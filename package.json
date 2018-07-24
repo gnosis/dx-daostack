@@ -1,0 +1,21 @@
+{
+  "name": "dx-daostack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "truffle test",
+    "migrate": "truffle migrate"
+  },
+  "author": "Angel Rodriguez <anxolin@gmail.com> (https://github.com/anxolin)",
+  "license": "ISC",
+  "devDependencies": {
+    "truffle": "^4.1.5"
+  },
+  "dependencies": {
+    "@daostack/arc": "^0.0.0-alpha.45",
+    "@gnosis.pm/dx-contracts": "^1.0.3",
+    "truffle-contract": "^3.0.6",
+    "truffle-hdwallet-provider": "0.0.5"
+  }
+}
