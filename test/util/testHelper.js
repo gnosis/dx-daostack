@@ -4,15 +4,30 @@ const dxServiceFactory = require('../../src/services/dxService/dxServiceFactory'
 
 let web3, artifacts, accounts, daoService, dxService
 
+
 async function setupDao ({
+  // Optional params
   organizationName = 'testOrg',
   tokenName = 'TEST',
   tokenSymbol = 'TST',
-  founders,
+  founders = null,
   controller = 0,
   cap = 0,
-  schemes
+  schemes,  
+  initialMgn = 0,
+  lockedMgn = 0
 }) {
+  if (initialMgn > 0) {
+    // Mint and lock some MGN
+    const owner = accounts[0]
+    const mgnAddress = await dxService.mintAndLockMgn({
+      account: owner,
+      mintAmount: initialMgn,
+      lockAmount: lockedMgn
+    })
+  }
+
+  // Setup Dao
   if (!founders && accounts) {
     founders = [{
       account: accounts[0],
@@ -69,8 +84,8 @@ module.exports = async ({
   // testHelper API
   return {
     // utils
-    getTimestampRangeFromDeltas,
     setupDao,
+    getTimestampRangeFromDeltas,
 
     // service
     daoService,

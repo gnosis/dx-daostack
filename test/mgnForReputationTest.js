@@ -5,13 +5,11 @@ async function setup ({
   web3,
   accounts,
 
-  // Optional params
-  founders = null,
-  initialMgn = 80,
   reputationReward = 100,
+  initialMgn = 80,
+  lockedMgn = 60,
   lockingStartTimeDelta = 0,
   lockingEndTimeDelta = 3000,
-  lockedMgn = 60
 }) {
   // Get the test helper
   const testHelper = await testHelperFactory({
@@ -19,15 +17,7 @@ async function setup ({
     web3,
     accounts
   })
-
-  // Mint and lock some MGN
   const { dxService } = testHelper
-  const owner = accounts[0]
-  const mgnAddress = await dxService.mintAndLockMgn({
-    account: owner,
-    mintAmount: initialMgn,
-    lockAmount: lockedMgn
-  })
 
   // Calculate the locking time range
   const [
@@ -38,15 +28,17 @@ async function setup ({
     endTimeDelta: lockingEndTimeDelta
   })
 
-  // Setup Dao
+  // Get the address for MGN
+  const mgnAddress = await dxService.getMgnAddress()
+
+  // Setup the DAO
   const {
     avatarAddress,
     tokenAddress,
     reputationAddress
   } = await testHelper.setupDao({
-    web3,
-    accounts,
-    founders,
+    initialMgn,
+    lockedMgn,
     schemes: [{
       type: 'ExternalLocking4Reputation',
       data: {
@@ -59,6 +51,7 @@ async function setup ({
     }]
   })
 
+  
   console.log(
     'Created DAO (%s) with REP (%s) and TOKEN (%s)',
     avatarAddress,

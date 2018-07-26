@@ -20,7 +20,13 @@ module.exports = async ({
       await mgn.lockTokens(lockAmount)  
 
       return mgn.address
+    },
+
+    getMgnAddress: async () => {
+      const mgn = await dxRepo.getMgn()
+      return mgn.address
     }
+
     /*
     mintMgn: async ({ account, amount }) => {
       const mgn = await dxRepo.getMgn()
@@ -30,11 +36,6 @@ module.exports = async ({
     lockMgn: async ({ amount }) => {
       const mgn = await dxRepo.getMgn()
       return mgn.lockTokens(amount)  
-    },
-
-    getMgnAddress: async () => {
-      const mgn = await dxRepo.getMgn()
-      return mgn.address
     }
     */
   }   
