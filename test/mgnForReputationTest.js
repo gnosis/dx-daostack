@@ -1,169 +1,79 @@
-// const helpers = require('./helpers')
-const constants = require('./constants')
-const getDaoStackContracts = require('../src/helpers/getDaoStackContracts')
-const getDxContracts = require('../src/helpers/getDxContracts')
-
-
-// TODO: Refactor
-const setupOrganization = async function ({
-  // contract instances
-  daoCreator,
-
-  // Contracts
-  Avatar,
-  DAOToken,
-  Reputation,
-
-  // Params
-  daoCreatorOwner,
-  founderToken,
-  founderReputation,
-  controller = 0,
-  cap = 0
-}) {
-  // console.log('SETUP daoCreator:', daoCreator)
-  // TODO: Refactor
-  // Create organization
-  var tx = await daoCreator.forgeOrg(
-    // org name
-    'testOrg',
-    // token name
-    'TEST',
-    // token symbol
-    'TST',
-    [ daoCreatorOwner ],
-    [ founderToken ],
-    [ founderReputation ],
-    controller,
-    cap,{
-      gas: constants.ARC_GAS_LIMIT
-    })
-
-  // Validate that the organization was created
-  assert.equal(tx.logs.length, 1)
-  assert.equal(tx.logs[0].event, 'NewOrg')
-
-  var avatarAddress = tx.logs[0].args._avatar
-  const avatar = await Avatar.at(avatarAddress)
-
-  var tokenAddress = await avatar.nativeToken()
-  const token = await DAOToken.at(tokenAddress)
-
-  var reputationAddress = await avatar.nativeReputation()
-  const reputation = await Reputation.at(reputationAddress)
-
-  return {
-    avatar,
-    token,
-    reputation
-  }
-}
+const testHelperFactory = require('./util/testHelper')
 
 async function setup ({
   artifacts,
+  web3,
   accounts,
-  repAllocation = 100,
+
+  // Optional params
+  founders = null,
+  initialMgn = 80,
+  reputationReward = 100,
   lockingStartTimeDelta = 0,
   lockingEndTimeDelta = 3000,
-  initialMgn = 80,
   lockedMgn = 60
-}) { 
+}) {
+  // Get the test helper
+  const testHelper = await testHelperFactory({
+    artifacts,
+    web3,
+    accounts
+  })
+
+  // Mint and lock some MGN
+  const { dxService } = testHelper
   const owner = accounts[0]
-  // const contract = require('truffle-contract')
-  // const ControllerCreator = contract(require(`@daostack/arc/build/contracts/ControllerCreator` ))
-  // console.log('currentProvider: ', web3.currentProvider)
-  // ControllerCreator.defaults({ from: owner })
-  // ControllerCreator.setProvider(web3.currentProvider)
+  const mgnAddress = await dxService.mintAndLockMgn({
+    account: owner,
+    mintAmount: initialMgn,
+    lockAmount: lockedMgn
+  })
+
+  // Calculate the locking time range
+  const [
+    lockingStartTime,
+    lockingEndTime
+  ] = await testHelper.getTimestampRangeFromDeltas({
+    startTimeDelta: lockingStartTimeDelta,
+    endTimeDelta: lockingEndTimeDelta
+  })
+
+  // Setup Dao
   const {
-    ControllerCreator,
-    DaoCreator,
-    Avatar,
-    DAOToken,
-    Reputation
-  } = await getDaoStackContracts({
-    provider: web3.currentProvider,
-    defaults: {
-      from: owner 
-    }
-  })
-  
-  const controllerCreator = await ControllerCreator.new({
-    gas: constants.ARC_GAS_LIMIT
-  })
-  const daoCreator = await DaoCreator.new(
-    controllerCreator.address, {
-    gas: constants.ARC_GAS_LIMIT
-  })
-
-  // // Create organization
-  const {
-    avatar,
-    token,
-    reputation
-  } = await setupOrganization({
-    daoCreator,
-    Avatar,
-    DAOToken,
-    Reputation,
-    daoCreatorOwner: owner,
-    founderToken: 0,
-    founderReputation: 0
+    avatarAddress,
+    tokenAddress,
+    reputationAddress
+  } = await testHelper.setupDao({
+    web3,
+    accounts,
+    founders,
+    schemes: [{
+      type: 'ExternalLocking4Reputation',
+      data: {
+        reputationReward,
+        lockingStartTime,
+        lockingEndTime,
+        externalLockingContract: mgnAddress,
+        getBalanceFuncSignature: 'lockedTokenBalances(address)'
+      }
+    }]
   })
 
-  // const now = await web3.eth.getBlock('latest').timestamp
-  // const lockingStartTime = now + lockingStartTimeDelta
-  // const lockingEndTime = now + lockingEndTimeDelta
-
-  // const {
-  //   TokenFRT
-  // } = await getDxContracts(artifacts)
-  // const mgn = await TokenFRT.deployed()
-  // await mgn.mintTokens(owner, initialMgn)
-  // await mgn.lockTokens(initialMgn, lockedMgn)
-
-  // //  testSetup.extetnalTokenLockerMock = await ExternalTokenLockerMock.new();
-  // //  await testSetup.extetnalTokenLockerMock.lock(100,{from:accounts[0]});
-  // //  await testSetup.extetnalTokenLockerMock.lock(200,{from:accounts[1]});
-  // //  await testSetup.extetnalTokenLockerMock.lock(300,{from:accounts[2]});
-
-  // // Create scheme for getting REP from locked MGN
-  // const externalLocking4Reputation = await ExternalLocking4Reputation.new(
-  //   avatar.address,
-  //   repAllocation,
-  //   lockingStartTime,
-  //   lockingEndTime,
-  //   mgn.address,
-  //   'lockedTokenBalances(address)'
-  // )
-
-  // await daoCreator.setSchemes(
-  //    // avatar
-  //    avatar.address,
-  //    // Scheme
-  //    [ externalLocking4Reputation.address ],
-  //    // parameters (no params)
-  //    [ 0 ],
-  //    // Permissions (no permissions)
-  //    [ '0x00000000' ]
-  // )
-
-  // return {
-  //   mgn,
-
-  //   // Main DaoStack contracts
-  //   avatar,
-  //   token,
-  //   reputation,
-  //   // Schemes
-  //   externalLocking4Reputation
-  // }
+  console.log(
+    'Created DAO (%s) with REP (%s) and TOKEN (%s)',
+    avatarAddress,
+    tokenAddress,
+    reputationAddress
+  )
 }
 
 contract('Scheme MGN to REP', accounts => {
   it('works', async () => {
     
     await setup({
-      accounts
+      web3,
+      accounts,
+      artifacts
     })
     
     assert.ok(true)

@@ -14,10 +14,13 @@ const CONTRACTS = [
   'ExternalLocking4Reputation'
 ]
 
-async function getDaoStackContracts ({ provider, defaults }) {
+async function getDaoStackContracts ({
+  provider,
+  defaults 
+}) {
   return CONTRACTS.reduce((acc, contractName) => {
     const contractUrl = `@daostack/arc/build/contracts/${contractName}`
-    console.log(`Load contract: ${contractUrl}`)
+    // console.log(`Load contract: ${contractUrl}`)
     const truffleContract = contract(require(contractUrl))
     truffleContract.setProvider(provider)
     truffleContract.defaults(defaults)

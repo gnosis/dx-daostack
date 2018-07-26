@@ -6,7 +6,7 @@ pragma solidity ^0.4.21;
 // 
 //  For other environments, we just use the compiled contracts from the NPM 
 //  package
-// import "@gnosis.pm/dx-contracts/contracts/DxDevDependencies.sol";
+import "@gnosis.pm/dx-contracts/contracts/DxDevDependencies.sol";
 // import "@daostack/arc/contracts/controller/Avatar.sol";
 // import "@daostack/arc/contracts/controller/Reputation.sol";
 
