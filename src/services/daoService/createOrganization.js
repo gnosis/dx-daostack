@@ -60,11 +60,7 @@ module.exports = ({
   return {
     avatarAddress: avatar.address,
     tokenAddress: token.address,
-    reputationAddress: reputation.address
-  }
-  return {
-    avatarAddress: avatar.address,
-    tokenAddress: token.address,
-    reputationAddress: reputation.address
+    reputationAddress: reputation.address,
+    schemes: schemesDetails
   }
 }

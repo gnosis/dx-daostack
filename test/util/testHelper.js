@@ -2,8 +2,10 @@ const DEFAULT_GAS = 4712388
 const daoServiceFactory = require('../../src/services/daoService/daoServiceFactory')
 const dxServiceFactory = require('../../src/services/dxService/dxServiceFactory')
 
-let web3, artifacts, accounts, daoService, dxService
+const getDaoStackContracts = require('../../src/repositories/daoStack/util/getDaoStackContracts')
+const getDxContracts = require('../../src/repositories/dx/util/getDxContracts')
 
+let web3, artifacts, accounts, daoService, dxService
 
 async function setupDao ({
   // Optional params
@@ -86,6 +88,8 @@ module.exports = async ({
     // utils
     setupDao,
     getTimestampRangeFromDeltas,
+    getDaoStackContracts,
+    getDxContracts,
 
     // service
     daoService,

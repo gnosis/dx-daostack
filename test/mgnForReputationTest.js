@@ -1,13 +1,15 @@
 const testHelperFactory = require('./util/testHelper')
 
+const INITIAL_MGN_AMOUNT = 80
+const INITIAL_LOCKED_MGN_AMOUNT = 60
+const REPUTATION_REWARD = 100
+
 async function setup ({
-  artifacts,
-  web3,
   accounts,
 
-  reputationReward = 100,
-  initialMgn = 80,
-  lockedMgn = 60,
+  reputationReward = REPUTATION_REWARD,
+  initialMgn = INITIAL_MGN_AMOUNT,
+  lockedMgn = INITIAL_LOCKED_MGN_AMOUNT,
   lockingStartTimeDelta = 0,
   lockingEndTimeDelta = 3000,
 }) {
@@ -35,7 +37,8 @@ async function setup ({
   const {
     avatarAddress,
     tokenAddress,
-    reputationAddress
+    reputationAddress,
+    schemes
   } = await testHelper.setupDao({
     initialMgn,
     lockedMgn,
@@ -51,22 +54,70 @@ async function setup ({
     }]
   })
 
+  // Get an scheme instance
+  const { ExternalLocking4Reputation } = await testHelper.getDaoStackContracts()
+  const schemeAddress = schemes[0].address
+  externalLocking4Reputation = ExternalLocking4Reputation.at(schemeAddress)
+
   
   console.log(
-    'Created DAO (%s) with REP (%s) and TOKEN (%s)',
+    'Created DAO (%s) with REP (%s) and TOKEN (%s). Schemes: %s',
     avatarAddress,
     tokenAddress,
-    reputationAddress
+    reputationAddress,
+    schemes.map(scheme => scheme.address).join(',')
   )
+
+  return {
+    testHelper,
+    avatarAddress,
+    tokenAddress,
+    reputationAddress,
+    schemes,
+    externalLocking4Reputation
+  }
 }
 
 contract('Scheme MGN to REP', accounts => {
-  it('works', async () => {
-    
-    await setup({
-      web3,
+  it('Test 1', async () => {
+    const {
+      // testHelper,
+      // avatarAddress,
+      // tokenAddress,
+      // reputationAddress,
+      // schemes,
+      externalLocking4Reputation
+    } = await setup({
       accounts,
-      artifacts
+    })
+
+    const reputationReward = await externalLocking4Reputation
+      .reputationReward
+      .call()
+      .then(n => n.toNumber())
+
+    assert.equal(reputationReward, REPUTATION_REWARD)
+
+    // Fail on porpouse :)
+    assert.equal(reputationReward, REPUTATION_REWARD + 1)
+
+    // assert.equal(await testSetup.externalLocking4Reputation.lockingEndTime(),testSetup.lockingEndTime);
+    // assert.equal(await testSetup.externalLocking4Reputation.lockingStartTime(),testSetup.lockingStartTime);
+    // assert.equal(await testSetup.externalLocking4Reputation.externalLockingContract(),testSetup.extetnalTokenLockerMock.address);
+    // assert.equal(await testSetup.externalLocking4Reputation.getBalanceFuncSignature(),"lockedTokenBalances(address)");
+    
+    assert.ok(true)
+  })
+
+  it('Test 2', async () => {    
+    const {
+      testHelper,
+      avatarAddress,
+      tokenAddress,
+      reputationAddress,
+      schemes
+    } = await setup({
+      accounts,
     })
     
     assert.ok(true)
