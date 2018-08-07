@@ -29,6 +29,7 @@ async function setup ({
     startTimeDelta: lockingStartTimeDelta,
     endTimeDelta: lockingEndTimeDelta
   })
+  testHelper.lockingStartTime = lockingStartTime;
 
   // Get the address for MGN
   const mgnAddress = await dxService.getMgnAddress()
@@ -59,7 +60,7 @@ async function setup ({
   const schemeAddress = schemes[0].address
   externalLocking4Reputation = ExternalLocking4Reputation.at(schemeAddress)
 
-  
+
   console.log(
     'Created DAO (%s) with REP (%s) and TOKEN (%s). Schemes: %s',
     avatarAddress,
@@ -74,19 +75,22 @@ async function setup ({
     tokenAddress,
     reputationAddress,
     schemes,
-    externalLocking4Reputation
+    externalLocking4Reputation,
+    lockingStartTime,
+    lockingEndTime
   }
 }
 
 contract('Scheme MGN to REP', accounts => {
-  it('Test 1', async () => {
+  it('constructor', async () => {
     const {
-      // testHelper,
+         testHelper,
       // avatarAddress,
       // tokenAddress,
       // reputationAddress,
-      // schemes,
-      externalLocking4Reputation
+         externalLocking4Reputation,
+         lockingStartTime,
+         lockingEndTime
     } = await setup({
       accounts,
     })
@@ -98,39 +102,50 @@ contract('Scheme MGN to REP', accounts => {
 
     assert.equal(reputationReward, REPUTATION_REWARD)
 
-    // Fail on porpouse :)
-    assert.equal(reputationReward, REPUTATION_REWARD + 1)
+    const _lockingEndTime = await externalLocking4Reputation
+      .lockingEndTime
+      .call()
+      .then(n => n.toNumber())
+    assert.equal(_lockingEndTime, lockingEndTime)
 
-    // assert.equal(await testSetup.externalLocking4Reputation.lockingEndTime(),testSetup.lockingEndTime);
-    // assert.equal(await testSetup.externalLocking4Reputation.lockingStartTime(),testSetup.lockingStartTime);
-    // assert.equal(await testSetup.externalLocking4Reputation.externalLockingContract(),testSetup.extetnalTokenLockerMock.address);
-    // assert.equal(await testSetup.externalLocking4Reputation.getBalanceFuncSignature(),"lockedTokenBalances(address)");
-    
+    const _lockingStartTime = await externalLocking4Reputation
+        .lockingStartTime
+        .call()
+        .then(n => n.toNumber())
+
+    assert.equal(_lockingStartTime, lockingStartTime)
+
+    const externalLockingContract = await externalLocking4Reputation
+          .externalLockingContract
+          .call()
+    const { dxService } = testHelper
+    assert.equal(externalLockingContract, await dxService.getMgnAddress())
+
+    const getBalanceFuncSignature = await externalLocking4Reputation
+          .getBalanceFuncSignature
+          .call()
+
+    assert.equal(getBalanceFuncSignature, 'lockedTokenBalances(address)')
+
     assert.ok(true)
   })
 
-  it('Test 2', async () => {    
+  it('lock', async () => {
     const {
-      testHelper,
-      avatarAddress,
-      tokenAddress,
-      reputationAddress,
-      schemes
+      externalLocking4Reputation
     } = await setup({
       accounts,
     })
-    
+
+    var tx = await externalLocking4Reputation.lock();
+    assert.equal(tx.logs.length,1);
+    assert.equal(tx.logs[0].event,"Lock");
+    assert.equal(tx.logs[0].args._amount,INITIAL_LOCKED_MGN_AMOUNT);
+    assert.equal(tx.logs[0].args._period,1);
+    assert.equal(tx.logs[0].args._locker,accounts[0]);
+
     assert.ok(true)
   })
-
-    // it("constructor", async () => {
-    //   let testSetup = await setup(accounts);
-    //   assert.equal(await testSetup.externalLocking4Reputation.reputationReward(),100);
-    //   assert.equal(await testSetup.externalLocking4Reputation.lockingEndTime(),testSetup.lockingEndTime);
-    //   assert.equal(await testSetup.externalLocking4Reputation.lockingStartTime(),testSetup.lockingStartTime);
-    //   assert.equal(await testSetup.externalLocking4Reputation.externalLockingContract(),testSetup.extetnalTokenLockerMock.address);
-    //   assert.equal(await testSetup.externalLocking4Reputation.getBalanceFuncSignature(),"lockedTokenBalances(address)");
-    // });
 
     // it("lock", async () => {
     //   let testSetup = await setup(accounts);

@@ -10,9 +10,20 @@ const CONTRACTS = [
   'Avatar',
   'DAOToken',
   'Reputation',
+  'Controller',
 
   // Schemes
-  'ExternalLocking4Reputation'
+  'SchemeRegistrar',
+  'GlobalConstraintRegistrar',
+  'UpgradeScheme',
+  'ContributionReward',
+  'ExternalLocking4Reputation',
+  'GenesisProtocol',
+  'StandardTokenMock',
+  'Auction4Reputation',
+  'FixedReputationAllocation',
+  'LockingEth4Reputation',
+  'LockingToken4Reputation'
 ]
 
 async function getDaoStackContracts ({

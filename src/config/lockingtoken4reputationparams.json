@@ -1,0 +1,7 @@
+{
+  "reputationReward" : 100,
+  "lockingStartTime" : 1000,
+  "lockingEndTime" : 2000,
+  "maxLockingPeriod" : 3000,
+  "token" : "0xabcd"
+}

@@ -13,9 +13,9 @@
     "truffle": "^4.1.5"
   },
   "dependencies": {
-    "@daostack/arc": "^0.0.0-alpha.45",
+    "@daostack/arc": "^0.0.0-alpha.47",
     "@gnosis.pm/dx-contracts": "^1.0.3",
     "truffle-contract": "^3.0.6",
-    "truffle-hdwallet-provider": "0.0.5"
+    "truffle-hdwallet-provider": "0.0.6"
   }
 }
