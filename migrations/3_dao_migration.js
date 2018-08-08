@@ -56,7 +56,8 @@ module.exports = async function(deployer,network,accounts,providers) {
             FixedReputationAllocation,
             LockingEth4Reputation,
             LockingToken4Reputation,
-            ExternalLocking4Reputation
+            ExternalLocking4Reputation,
+            GenericScheme
           } = await getDaoStackContracts({provider: web3.currentProvider});
     deployer.deploy(ControllerCreator, options).then(async function(){
       var controllerCreator = await ControllerCreator.deployed();
@@ -90,6 +91,9 @@ module.exports = async function(deployer,network,accounts,providers) {
       }
       await deployer.deploy(GenesisProtocol,stakingTokenAddress,options);
       var genesisProtocolInstance = await GenesisProtocol.deployed();
+
+      await genesisProtocolInstance.setParameters(genesisProtocolParams,options);
+      var genesisProtocolParamsHash = await genesisProtocolInstance.getParametersHash(genesisProtocolParams,options);
 
 
       var externalLockingContract = externalLocking4ReputationParamsJson.externalLockingContract;
@@ -146,12 +150,27 @@ module.exports = async function(deployer,network,accounts,providers) {
                            options);
       var fixedReputationAllocationInst = await FixedReputationAllocation.deployed();
 
+      await deployer.deploy(
+                           GenericScheme,
+                           options
+                           );
+      var genericSchemeInst = await GenericScheme.deployed();
+      var dutchexContractAddress = "0xabcd";
+      await genericSchemeInst.setParameters(
+                                            genesisProtocolParamsHash,
+                                            genesisProtocolInstance.address,
+                                            dutchexContractAddress,
+                                            options
+                                           );
+      var genericSchemeParamsHash = await genericSchemeInst.getParametersHash(
+                                                                              genesisProtocolParamsHash,
+                                                                              genesisProtocolInstance.address,
+                                                                              dutchexContractAddress,
+                                                                              options
+                                                                             );
+
       await deployer.deploy(ContributionReward,options);
       var contributionRewardInst = await ContributionReward.deployed();
-
-      await genesisProtocolInstance.setParameters(genesisProtocolParams,options);
-      var genesisProtocolParamsHash = await genesisProtocolInstance.getParametersHash(genesisProtocolParams,options);
-
 
       await schemeRegistrarInst.setParameters(genesisProtocolParamsHash, genesisProtocolParamsHash, genesisProtocolInstance.address,options);
       var schemeRegisterParams = await schemeRegistrarInst.getParametersHash(genesisProtocolParamsHash, genesisProtocolParamsHash, genesisProtocolInstance.address,options);
@@ -166,7 +185,8 @@ module.exports = async function(deployer,network,accounts,providers) {
       var contributionRewardParams = await contributionRewardInst.getParametersHash(0,genesisProtocolParamsHash, genesisProtocolInstance.address,options);
 
 
-      var schemesArray = [schemeRegistrarInst.address,
+      var schemesArray = [
+                          schemeRegistrarInst.address,
                           globalConstraintRegistrarInst.address,
                           upgradeSchemeInst.address,
                           contributionRewardInst.address,
@@ -175,8 +195,11 @@ module.exports = async function(deployer,network,accounts,providers) {
                           auction4ReputationInst.address,
                           lockingEth4ReputationInst.address,
                           lockingToken4ReputationInst.address,
-                          fixedReputationAllocationInst.address];
-      const paramsArray = [schemeRegisterParams,
+                          fixedReputationAllocationInst.address,
+                          genericSchemeInst.address
+                        ];
+      const paramsArray = [
+                           schemeRegisterParams,
                            schemeGCRegisterParams,
                            schemeUpgradeParams,
                            contributionRewardParams,
@@ -185,8 +208,11 @@ module.exports = async function(deployer,network,accounts,providers) {
                            0,
                            0,
                            0,
-                           0];
-      const permissionArray = ['0x0000001F',
+                           0,
+                           genericSchemeParamsHash
+                           ];
+      const permissionArray = [
+                               '0x0000001F',
                                '0x00000005',
                                '0x0000000a',
                                '0x00000001',
@@ -195,7 +221,9 @@ module.exports = async function(deployer,network,accounts,providers) {
                                '0x00000001',
                                '0x00000001',
                                '0x00000001',
-                               '0x00000001'];
+                               '0x00000001',
+                               '0x00000010'   //genericScheme permission
+                             ];
 
       // set DAO initial schemes:
       await daoCreatorInst.setSchemes(

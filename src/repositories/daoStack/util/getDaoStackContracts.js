@@ -23,7 +23,8 @@ const CONTRACTS = [
   'Auction4Reputation',
   'FixedReputationAllocation',
   'LockingEth4Reputation',
-  'LockingToken4Reputation'
+  'LockingToken4Reputation',
+  'GenericScheme'
 ]
 
 async function getDaoStackContracts ({
