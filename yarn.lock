@@ -2,13 +2,13 @@
 # yarn lockfile v1
 
 
-"@daostack/arc@^0.0.0-alpha.45":
-  version "0.0.0-alpha.45"
-  resolved "https://registry.yarnpkg.com/@daostack/arc/-/arc-0.0.0-alpha.45.tgz#1135264b1540e74560f0757b4a4c2ffde39ff7e8"
+"@daostack/arc@^0.0.0-alpha.47":
+  version "0.0.0-alpha.48"
+  resolved "https://registry.yarnpkg.com/@daostack/arc/-/arc-0.0.0-alpha.48.tgz#cc864325b7471a03eb3594e158b680803e3f45ec"
   dependencies:
     ethereumjs-abi "^0.6.5"
     ganache-cli "^6.1.6"
-    openzeppelin-solidity "1.10.0"
+    openzeppelin-solidity "1.11.0"
 
 "@gnosis.pm/dx-contracts@^1.0.3":
   version "1.0.3"
@@ -82,7 +82,7 @@ async-eventemitter@^0.2.2:
   dependencies:
     async "^2.4.0"
 
-"async-eventemitter@github:ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c":
+async-eventemitter@ahultgren/async-eventemitter#fa06e39e56786ba541c180061dbf2c0a5bbf951c:
   version "0.2.3"
   resolved "https://codeload.github.com/ahultgren/async-eventemitter/tar.gz/fa06e39e56786ba541c180061dbf2c0a5bbf951c"
   dependencies:
@@ -1163,7 +1163,7 @@ ethereumjs-vm@^2.0.2, ethereumjs-vm@^2.1.0, ethereumjs-vm@^2.3.4:
     rustbn.js "~0.1.1"
     safe-buffer "^5.1.1"
 
-ethereumjs-wallet@^0.6.0:
+ethereumjs-wallet@0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/ethereumjs-wallet/-/ethereumjs-wallet-0.6.0.tgz#82763b1697ee7a796be7155da9dfb49b2f98cfdb"
   dependencies:
@@ -1861,9 +1861,9 @@ once@^1.3.0, once@^1.4.0:
   dependencies:
     wrappy "1"
 
-openzeppelin-solidity@1.10.0:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/openzeppelin-solidity/-/openzeppelin-solidity-1.10.0.tgz#d77eee6653f5958d051318a61ba0b436f92216c0"
+openzeppelin-solidity@1.11.0:
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/openzeppelin-solidity/-/openzeppelin-solidity-1.11.0.tgz#f57a5e340aa45efd4a052f4bb514a7a619b0bbd0"
 
 original-require@1.0.1:
   version "1.0.1"
@@ -2420,12 +2420,12 @@ truffle-error@^0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/truffle-error/-/truffle-error-0.0.3.tgz#4bf55242e14deee1c7194932709182deff2c97ca"
 
-truffle-hdwallet-provider@0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/truffle-hdwallet-provider/-/truffle-hdwallet-provider-0.0.5.tgz#6e3dc0fb607a40c8bf02312b9a6aa1ce49883902"
+truffle-hdwallet-provider@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/truffle-hdwallet-provider/-/truffle-hdwallet-provider-0.0.6.tgz#775c677693a94d83a515815d7fd7f0a73f00c3e9"
   dependencies:
     bip39 "^2.2.0"
-    ethereumjs-wallet "^0.6.0"
+    ethereumjs-wallet "0.6.0"
     web3 "^0.18.2"
     web3-provider-engine "^14.0.5"
 
