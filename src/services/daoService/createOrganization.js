@@ -42,13 +42,18 @@ module.exports = ({
         return daoStackRepo.createSchemeExternalLocking4Reputation({
           ...scheme.data,
           avatarAddress: avatar.address
-        })
+        });
+      case 'ZeroXDutchXValidateAndCall':
+          return daoStackRepo.createSchemeZeroXDutchXValidateAndCall({
+            ...scheme.data,
+            avatarAddress: avatar.address
+          })
       default:
         throw new Error('Unknown scheme type ' + scheme.type)
     }
   })
 
-  // Wait for all the scheme creations  
+  // Wait for all the scheme creations
   const schemeCreations = await Promise.all(schemeCreationPromises)
 
   debug('%d schemes have been created', schemeCreations.length)

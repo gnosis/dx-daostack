@@ -18,7 +18,7 @@ module.exports = async ({
   let mgn
   const getMgn = async () => {
     if (!mgn) {
-      mgn = await TokenFRT.deployed()
+      mgn = await TokenFRT.deployed({gas:7000000})
     }
 
     return mgn
@@ -27,5 +27,5 @@ module.exports = async ({
   // Repo API
   return {
     getMgn
-  }   
+  }
 }

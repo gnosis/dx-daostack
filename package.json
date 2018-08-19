@@ -14,7 +14,7 @@
     "truffle": "^4.1.5"
   },
   "dependencies": {
-    "@daostack/arc": "^0.0.0-alpha.47",
+    "@daostack/arc": "file:daostack-arc-0.0.0-alpha.51.tgz",
     "@gnosis.pm/dx-contracts": "^1.0.3",
     "debug": "^3.1.0",
     "truffle-contract": "^3.0.6",
