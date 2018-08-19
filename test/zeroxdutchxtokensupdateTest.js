@@ -28,7 +28,7 @@ async function setup ({
     debug('Created snapshot: ' + currentSnapshotId)
   }
 
-  const { dxService } = testHelper
+  const { dxService } = await testHelper
 
   var zeroXRegistryContract = await TokenRegistry.new();
   var dxContract = await DutchXMock.new();
@@ -153,6 +153,7 @@ contract('Scheme ZeroX to DutchX', accounts => {
           assert.isTrue(condition, 'Expected a VM Exception, got this instead:' + ex.message);
        }
   })
+
 
 
 })

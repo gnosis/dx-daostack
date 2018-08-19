@@ -43,6 +43,7 @@ module.exports = ({
           ...scheme.data,
           avatarAddress: avatar.address
         });
+      break;
       case 'ZeroXDutchXValidateAndCall':
           return daoStackRepo.createSchemeZeroXDutchXValidateAndCall({
             ...scheme.data,
