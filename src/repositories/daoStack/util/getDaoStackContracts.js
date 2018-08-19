@@ -24,7 +24,8 @@ const CONTRACTS = [
   'FixedReputationAllocation',
   'LockingEth4Reputation',
   'LockingToken4Reputation',
-  'GenericScheme'
+  'GenericScheme',
+  'ZeroXDutchXValidateAndCall'
 ]
 
 async function getDaoStackContracts ({
@@ -33,13 +34,16 @@ async function getDaoStackContracts ({
 } = {}) {
   if (!contractInstances) {
     contractInstances = CONTRACTS.reduce((acc, contractName) => {
-      const contractUrl = `@daostack/arc/build/contracts/${contractName}`
+      var contractUrl  = `@daostack/arc/build/contracts/${contractName}`
+      if (contractName == 'ZeroXDutchXValidateAndCall') {
+          contractUrl = `../../../../build/contracts/${contractName}`
+      }
       // console.log(`Load contract: ${contractUrl}`)
       const truffleContract = contract(require(contractUrl))
       truffleContract.setProvider(provider)
       truffleContract.defaults(defaults)
       acc[contractName] = truffleContract
-  
+
       return acc
     }, {})
   }

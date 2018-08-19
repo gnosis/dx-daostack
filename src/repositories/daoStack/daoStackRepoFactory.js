@@ -12,7 +12,8 @@ module.exports = async ({
     Avatar,
     DAOToken,
     Reputation,
-    ExternalLocking4Reputation
+    ExternalLocking4Reputation,
+    ZeroXDutchXValidateAndCall
   } = await getDaoStackContracts({
     provider,
     defaults: transactionDefaults
@@ -48,12 +49,17 @@ module.exports = async ({
     ExternalLocking4Reputation
   })
 
+  const createSchemeZeroXDutchXValidateAndCall = require('./schemes/createZeroXDutchXValidateAndCall')({
+    ZeroXDutchXValidateAndCall
+  })
+
   // Repo API
   return {
     forgeOrganization,
     setSchemes,
 
     // Scheme creation
-    createSchemeExternalLocking4Reputation
-  }   
+    createSchemeExternalLocking4Reputation,
+    createSchemeZeroXDutchXValidateAndCall
+  }
 }
