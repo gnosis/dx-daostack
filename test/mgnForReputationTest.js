@@ -44,7 +44,6 @@ async function setup ({
     endTimeDelta: lockingEndTimeDelta
   })
   testHelper.lockingStartTime = lockingStartTime;
-
   // Get the address for MGN
   const mgnAddress = await dxService.getMgnAddress()
   debug('Using MGN: ' + mgnAddress)
@@ -74,7 +73,7 @@ async function setup ({
   // Get an scheme instance
   const { ExternalLocking4Reputation } = await testHelper.getDaoStackContracts()
   const schemeAddress = schemes[0].address
-  externalLocking4Reputation = ExternalLocking4Reputation.at(schemeAddress)
+  externalLocking4Reputation = await ExternalLocking4Reputation.at(schemeAddress)
 
 
   debug(
@@ -154,6 +153,7 @@ contract('Scheme MGN to REP', accounts => {
       accounts,
     })
 
+
     var tx = await externalLocking4Reputation.lock();
     assert.equal(tx.logs.length, 1);
     const log = tx.logs[0]
@@ -162,7 +162,6 @@ contract('Scheme MGN to REP', accounts => {
     // assert.equal(tx.logs[0].args._amount, INITIAL_LOCKED_MGN_AMOUNT);
     // assert.equal(tx.logs[0].args._period, 1);
     // assert.equal(tx.logs[0].args._locker, accounts[0]);
-
     assert.ok(true)
   })
 
