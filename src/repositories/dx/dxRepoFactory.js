@@ -18,7 +18,7 @@ module.exports = async ({
   let mgn
   const getMgn = async () => {
     if (!mgn) {
-      mgn = await TokenFRT.deployed({gas:7000000})
+      mgn = await TokenFRT.deployed({gas: 7000000})
     }
 
     return mgn

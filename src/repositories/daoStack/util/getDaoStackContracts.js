@@ -34,9 +34,9 @@ async function getDaoStackContracts ({
 } = {}) {
   if (!contractInstances) {
     contractInstances = CONTRACTS.reduce((acc, contractName) => {
-      var contractUrl  = `@daostack/arc/build/contracts/${contractName}`
-      if (contractName == 'ZeroXDutchXValidateAndCall') {
-          contractUrl = `../../../../build/contracts/${contractName}`
+      var contractUrl = `@daostack/arc/build/contracts/${contractName}`
+      if (contractName === 'ZeroXDutchXValidateAndCall') {
+        contractUrl = `../../../../build/contracts/${contractName}`
       }
       // console.log(`Load contract: ${contractUrl}`)
       const truffleContract = contract(require(contractUrl))

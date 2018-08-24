@@ -1,10 +1,12 @@
+const assert = require('assert')
+
 const DEFAULT_SCHEME_PARAMS = 0
 const DEFAULT_SCHEME_PARMISSIONS = 0
 
 module.exports = ({
   daoCreatorGetter
 }) => async ({
-  avatarAddress,  
+  avatarAddress,
   schemes // Object containing the 'address', and optionally the 'params' and 'permissions'
 }) => {
   assert(schemes || schemes.length > 0, 'At least one scheme is mandatory')

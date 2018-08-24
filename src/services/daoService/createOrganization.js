@@ -1,3 +1,4 @@
+const assert = require('assert')
 const debug = require('debug')('app:services:dao')
 
 module.exports = ({
@@ -33,7 +34,7 @@ module.exports = ({
   })
 
   // Create all the schemes
-  assert(schemes && schemes.length >0, 'At least one scheme is required')
+  assert(schemes && schemes.length > 0, 'At least one scheme is required')
   const schemeCreationPromises = schemes.map(async scheme => {
     assert(scheme.type, 'The scheme type is mandatory')
     debug('Creating scheme %s, with data: %o', scheme.type, scheme.data)
@@ -42,13 +43,12 @@ module.exports = ({
         return daoStackRepo.createSchemeExternalLocking4Reputation({
           ...scheme.data,
           avatarAddress: avatar.address
-        });
-      break;
+        })
       case 'ZeroXDutchXValidateAndCall':
-          return daoStackRepo.createSchemeZeroXDutchXValidateAndCall({
-            ...scheme.data,
-            avatarAddress: avatar.address
-          })
+        return daoStackRepo.createSchemeZeroXDutchXValidateAndCall({
+          ...scheme.data,
+          avatarAddress: avatar.address
+        })
       default:
         throw new Error('Unknown scheme type ' + scheme.type)
     }
@@ -68,7 +68,7 @@ module.exports = ({
       permissions: scheme.permissions
     }
   })
-  
+
   // Set organization schemes
   debug('Set schemes into Dao %s', avatar.address)
   await daoStackRepo.setSchemes({

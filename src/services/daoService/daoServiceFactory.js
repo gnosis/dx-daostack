@@ -18,5 +18,5 @@ module.exports = async ({
   // daoService API
   return {
     createOrganization
-  }   
+  }
 }

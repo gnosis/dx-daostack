@@ -1,3 +1,6 @@
+/* global artifacts, web3, contract, it */
+/* eslint no-undef: "error" */
+const assert = require('assert')
 const debug = require('debug')('test:mgnForReputation')
 const testHelperFactory = require('../src/helpers/testHelper')
 
@@ -13,7 +16,7 @@ async function setup ({
   initialMgn = INITIAL_MGN_AMOUNT,
   lockedMgn = INITIAL_LOCKED_MGN_AMOUNT,
   lockingStartTimeDelta = 0,
-  lockingEndTimeDelta = 3000,
+  lockingEndTimeDelta = 3000
 }) {
   // Get the test helper
   const testHelper = await testHelperFactory({
@@ -43,7 +46,7 @@ async function setup ({
     startTimeDelta: lockingStartTimeDelta,
     endTimeDelta: lockingEndTimeDelta
   })
-  testHelper.lockingStartTime = lockingStartTime;
+  testHelper.lockingStartTime = lockingStartTime
   // Get the address for MGN
   const mgnAddress = await dxService.getMgnAddress()
   debug('Using MGN: ' + mgnAddress)
@@ -73,8 +76,7 @@ async function setup ({
   // Get an scheme instance
   const { ExternalLocking4Reputation } = await testHelper.getDaoStackContracts()
   const schemeAddress = schemes[0].address
-  externalLocking4Reputation = await ExternalLocking4Reputation.at(schemeAddress)
-
+  const externalLocking4Reputation = await ExternalLocking4Reputation.at(schemeAddress)
 
   debug(
     'Created DAO (%s) with REP (%s) and TOKEN (%s). Schemes: %s',
@@ -97,18 +99,17 @@ async function setup ({
 }
 
 contract('Scheme MGN to REP', accounts => {
-
   it('constructor', async () => {
     const {
-         testHelper,
+      testHelper,
       // avatarAddress,
       // tokenAddress,
       // reputationAddress,
-         externalLocking4Reputation,
-         lockingStartTime,
-         lockingEndTime
+      externalLocking4Reputation,
+      lockingStartTime,
+      lockingEndTime
     } = await setup({
-      accounts,
+      accounts
     })
 
     const reputationReward = await externalLocking4Reputation
@@ -116,32 +117,32 @@ contract('Scheme MGN to REP', accounts => {
       .call()
       .then(n => n.toNumber())
 
-    assert.equal(reputationReward, REPUTATION_REWARD)
+    assert.strictEqual(reputationReward, REPUTATION_REWARD)
 
     const _lockingEndTime = await externalLocking4Reputation
       .lockingEndTime
       .call()
       .then(n => n.toNumber())
-    assert.equal(_lockingEndTime, lockingEndTime)
+    assert.strictEqual(_lockingEndTime, lockingEndTime)
 
     const _lockingStartTime = await externalLocking4Reputation
-        .lockingStartTime
-        .call()
-        .then(n => n.toNumber())
+      .lockingStartTime
+      .call()
+      .then(n => n.toNumber())
 
-    assert.equal(_lockingStartTime, lockingStartTime)
+    assert.strictEqual(_lockingStartTime, lockingStartTime)
 
     const externalLockingContract = await externalLocking4Reputation
-          .externalLockingContract
-          .call()
+      .externalLockingContract
+      .call()
     const { dxService } = testHelper
-    assert.equal(externalLockingContract, await dxService.getMgnAddress())
+    assert.strictEqual(externalLockingContract, await dxService.getMgnAddress())
 
     const getBalanceFuncSignature = await externalLocking4Reputation
-          .getBalanceFuncSignature
-          .call()
+      .getBalanceFuncSignature
+      .call()
 
-    assert.equal(getBalanceFuncSignature, 'lockedTokenBalances(address)')
+    assert.strictEqual(getBalanceFuncSignature, 'lockedTokenBalances(address)')
 
     assert.ok(true)
   })
@@ -150,126 +151,125 @@ contract('Scheme MGN to REP', accounts => {
     const {
       externalLocking4Reputation
     } = await setup({
-      accounts,
+      accounts
     })
 
-
-    var tx = await externalLocking4Reputation.lock();
-    assert.equal(tx.logs.length, 1);
+    var tx = await externalLocking4Reputation.lock()
+    assert.strictEqual(tx.logs.length, 1)
     const log = tx.logs[0]
     debug('Lock externalLocking4Reputation log: %o', log)
-    // assert.equal(tx.logs[0].event, 'Lock');
-    // assert.equal(tx.logs[0].args._amount, INITIAL_LOCKED_MGN_AMOUNT);
-    // assert.equal(tx.logs[0].args._period, 1);
-    // assert.equal(tx.logs[0].args._locker, accounts[0]);
+    // assert.strictEqual(tx.logs[0].event, 'Lock');
+    // assert.strictEqual(tx.logs[0].args._amount, INITIAL_LOCKED_MGN_AMOUNT);
+    // assert.strictEqual(tx.logs[0].args._period, 1);
+    // assert.strictEqual(tx.logs[0].args._locker, accounts[0]);
     assert.ok(true)
   })
 
-    // it("lock", async () => {
-    //   let testSetup = await setup(accounts);
-    //   var tx = await testSetup.externalLocking4Reputation.lock();
-    //   var lockingId = await helpers.getValueFromLogs(tx, '_lockingId',1);
-    //   assert.equal(tx.logs.length,1);
-    //   assert.equal(tx.logs[0].event,"Lock");
-    //   assert.equal(tx.logs[0].args._lockingId,lockingId);
-    //   assert.equal(tx.logs[0].args._amount,100);
-    //   assert.equal(tx.logs[0].args._period,1);
-    //   assert.equal(tx.logs[0].args._locker,accounts[0]);
-    // });
+  // it("lock", async () => {
+  //   let testSetup = await setup(accounts);
+  //   var tx = await testSetup.externalLocking4Reputation.lock();
+  //   var lockingId = await helpers.getValueFromLogs(tx, '_lockingId',1);
+  //   assert.strictEqual(tx.logs.length,1);
+  //   assert.strictEqual(tx.logs[0].event,"Lock");
+  //   assert.strictEqual(tx.logs[0].args._lockingId,lockingId);
+  //   assert.strictEqual(tx.logs[0].args._amount,100);
+  //   assert.strictEqual(tx.logs[0].args._period,1);
+  //   assert.strictEqual(tx.logs[0].args._locker,accounts[0]);
+  // });
 
-    // it("lock with value == 0 should revert", async () => {
-    //   let testSetup = await setup(accounts);
-    //   try {
-    //     await testSetup.externalLocking4Reputation.lock({from:accounts[4]});
-    //     assert(false, "lock with value == 0 should revert");
-    //   } catch(error) {
-    //     helpers.assertVMException(error);
-    //   }
-    // });
+  // it("lock with value == 0 should revert", async () => {
+  //   let testSetup = await setup(accounts);
+  //   try {
+  //     await testSetup.externalLocking4Reputation.lock({from:accounts[4]});
+  //     assert(false, "lock with value == 0 should revert");
+  //   } catch(error) {
+  //     helpers.assertVMException(error);
+  //   }
+  // });
 
-    // it("lock after _lockingEndTime should revert", async () => {
-    //   let testSetup = await setup(accounts);
-    //   await helpers.increaseTime(3001);
-    //   try {
-    //     await testSetup.externalLocking4Reputation.lock();
-    //     assert(false, "lock after _lockingEndTime should revert");
-    //   } catch(error) {
-    //     helpers.assertVMException(error);
-    //   }
-    // });
+  // it("lock after _lockingEndTime should revert", async () => {
+  //   let testSetup = await setup(accounts);
+  //   await helpers.increaseTime(3001);
+  //   try {
+  //     await testSetup.externalLocking4Reputation.lock();
+  //     assert(false, "lock after _lockingEndTime should revert");
+  //   } catch(error) {
+  //     helpers.assertVMException(error);
+  //   }
+  // });
 
-    // it("lock before start should  revert", async () => {
-    //   let testSetup = await setup(accounts,100,100);
-    //   try {
-    //     await testSetup.externalLocking4Reputation.lock();
-    //     assert(false, "lock before start should  revert");
-    //   } catch(error) {
-    //     helpers.assertVMException(error);
-    //   }
-    // });
+  // it("lock before start should  revert", async () => {
+  //   let testSetup = await setup(accounts,100,100);
+  //   try {
+  //     await testSetup.externalLocking4Reputation.lock();
+  //     assert(false, "lock before start should  revert");
+  //   } catch(error) {
+  //     helpers.assertVMException(error);
+  //   }
+  // });
 
-    // it("cannot lock twice for the same user", async () => {
-    //   let testSetup = await setup(accounts);
-    //   await testSetup.externalLocking4Reputation.lock();
-    //   try {
-    //     await testSetup.externalLocking4Reputation.lock();
-    //     assert(false, "cannot lock twice for the same user");
-    //   } catch(error) {
-    //     helpers.assertVMException(error);
-    //   }
-    // });
+  // it("cannot lock twice for the same user", async () => {
+  //   let testSetup = await setup(accounts);
+  //   await testSetup.externalLocking4Reputation.lock();
+  //   try {
+  //     await testSetup.externalLocking4Reputation.lock();
+  //     assert(false, "cannot lock twice for the same user");
+  //   } catch(error) {
+  //     helpers.assertVMException(error);
+  //   }
+  // });
 
-    // it("redeem", async () => {
-    //     let testSetup = await setup(accounts);
-    //     var tx = await testSetup.externalLocking4Reputation.lock();
-    //     var lockingId = await helpers.getValueFromLogs(tx, '_lockingId',1);
-    //     await helpers.increaseTime(3001);
-    //     tx = await testSetup.externalLocking4Reputation.redeem(accounts[0],lockingId);
-    //     assert.equal(tx.logs.length,1);
-    //     assert.equal(tx.logs[0].event,"Redeem");
-    //     assert.equal(tx.logs[0].args._lockingId,lockingId);
-    //     assert.equal(tx.logs[0].args._amount,100);
-    //     assert.equal(tx.logs[0].args._beneficiary,accounts[0]);
-    //     assert.equal(await testSetup.org.reputation.reputationOf(accounts[0]),1000+100);
-    // });
+  // it("redeem", async () => {
+  //     let testSetup = await setup(accounts);
+  //     var tx = await testSetup.externalLocking4Reputation.lock();
+  //     var lockingId = await helpers.getValueFromLogs(tx, '_lockingId',1);
+  //     await helpers.increaseTime(3001);
+  //     tx = await testSetup.externalLocking4Reputation.redeem(accounts[0],lockingId);
+  //     assert.strictEqual(tx.logs.length,1);
+  //     assert.strictEqual(tx.logs[0].event,"Redeem");
+  //     assert.strictEqual(tx.logs[0].args._lockingId,lockingId);
+  //     assert.strictEqual(tx.logs[0].args._amount,100);
+  //     assert.strictEqual(tx.logs[0].args._beneficiary,accounts[0]);
+  //     assert.strictEqual(await testSetup.org.reputation.reputationOf(accounts[0]),1000+100);
+  // });
 
-    // it("redeem score ", async () => {
-    //     let testSetup = await setup(accounts);
-    //     var tx = await testSetup.externalLocking4Reputation.lock({from:accounts[0]});
-    //     var lockingId1 = await helpers.getValueFromLogs(tx, '_lockingId',1);
-    //     tx = await testSetup.externalLocking4Reputation.lock({from:accounts[2]});
-    //     var lockingId2 = await helpers.getValueFromLogs(tx, '_lockingId',1);
-    //     await helpers.increaseTime(3001);
-    //     await testSetup.externalLocking4Reputation.redeem(accounts[0],lockingId1);
-    //     await testSetup.externalLocking4Reputation.redeem(accounts[2],lockingId2);
-    //     assert.equal(await testSetup.org.reputation.reputationOf(accounts[0]),1000+25);
-    //     assert.equal(await testSetup.org.reputation.reputationOf(accounts[2]),75);
-    // });
+  // it("redeem score ", async () => {
+  //     let testSetup = await setup(accounts);
+  //     var tx = await testSetup.externalLocking4Reputation.lock({from:accounts[0]});
+  //     var lockingId1 = await helpers.getValueFromLogs(tx, '_lockingId',1);
+  //     tx = await testSetup.externalLocking4Reputation.lock({from:accounts[2]});
+  //     var lockingId2 = await helpers.getValueFromLogs(tx, '_lockingId',1);
+  //     await helpers.increaseTime(3001);
+  //     await testSetup.externalLocking4Reputation.redeem(accounts[0],lockingId1);
+  //     await testSetup.externalLocking4Reputation.redeem(accounts[2],lockingId2);
+  //     assert.strictEqual(await testSetup.org.reputation.reputationOf(accounts[0]),1000+25);
+  //     assert.strictEqual(await testSetup.org.reputation.reputationOf(accounts[2]),75);
+  // });
 
-    // it("redeem cannot redeem twice", async () => {
-    //     let testSetup = await setup(accounts);
-    //     var tx = await testSetup.externalLocking4Reputation.lock();
-    //     var lockingId = await helpers.getValueFromLogs(tx, '_lockingId',1);
-    //     await helpers.increaseTime(3001);
-    //     await testSetup.externalLocking4Reputation.redeem(accounts[0],lockingId);
-    //     try {
-    //       await testSetup.externalLocking4Reputation.redeem(accounts[0],lockingId);
-    //       assert(false, "cannot redeem twice");
-    //     } catch(error) {
-    //       helpers.assertVMException(error);
-    //     }
-    // });
+  // it("redeem cannot redeem twice", async () => {
+  //     let testSetup = await setup(accounts);
+  //     var tx = await testSetup.externalLocking4Reputation.lock();
+  //     var lockingId = await helpers.getValueFromLogs(tx, '_lockingId',1);
+  //     await helpers.increaseTime(3001);
+  //     await testSetup.externalLocking4Reputation.redeem(accounts[0],lockingId);
+  //     try {
+  //       await testSetup.externalLocking4Reputation.redeem(accounts[0],lockingId);
+  //       assert(false, "cannot redeem twice");
+  //     } catch(error) {
+  //       helpers.assertVMException(error);
+  //     }
+  // });
 
-    // it("redeem before lockingEndTime should revert", async () => {
-    //     let testSetup = await setup(accounts);
-    //     var tx = await testSetup.externalLocking4Reputation.lock();
-    //     var lockingId = await helpers.getValueFromLogs(tx, '_lockingId',1);
-    //     await helpers.increaseTime(50);
-    //     try {
-    //          await testSetup.externalLocking4Reputation.redeem(accounts[0],lockingId);
-    //          assert(false, "redeem before lockingEndTime should revert");
-    //        } catch(error) {
-    //          helpers.assertVMException(error);
-    //        }
-    // });
+  // it("redeem before lockingEndTime should revert", async () => {
+  //     let testSetup = await setup(accounts);
+  //     var tx = await testSetup.externalLocking4Reputation.lock();
+  //     var lockingId = await helpers.getValueFromLogs(tx, '_lockingId',1);
+  //     await helpers.increaseTime(50);
+  //     try {
+  //          await testSetup.externalLocking4Reputation.redeem(accounts[0],lockingId);
+  //          assert(false, "redeem before lockingEndTime should revert");
+  //        } catch(error) {
+  //          helpers.assertVMException(error);
+  //        }
+  // });
 })

@@ -1,3 +1,5 @@
+const assert = require('assert')
+
 module.exports = ({
   ExternalLocking4Reputation
 }) => async ({

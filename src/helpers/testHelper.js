@@ -16,15 +16,15 @@ async function setupDao ({
   founders = null,
   controller = 0,
   cap = 0,
-  schemes,  
+  schemes,
   initialMgn = 0,
   lockedMgn = 0
-}) {  
+}) {
   if (initialMgn > 0) {
     debug('Setting initial MGN to: %d', initialMgn)
     // Mint and lock some MGN
     const owner = accounts[0]
-    const mgnAddress = await dxService.mintAndLockMgn({
+    await dxService.mintAndLockMgn({
       account: owner,
       mintAmount: initialMgn,
       lockAmount: lockedMgn
@@ -62,7 +62,7 @@ async function getTimestampRangeFromDeltas ({
   const now = await web3.eth.getBlock('latest').timestamp
   const lockingStartTime = now + startTimeDelta
   const lockingEndTime = now + endTimeDelta
-  
+
   return [ lockingStartTime, lockingEndTime ]
 }
 
@@ -80,7 +80,6 @@ const revertSnapshotFactory = (web3) => snapshotId => {
     params: [snapshotId]
   })
 }
-
 
 module.exports = async ({
   artifacts: _artifacts,
@@ -119,5 +118,3 @@ module.exports = async ({
     dxService
   }
 }
-
-

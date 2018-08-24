@@ -27,8 +27,8 @@ module.exports = async ({
       })
       daoCreator = await DaoCreator.new(
         controllerCreator.address, {
-        gas: constants.ARC_GAS_LIMIT
-      })
+          gas: constants.ARC_GAS_LIMIT
+        })
     }
 
     return daoCreator

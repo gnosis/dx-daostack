@@ -1,3 +1,4 @@
+const assert = require('assert')
 const constants = require('./util/constants')
 
 module.exports = ({
@@ -11,11 +12,11 @@ module.exports = ({
   tokenSymbol,
   founders,
   // universal controller instance
-  // if _uController address equal to zero the organization 
+  // if _uController address equal to zero the organization
   // will use none universal controller
   controller = 0,
   // token cap - 0 for no cap
-  cap = 0,
+  cap = 0
 }) => {
   assert(founders || founders.length > 0, 'At least one founder is mandatory')
 
@@ -46,13 +47,13 @@ module.exports = ({
     foundersTokenAmounts,
     founderReputationAmounts,
     controller,
-    cap,{
+    cap, {
       gas: constants.ARC_GAS_LIMIT
     })
 
   // Validate that the organization was created
-  assert.equal(tx.logs.length, 1)
-  assert.equal(tx.logs[0].event, constants.EVENT_NEW_ORGANIZATION)
+  assert.strictEqual(tx.logs.length, 1)
+  assert.strictEqual(tx.logs[0].event, constants.EVENT_NEW_ORGANIZATION)
 
   var avatarAddress = tx.logs[0].args._avatar
   const avatar = await Avatar.at(avatarAddress)
