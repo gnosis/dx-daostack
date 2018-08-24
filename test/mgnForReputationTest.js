@@ -1,5 +1,5 @@
 const debug = require('debug')('test:mgnForReputation')
-const testHelperFactory = require('./util/testHelper')
+const testHelperFactory = require('../src/helpers/testHelper')
 
 const INITIAL_MGN_AMOUNT = 80
 const INITIAL_LOCKED_MGN_AMOUNT = 60

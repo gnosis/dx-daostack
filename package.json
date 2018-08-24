@@ -6,7 +6,8 @@
   "scripts": {
     "test": "truffle test test/*Test.js",
     "test-debug": "DEBUG=app:*,test:* truffle test test/*Test.js",
-    "migrate": "truffle migrate"
+    "migrate": "truffle migrate",
+    "rpc": "ganache-cli -d"
   },
   "author": "Angel Rodriguez <anxolin@gmail.com> (https://github.com/anxolin)",
   "license": "ISC",
