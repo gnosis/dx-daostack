@@ -11,4 +11,5 @@ import "@gnosis.pm/dx-contracts/contracts/DxDevDependencies.sol";
 // import "@daostack/arc/contracts/controller/Reputation.sol";
 
 
+// solium-disable-next-line no-empty-blocks
 contract DxDaoStack {}

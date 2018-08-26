@@ -1,15 +1,12 @@
-let contractInstances
+let contractInstances;
 
 async function getDaoStackContracts ({ artifacts } = {}) {
-  if (!contractInstances) {
-    const TokenFRT = artifacts.require('TokenFRT')
+    const TokenFRT = artifacts.require('TokenFRT');
 
     contractInstances = {
       TokenFRT
-    }
-  }
-
-  return contractInstances
+    };
+  return contractInstances;
 }
 
-module.exports = getDaoStackContracts
+module.exports = getDaoStackContracts;

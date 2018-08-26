@@ -1,12 +1,12 @@
-const debug = require('debug')('test:helper')
-const DEFAULT_GAS = 4712388
-const daoServiceFactory = require('../../src/services/daoService/daoServiceFactory')
-const dxServiceFactory = require('../../src/services/dxService/dxServiceFactory')
+const debug = require('debug')('test:helper');
+const DEFAULT_GAS = 4712388;
+const daoServiceFactory = require('../../src/services/daoService/daoServiceFactory');
+const dxServiceFactory = require('../../src/services/dxService/dxServiceFactory');
 
-const getDaoStackContracts = require('../../src/repositories/daoStack/util/getDaoStackContracts')
-const getDxContracts = require('../../src/repositories/dx/util/getDxContracts')
+const getDaoStackContracts = require('../../src/repositories/daostack/util/getDaoStackContracts');
+const getDxContracts = require('../../src/repositories/dx/util/getDxContracts');
 
-let web3, artifacts, accounts, daoService, dxService
+let web3, artifacts, accounts, daoService, dxService;
 
 async function setupDao ({
   // Optional params
@@ -16,34 +16,21 @@ async function setupDao ({
   founders = null,
   controller = 0,
   cap = 0,
-  schemes,
-  initialMgn = 0,
-  lockedMgn = 0
+  schemes
 }) {
-  if (initialMgn > 0) {
-    debug('Setting initial MGN to: %d', initialMgn)
-    // Mint and lock some MGN
-    const owner = accounts[0]
-    await dxService.mintAndLockMgn({
-      account: owner,
-      mintAmount: initialMgn,
-      lockAmount: lockedMgn
-    })
-  }
-
   // Setup Dao
   if (!founders && accounts) {
     founders = [{
       account: accounts[0],
       tokenAmount: 0,
       reputationAmount: 0
-    }]
-    debug('Using default founders: %o', founders)
+    }];
+    debug('Using default founders: %o', founders);
   } else {
-    debug('Using the provided founders: %o', founders)
+    debug('Using the provided founders: %o', founders);
   }
 
-  debug('Creating organization %s with %d schemes', organizationName, schemes.length)
+  debug('Creating organization %s with %d schemes', organizationName, schemes.length);
   return daoService.createOrganization({
     organizationName,
     tokenName,
@@ -52,56 +39,56 @@ async function setupDao ({
     controller,
     cap,
     schemes
-  })
+  });
 }
 
 async function getTimestampRangeFromDeltas ({
   startTimeDelta,
   endTimeDelta
 }) {
-  const now = await web3.eth.getBlock('latest').timestamp
-  const lockingStartTime = now + startTimeDelta
-  const lockingEndTime = now + endTimeDelta
+  const now = await web3.eth.getBlock('latest').timestamp;
+  const lockingStartTime = now + startTimeDelta;
+  const lockingEndTime = now + endTimeDelta;
 
-  return [ lockingStartTime, lockingEndTime ]
+  return [ lockingStartTime, lockingEndTime ];
 }
 
 const makeSnapshotFactory = (web3) => () => {
   return web3.currentProvider.send({
     jsonrpc: '2.0',
     method: 'evm_snapshot'
-  }).result
-}
+  }).result;
+};
 
 const revertSnapshotFactory = (web3) => snapshotId => {
   web3.currentProvider.send({
     jsonrpc: '2.0',
     method: 'evm_revert',
     params: [snapshotId]
-  })
-}
+  });
+};
 
 module.exports = async ({
   artifacts: _artifacts,
   accounts: _accounts,
   web3: _web3
 }) => {
-  artifacts = _artifacts
-  accounts = _accounts
-  web3 = _web3
+  artifacts = _artifacts;
+  accounts = _accounts;
+  web3 = _web3;
 
-  const owner = accounts[0]
+  const owner = accounts[0];
   daoService = await daoServiceFactory({
     provider: web3.currentProvider,
     transactionDefaults: {
       from: owner,
       gas: DEFAULT_GAS
     }
-  })
+  });
 
   dxService = await dxServiceFactory({
     artifacts
-  })
+  });
 
   // testHelper API
   return {
@@ -116,5 +103,5 @@ module.exports = async ({
     // service
     daoService,
     dxService
-  }
-}
+  };
+};
