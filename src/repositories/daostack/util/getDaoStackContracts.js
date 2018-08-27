@@ -1,5 +1,5 @@
-const contract = require('truffle-contract')
-let contractInstances
+const contract = require('truffle-contract');
+let contractInstances;
 
 const CONTRACTS = [
   // Contract constructor helpers
@@ -26,31 +26,31 @@ const CONTRACTS = [
   'LockingToken4Reputation',
   'GenericScheme',
   'ZeroXDutchXValidateAndCall'
-]
+];
 
-async function getDaoStackContracts ({
+const getDaoStackContracts = async function ({
+// async function getDaoStackContracts ({
   provider,
   defaults
 } = {}) {
   if (!contractInstances) {
     contractInstances = CONTRACTS.reduce((acc, contractName) => {
-      var contractUrl = `@daostack/arc/build/contracts/${contractName}`
+      var contractUrl = `@daostack/arc/build/contracts/${contractName}`;
       if (contractName === 'ZeroXDutchXValidateAndCall') {
-        contractUrl = `../../../../build/contracts/${contractName}`
+        contractUrl = `../../../../build/contracts/${contractName}`;
       }
       // console.log(`Load contract: ${contractUrl}`)
-      const truffleContract = contract(require(contractUrl))
-      truffleContract.setProvider(provider)
-      truffleContract.defaults(defaults)
-      acc[contractName] = truffleContract
-
-      return acc
-    }, {})
+      const truffleContract = contract(require(contractUrl));
+      truffleContract.setProvider(provider);
+      truffleContract.defaults(defaults);
+      acc[contractName] = truffleContract;
+      return acc;
+    }, {});
   }
 
   // console.log('contractInstances: ', Object.keys(contractInstances))
 
-  return contractInstances
-}
+  return contractInstances;
+};
 
-module.exports = getDaoStackContracts
+module.exports = getDaoStackContracts;
