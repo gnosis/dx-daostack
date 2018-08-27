@@ -5,9 +5,8 @@ node_js:
   - '8'
 before_install:
   - rm -rf node_modules
-  - npm install -g ganache-cli
 install:
   - npm install
 before_script:
-  - npm run rpc
+  - npm run rpc > /dev/null &
   - sleep 5
