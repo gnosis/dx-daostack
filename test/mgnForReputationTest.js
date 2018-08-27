@@ -9,7 +9,6 @@ const INITIAL_MGN_AMOUNT = 80
 const INITIAL_LOCKED_MGN_AMOUNT = 60
 const REPUTATION_REWARD = 100
 
-let currentSnapshotId
 async function setup ({
   accounts,
 
@@ -25,17 +24,6 @@ async function setup ({
     web3,
     accounts
   })
-
-  // Revert state, or save state to make test repeatable
-  // if (currentSnapshotId) {
-  //   debug('Revert ganache snapshot: ' + currentSnapshotId)
-  //   await testHelper.revertSnapshot(currentSnapshotId)
-  //   debug('Ganache snapshot successfully reverted')
-  // } else {
-  //   debug('Creating snapshot of local ganache')
-  //   currentSnapshotId = await testHelper.makeSnapshot()
-  //   debug('Created snapshot: ' + currentSnapshotId)
-  // }
 
   const { dxService } = testHelper
 

@@ -8,7 +8,6 @@ var DutchXMock = artifacts.require('./test/DutchXMock.sol');
 const constants = require('../src/repositories/daostack/util/constants');
 const options = {gas: constants.ARC_GAS_LIMIT, from: web3.eth.accounts[0]};
 
-let currentSnapshotId;
 async function setup ({
   accounts
 }) {
@@ -18,19 +17,6 @@ async function setup ({
     web3,
     accounts
   });
-
-  // Revert state, or save state to make test repeatable
-  if (currentSnapshotId) {
-    debug('Revert ganache snapshot: ' + currentSnapshotId);
-    await testHelper.revertSnapshot(currentSnapshotId);
-    debug('Ganache snapshot successfully reverted');
-  } else {
-    debug('Creating snapshot of local ganache');
-    currentSnapshotId = await testHelper.makeSnapshot();
-    debug('Created snapshot: ' + currentSnapshotId);
-  }
-
-  // const { dxService } = await testHelper
 
   var zeroXRegistryContract = await TokenRegistry.new(options);
   var dxContract = await DutchXMock.new(options);
