@@ -28,7 +28,6 @@
     "truffle": "^4.1.13",
     "solium": "^1.1.8",
     "cross-conf-env": "^1.1.2",
-    "run-with-ganache": "^0.1.1",
     "solc": "^0.4.24",
     "solc-cli": "^0.3.0",
     "ganache-cli": "^6.1.6"
