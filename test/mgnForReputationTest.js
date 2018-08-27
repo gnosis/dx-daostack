@@ -27,15 +27,15 @@ async function setup ({
   })
 
   // Revert state, or save state to make test repeatable
-  if (currentSnapshotId) {
-    debug('Revert ganache snapshot: ' + currentSnapshotId)
-    await testHelper.revertSnapshot(currentSnapshotId)
-    debug('Ganache snapshot successfully reverted')
-  } else {
-    debug('Creating snapshot of local ganache')
-    currentSnapshotId = await testHelper.makeSnapshot()
-    debug('Created snapshot: ' + currentSnapshotId)
-  }
+  // if (currentSnapshotId) {
+  //   debug('Revert ganache snapshot: ' + currentSnapshotId)
+  //   await testHelper.revertSnapshot(currentSnapshotId)
+  //   debug('Ganache snapshot successfully reverted')
+  // } else {
+  //   debug('Creating snapshot of local ganache')
+  //   currentSnapshotId = await testHelper.makeSnapshot()
+  //   debug('Created snapshot: ' + currentSnapshotId)
+  // }
 
   const { dxService } = testHelper
 
