@@ -1,9 +1,10 @@
-const HDWalletProvider = require('truffle-hdwallet-provider')
-const assert = require('assert')
+/* eslint no-console: "off" */
+const HDWalletProvider = require('truffle-hdwallet-provider');
+const assert = require('assert');
 
-const DEFAULT_GAS_PRICE_GWEI = 5
-const GAS_LIMIT = 6.5e6
-const DEFAULT_MNEMONIC = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
+const DEFAULT_GAS_PRICE_GWEI = 5;
+const GAS_LIMIT = 6.5e6;
+const DEFAULT_MNEMONIC = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat';
 
 function truffleConfig ({
   mnemonic = DEFAULT_MNEMONIC,
@@ -15,16 +16,16 @@ function truffleConfig ({
   urlDevelopment = 'localhost',
   portDevelopment = 8545
 } = {}) {
-  assert(mnemonic, 'The mnemonic has not been provided')
-  console.log(`Using gas limit: ${gas / 1000} K`)
-  console.log(`Using gas price: ${gasPriceGWei} Gwei`)
-  console.log(`Optimizer enabled: ${optimizedEnabled}`)
-  console.log('Using default mnemonic: %s', mnemonic === DEFAULT_MNEMONIC)
-  const gasPrice = gasPriceGWei * 1e9
+  assert(mnemonic, 'The mnemonic has not been provided');
+  console.log(`Using gas limit: ${gas / 1000} K`);
+  console.log(`Using gas price: ${gasPriceGWei} Gwei`);
+  console.log(`Optimizer enabled: ${optimizedEnabled}`);
+  console.log('Using default mnemonic: %s', mnemonic === DEFAULT_MNEMONIC);
+  const gasPrice = gasPriceGWei * 1e9;
 
   const _getProvider = url => {
-    return () => new HDWalletProvider({ mnemonic, url })
-  }
+    return () => new HDWalletProvider({ mnemonic, url });
+  };
 
   return {
     networks: {
@@ -53,9 +54,9 @@ function truffleConfig ({
         enabled: optimizedEnabled
       }
     }
-  }
+  };
 }
 
 module.exports = truffleConfig({
   optimizedEnabled: true
-})
+});

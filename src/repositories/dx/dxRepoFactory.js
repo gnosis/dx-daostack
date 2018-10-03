@@ -1,5 +1,5 @@
 // const getDxContracts = require('../src/helpers/getDxContracts')
-const getDxContracts = require('./util/getDxContracts')
+const getDxContracts = require('./util/getDxContracts');
 
 module.exports = async ({
   artifacts
@@ -13,19 +13,14 @@ module.exports = async ({
     TokenFRT
   } = await getDxContracts({
     artifacts
-  })
+  });
 
-  let mgn
-  const getMgn = async () => {
-    if (!mgn) {
-      mgn = await TokenFRT.deployed({gas: 7000000})
-    }
-
-    return mgn
-  }
+  const getMgn = async (owner) => {
+    return await TokenFRT.new(owner, {gas: 7000000});
+  };
 
   // Repo API
   return {
     getMgn
-  }
-}
+  };
+};

@@ -1,5 +1,5 @@
 // const constants = require('./util/constants')
-const daoStackRepoFactory = require('../../../src/repositories/daoStack/daoStackRepoFactory')
+const daoStackRepoFactory = require('../../../src/repositories/daostack/daoStackRepoFactory');
 
 module.exports = async ({
   provider,
@@ -9,14 +9,14 @@ module.exports = async ({
   const daoStackRepo = await daoStackRepoFactory({
     provider,
     transactionDefaults
-  })
+  });
 
   const createOrganization = require('./createOrganization')({
     daoStackRepo
-  })
+  });
 
   // daoService API
   return {
     createOrganization
-  }
-}
+  };
+};

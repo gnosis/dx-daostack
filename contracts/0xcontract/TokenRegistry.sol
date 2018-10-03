@@ -15,6 +15,7 @@
   limitations under the License.
 
 */
+/* solium-disable */
 
 pragma solidity ^0.4.11;
 

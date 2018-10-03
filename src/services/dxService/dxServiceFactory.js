@@ -1,13 +1,12 @@
-const debug = require('debug')('test:services:dx')
-// const constants = require('./util/constants')
-const dxRepoFactory = require('../../../src/repositories/dx/dxRepoFactory')
+const debug = require('debug')('test:services:dx');
+const dxRepoFactory = require('../../../src/repositories/dx/dxRepoFactory');
 
 module.exports = async ({
   artifacts
 }) => {
   const dxRepo = await dxRepoFactory({
     artifacts
-  })
+  });
 
   // dxService API
   return {
@@ -20,34 +19,19 @@ module.exports = async ({
         account,
         mintAmount,
         lockAmount
-      })
-      const mgn = await dxRepo.getMgn()
-      debug('Using MGN: %s', mgn.address)
+      });
+      const mgn = await dxRepo.getMgn(account);
+      debug('Using MGN: %s', mgn.address);
 
-      debug('Minting: %d', mintAmount)
-      await mgn.mintTokens(account, mintAmount)
+      debug('Minting: %d', mintAmount);
 
-      debug('Locking: %d', lockAmount)
-      await mgn.lockTokens(lockAmount)
+      await mgn.updateMinter(account);
 
-      return mgn.address
-    },
+      await mgn.mintTokens(account, mintAmount);
 
-    getMgnAddress: async () => {
-      const mgn = await dxRepo.getMgn()
-      return mgn.address
+      debug('Locking: %d', lockAmount);
+      await mgn.lockTokens(lockAmount);
+      return mgn;
     }
-
-    /*
-    mintMgn: async ({ account, amount }) => {
-      const mgn = await dxRepo.getMgn()
-      return mgn.mintTokens(account, amount)
-    },
-
-    lockMgn: async ({ amount }) => {
-      const mgn = await dxRepo.getMgn()
-      return mgn.lockTokens(amount)
-    }
-    */
-  }
-}
+  };
+};

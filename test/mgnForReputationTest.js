@@ -1,14 +1,14 @@
 /* global artifacts, web3, contract, it */
-/* eslint no-undef: "error" */
 const assert = require('assert')
 const debug = require('debug')('test:mgnForReputation')
 const testHelperFactory = require('../src/helpers/testHelper')
+const constants = require('../src/repositories/daostack/util/constants')
+const options = {gas: constants.ARC_GAS_LIMIT, from: web3.eth.accounts[0]}
 
 const INITIAL_MGN_AMOUNT = 80
 const INITIAL_LOCKED_MGN_AMOUNT = 60
 const REPUTATION_REWARD = 100
 
-let currentSnapshotId
 async function setup ({
   accounts,
 
@@ -25,17 +25,6 @@ async function setup ({
     accounts
   })
 
-  // Revert state, or save state to make test repeatable
-  if (currentSnapshotId) {
-    debug('Revert ganache snapshot: ' + currentSnapshotId)
-    await testHelper.revertSnapshot(currentSnapshotId)
-    debug('Ganache snapshot successfully reverted')
-  } else {
-    debug('Creating snapshot of local ganache')
-    currentSnapshotId = await testHelper.makeSnapshot()
-    debug('Created snapshot: ' + currentSnapshotId)
-  }
-
   const { dxService } = testHelper
 
   // Calculate the locking time range
@@ -48,8 +37,14 @@ async function setup ({
   })
   testHelper.lockingStartTime = lockingStartTime
   // Get the address for MGN
-  const mgnAddress = await dxService.getMgnAddress()
-  debug('Using MGN: ' + mgnAddress)
+  const owner = accounts[0]
+  debug('Setting initial MGN to: %d', initialMgn)
+  const mgn = await dxService.mintAndLockMgn({
+    account: owner,
+    mintAmount: initialMgn,
+    lockAmount: lockedMgn
+  })
+  debug('Using MGN: ' + mgn.address)
 
   // Setup the DAO
   debug('Setup DAO')
@@ -59,15 +54,13 @@ async function setup ({
     reputationAddress,
     schemes
   } = await testHelper.setupDao({
-    initialMgn,
-    lockedMgn,
     schemes: [{
       type: 'ExternalLocking4Reputation',
       data: {
         reputationReward,
         lockingStartTime,
         lockingEndTime,
-        externalLockingContract: mgnAddress,
+        externalLockingContract: mgn.address,
         getBalanceFuncSignature: 'lockedTokenBalances(address)'
       }
     }]
@@ -94,20 +87,21 @@ async function setup ({
     schemes,
     externalLocking4Reputation,
     lockingStartTime,
-    lockingEndTime
+    lockingEndTime,
+    mgn
   }
 }
 
 contract('Scheme MGN to REP', accounts => {
   it('constructor', async () => {
     const {
-      testHelper,
       // avatarAddress,
       // tokenAddress,
       // reputationAddress,
       externalLocking4Reputation,
       lockingStartTime,
-      lockingEndTime
+      lockingEndTime,
+      mgn
     } = await setup({
       accounts
     })
@@ -135,13 +129,11 @@ contract('Scheme MGN to REP', accounts => {
     const externalLockingContract = await externalLocking4Reputation
       .externalLockingContract
       .call()
-    const { dxService } = testHelper
-    assert.strictEqual(externalLockingContract, await dxService.getMgnAddress())
+    assert.strictEqual(externalLockingContract, mgn.address)
 
     const getBalanceFuncSignature = await externalLocking4Reputation
       .getBalanceFuncSignature
       .call()
-
     assert.strictEqual(getBalanceFuncSignature, 'lockedTokenBalances(address)')
 
     assert.ok(true)
@@ -154,7 +146,9 @@ contract('Scheme MGN to REP', accounts => {
       accounts
     })
 
-    var tx = await externalLocking4Reputation.lock()
+
+
+    var tx = await externalLocking4Reputation.lock(options)
     assert.strictEqual(tx.logs.length, 1)
     const log = tx.logs[0]
     debug('Lock externalLocking4Reputation log: %o', log)

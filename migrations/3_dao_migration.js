@@ -1,29 +1,28 @@
 /* global artifacts, web3  */
-/* eslint no-undef: "error" */
 
 // this migration file is used only for testing purpose
-var constants = require('@daostack/arc/test/constants')
+var constants = require('@daostack/arc/test/constants');
 
-var getDaoStackContracts = require('../src/repositories/daostack/util/getDaoStackContracts')
-var genesisProtocolParamsJson = require('../src/config/genesisprotocolparams.json')
-var externalLocking4ReputationParamsJson = require('../src/config/externallocking4reputationparams.json')
-var auction4ReputationParamsJson = require('../src/config/auction4reputationparams.json')
-var lockingEth4ReputationParamsJson = require('../src/config/lockingeth4reputationparams.json')
-var lockingToken4ReputationParamsJson = require('../src/config/lockingtoken4reputationparams.json')
-var fixedReputationAllocationParamsJson = require('../src/config/fixreputationallocationparams.json')
+var getDaoStackContracts = require('../src/repositories/daostack/util/getDaoStackContracts');
+var genesisProtocolParamsJson = require('../src/config/genesisprotocolparams.json');
+var externalLocking4ReputationParamsJson = require('../src/config/externallocking4reputationparams.json');
+var auction4ReputationParamsJson = require('../src/config/auction4reputationparams.json');
+var lockingEth4ReputationParamsJson = require('../src/config/lockingeth4reputationparams.json');
+var lockingToken4ReputationParamsJson = require('../src/config/lockingtoken4reputationparams.json');
+var fixedReputationAllocationParamsJson = require('../src/config/fixreputationallocationparams.json');
 
 // DUTCHEX ORG parameters:
-const orgName = 'DUTCHEX'
-const tokenName = 'DUTCHEX_DAO_TOKEN'
-const tokenSymbol = 'XXX'
-const founders = [web3.eth.accounts[0]]
-const initRep = 0
-const initRepInWei = [web3.toWei(initRep)]
-const initToken = 0
-const initTokenInWei = [web3.toWei(initToken)]
-const cap = 0
+const orgName = 'DUTCHEX';
+const tokenName = 'DUTCHEX_DAO_TOKEN';
+const tokenSymbol = 'XXX';
+const founders = [web3.eth.accounts[0]];
+const initRep = 0;
+const initRepInWei = [web3.toWei(initRep)];
+const initToken = 0;
+const initTokenInWei = [web3.toWei(initToken)];
+const cap = 0;
 
-const options = {gas: constants.ARC_GAS_LIMIT, from: web3.eth.accounts[0]}
+const options = {gas: constants.ARC_GAS_LIMIT, from: web3.eth.accounts[0]};
 
 const genesisProtocolParams = [
   genesisProtocolParamsJson.preBoostedVoteRequiredPercentage,
@@ -40,9 +39,9 @@ const genesisProtocolParams = [
   genesisProtocolParamsJson.votersGainRepRatioFromLostRep,
   genesisProtocolParamsJson.daoBountyConst,
   genesisProtocolParamsJson.daoBountyLimit
-]
+];
 
-module.exports = async function (deployer, network, accounts, providers) {
+module.exports = async function (deployer, network) {
   const {
     ControllerCreator,
     DaoCreator,
@@ -60,48 +59,48 @@ module.exports = async function (deployer, network, accounts, providers) {
     LockingToken4Reputation,
     ExternalLocking4Reputation,
     GenericScheme
-  } = await getDaoStackContracts({provider: web3.currentProvider})
+  } = await getDaoStackContracts({provider: web3.currentProvider});
   deployer.deploy(ControllerCreator, options).then(async function () {
-    var controllerCreator = await ControllerCreator.deployed()
+    var controllerCreator = await ControllerCreator.deployed();
 
-    await deployer.deploy(DaoCreator, controllerCreator.address, options)
-    var daoCreatorInst = await DaoCreator.deployed(controllerCreator.address)
+    await deployer.deploy(DaoCreator, controllerCreator.address, options);
+    var daoCreatorInst = await DaoCreator.deployed(controllerCreator.address);
 
     // Create DAOstack:
     var returnedParams = await daoCreatorInst.forgeOrg(orgName, tokenName, tokenSymbol, founders,
-      initTokenInWei, initRepInWei, 0, cap, options)
-    var AvatarInst = await Avatar.at(returnedParams.logs[0].args._avatar)
-    var ControllerInst = await Controller.at(await AvatarInst.owner())
-    await ControllerInst.nativeReputation()
+      initTokenInWei, initRepInWei, 0, cap, options);
+    var AvatarInst = await Avatar.at(returnedParams.logs[0].args._avatar);
+    var ControllerInst = await Controller.at(await AvatarInst.owner());
+    await ControllerInst.nativeReputation();
     // Deploy SchemeRegistrar:
-    await deployer.deploy(SchemeRegistrar, options)
-    var schemeRegistrarInst = await SchemeRegistrar.deployed()
+    await deployer.deploy(SchemeRegistrar, options);
+    var schemeRegistrarInst = await SchemeRegistrar.deployed();
     // Deploy UniversalUpgrade:
-    await deployer.deploy(UpgradeScheme, options)
-    var upgradeSchemeInst = await UpgradeScheme.deployed()
+    await deployer.deploy(UpgradeScheme, options);
+    var upgradeSchemeInst = await UpgradeScheme.deployed();
     // Deploy UniversalGCScheme register:
-    await deployer.deploy(GlobalConstraintRegistrar, options)
-    var globalConstraintRegistrarInst = await GlobalConstraintRegistrar.deployed()
+    await deployer.deploy(GlobalConstraintRegistrar, options);
+    var globalConstraintRegistrarInst = await GlobalConstraintRegistrar.deployed();
 
     // deploy GenesisProtocol
     // gen token
-    var stakingTokenAddress = '0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf'
+    var stakingTokenAddress = '0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf';
     if (network === 'development') {
-      await deployer.deploy(StandardTokenMock, options.from, 1000, options)
-      var stakingToken = await StandardTokenMock.deployed()
-      stakingTokenAddress = stakingToken.address
+      await deployer.deploy(StandardTokenMock, options.from, 1000, options);
+      var stakingToken = await StandardTokenMock.deployed();
+      stakingTokenAddress = stakingToken.address;
     }
-    await deployer.deploy(GenesisProtocol, stakingTokenAddress, options)
-    var genesisProtocolInstance = await GenesisProtocol.deployed()
+    await deployer.deploy(GenesisProtocol, stakingTokenAddress, options);
+    var genesisProtocolInstance = await GenesisProtocol.deployed();
 
-    await genesisProtocolInstance.setParameters(genesisProtocolParams, options)
-    var genesisProtocolParamsHash = await genesisProtocolInstance.getParametersHash(genesisProtocolParams, options)
+    await genesisProtocolInstance.setParameters(genesisProtocolParams, options);
+    var genesisProtocolParamsHash = await genesisProtocolInstance.getParametersHash(genesisProtocolParams, options);
 
-    var externalLockingContract = externalLocking4ReputationParamsJson.externalLockingContract
+    var externalLockingContract = externalLocking4ReputationParamsJson.externalLockingContract;
     if (network === 'development') {
-      const TokenFRT = artifacts.require('TokenFRT')
-      const tokenFRT = await TokenFRT.deployed()
-      externalLockingContract = tokenFRT.address
+      const TokenFRT = artifacts.require('TokenFRT');
+      const tokenFRT = await TokenFRT.deployed();
+      externalLockingContract = tokenFRT.address;
     }
 
     // reputation schemes
@@ -112,8 +111,8 @@ module.exports = async function (deployer, network, accounts, providers) {
       externalLocking4ReputationParamsJson.lockingEndTime,
       externalLockingContract,
       externalLocking4ReputationParamsJson.getBalanceFuncSignature,
-      options)
-    var externalLocking4ReputationInst = await ExternalLocking4Reputation.deployed()
+      options);
+    var externalLocking4ReputationInst = await ExternalLocking4Reputation.deployed();
 
     await deployer.deploy(Auction4Reputation,
       AvatarInst.address,
@@ -123,8 +122,8 @@ module.exports = async function (deployer, network, accounts, providers) {
       auction4ReputationParamsJson.numberOfAuctions,
       stakingTokenAddress,
       auction4ReputationParamsJson.wallet,
-      options)
-    var auction4ReputationInst = await Auction4Reputation.deployed()
+      options);
+    var auction4ReputationInst = await Auction4Reputation.deployed();
 
     await deployer.deploy(LockingEth4Reputation,
       AvatarInst.address,
@@ -132,8 +131,8 @@ module.exports = async function (deployer, network, accounts, providers) {
       lockingEth4ReputationParamsJson.lockingStartTime,
       lockingEth4ReputationParamsJson.lockingEndTime,
       lockingEth4ReputationParamsJson.maxLockingPeriod,
-      options)
-    var lockingEth4ReputationInst = await LockingEth4Reputation.deployed()
+      options);
+    var lockingEth4ReputationInst = await LockingEth4Reputation.deployed();
 
     await deployer.deploy(LockingToken4Reputation,
       AvatarInst.address,
@@ -142,48 +141,48 @@ module.exports = async function (deployer, network, accounts, providers) {
       lockingToken4ReputationParamsJson.lockingEndTime,
       lockingToken4ReputationParamsJson.maxLockingPeriod,
       lockingToken4ReputationParamsJson.token, // GNO token
-      options)
-    var lockingToken4ReputationInst = await LockingToken4Reputation.deployed()
+      options);
+    var lockingToken4ReputationInst = await LockingToken4Reputation.deployed();
 
     await deployer.deploy(FixedReputationAllocation,
       AvatarInst.address,
       fixedReputationAllocationParamsJson.reputationReward,
-      options)
-    var fixedReputationAllocationInst = await FixedReputationAllocation.deployed()
+      options);
+    var fixedReputationAllocationInst = await FixedReputationAllocation.deployed();
 
     await deployer.deploy(
       GenericScheme,
       options
-    )
-    var genericSchemeInst = await GenericScheme.deployed()
-    var dutchexContractAddress = '0xabcd'
+    );
+    var genericSchemeInst = await GenericScheme.deployed();
+    var dutchexContractAddress = '0xabcd';
     await genericSchemeInst.setParameters(
       genesisProtocolParamsHash,
       genesisProtocolInstance.address,
       dutchexContractAddress,
       options
-    )
+    );
     var genericSchemeParamsHash = await genericSchemeInst.getParametersHash(
       genesisProtocolParamsHash,
       genesisProtocolInstance.address,
       dutchexContractAddress,
       options
-    )
+    );
 
-    await deployer.deploy(ContributionReward, options)
-    var contributionRewardInst = await ContributionReward.deployed()
+    await deployer.deploy(ContributionReward, options);
+    var contributionRewardInst = await ContributionReward.deployed();
 
-    await schemeRegistrarInst.setParameters(genesisProtocolParamsHash, genesisProtocolParamsHash, genesisProtocolInstance.address, options)
-    var schemeRegisterParams = await schemeRegistrarInst.getParametersHash(genesisProtocolParamsHash, genesisProtocolParamsHash, genesisProtocolInstance.address, options)
+    await schemeRegistrarInst.setParameters(genesisProtocolParamsHash, genesisProtocolParamsHash, genesisProtocolInstance.address, options);
+    var schemeRegisterParams = await schemeRegistrarInst.getParametersHash(genesisProtocolParamsHash, genesisProtocolParamsHash, genesisProtocolInstance.address, options);
 
-    await globalConstraintRegistrarInst.setParameters(genesisProtocolParamsHash, genesisProtocolInstance.address, options)
-    var schemeGCRegisterParams = await globalConstraintRegistrarInst.getParametersHash(genesisProtocolParamsHash, genesisProtocolInstance.address, options)
+    await globalConstraintRegistrarInst.setParameters(genesisProtocolParamsHash, genesisProtocolInstance.address, options);
+    var schemeGCRegisterParams = await globalConstraintRegistrarInst.getParametersHash(genesisProtocolParamsHash, genesisProtocolInstance.address, options);
 
-    await upgradeSchemeInst.setParameters(genesisProtocolParamsHash, genesisProtocolInstance.address, options)
-    var schemeUpgradeParams = await upgradeSchemeInst.getParametersHash(genesisProtocolParamsHash, genesisProtocolInstance.address, options)
+    await upgradeSchemeInst.setParameters(genesisProtocolParamsHash, genesisProtocolInstance.address, options);
+    var schemeUpgradeParams = await upgradeSchemeInst.getParametersHash(genesisProtocolParamsHash, genesisProtocolInstance.address, options);
 
-    await contributionRewardInst.setParameters(0, genesisProtocolParamsHash, genesisProtocolInstance.address, options)
-    var contributionRewardParams = await contributionRewardInst.getParametersHash(0, genesisProtocolParamsHash, genesisProtocolInstance.address, options)
+    await contributionRewardInst.setParameters(0, genesisProtocolParamsHash, genesisProtocolInstance.address, options);
+    var contributionRewardParams = await contributionRewardInst.getParametersHash(0, genesisProtocolParamsHash, genesisProtocolInstance.address, options);
 
     var schemesArray = [
       schemeRegistrarInst.address,
@@ -197,7 +196,7 @@ module.exports = async function (deployer, network, accounts, providers) {
       lockingToken4ReputationInst.address,
       fixedReputationAllocationInst.address,
       genericSchemeInst.address
-    ]
+    ];
     const paramsArray = [
       schemeRegisterParams,
       schemeGCRegisterParams,
@@ -210,7 +209,7 @@ module.exports = async function (deployer, network, accounts, providers) {
       0,
       0,
       genericSchemeParamsHash
-    ]
+    ];
     const permissionArray = [
       '0x0000001F',
       '0x00000005',
@@ -223,13 +222,13 @@ module.exports = async function (deployer, network, accounts, providers) {
       '0x00000001',
       '0x00000001',
       '0x00000010' // genericScheme permission
-    ]
+    ];
 
     // set DAO initial schemes:
     await daoCreatorInst.setSchemes(
       AvatarInst.address,
       schemesArray,
       paramsArray,
-      permissionArray, options)
-  })
-}
+      permissionArray, options);
+  });
+};
