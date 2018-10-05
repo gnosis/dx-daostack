@@ -3,12 +3,11 @@ const daoStackRepoFactory = require('../../../src/repositories/daoStack/daoStack
 
 module.exports = async ({
   provider,
-  transactionDefaults
-  // accounts,
+  fromDefault
 }) => {
   const daoStackRepo = await daoStackRepoFactory({
     provider,
-    transactionDefaults
+    fromDefault
   })
 
   const createOrganization = require('./createOrganization')({

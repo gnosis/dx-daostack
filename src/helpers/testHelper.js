@@ -1,10 +1,11 @@
 const debug = require('debug')('test:helper')
-const DEFAULT_GAS = 4712388
 const daoServiceFactory = require('../../src/services/daoService/daoServiceFactory')
 const dxServiceFactory = require('../../src/services/dxService/dxServiceFactory')
 
 const getDaoStackContracts = require('../../src/repositories/daoStack/util/getDaoStackContracts')
 const getDxContracts = require('../../src/repositories/dx/util/getDxContracts')
+
+// const DEFAULT_GAS = 4712388
 
 let web3, artifacts, accounts, daoService, dxService
 
@@ -93,10 +94,7 @@ module.exports = async ({
   const owner = accounts[0]
   daoService = await daoServiceFactory({
     provider: web3.currentProvider,
-    transactionDefaults: {
-      from: owner,
-      gas: DEFAULT_GAS
-    }
+    fromDefault: owner
   })
 
   dxService = await dxServiceFactory({

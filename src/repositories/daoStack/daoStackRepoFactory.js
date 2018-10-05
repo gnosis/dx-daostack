@@ -4,7 +4,7 @@ const getDaoStackContracts = require('./util/getDaoStackContracts')
 
 module.exports = async ({
   provider,
-  transactionDefaults
+  fromDefault
 }) => {
   const {
     ControllerCreator,
@@ -16,7 +16,7 @@ module.exports = async ({
     ZeroXDutchXValidateAndCall
   } = await getDaoStackContracts({
     provider,
-    defaults: transactionDefaults
+    fromDefault
   })
 
   let daoCreator

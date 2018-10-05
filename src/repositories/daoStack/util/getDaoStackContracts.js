@@ -1,4 +1,6 @@
 const contract = require('truffle-contract')
+
+var constants = require('@daostack/arc/test/constants')
 let contractInstances
 
 const CONTRACTS = [
@@ -29,11 +31,14 @@ const CONTRACTS = [
 ]
 
 async function getDaoStackContracts ({
+  contracts = CONTRACTS,
   provider,
-  defaults
+  fromDefault,
+  gas = constants.ARC_GAS_LIMIT
 } = {}) {
+  console.log({ fromDefault, gas })
   if (!contractInstances) {
-    contractInstances = CONTRACTS.reduce((acc, contractName) => {
+    contractInstances = contracts.reduce((acc, contractName) => {
       var contractUrl = `@daostack/arc/build/contracts/${contractName}`
       if (contractName === 'ZeroXDutchXValidateAndCall') {
         contractUrl = `../../../../build/contracts/${contractName}`
@@ -41,7 +46,10 @@ async function getDaoStackContracts ({
       // console.log(`Load contract: ${contractUrl}`)
       const truffleContract = contract(require(contractUrl))
       truffleContract.setProvider(provider)
-      truffleContract.defaults(defaults)
+      truffleContract.defaults({
+        from: fromDefault,
+        gas
+      })
       acc[contractName] = truffleContract
 
       return acc
