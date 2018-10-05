@@ -1,7 +1,9 @@
 const contract = require('truffle-contract')
+const fs = require('fs')
 
 var constants = require('@daostack/arc/test/constants')
 let contractInstances
+const DAO_STACK_BUILD_CONTRACTS_DIR = '@daostack/arc/build/contracts'
 
 const CONTRACTS = [
   // Contract constructor helpers
@@ -38,17 +40,33 @@ async function getDaoStackContracts ({
 } = {}) {
   if (!contractInstances) {
     contractInstances = contracts.reduce((acc, contractName) => {
-      var contractUrl = `@daostack/arc/build/contracts/${contractName}`
+      let contractUrl = `${DAO_STACK_BUILD_CONTRACTS_DIR}/${contractName}`
       if (contractName === 'ZeroXDutchXValidateAndCall') {
         contractUrl = `../../../../build/contracts/${contractName}`
       }
       // console.log(`Load contract: ${contractUrl}`)
-      const truffleContract = contract(require(contractUrl))
+      const contractJson = require(contractUrl)
+      const truffleContract = contract(contractJson)
       truffleContract.setProvider(provider)
       truffleContract.defaults({
         from: fromDefault,
         gas
       })
+      contractUrl = './node_modules/' + contractUrl + '.json'
+      truffleContract.saveArtifact = async () => {
+        if (truffleContract.address) {
+          console.log(`Saving artifact ${contractName}...`)
+          contractJson.networks[truffleContract.network_id] = {
+            address: truffleContract.address
+          }
+          const jsonContent = JSON.stringify(contractJson, null, 2)
+          // console.log(jsonContent)
+          fs.writeFileSync(contractUrl, jsonContent)
+          console.log(`Artifact ${contractName} was saved in ${contractUrl}`)
+        } else {
+          console.log(`No need to save artifact ${contractName}, it doesn't have deployed address`)
+        }
+      }
       acc[contractName] = truffleContract
 
       return acc

@@ -8,13 +8,14 @@ function migrate ({
   accounts,
   web3
 }) {
-  console.log('web3.currentProvider', web3.currentProvider)
+  const contracts = [
+    'ControllerCreator',
+    'DaoCreator',
+    'SchemeRegistrar'
+  ]
+  console.log('Deploying DaoStack base contracts: ' + contracts.join(', '))
   getDaoStackContracts({
-    contracts: [
-      'ControllerCreator',
-      'DaoCreator',
-      'SchemeRegistrar'
-    ],
+    contracts,
     provider: web3.currentProvider,
     fromDefault: accounts[0]
   }).then(({
@@ -31,6 +32,14 @@ function migrate ({
       .deploy(ControllerCreator)
       .then(() => deployer.deploy(DaoCreator, ControllerCreator.address))
       .then(() => deployer.deploy(SchemeRegistrar))
+      .then(() => {
+        // Fix to truffle-contract/migration not saving JSON
+        return Promise.all([
+          ControllerCreator.saveArtifact(),
+          DaoCreator.saveArtifact(),
+          SchemeRegistrar.saveArtifact()
+        ])
+      })
   })
 }
 

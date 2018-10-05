@@ -8,8 +8,8 @@ const ORGANIZATION_NAME = 'DutchX'
 const TOKEN_NAME = 'DutchX'
 const TOKEN_SYMBOL = 'DUX'
 const INITIAL_REPUTATION = 1e6 // TODO: 1M, isn't it?
-const INITIAL_TOKENS = 10e6 // TODO: Review
-const TOKENS_CAP = 1.5e6 // TODO: No idea. Confirm
+const INITIAL_TOKENS = 0 // 10e6 // TODO: Review
+const TOKENS_CAP = 0 // 1.5e6 // TODO: No idea. Confirm
 
 function migrate ({
   deployer,
@@ -56,7 +56,7 @@ Forging organization with the following data...
           founders,
           initTokenInWei,
           initRepInWei,
-          0,
+          0, // uController,
           tokensCap
         )
       })
