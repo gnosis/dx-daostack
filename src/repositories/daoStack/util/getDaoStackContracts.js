@@ -36,7 +36,6 @@ async function getDaoStackContracts ({
   fromDefault,
   gas = constants.ARC_GAS_LIMIT
 } = {}) {
-  console.log({ fromDefault, gas })
   if (!contractInstances) {
     contractInstances = contracts.reduce((acc, contractName) => {
       var contractUrl = `@daostack/arc/build/contracts/${contractName}`

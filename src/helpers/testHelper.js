@@ -85,7 +85,8 @@ const revertSnapshotFactory = (web3) => snapshotId => {
 module.exports = async ({
   artifacts: _artifacts,
   accounts: _accounts,
-  web3: _web3
+  web3: _web3,
+  contracts
 }) => {
   artifacts = _artifacts
   accounts = _accounts
@@ -93,6 +94,7 @@ module.exports = async ({
 
   const owner = accounts[0]
   daoService = await daoServiceFactory({
+    contracts,
     provider: web3.currentProvider,
     fromDefault: owner
   })
