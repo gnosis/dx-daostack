@@ -1,7 +1,7 @@
 /* global web3 */
 /* eslint no-undef: "error" */
 
-const forgeOrganization = require('../src/migrations/4_forge_organization')
+const forgeOrganization = require('../src/migrations/3_deploy_Token_Reputation_Avatar')
 
 module.exports = function (deployer, network, accounts) {
   let founders
