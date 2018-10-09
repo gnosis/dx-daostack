@@ -7,7 +7,7 @@ module.exports = async function (deployer, network, accounts) {
     const owner = accounts[0]
 
     // deploy MGN, GEN
-    await deployTokens(deployer, owner)
+    // await deployTokens(deployer, owner)
 
     // Deploy voting machines
     // await deployVotingMachines()
