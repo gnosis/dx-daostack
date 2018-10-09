@@ -1,5 +1,9 @@
-/* global artifacts */
+/* global artifacts, web3 */
 /* eslint no-undef: "error" */
+
+const devLocalConfig = require('../src/config/dev-local')
+const assert = require('assert')
+const BN = web3.utils.BN
 
 module.exports = async function (deployer, network, accounts) {
   if (network === 'development') {
@@ -7,7 +11,7 @@ module.exports = async function (deployer, network, accounts) {
     const owner = accounts[0]
 
     // deploy MGN, GEN
-    // await deployTokens(deployer, owner)
+    await deployTokens(deployer, owner)
 
     // Deploy voting machines
     // await deployVotingMachines()
@@ -51,6 +55,31 @@ module.exports = async function (deployer, network, accounts) {
   }
 }
 
+async function deployTokens (deployer, owner) {
+  const GenToken = artifacts.require('GenToken')
+  const MgnToken = artifacts.require('MgnToken')
+  const WethToken = artifacts.require('WethToken')
+
+  const { testTokensInitialBalance: initialBalance } = devLocalConfig
+  console.log('Create GEN, MGN, WETH with %dM as the initial balance for the deployer', initialBalance * 1e6)
+  const initialBalanceWei = web3.utils.toWei(
+    new BN(initialBalance),
+    'ether'
+  )
+  await deployer.deploy(GenToken, initialBalanceWei)
+  await deployer.deploy(MgnToken, initialBalanceWei)
+  await deployer.deploy(WethToken, initialBalanceWei)
+}
+
+async function deployVotingMachines (deployer) {
+  const GenesisProtocol = artifacts.require('GenesisProtocol')
+
+  // TODO: Are we staking using GEN? (review this part)
+  console.log('Voting machine: Deploying GenesisProtocol')
+  console.log("  - GenesisProtocol implementation -an organization's voting machine scheme.")
+  await deployer.deploy(GenesisProtocol)
+}
+
 async function deployUniversalControllers (deployer) {
   const SchemeRegistrar = artifacts.require('DxToken')
   const UpgradeScheme = artifacts.require('UpgradeScheme')
@@ -68,22 +97,4 @@ async function deployUniversalControllers (deployer) {
   console.log('Scheme: Deploying GlobalConstraintRegistrar')
   console.log('  - register or remove new global constraints')
   await deployer.deploy(GlobalConstraintRegistrar)
-}
-
-async function deployTokens (deployer, owner) {
-  const GenToken = artifacts.require('GenToken')
-  const MgnToken = artifacts.require('MgnToken')
-  const WethToken = artifacts.require('WethToken')
- 
-  console.log('Token: Deploying GEN Token:')
-  await deployer.deploy(GenToken)
-}
-
-async function deployVotingMachines (deployer) {
-  const GenesisProtocol = artifacts.require('GenesisProtocol')
-
-  // TODO: Are we staking using GEN? (review this part)
-  console.log('Voting machine: Deploying GenesisProtocol')
-  console.log("  - GenesisProtocol implementation -an organization's voting machine scheme.")
-  await deployer.deploy(GenesisProtocol)
 }
