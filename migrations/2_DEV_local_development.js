@@ -14,7 +14,7 @@ module.exports = async function (deployer, network, accounts) {
     await deployTokens(deployer, owner)
 
     // Deploy voting machines
-    // await deployVotingMachines()
+    await deployVotingMachines(deployer)
 
     // Deploy DaoStack Universal Controllers
     // await deployUniversalControllers(deployer)
@@ -61,6 +61,8 @@ async function deployTokens (deployer, owner) {
   const WethToken = artifacts.require('WethToken')
 
   const { testTokensInitialBalance: initialBalance } = devLocalConfig
+  assert(initialBalance, 'testTokensInitialBalance is mandatory')
+
   console.log('Create GEN, MGN, WETH with %dM as the initial balance for the deployer', initialBalance * 1e6)
   const initialBalanceWei = web3.utils.toWei(
     new BN(initialBalance),
@@ -73,11 +75,21 @@ async function deployTokens (deployer, owner) {
 
 async function deployVotingMachines (deployer) {
   const GenesisProtocol = artifacts.require('GenesisProtocol')
+  const GenToken = artifacts.require('GenToken')
+
+  // Get instances
+  const genToken = await GenToken.deployed()
+
+  // Get token symbol
+  const symbol = await genToken.symbol.call()
 
   // TODO: Are we staking using GEN? (review this part)
   console.log('Voting machine: Deploying GenesisProtocol')
-  console.log("  - GenesisProtocol implementation -an organization's voting machine scheme.")
-  await deployer.deploy(GenesisProtocol)
+  console.log("  - GenesisProtocol implementation. An organization's voting machine scheme.")
+  
+  console.log('  - Using ' + symbol + ' Token for staking')
+  console.log('  - Token address: ' + genToken.address)
+  await deployer.deploy(GenesisProtocol, genToken.address)
 }
 
 async function deployUniversalControllers (deployer) {
