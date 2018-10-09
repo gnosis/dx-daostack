@@ -4,9 +4,6 @@
 const assert = require('assert')
 const daoConfig = require('../src/config/DutchX-dao')
 
-// const INITIAL_REPUTATION = 1e6 // TODO: 1M, isn't it?
-// const INITIAL_TOKENS = 0 // 10e6 // TODO: Review
-
 module.exports = async (deployer, network, accounts) => {
   const DxToken = artifacts.require('DxToken')
   const DxReputation = artifacts.require('DxReputation')
