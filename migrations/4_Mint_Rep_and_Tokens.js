@@ -28,17 +28,30 @@ Minting tokens and REP for ${founders.length} founders:
     for (var i = 0; i < founders.length; i++) {
       const founder = founders[i]
       console.log(`Minting tokens and REP for ${founder}:`)
-      await mintFounderTokens(founder, dxToken, foundersInitialTokens)
-      await mintFounderReputation(founder, dxReputation, foundersInitialRep)
+      await mintTokens({
+        account: founder,
+        amount: foundersInitialTokens,
+        dxToken
+      })
+      await mintReputation({
+        account: founder,
+        amount: foundersInitialRep,
+        dxReputation
+      })
     }
+    // TODO: Should we mint for the Dao itself??
   } else {
     console.log('No need to mint tokens or REP')
   }
 }
 
-async function mintFounderTokens (founder, dxToken, foundersInitialTokens) {
-  if (foundersInitialTokens) {
-    const txResult = await dxToken.mint(founder, foundersInitialTokens)
+async function mintTokens ({
+  account,
+  amount,
+  dxToken
+}) {
+  if (amount) {
+    const txResult = await dxToken.mint(account, amount)
     console.log(`Token minted:
 - Transaction: ${txResult.tx}
 - Gas used: ${txResult.receipt.gasUsed}
@@ -46,9 +59,9 @@ async function mintFounderTokens (founder, dxToken, foundersInitialTokens) {
   }
 }
 
-async function mintFounderReputation (founder, dxReputation, foundersInitialRep) {
-  if (foundersInitialRep) {
-    const txResult = await dxReputation.mint(founder, foundersInitialRep)
+async function mintReputation (account, amount, dxReputation) {
+  if (amount) {
+    const txResult = await dxReputation.mint(account, amount)
     console.log(`REP minted:
 - Transaction: ${txResult.tx}
 - Gas used: ${txResult.receipt.gasUsed}
