@@ -6,12 +6,18 @@
   "scripts": {
     "test": "truffle test test/*Test.js",
     "test-debug": "DEBUG=app:*,test:* truffle test test/*Test.js",
+    "rpc": "ganache-cli -d",
+    "network-extract": "npx truffle networks --clean && npx tnt extractNetworks",
+    "network-inject": "npx tnt injectNetworks",
+    "compile": "truffle compile",
     "migrate": "truffle migrate",
-    "rpc": "ganache-cli -d"
+    "restore": "npm run compile && npm run network-inject",
+    "networks": "truffle networks"
   },
   "author": "Angel Rodriguez <anxolin@gmail.com> (https://github.com/anxolin)",
   "license": "ISC",
   "devDependencies": {
+    "@gnosis.pm/truffle-nice-tools": "^1.1.3",
     "eslint": "^5.4.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.14.0",
