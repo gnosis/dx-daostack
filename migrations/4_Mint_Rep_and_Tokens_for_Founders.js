@@ -3,7 +3,8 @@
 const daoConfig = require('../src/config/DutchX-dao')
 
 module.exports = async (deployer, network, accounts) => {
-  let founders, foundersMsg
+  const { founders, foundersInitialTokens, foundersInitialRep } = daoConfig
+  /*
   const { founders: foundersAux, foundersInitialTokens, foundersInitialRep } = daoConfig
   if (foundersAux) {
     founders = foundersAux
@@ -13,9 +14,25 @@ module.exports = async (deployer, network, accounts) => {
     foundersMsg = ''
     founders = [ accounts[0] ]
   }
+  */
+  if (founders && founders.length > 0) {
+    mintTokensAndRepoForFounders(
+      founders,
+      foundersInitialTokens,
+      foundersInitialRep
+    )
+  } else {
+    console.log("The DAO doesn't have founders with initial Tokens and REP.")
+  }
+}
+
+async function mintTokensAndRepoForFounders (
+  founders,
+  foundersInitialTokens,
+  foundersInitialRep) {
   console.log(`
 Minting tokens and REP for ${founders.length} founders:
-  - Founders: ${founders.join(', ') + foundersMsg}
+  - Founders: ${founders.join(', ')}
   - Tokens: ${foundersInitialTokens} 
   - Reputation: ${foundersInitialRep}
 `)
