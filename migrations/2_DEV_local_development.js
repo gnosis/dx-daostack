@@ -13,11 +13,8 @@ module.exports = async function (deployer, network, accounts) {
     // deploy MGN, GEN
     await deployTokens(deployer, owner)
 
-    // Deploy voting machines
-    await deployVotingMachines(deployer)
-
     // Deploy DaoStack Universal Controllers
-    // await deployUniversalControllers(deployer)
+    await deployUniversalControllers(deployer)
 
     // deploy
 
@@ -73,27 +70,8 @@ async function deployTokens (deployer, owner) {
   await deployer.deploy(WethToken, initialBalanceWei)
 }
 
-async function deployVotingMachines (deployer) {
-  const GenesisProtocol = artifacts.require('GenesisProtocol')
-  const GenToken = artifacts.require('GenToken')
-
-  // Get instances
-  const genToken = await GenToken.deployed()
-
-  // Get token symbol
-  const symbol = await genToken.symbol.call()
-
-  // TODO: Are we staking using GEN? (review this part)
-  console.log('Voting machine: Deploying GenesisProtocol')
-  console.log("  - GenesisProtocol implementation. An organization's voting machine scheme.")
-  
-  console.log('  - Using ' + symbol + ' Token for staking')
-  console.log('  - Token address: ' + genToken.address)
-  await deployer.deploy(GenesisProtocol, genToken.address)
-}
-
 async function deployUniversalControllers (deployer) {
-  const SchemeRegistrar = artifacts.require('DxToken')
+  const SchemeRegistrar = artifacts.require('SchemeRegistrar')
   const UpgradeScheme = artifacts.require('UpgradeScheme')
   const GlobalConstraintRegistrar = artifacts.require('GlobalConstraintRegistrar')
 

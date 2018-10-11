@@ -33,11 +33,4 @@ Deploying DutchX avatar:
   - Reputation address: ${DxReputation.address}
 `)
   await deployer.deploy(DxAvatar, organizationName, DxToken.address, DxReputation.address)
-
-  // const dxToken = artifacts.deployed(DxToken)
-  // const dxReputation = artifacts.deployed(DxReputation)
-  // // const DxAvatar = artifacts.deployed()
-
-  // dxToken.mint()
-  // console.log('A', a)
 }
