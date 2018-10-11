@@ -55,11 +55,19 @@ async function configureGenesisProtocol (GenesisProtocol) {
   console.log('Configure Genesis Protocol voting machine:')
   parameterNames.forEach(parameterName => {
     const parameter = genesisProtocolConf[parameterName]
-    assert(parameter !== undefined, `The parameter ${parameterName} for genesisProtocol was not defined`)
     console.log(`  - ${parameterName}: ${parameter}`)
+    assert(parameter !== undefined, `The parameter ${parameterName} for genesisProtocol was not defined`)
   })
+
+  const { voteOnBehalf } = genesisProtocolConf
+  console.log('  - voteOnBehalf: ' + voteOnBehalf)
+  assert(voteOnBehalf !== undefined, 'The parameter voteOnBehalf for genesisProtocol was not defined')
 
   const parameters = parameterNames
     .map(parameterName => genesisProtocolConf[parameterName])
-  genesisProtocol.setParameters(parameters)
+
+  const txResult = await genesisProtocol.setParameters(parameters, voteOnBehalf)
+  console.log('  - Transaction: ' + txResult.tx)
+  console.log('  - Gas used: ' + txResult.receipt.gasUsed)
+  console.log()
 }

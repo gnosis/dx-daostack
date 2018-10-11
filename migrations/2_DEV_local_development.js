@@ -10,52 +10,20 @@ module.exports = async function (deployer, network, accounts) {
     console.log('Deploying some contracts into a local ganche-cli')
     const owner = accounts[0]
 
-    // deploy MGN, GEN
+    // deploy MGN (FRT), GEN, WETH
     await deployTokens(deployer, owner)
 
     // Deploy DaoStack Universal Controllers
     await deployUniversalControllers(deployer)
-
-    // deploy
-
-    // // deploy GenesisProtocol
-    // // gen token
-    // var stakingTokenAddress = '0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf'
-    // if (network === 'development') {
-    //   await deployer.deploy(StandardTokenMock, options.from, 1000, options)
-    //   var stakingToken = await StandardTokenMock.deployed()
-    //   stakingTokenAddress = stakingToken.address
-    // }
-    // await deployer.deploy(GenesisProtocol, stakingTokenAddress, options)
-    // var genesisProtocolInstance = await GenesisProtocol.deployed()
-
-    // await genesisProtocolInstance.setParameters(genesisProtocolParams, options)
-    // var genesisProtocolParamsHash = await genesisProtocolInstance.getParametersHash(genesisProtocolParams, options)
-
-
-    // }) => {
-    //   return deployer
-    //     .deploy(ControllerCreator)
-    //     .then(() => deployer.deploy(DaoCreator, ControllerCreator.address))
-    //     .then(() => deployer.deploy(SchemeRegistrar))
-    //     .then(() => {
-    //       // Fix to truffle-contract/migration not saving JSON
-    //       return Promise.all([
-    //         ControllerCreator.saveArtifact(),
-    //         DaoCreator.saveArtifact(),
-    //         SchemeRegistrar.saveArtifact()
-    //       ])
-    //     })
-    // })
   } else {
     console.log('Not in development, so nothing to do. Current network is %s', network)
   }
 }
 
 async function deployTokens (deployer, owner) {
-  const GenToken = artifacts.require('GenToken')
-  const MgnToken = artifacts.require('MgnToken')
-  const WethToken = artifacts.require('WethToken')
+  const GenToken = artifacts.require('GenToken') // GEN (Dao Stack)
+  const MgnToken = artifacts.require('MgnToken') // MGN (Token FRT)
+  const WethToken = artifacts.require('WethToken') // (Wrapped Ether)
 
   const { testTokensInitialBalance: initialBalance } = devLocalConfig
   assert(initialBalance, 'testTokensInitialBalance is mandatory')

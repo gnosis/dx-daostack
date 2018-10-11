@@ -63,12 +63,15 @@ module.exports = {
   //      s+
   //        is the wager staked for the proposal
   //      daoBountyConst
-  //        is a constant factor that is configurable and changeable by the 
+  //        is a constant factor that is configurable and changeable by the
   //        DAO given.
-  //        daoBountyConst should be greater than stakerFeeRatioForVoters and 
+  //        daoBountyConst should be greater than stakerFeeRatioForVoters and
   //        less than 2 * stakerFeeRatioForVoters
   daoBountyConst: 15,
 
   // The daoBounty cannot be greater than daoBountyLimit
-  daoBountyLimit: 10
+  daoBountyLimit: 10,
+
+  // This address is allowed to vote on behalf of someone else
+  voteOnBehalf: 0
 }
