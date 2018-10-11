@@ -1,16 +1,19 @@
-/* global artifacts */
+/* global artifacts, web3 */
 /* eslint no-undef: "error" */
 const assert = require('assert')
 const dateUtil = require('../src/helpers/dateUtil')
+const registerScheme = require('./helpers/registerScheme')
 
 module.exports = async function (deployer) {
   const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
   const MgnToken = artifacts.require('MgnToken')
   const DxAvatar = artifacts.require('DxAvatar')
+  const DxController = artifacts.require('DxController')
 
   // Get instances
   const mgnToken = await MgnToken.deployed()
   const dxAvatar = await DxAvatar.deployed()
+  const dxController = await DxController.deployed()
 
   // Deploy DxLockMgnForRep
   console.log('Deploying DxLockMgnForRep scheme')
@@ -39,7 +42,7 @@ module.exports = async function (deployer) {
   console.log('  - MGN address (external locking contract): ' + mgnToken.address)
   console.log('  - Get balance function signature: ' + getBalanceFuncSignature)
 
-  const txResult = await dxLockMgnForRep.initialize(
+  let txResult = await dxLockMgnForRep.initialize(
     dxAvatar.address,
     reputationReward,
     dateUtil.toEthereumTimestamp(lockingStartTime),
@@ -50,4 +53,13 @@ module.exports = async function (deployer) {
   console.log('  - Transaction: ' + txResult.tx)
   console.log('  - Gas used: ' + txResult.receipt.gasUsed)
   console.log()
+
+  // Register scheme DxLockMgnForRep
+  await registerScheme({
+    label: 'DxLockMgnForRep',
+    schemeAddress: dxLockMgnForRep.address,
+    avatarAddress: dxAvatar.address,
+    controller: dxController,
+    web3
+  })
 }
