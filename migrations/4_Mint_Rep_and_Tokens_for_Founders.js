@@ -1,6 +1,7 @@
 /* global artifacts */
 /* eslint no-undef: "error" */
 const daoConfig = require('../src/config/DutchX-dao')
+const batchTransactions = require('../src/helpers/batchTransactions')(web3)
 
 module.exports = async (deployer, network, accounts) => {
   const { founders, foundersInitialTokens, foundersInitialRep } = daoConfig
@@ -40,48 +41,32 @@ Minting tokens and REP for ${founders.length} founders:
     const DxToken = artifacts.require('DxToken')
     const DxReputation = artifacts.require('DxReputation')
 
-    const dxToken = await DxToken.deployed()
-    const dxReputation = await DxReputation.deployed()
-    for (var i = 0; i < founders.length; i++) {
-      const founder = founders[i]
-      console.log(`Minting tokens and REP for ${founder}:`)
-      await mintTokens({
-        account: founder,
-        amount: foundersInitialTokens,
-        dxToken
-      })
-      await mintReputation({
-        account: founder,
-        amount: foundersInitialRep,
-        dxReputation
-      })
-    }
+    // construct txs for batch request
+    const txConstructs = founders.reduce((accum, founder) => {
+      // will call DxToken.mint(founder, foundersInitialTokens)
+      const MintDxToken = {
+        artifact: DxToken,
+        method: 'mint',
+        args: [founder, foundersInitialTokens]
+      }
+
+      // will call DxRep.mint(founder, foundersInitialRep)
+      const MintDxRep = {
+        artifact: DxReputation,
+        method: 'mint',
+        args: [founder, foundersInitialRep]
+      }
+
+      accum.push(MintDxToken, MintDxRep)
+      return accum
+    }, [])
+
+    console.log('Batch sending transactions\n')
+    const txHashes = await batchTransactions(txConstructs)
+    console.log('Tx hashes:\n ', txHashes.join('\n  '))
+
     // TODO: Should we mint for the Dao itself??
   } else {
     console.log('No need to mint tokens or REP')
-  }
-}
-
-async function mintTokens ({
-  account,
-  amount,
-  dxToken
-}) {
-  if (amount) {
-    const txResult = await dxToken.mint(account, amount)
-    console.log(`Token minted:
-- Transaction: ${txResult.tx}
-- Gas used: ${txResult.receipt.gasUsed}
-`)
-  }
-}
-
-async function mintReputation (account, amount, dxReputation) {
-  if (amount) {
-    const txResult = await dxReputation.mint(account, amount)
-    console.log(`REP minted:
-- Transaction: ${txResult.tx}
-- Gas used: ${txResult.receipt.gasUsed}
-`)
   }
 }
