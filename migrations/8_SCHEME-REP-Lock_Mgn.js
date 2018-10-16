@@ -4,6 +4,19 @@ const assert = require('assert')
 const dateUtil = require('../src/helpers/dateUtil')
 const registerScheme = require('./helpers/registerScheme')
 
+const {
+  getBalanceFuncSignature
+} = require('../src/config/schemes/DxLockMgnForRep')
+
+const {
+  startDate: lockingStartTime,
+  endDate: lockingEndTime
+} = require('../src/config/timePeriods/initialLocking')
+
+const {
+  mgnReward
+} = require('../src/config/rep/initalRepDistribution')
+
 module.exports = async function (deployer) {
   const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
   const MgnToken = artifacts.require('MgnToken')
@@ -22,29 +35,22 @@ module.exports = async function (deployer) {
 
   // Initialize DxLockMgnForRep
   const dxLockMgnForRep = await DxLockMgnForRep.deployed()
-  const {
-    reputationReward,
-    lockingStartTime,
-    lockingEndTime,
-    getBalanceFuncSignature
-  } = require('../src/config/schemes/DxLockMgnForRep')
-
   console.log('Configure DxLockMgnForRep scheme:')
-  assert(reputationReward, `The parameter reputationReward was not defined`)
+  assert(mgnReward, `The parameter reputationReward was not defined`)
   assert(lockingStartTime, `The parameter lockingStartTime was not defined`)
   assert(lockingEndTime, `The parameter lockingEndTime was not defined`)
   assert(getBalanceFuncSignature, `The parameter getBalanceFuncSignature was not defined`)
 
   console.log('  - Avatar address: ' + dxAvatar.address)
-  console.log('  - Reputation reward: ' + reputationReward)
-  console.log('  - Locking start time (UTC): ' + lockingStartTime)
-  console.log('  - Locking end time (UTC): ' + lockingEndTime)
+  console.log('  - Reputation reward: %dK', mgnReward / 1000)
+  console.log('  - Locking start time (UTC): ' + dateUtil.formatDateTime(lockingStartTime))
+  console.log('  - Locking end time (UTC): ' + dateUtil.formatDateTime(lockingEndTime))
   console.log('  - MGN address (external locking contract): ' + mgnToken.address)
   console.log('  - Get balance function signature: ' + getBalanceFuncSignature)
 
   let txResult = await dxLockMgnForRep.initialize(
     dxAvatar.address,
-    reputationReward,
+    mgnReward,
     dateUtil.toEthereumTimestamp(lockingStartTime),
     dateUtil.toEthereumTimestamp(lockingEndTime),
     mgnToken.address,

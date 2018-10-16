@@ -1,4 +1,4 @@
-const dateUtil = require('../helpers/dateUtil')
+const dateUtil = require('../../helpers/dateUtil')
 
 // The lock peridod has some default config, but it ca be modified with
 // env variables
