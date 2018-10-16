@@ -27,7 +27,7 @@
     "truffle": "^5.0.0-beta.1"
   },
   "dependencies": {
-    "@daostack/arc": "^0.0.0-alpha.53",
+    "@daostack/arc": "^0.0.0-alpha.55",
     "debug": "^3.1.0",
     "truffle-contract": "^3.0.6",
     "truffle-hdwallet-provider": "^1.0.0-web3one.0"
