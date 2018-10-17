@@ -139,7 +139,7 @@ contract MgnToken is TestToken {
     /// @return Did no overflow occur?
     function safeToAdd(uint a, uint b)
         public
-        constant
+        pure
         returns (bool)
     {
         return a + b >= a;
@@ -151,7 +151,7 @@ contract MgnToken is TestToken {
     /// @return Did no underflow occur?
     function safeToSub(uint a, uint b)
         public
-        constant
+        pure
         returns (bool)
     {
         return a >= b;
@@ -164,7 +164,7 @@ contract MgnToken is TestToken {
     /// @return Sum
     function add(uint a, uint b)
         public
-        constant
+        pure
         returns (uint)
     {
         require(safeToAdd(a, b));
@@ -177,7 +177,7 @@ contract MgnToken is TestToken {
     /// @return Difference
     function sub(uint a, uint b)
         public
-        constant
+        pure
         returns (uint)
     {
         require(safeToSub(a, b));
