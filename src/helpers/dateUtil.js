@@ -1,3 +1,7 @@
+const moment = require('moment-timezone')
+
+const TIME_ZONE = process.env.TZ || 'Europe/Berlin'
+
 function parseIso8601Date (iso8601FormattedDate) {
   return new Date(Date.parse(iso8601FormattedDate))
 }
@@ -12,7 +16,7 @@ function formatDate (date) {
     return null
   }
 
-  return pad(date.getDate()) + '-' + pad(date.getMonth() + 1) + '-' + date.getFullYear()
+  return _toMoment(date).format('L')
 }
 
 // Formats a date and time: Just for debuging porposes
@@ -21,20 +25,22 @@ function formatDateTime (date) {
     return null
   }
 
-  return formatDate(date) +
-    ' ' +
-    pad(date.getHours()) + ':' + pad(date.getMinutes())
+  return _toMoment(date).format('DD/MM/YYYY HH:mm')
 }
 
-function pad (n, width = 2, z = 0) {
-  z = z || '0'
-  n = n + ''
-  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n
+function parse (dateString) {
+  return moment.tz(dateString, TIME_ZONE).toDate()
+}
+
+function _toMoment (date) {
+  return moment(date).tz(TIME_ZONE)
 }
 
 module.exports = {
+  parse,
   parseIso8601Date,
   toEthereumTimestamp,
   formatDate,
-  formatDateTime
+  formatDateTime,
+  timeZone: TIME_ZONE
 }

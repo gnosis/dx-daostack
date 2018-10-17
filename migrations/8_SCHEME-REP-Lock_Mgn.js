@@ -41,10 +41,14 @@ module.exports = async function (deployer) {
   assert(lockingEndTime, `The parameter lockingEndTime was not defined`)
   assert(getBalanceFuncSignature, `The parameter getBalanceFuncSignature was not defined`)
 
+  // TODO: Make sure that this is correct
+  const redeemEnableTime = lockingEndTime
+
   console.log('  - Avatar address: ' + dxAvatar.address)
   console.log('  - Reputation reward: %dK', mgnReward / 1000)
-  console.log('  - Locking start time (UTC): ' + dateUtil.formatDateTime(lockingStartTime))
-  console.log('  - Locking end time (UTC): ' + dateUtil.formatDateTime(lockingEndTime))
+  console.log('  - Locking start time: ' + dateUtil.formatDateTime(lockingStartTime))
+  console.log('  - Locking end time: ' + dateUtil.formatDateTime(lockingEndTime))
+  console.log('  - Redeem enable time: ' + dateUtil.formatDateTime(redeemEnableTime))
   console.log('  - MGN address (external locking contract): ' + mgnToken.address)
   console.log('  - Get balance function signature: ' + getBalanceFuncSignature)
 
@@ -53,11 +57,13 @@ module.exports = async function (deployer) {
     mgnReward,
     dateUtil.toEthereumTimestamp(lockingStartTime),
     dateUtil.toEthereumTimestamp(lockingEndTime),
+    dateUtil.toEthereumTimestamp(redeemEnableTime),
     mgnToken.address,
     getBalanceFuncSignature
   )
   console.log('  - Transaction: ' + txResult.tx)
   console.log('  - Gas used: ' + txResult.receipt.gasUsed)
+  console.log(`(*) Dates use ${dateUtil.timeZone} time zone`)
   console.log()
 
   // Register scheme DxLockMgnForRep
