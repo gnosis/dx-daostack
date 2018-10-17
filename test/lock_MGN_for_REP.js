@@ -120,35 +120,35 @@ contract('Locking MGN for REP', accounts => {
     }
   })
 
-  it('can\'t redeem before lockingEndTime', async () => {
-    const lockingEndTime = await DxLock4Rep.lockingEndTime()
+  it('can\'t redeem before redeemEnableTime', async () => {
+    const redeemEnableTime = await DxLock4Rep.redeemEnableTime()
     const now = await getTimestamp()
 
-    assert(lockingEndTime.gt(new BN(now)), 'lockingEndTime should be in the future')
+    assert(redeemEnableTime.gt(new BN(now)), 'redeemEnableTime should be in the future')
 
     try {
       await DxLock4Rep.redeem(master)
       // should be unreachable
-      assert.fail('shouldn\'t redeem before lockingEndTime')
+      assert.fail('shouldn\'t redeem before redeemEnableTime')
     } catch (error) {
-      assert.include(error.message, 'check the lock period pass', 'error message should contain string specified')
+      assert.include(error.message, 'now > redeemEnableTime', 'error message should contain string specified')
     }
   })
 
-  it('can redeem after lockingEndTime', async () => {
-    const lockingEndTime = await DxLock4Rep.lockingEndTime()
-    console.log('lockingEndTime: ', lockingEndTime.toString())
+  it('can redeem after redeemEnableTime', async () => {
+    const redeemEnableTime = await DxLock4Rep.redeemEnableTime()
+    console.log('redeemEnableTime: ', redeemEnableTime.toString())
     const timestamp1 = await getTimestamp()
     console.log('now: ', timestamp1)
 
-    const advanceBy = lockingEndTime.sub(new BN(timestamp1 - 1000))
+    const advanceBy = redeemEnableTime.sub(new BN(timestamp1 - 1000))
     console.log('advanceBy: ', advanceBy.toString())
     await increaseTimeAndMine(advanceBy.toNumber())
 
     const timestamp2 = await getTimestamp()
     console.log('now: ', timestamp2)
 
-    assert(lockingEndTime.lt(new BN(timestamp2)), 'lockingEndTime should be in the past')
+    assert(redeemEnableTime.lt(new BN(timestamp2)), 'redeemEnableTime should be in the past')
 
     const scoreBefore = await DxLock4Rep.scores(master)
     console.log('scoreBefore: ', scoreBefore.toString())
