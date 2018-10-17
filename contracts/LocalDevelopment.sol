@@ -1,8 +1,5 @@
 pragma solidity ^0.4.24;
 
-// Vote machines
-import "@daostack/infra/contracts/VotingMachines/GenesisProtocol.sol";
-
 // Universal Schemes
 import "@daostack/arc/contracts/universalSchemes/SchemeRegistrar.sol";
 import "@daostack/arc/contracts/universalSchemes/UpgradeScheme.sol";

@@ -3,17 +3,17 @@
 const assert = require('assert')
 
 module.exports = async function (deployer) {
-  const GenesisProtocol = artifacts.require('GenesisProtocol')
+  const DxGenesisProtocol = artifacts.require('DxGenesisProtocol')
   const GenToken = artifacts.require('GenToken')
 
   // Deploy Genesis Protocol voting machine
-  await deployGenesisProtocol(GenesisProtocol, GenToken, deployer)
+  await deployGenesisProtocol(DxGenesisProtocol, GenToken, deployer)
 
   // Configure Genesis Protocol voting machine
-  await configureGenesisProtocol(GenesisProtocol)
+  await configureGenesisProtocol(DxGenesisProtocol)
 }
 
-async function deployGenesisProtocol (GenesisProtocol, GenToken, deployer) {
+async function deployGenesisProtocol (DxGenesisProtocol, GenToken, deployer) {
   // Get instances
   const genToken = await GenToken.deployed()
 
@@ -21,17 +21,17 @@ async function deployGenesisProtocol (GenesisProtocol, GenToken, deployer) {
   const symbol = await genToken.symbol.call()
 
   // TODO: Are we staking using GEN? (review this part)
-  console.log('Deploying GenesisProtocol voting machine')
+  console.log('Deploying DxGenesisProtocol voting machine')
   console.log("  - GenesisProtocol implementation. An organization's voting machine scheme.")
 
   console.log('  - Using ' + symbol + ' Token for staking')
   console.log('  - Token address: ' + genToken.address)
-  await deployer.deploy(GenesisProtocol, genToken.address)
+  await deployer.deploy(DxGenesisProtocol, genToken.address)
 }
 
-async function configureGenesisProtocol (GenesisProtocol) {
+async function configureGenesisProtocol (DxGenesisProtocol) {
   const genesisProtocolConf = require('../src/config/votingMachines/GenesisProtocol')
-  const genesisProtocol = await GenesisProtocol.deployed()
+  const genesisProtocol = await DxGenesisProtocol.deployed()
 
   // Genesis Protocol params:
   //    https://github.com/daostack/infra/blob/master/contracts/VotingMachines/GenesisProtocol.sol#L27
