@@ -32,11 +32,16 @@ function parse (dateString) {
   return moment.tz(dateString, TIME_ZONE).toDate()
 }
 
+function add (date, amount, unit) {
+  return _toMoment(date).add(amount, unit)
+}
+
 function _toMoment (date) {
   return moment(date).tz(TIME_ZONE)
 }
 
 module.exports = {
+  add,
   parse,
   parseIso8601Date,
   toEthereumTimestamp,
