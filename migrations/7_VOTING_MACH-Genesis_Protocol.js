@@ -52,16 +52,14 @@ async function configureGenesisProtocol (DxGenesisProtocol) {
     'daoBountyLimit'
   ]
 
+  const { voteOnBehalf } = genesisProtocolConf
+
   console.log('Configure Genesis Protocol voting machine:')
-  parameterNames.forEach(parameterName => {
+  parameterNames.concat('voteOnBehalf').forEach(parameterName => {
     const parameter = genesisProtocolConf[parameterName]
     console.log(`  - ${parameterName}: ${parameter}`)
     assert(parameter !== undefined, `The parameter ${parameterName} for genesisProtocol was not defined`)
   })
-
-  const { voteOnBehalf } = genesisProtocolConf
-  console.log('  - voteOnBehalf: ' + voteOnBehalf)
-  assert(voteOnBehalf !== undefined, 'The parameter voteOnBehalf for genesisProtocol was not defined')
 
   const parameters = parameterNames
     .map(parameterName => genesisProtocolConf[parameterName])
