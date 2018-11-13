@@ -25,7 +25,7 @@ module.exports = async function (deployer) {
 
   console.log('Deploy DxAuction4Rep that inherits from Auction4Reputation')
   const dxAuction4Rep = await deployer.deploy(DxAuction4Rep)
-  console.log('  - Scheme for conducting ERC20 Tokens auction for reputation')
+  console.log('  - Scheme for conducting ERC20 Tokens auctions for reputation')
 
   console.log('Configure DxAuction4Rep')
 
