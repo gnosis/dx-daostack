@@ -10,5 +10,6 @@ import "@daostack/arc/contracts/universalSchemes/GlobalConstraintRegistrar.sol";
 import "../test/contracts/GenToken.sol";
 import "../test/contracts/MgnToken.sol";
 import "../test/contracts/EthToken.sol";
+import "../test/contracts/GnoToken.sol";
 
 contract LocalDevelopment {}
