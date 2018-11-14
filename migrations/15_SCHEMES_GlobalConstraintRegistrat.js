@@ -22,14 +22,14 @@ module.exports = async function (deployer) {
     genesisProtocolAddress
   } = await getGenesisProtocolData()
 
-  const genericSchemeParams = [
+  const globalConstraintRegistrarParams = [
     genesisProtocolParamsHash,
     genesisProtocolAddress
   ]
 
-  await globalConstraintRegistrar.setParameters(...genericSchemeParams)
+  await globalConstraintRegistrar.setParameters(...globalConstraintRegistrarParams)
 
-  const paramsHash = await globalConstraintRegistrar.getParametersHash(...genericSchemeParams)
+  const paramsHash = await globalConstraintRegistrar.getParametersHash(...globalConstraintRegistrarParams)
 
   await registerScheme({
     label: 'GlobalConstraintRegistrar',
