@@ -24,6 +24,7 @@ async function deployTokens (deployer, owner) {
   const GenToken = artifacts.require('GenToken') // GEN (Dao Stack)
   const MgnToken = artifacts.require('MgnToken') // MGN (Token FRT)
   const WethToken = artifacts.require('WethToken') // (Wrapped Ether)
+  const GnoToken = artifacts.require('GnoToken') // GNO
 
   const { testTokensInitialBalance: initialBalance } = devLocalConfig
   assert(initialBalance, 'testTokensInitialBalance is mandatory')
@@ -36,6 +37,7 @@ async function deployTokens (deployer, owner) {
   await deployer.deploy(GenToken, initialBalanceWei)
   await deployer.deploy(MgnToken, initialBalanceWei)
   await deployer.deploy(WethToken, initialBalanceWei)
+  await deployer.deploy(GnoToken, initialBalanceWei)
 }
 
 async function deployUniversalControllers (deployer) {
