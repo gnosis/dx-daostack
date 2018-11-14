@@ -22,14 +22,14 @@ module.exports = async function (deployer) {
     genesisProtocolAddress
   } = await getGenesisProtocolData()
 
-  const genericSchemeParams = [
+  const upgradeSchemeParams = [
     genesisProtocolParamsHash,
     genesisProtocolAddress
   ]
 
-  await upgradeScheme.setParameters(...genericSchemeParams)
+  await upgradeScheme.setParameters(...upgradeSchemeParams)
 
-  const paramsHash = await upgradeScheme.getParametersHash(...genericSchemeParams)
+  const paramsHash = await upgradeScheme.getParametersHash(...upgradeSchemeParams)
 
   await registerScheme({
     label: 'UpgradeScheme',
