@@ -8,6 +8,7 @@ const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
 const registerScheme = require('./helpers/registerScheme')
+const { SchemePermissions } = registerScheme
 const getDXContractAddress = require('../src/helpers/getDXContractAddresses.js')(web3, artifacts)
 
 module.exports = async function (deployer, network) {
@@ -43,7 +44,7 @@ module.exports = async function (deployer, network) {
   await registerScheme({
     label: 'DxGenericScheme',
     paramsHash,
-    permissions: '0x00000010',
+    permissions: SchemePermissions.GenericScheme,
     schemeAddress: dxGenericScheme.address,
     avatarAddress: dxAvatar.address,
     controller: dxController

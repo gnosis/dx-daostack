@@ -8,6 +8,7 @@ const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
 const registerScheme = require('./helpers/registerScheme')
+const { SchemePermissions } = registerScheme
 
 module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
@@ -35,7 +36,7 @@ module.exports = async function (deployer) {
   await registerScheme({
     label: 'SchemeRegistrar',
     paramsHash,
-    permissions: '0x0000001F',
+    permissions: SchemePermissions.SchemeRegistar,
     schemeAddress: schemeRegistrar.address,
     avatarAddress: dxAvatar.address,
     controller: dxController
