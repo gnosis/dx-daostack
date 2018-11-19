@@ -7,7 +7,7 @@ async function registerScheme ({
   avatarAddress,
   controller
 }) {
-  console.log('Register ' + label + ' scheme in the controller:')
+  console.log('\nRegister ' + label + ' scheme in the controller:')
   console.log('  - Scheme address: ' + schemeAddress)
   console.log('  - Param hash: ' + paramsHash)
   console.log('  - Permissions: ' + permissions)
