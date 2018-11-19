@@ -11,7 +11,7 @@ const registerScheme = require('./helpers/registerScheme')
 
 const {
   dappConReward: reputationReward
-} = require('../src/conf/rep/initalRepDistribution')
+} = require('../src/config/rep/initalRepDistribution')
 
 const {
   endDate: redeemEnableTime
