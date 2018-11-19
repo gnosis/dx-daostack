@@ -9,6 +9,8 @@ const DxController = artifacts.require('DxController')
 
 const registerScheme = require('./helpers/registerScheme')
 
+const { submissionFee } = require('../src/config/schemes/DxContributionReward')
+
 module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
@@ -24,7 +26,8 @@ module.exports = async function (deployer) {
   } = await getGenesisProtocolData()
 
   const contributionRewardParams = [
-    0, // a fee (in the organization's token) that is to be paid for submitting a contribution
+    // a fee (in the organization's token) that is to be paid for submitting a contribution
+    submissionFee,
     genesisProtocolParamsHash,
     genesisProtocolAddress
   ]
