@@ -1,23 +1,15 @@
-const Network2Id = {
-  mainnet: 1,
-  morden: 2,
-  ropsten: 3,
-  rinkeby: 4,
-  kovan: 42
-}
-
 const USE_DEV_CONTRACTS = process.env.USE_DEV_CONTRACTS
 
-module.exports = (network, artifacts) => (ContractName, dev = USE_DEV_CONTRACTS) => {
-  if (network === 'development') {
-    const { address } = artifacts.require(ContractName)
+module.exports = (web3, artifacts) => async (ContractName, dev = USE_DEV_CONTRACTS) => {
+  const networkId = await web3.eth.net.getId()
+
+  // on local development network
+  if (networkId > Date.now() / 10) {
+    const { address } = await artifacts.require(ContractName).deployed()
     if (!address) throw new Error(`${ContractName} hasn't been deployed yet`)
 
     return address
   }
-
-  const networkId = Network2Id[network]
-  if (!networkId) throw new Error('Unknown network. Unable to retrieve DX contract address')
 
   const networksFile = dev
     ? '@gnosis.pm/dx-contracts/networks-dev.json'
@@ -29,7 +21,7 @@ module.exports = (network, artifacts) => (ContractName, dev = USE_DEV_CONTRACTS)
   if (!Contract) throw new Error(`No ${ContractName} in ${networksFile}`)
 
   const address = Contract[networkId]
-  if (!address) throw new Error(`No address for ${ContractName} on ${network} network in ${networksFile}`)
+  if (!address) throw new Error(`No address for ${ContractName} on network ${networkId} in ${networksFile}`)
 
   return address
 }

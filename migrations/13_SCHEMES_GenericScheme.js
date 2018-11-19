@@ -1,4 +1,4 @@
-/* global artifacts */
+/* global artifacts, web3 */
 /* eslint no-undef: "error" */
 
 const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')(artifacts)
@@ -8,12 +8,11 @@ const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
 const registerScheme = require('./helpers/registerScheme')
+const getDXContractAddress = require('../src/helpers/getDXContractAddresses.js')(web3, artifacts)
 
 module.exports = async function (deployer, network) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
-
-  const getDXContractAddress = require('../src/helpers/getDXContractAddresses.js')(network, artifacts)
 
   console.log('Deploy DxGenericScheme that inherits from GenericScheme')
   const dxGenericScheme = await deployer.deploy(DxGenericScheme)
@@ -29,7 +28,7 @@ module.exports = async function (deployer, network) {
   let dutchXContractAddress
   // For now substitute a valid address, otherwise breaks
   if (network === 'development') dutchXContractAddress = '0x039fb002d21c1c5eeb400612aef3d64d49eb0d94'
-  else dutchXContractAddress = getDXContractAddress('DutchExchangeProxy')
+  else dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
 
   const genericSchemeParams = [
     genesisProtocolParamsHash,
