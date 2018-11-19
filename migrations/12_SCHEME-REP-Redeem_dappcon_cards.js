@@ -10,9 +10,12 @@ const dateUtil = require('../src/helpers/dateUtil')
 const registerScheme = require('./helpers/registerScheme')
 
 const {
-  reputationReward,
-  redeemEnableTime: redeemTime
-} = require('../src/config/schemes/old/fixreputationallocationparams.json')
+  dappConReward: reputationReward
+} = require('../src/conf/rep/initalRepDistribution')
+
+const {
+  endDate: redeemEnableTime
+} = require('../src/config/timePeriods/initialLocking')
 
 module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
@@ -22,10 +25,6 @@ module.exports = async function (deployer) {
   const dxRedeemDappconCards = await deployer.deploy(DxRedeemDappconCards)
 
   console.log('Configure DxRedeemDappconCards')
-
-  // TODO: have real times in config, for now current time + from config
-  // to ensure times are in the future
-  const redeemEnableTime = new Date(Date.now() + redeemTime * 1000)
 
   console.log('  - Avatar address:', dxAvatar.address)
   console.log('  - Reputation reward:', reputationReward)
