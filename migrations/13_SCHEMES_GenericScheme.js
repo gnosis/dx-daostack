@@ -9,9 +9,11 @@ const DxController = artifacts.require('DxController')
 
 const registerScheme = require('./helpers/registerScheme')
 
-module.exports = async function (deployer) {
+module.exports = async function (deployer, network) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
+
+  const getDXContractAddress = require('../src/helpers/getDXContractAddresses.js')(network, artifacts)
 
   console.log('Deploy DxGenericScheme that inherits from GenericScheme')
   const dxGenericScheme = await deployer.deploy(DxGenericScheme)
@@ -23,11 +25,13 @@ module.exports = async function (deployer) {
     genesisProtocolAddress
   } = await getGenesisProtocolData()
 
-  // TODO: get locally deployed Dx address
-  const dutchXContractAddress = '0x039fb002d21c1c5eeb400612aef3d64d49eb0d94'
+  // TODO: deploy DX and DXProxy locally
+  let dutchXContractAddress
+  // For now substitute a valid address, otherwise breaks
+  if (network === 'development') dutchXContractAddress = '0x039fb002d21c1c5eeb400612aef3d64d49eb0d94'
+  else dutchXContractAddress = getDXContractAddress('DutchExchangeProxy')
 
   const genericSchemeParams = [
-    // QUESTION: is it ok to just pass in hash, it expects bytes32, so a string works, but...
     genesisProtocolParamsHash,
     genesisProtocolAddress,
     dutchXContractAddress
