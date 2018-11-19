@@ -1,9 +1,11 @@
+const SchemePermissions = require('./SchemePermissions')
+
 async function registerScheme ({
   web3,
   label,
   schemeAddress,
   paramsHash = web3.utils.asciiToHex('0'),
-  permissions = '0x00000001', // TODO: Use constants
+  permissions = SchemePermissions.Default,
   avatarAddress,
   controller
 }) {
@@ -23,5 +25,7 @@ async function registerScheme ({
   console.log('  - Gas used: ' + txResult.receipt.gasUsed)
   console.log()
 }
+
+registerScheme.SchemePermissions = SchemePermissions
 
 module.exports = registerScheme
