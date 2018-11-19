@@ -1,3 +1,4 @@
 {
-  "reputationReward" : 100
+  "reputationReward": 100,
+  "redeemEnableTime": 2000
 }
