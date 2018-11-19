@@ -10,8 +10,7 @@ const dateUtil = require('../src/helpers/dateUtil')
 const registerScheme = require('./helpers/registerScheme')
 
 const {
-  numberOfAuctions,
-  wallet
+  numberOfAuctions
 } = require('../src/config/schemes/old/auction4reputationparams.json')
 
 const {
@@ -36,9 +35,7 @@ module.exports = async function (deployer) {
 
   const redeemEnableTime = auctionEndTime
 
-  // TODO: have a real address in config
-  const walletAddress = web3.utils.isAddress(wallet)
-    ? wallet : (await web3.eth.getAccounts())[0]
+  const walletAddress = dxAvatar.address
 
   console.log('  - Avatar address:', dxAvatar.address)
   console.log('  - Reputation reward:', reputationReward)
@@ -48,7 +45,7 @@ module.exports = async function (deployer) {
   console.log('  - number of auctions:', numberOfAuctions)
   // QUESTION: is GEN token - staking token?
   console.log('  - Staking token address (GEN):', genToken.address)
-  console.log('  - wallet address: ', walletAddress)
+  console.log('  - wallet address (DxAvatar.address): ', walletAddress)
 
   await dxAuction4Rep.initialize(
     dxAvatar.address,
