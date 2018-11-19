@@ -10,13 +10,18 @@ const dateUtil = require('../src/helpers/dateUtil')
 const registerScheme = require('./helpers/registerScheme')
 
 const {
-  reputationReward,
-  // TODO: update times, now in the past
-  lockingStartTime,
-  lockingEndTime,
   numberOfAuctions,
   wallet
 } = require('../src/config/schemes/old/auction4reputationparams.json')
+
+const {
+  startDate: auctionStartTime,
+  endDate: auctionEndTime
+} = require('../src/config/timePeriods/initialLocking')
+
+const {
+  genReward: reputationReward
+} = require('../src/config/rep/initalRepDistribution')
 
 module.exports = async function (deployer) {
   const genToken = await GenToken.deployed()
@@ -28,11 +33,6 @@ module.exports = async function (deployer) {
   console.log('  - Scheme for conducting ERC20 Tokens auctions for reputation')
 
   console.log('Configure DxAuction4Rep')
-
-  // TODO: have real times in config, for now current time + from config
-  // to ensure times are in the future
-  const auctionStartTime = new Date(Date.now() + lockingStartTime * 1000)
-  const auctionEndTime = new Date(Date.now() + lockingEndTime * 1000)
 
   const redeemEnableTime = auctionEndTime
 
