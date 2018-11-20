@@ -9,8 +9,10 @@ async function registerScheme ({
   avatarAddress,
   controller
 }) {
-  // permission has to be convertable to bytes4
-  // that is 0x0000001f => 0x 00 00 00 1f => [0, 0, 0, 1f]
+  // permission has to be convertible to bytes4
+  // that is 0x0000001f => 0x 00 00 00 1f => [0, 0, 0, 31]
+  // we have decimal int (.e.g. 31), therefore
+  // 31 =toHex=> 1f =0x+padding=> 0x0000001f
   const permissionsInHex = '0x' + permissions.toString(16).padStart(8, '0')
 
   console.log('\nRegister ' + label + ' scheme in the controller:')
