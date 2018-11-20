@@ -5,20 +5,24 @@ async function registerScheme ({
   label,
   schemeAddress,
   paramsHash = web3.utils.asciiToHex('0'),
-  permissions = SchemePermissions.Default,
+  permissions = SchemePermissions.REGISTERED,
   avatarAddress,
   controller
 }) {
+  // permission has to be convertable to bytes4
+  // that is 0x0000001f => 0x 00 00 00 1f => [0, 0, 0, 1f]
+  const permissionsInHex = '0x' + permissions.toString(16).padStart(8, '0')
+
   console.log('\nRegister ' + label + ' scheme in the controller:')
   console.log('  - Scheme address: ' + schemeAddress)
   console.log('  - Param hash: ' + paramsHash)
-  console.log('  - Permissions: ' + permissions)
+  console.log('  - Permissions: ' + permissionsInHex)
   console.log('  - Avatar address: ' + avatarAddress)
   console.log('  - Controller address: ' + controller.address)
   const txResult = await controller.registerScheme(
     schemeAddress,
     paramsHash,
-    permissions,
+    permissionsInHex,
     avatarAddress
   )
   console.log('  - Transaction: ' + txResult.tx)
