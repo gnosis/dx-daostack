@@ -36,9 +36,9 @@
     openzeppelin-solidity "1.12.0"
 
 "@gnosis.pm/dx-contracts@^1.0.7":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@gnosis.pm/dx-contracts/-/dx-contracts-1.0.8.tgz#04ba9dc0d2b3b79a01f842b3e6a2f727f220081f"
-  integrity sha512-aRSGnPCMOpEXBWOfVEC3A7Xoh0LSwQCfw8ipsP1BQqaKtCq3HlEO4hmJZ2DafBHptVleHVZ6if/h0ZVovkqsyA==
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/dx-contracts/-/dx-contracts-1.0.7.tgz#5cf62d6327a16ee87ca7c1cbcce0fa46fea0ee97"
+  integrity sha512-F6G84+EdEJv8o2PFnijyUdH5j+iEFEFKxfPJ7BfzeSnKJcK4dkT0zjKGrNj5O6ihgWPnDCb0rGVcwXvPsjN6yQ==
   dependencies:
     "@gnosis.pm/gno-token" "^1.0.1"
     "@gnosis.pm/owl-token" "^1.1.2"
