@@ -3,8 +3,9 @@ const constants = require('./util/constants');
 const getDaoStackContracts = require('./util/getDaoStackContracts');
 
 module.exports = async ({
+  contracts,
   provider,
-  transactionDefaults
+  fromDefault
 }) => {
   const {
     ControllerCreator,
@@ -15,6 +16,7 @@ module.exports = async ({
     ExternalLocking4Reputation,
     ZeroXDutchXValidateAndCall
   } = await getDaoStackContracts({
+    contracts,
     provider,
     defaults: transactionDefaults
   });

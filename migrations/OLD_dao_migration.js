@@ -11,18 +11,23 @@ var lockingEth4ReputationParamsJson = require('../src/config/lockingeth4reputati
 var lockingToken4ReputationParamsJson = require('../src/config/lockingtoken4reputationparams.json');
 var fixedReputationAllocationParamsJson = require('../src/config/fixreputationallocationparams.json');
 
-// DUTCHEX ORG parameters:
-const orgName = 'DUTCHEX';
-const tokenName = 'DUTCHEX_DAO_TOKEN';
-const tokenSymbol = 'XXX';
-const founders = [web3.eth.accounts[0]];
-const initRep = 0;
-const initRepInWei = [web3.toWei(initRep)];
-const initToken = 0;
-const initTokenInWei = [web3.toWei(initToken)];
-const cap = 0;
+// DutchX parameters
+const orgName = 'DutchX'
+const tokenName = 'DutchX'
+const tokenSymbol = 'DUX' // TODO: confirm DX, DXT, DXC, ...?
+const founders = [
+  web3.eth.accounts[0]
+]
+const initRep = 1e6 // TODO: 1M, no?
+const initRepInWei = [ web3.toWei(initRep) ]
+const initToken = 0
+const initTokenInWei = [ web3.toWei(initToken) ]
+const cap = 1.5e6 // TODO: No idea. Confirm
 
-const options = {gas: constants.ARC_GAS_LIMIT, from: web3.eth.accounts[0]};
+const options = {
+  gas: constants.ARC_GAS_LIMIT,
+  from: web3.eth.accounts[0]
+}
 
 const genesisProtocolParams = [
   genesisProtocolParamsJson.preBoostedVoteRequiredPercentage,
@@ -59,7 +64,10 @@ module.exports = async function (deployer, network) {
     LockingToken4Reputation,
     ExternalLocking4Reputation,
     GenericScheme
-  } = await getDaoStackContracts({provider: web3.currentProvider});
+  } = await getDaoStackContracts({
+    provider: web3.currentProvider
+  })
+  
   deployer.deploy(ControllerCreator, options).then(async function () {
     var controllerCreator = await ControllerCreator.deployed();
 
