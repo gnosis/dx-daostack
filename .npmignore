@@ -1,0 +1,7 @@
+contractsOld
+.DS_STORE
+.eslintrc.json
+.soliumignore
+.soliumrc.json
+.travis.yml
+.history
