@@ -4,7 +4,6 @@
 const DxLockGno4Rep = artifacts.require('DxLockGno4Rep')
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
-const GnoToken = artifacts.require('GnoToken')
 
 const dateUtil = require('../src/helpers/dateUtil')
 
@@ -18,10 +17,13 @@ const {
   maxLockingPeriod
 } = require('../src/config/schemes/old/lockingeth4reputationparams.json')
 
+const getDXContractAddresses = require('../src/helpers/getDXContractAddresses.js')(web3, artifacts)
+
 module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
-  const gnoToken = await GnoToken.deployed()
+
+  const gnoAddress = await getDXContractAddresses('TokenGNO')
 
   console.log('Deploy DxLockGno4Rep that inherits from LockingToken4Reputation')
   const dxLockGno4Rep = await deployer.deploy(DxLockGno4Rep)
@@ -41,7 +43,7 @@ module.exports = async function (deployer) {
   console.log('  - Locking end time:', dateUtil.formatDateTime(lockingEndTime))
   console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemEnableTime))
   console.log('  - max locking period:', maxLockingPeriod)
-  console.log('  - locking token address (GNO):', gnoToken.address)
+  console.log('  - locking token address (GNO):', gnoAddress)
 
   await dxLockGno4Rep.initialize(
     dxAvatar.address,
@@ -50,7 +52,7 @@ module.exports = async function (deployer) {
     dateUtil.toEthereumTimestamp(lockingEndTime),
     dateUtil.toEthereumTimestamp(redeemEnableTime),
     maxLockingPeriod,
-    gnoToken.address
+    gnoAddress
   )
 
   await registerScheme({
