@@ -17,16 +17,18 @@ const {
   mgnReward
 } = require('../src/config/rep/initalRepDistribution')
 
+const getDXContractAddresses = require('../src/helpers/getDXContractAddresses.js')(web3, artifacts)
+
 module.exports = async function (deployer) {
   const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
-  const MgnToken = artifacts.require('MgnToken')
   const DxAvatar = artifacts.require('DxAvatar')
   const DxController = artifacts.require('DxController')
 
   // Get instances
-  const mgnToken = await MgnToken.deployed()
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
+
+  const mgnTokenAddress = await getDXContractAddresses('TokenFRT')
 
   // Deploy DxLockMgnForRep
   console.log('Deploying DxLockMgnForRep scheme')
@@ -49,7 +51,7 @@ module.exports = async function (deployer) {
   console.log('  - Locking start time: ' + dateUtil.formatDateTime(lockingStartTime))
   console.log('  - Locking end time: ' + dateUtil.formatDateTime(lockingEndTime))
   console.log('  - Redeem enable time: ' + dateUtil.formatDateTime(redeemEnableTime))
-  console.log('  - MGN address (external locking contract): ' + mgnToken.address)
+  console.log('  - MGN address (external locking contract): ' + mgnTokenAddress)
   console.log('  - Get balance function signature: ' + getBalanceFuncSignature)
 
   let txResult = await dxLockMgnForRep.initialize(
@@ -58,7 +60,7 @@ module.exports = async function (deployer) {
     dateUtil.toEthereumTimestamp(lockingStartTime),
     dateUtil.toEthereumTimestamp(lockingEndTime),
     dateUtil.toEthereumTimestamp(redeemEnableTime),
-    mgnToken.address,
+    mgnTokenAddress,
     getBalanceFuncSignature
   )
   console.log('  - Transaction: ' + txResult.tx)
