@@ -17,7 +17,7 @@ const {
   maxLockingPeriod
 } = require('../src/config/schemes/old/lockingeth4reputationparams.json')
 
-const getDXContractAddresses = require('../src/helpers/getDXContractAddresses.js')(web3, artifacts)
+const getDXContractAddresses = require('../src/helpers/getDXContractAddresses')(web3, artifacts)
 
 module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()

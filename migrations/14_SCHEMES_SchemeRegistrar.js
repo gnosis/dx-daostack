@@ -1,9 +1,8 @@
-/* global artifacts */
+/* global artifacts, web3 */
 /* eslint no-undef: "error" */
 
 const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')(artifacts)
 
-const SchemeRegistrar = artifacts.require('SchemeRegistrar')
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
@@ -16,11 +15,14 @@ const { SchemePermissions: {
   CALL_DELEGATECALL
 } } = registerScheme
 
+const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
+
+
 module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  const schemeRegistrar = await SchemeRegistrar.deployed()
+  const schemeRegistrar = await getDaostackContract('SchemeRegistrar')
 
   console.log('Configure SchemeRegistrar')
 

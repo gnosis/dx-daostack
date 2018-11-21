@@ -3,19 +3,19 @@
 
 const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')(artifacts)
 
-const GenericScheme = artifacts.require('GenericScheme')
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
 const registerScheme = require('./helpers/registerScheme')
 const { SchemePermissions: { CALL_DELEGATECALL } } = registerScheme
-const getDXContractAddress = require('../src/helpers/getDXContractAddresses.js')(web3, artifacts)
+const getDXContractAddress = require('../src/helpers/getDXContractAddresses')(web3, artifacts)
+const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
 module.exports = async function (deployer, network) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  const genericScheme = await GenericScheme.deployed()
+  const genericScheme = await getDaostackContract('GenericScheme')
 
   console.log('Configure GenericScheme')
 
