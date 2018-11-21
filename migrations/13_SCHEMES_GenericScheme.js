@@ -3,7 +3,7 @@
 
 const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')(artifacts)
 
-const DxGenericScheme = artifacts.require('DxGenericScheme')
+const GenericScheme = artifacts.require('GenericScheme')
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
@@ -15,10 +15,9 @@ module.exports = async function (deployer, network) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  console.log('Deploy DxGenericScheme that inherits from GenericScheme')
-  const dxGenericScheme = await deployer.deploy(DxGenericScheme)
+  const genericScheme = await GenericScheme.deployed()
 
-  console.log('Configure DxGenericScheme')
+  console.log('Configure GenericScheme')
 
   const {
     genesisProtocolParamsHash,
@@ -37,15 +36,15 @@ module.exports = async function (deployer, network) {
     dutchXContractAddress
   ]
 
-  await dxGenericScheme.setParameters(...genericSchemeParams)
+  await genericScheme.setParameters(...genericSchemeParams)
 
-  const paramsHash = await dxGenericScheme.getParametersHash(...genericSchemeParams)
+  const paramsHash = await genericScheme.getParametersHash(...genericSchemeParams)
 
   await registerScheme({
-    label: 'DxGenericScheme',
+    label: 'GenericScheme',
     paramsHash,
     permissions: CALL_DELEGATECALL,
-    schemeAddress: dxGenericScheme.address,
+    schemeAddress: genericScheme.address,
     avatarAddress: dxAvatar.address,
     controller: dxController
   })

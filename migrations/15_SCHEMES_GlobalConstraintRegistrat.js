@@ -14,7 +14,7 @@ module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  const globalConstraintRegistrar = await deployer.deploy(GlobalConstraintRegistrar)
+  const globalConstraintRegistrar = await GlobalConstraintRegistrar.deployed()
 
   console.log('Configure GlobalConstraintRegistrar')
 

@@ -3,7 +3,7 @@
 
 const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')(artifacts)
 
-const DxContributionReward = artifacts.require('DxContributionReward')
+const ContributionReward = artifacts.require('ContributionReward')
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
@@ -15,10 +15,9 @@ module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  console.log('Deploy DxContributionReward that inherits from ContributionReward')
-  const dxContributionReward = await deployer.deploy(DxContributionReward)
+  const contributionReward = await ContributionReward.deployed()
 
-  console.log('Configure DxContributionReward')
+  console.log('Configure ContributionReward')
 
   const {
     genesisProtocolParamsHash,
@@ -32,14 +31,14 @@ module.exports = async function (deployer) {
     genesisProtocolAddress
   ]
 
-  await dxContributionReward.setParameters(...contributionRewardParams)
+  await contributionReward.setParameters(...contributionRewardParams)
 
-  const paramsHash = await dxContributionReward.getParametersHash(...contributionRewardParams)
+  const paramsHash = await contributionReward.getParametersHash(...contributionRewardParams)
 
   await registerScheme({
-    label: 'DxContributionReward',
+    label: 'ContributionReward',
     paramsHash,
-    schemeAddress: dxContributionReward.address,
+    schemeAddress: contributionReward.address,
     avatarAddress: dxAvatar.address,
     controller: dxController
   })

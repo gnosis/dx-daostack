@@ -14,7 +14,7 @@ module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  const upgradeScheme = await deployer.deploy(UpgradeScheme)
+  const upgradeScheme = await UpgradeScheme.deployed()
 
   console.log('Configure UpgradeScheme')
 

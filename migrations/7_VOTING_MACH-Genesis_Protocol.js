@@ -7,13 +7,14 @@ module.exports = async function (deployer) {
   const GenToken = artifacts.require('GenToken')
 
   // Deploy Genesis Protocol voting machine
+  // CAN ALSO REUSE
   await deployGenesisProtocol(DxGenesisProtocol, GenToken, deployer)
 
   // Configure Genesis Protocol voting machine
   await configureGenesisProtocol(DxGenesisProtocol)
 }
 
-async function deployGenesisProtocol (DxGenesisProtocol, GenToken, deployer) {
+async function deployGenesisProtocol(DxGenesisProtocol, GenToken, deployer) {
   // Get instances
   const genToken = await GenToken.deployed()
 
@@ -29,7 +30,7 @@ async function deployGenesisProtocol (DxGenesisProtocol, GenToken, deployer) {
   await deployer.deploy(DxGenesisProtocol, genToken.address)
 }
 
-async function configureGenesisProtocol (DxGenesisProtocol) {
+async function configureGenesisProtocol(DxGenesisProtocol) {
   const genesisProtocolConf = require('../src/config/votingMachines/GenesisProtocol')
   const genesisProtocol = await DxGenesisProtocol.deployed()
 

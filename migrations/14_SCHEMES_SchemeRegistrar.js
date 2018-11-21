@@ -20,7 +20,7 @@ module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  const schemeRegistrar = await deployer.deploy(SchemeRegistrar)
+  const schemeRegistrar = await SchemeRegistrar.deployed()
 
   console.log('Configure SchemeRegistrar')
 
