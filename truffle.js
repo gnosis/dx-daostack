@@ -2,7 +2,11 @@ const assert = require('assert')
 const HDWalletProvider = require('truffle-hdwallet-provider')
 const DEFAULT_GAS_PRICE_GWEI = 5
 const GAS_LIMIT = 6.5e6
+
 const DEFAULT_MNEMONIC = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
+
+// Load env vars
+require('dotenv').load()
 
 // Get the mnemonic
 const privateKey = process.env.PK
@@ -71,7 +75,7 @@ function truffleConfig ({
     compilers: {
       solc: {
         version: '0.4.25',
-        docker: true,
+        docker: process.env.SOLC_USE_DOCKER === 'true' || false,
         settings: {
           optimizer: {
             enabled: optimizedEnabled, // Default: false
