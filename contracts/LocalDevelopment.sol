@@ -6,6 +6,7 @@ import "@daostack/arc/contracts/universalSchemes/UpgradeScheme.sol";
 import "@daostack/arc/contracts/universalSchemes/GlobalConstraintRegistrar.sol";
 import "@daostack/arc/contracts/universalSchemes/ContributionReward.sol";
 import "@daostack/arc/contracts/universalSchemes/GenericScheme.sol";
+import "@daostack/infra/contracts/votingMachines/GenesisProtocol.sol";
 
 // Tokens
 //  First aproach, maybe later we take it from DutchX contracts

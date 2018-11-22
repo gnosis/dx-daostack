@@ -23,6 +23,7 @@ const {
 } = require('../src/config/rep/initalRepDistribution')
 
 module.exports = async function (deployer) {
+  // TODO: get address from config/networks/GenesisProtocol.stakingToken()
   const genToken = await GenToken.deployed()
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()

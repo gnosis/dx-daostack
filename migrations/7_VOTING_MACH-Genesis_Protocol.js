@@ -2,19 +2,23 @@
 /* eslint no-undef: "error" */
 const assert = require('assert')
 
-module.exports = async function (deployer) {
-  const DxGenesisProtocol = artifacts.require('DxGenesisProtocol')
+const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
+
+
+module.exports = async function (deployer, network) {
+  const GenesisProtocol = artifacts.require('GenesisProtocol')
   const GenToken = artifacts.require('GenToken')
 
   // Deploy Genesis Protocol voting machine
-  // CAN ALSO REUSE
-  await deployGenesisProtocol(DxGenesisProtocol, GenToken, deployer)
+  if (network === 'development') {
+    await deployGenesisProtocol(GenesisProtocol, GenToken, deployer)
+  }
 
   // Configure Genesis Protocol voting machine
-  await configureGenesisProtocol(DxGenesisProtocol)
+  await configureGenesisProtocol(GenesisProtocol)
 }
 
-async function deployGenesisProtocol(DxGenesisProtocol, GenToken, deployer) {
+async function deployGenesisProtocol(GenesisProtocol, GenToken, deployer) {
   // Get instances
   const genToken = await GenToken.deployed()
 
@@ -22,17 +26,18 @@ async function deployGenesisProtocol(DxGenesisProtocol, GenToken, deployer) {
   const symbol = await genToken.symbol.call()
 
   // TODO: Are we staking using GEN? (review this part)
-  console.log('Deploying DxGenesisProtocol voting machine')
+  console.log('Deploying GenesisProtocol voting machine')
   console.log("  - GenesisProtocol implementation. An organization's voting machine scheme.")
 
   console.log('  - Using ' + symbol + ' Token for staking')
   console.log('  - Token address: ' + genToken.address)
-  await deployer.deploy(DxGenesisProtocol, genToken.address)
+  await deployer.deploy(GenesisProtocol, genToken.address)
 }
 
-async function configureGenesisProtocol(DxGenesisProtocol) {
+async function configureGenesisProtocol() {
   const genesisProtocolConf = require('../src/config/votingMachines/GenesisProtocol')
-  const genesisProtocol = await DxGenesisProtocol.deployed()
+  // reuse GenesisProtocol if available on the network
+  const genesisProtocol = await getDaostackContract('GenesisProtocol')
 
   // Genesis Protocol params:
   //    https://github.com/daostack/infra/blob/master/contracts/VotingMachines/GenesisProtocol.sol#L27
