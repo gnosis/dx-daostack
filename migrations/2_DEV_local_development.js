@@ -24,7 +24,7 @@ async function deployTokens(deployer, owner) {
   // TODO: get address from config/networks
   const GenToken = artifacts.require('GenToken') // GEN (Dao Stack)
   const MgnToken = artifacts.require('TokenFRT') // MGN (Token FRT)
-  const WethToken = artifacts.require('WethToken') // (Wrapped Ether)
+  const WethToken = artifacts.require('EtherToken') // (Wrapped Ether)
   const GnoToken = artifacts.require('TokenGNO') // GNO
 
   const { testTokensInitialBalance: initialBalance } = devLocalConfig

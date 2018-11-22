@@ -40,6 +40,7 @@
     "@daostack/arc.js": "0.0.0-alpha.89",
     "@gnosis.pm/dx-contracts": "^1.0.8",
     "@gnosis.pm/gno-token": "^1.0.2",
+    "@gnosis.pm/util-contracts": "^1.0.2",
     "debug": "^4.1.0",
     "truffle-contract": "^3.0.6",
     "truffle-hdwallet-provider": "^1.0.0-web3one.1"
