@@ -3,7 +3,7 @@ pragma solidity ^0.4.24;
 import "./TestToken.sol";
 
 // TODO: Review also if we can use the real MGN easily
-contract MgnToken is TestToken {
+contract TokenFRT is TestToken {
     constructor (uint256 initialBalance) public
     TestToken ("MGN Test Token", "MGN", initialBalance) {}
 
@@ -28,15 +28,6 @@ contract MgnToken is TestToken {
     /*
      *  Public functions
      */
-
-    function TokenFRT(
-        address _owner
-    )
-        public
-    {
-        require(_owner != address(0));
-        owner = _owner;
-    }
 
     // @dev allows to set the minter of Magnolia tokens once.
     // @param   _minter the minter of the Magnolia tokens, should be the DX-proxy

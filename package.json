@@ -7,8 +7,8 @@
     "gasLimit": "7000000"
   },
   "scripts": {
-    "test": "truffle test test/*Test.js",
-    "test-debug": "DEBUG=app:*,test:* truffle test test/*Test.js",
+    "test": "truffle test test/*.js",
+    "test-debug": "DEBUG=app:*,test:* truffle test test/*.js",
     "rpc": "ganache-cli -d",
     "networks-extract": "npx truffle networks --clean && npx tnt extractNetworks",
     "networks-inject": "npx tnt injectNetworks",
@@ -24,19 +24,22 @@
   "license": "ISC",
   "devDependencies": {
     "@gnosis.pm/truffle-nice-tools": "^1.2.1",
+    "babel-eslint": "^10.0.1",
     "eslint": "^5.9.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-promise": "^4.0.0",
-    "solium": "^1.1.8",
     "eslint-plugin-standard": "^4.0.0",
     "moment-timezone": "^0.5.23",
+    "solium": "^1.1.8",
     "truffle": "^5.0.0-user-level-mnemonic.0"
   },
   "dependencies": {
     "@daostack/arc": "0.0.0-alpha.56",
-    "@gnosis.pm/dx-contracts": "^1.0.7",
+    "@daostack/arc.js": "0.0.0-alpha.89",
+    "@gnosis.pm/dx-contracts": "^1.0.8",
+    "@gnosis.pm/gno-token": "^1.0.2",
     "debug": "^4.1.0",
     "truffle-contract": "^3.0.6",
     "truffle-hdwallet-provider": "^1.0.0-web3one.1"
