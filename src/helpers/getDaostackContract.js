@@ -26,7 +26,7 @@ const getContract = (web3, artifacts) => async (ContractName) => {
   const ContractsOnNetwork = networksJSON[network]
   if (!ContractsOnNetwork) throw new Error(`No deployed contracts on ${network}`)
 
-  const address = ContractsOnNetwork[ContractName]
+  const address = ContractsOnNetwork.base[ContractName]
   if (!address) throw new Error(`No address for ${ContractName} on network ${network} in ${networksFile}`)
 
   return Artifact.at(address)
