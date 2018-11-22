@@ -6,13 +6,26 @@ module.exports = (web3, artifacts) => async (ContractName, dev = USE_DEV_CONTRAC
   const networkId = await web3.eth.net.getId()
 
   // on local development network
+  let address
   if (networkId > Date.now() / 10) {
-    const { address } = await artifacts.require(ContractName).deployed()
-    if (!address) throw new Error(`${ContractName} hasn't been deployed yet`)
-
-    return address
+    address = await _getAddressForLocalGanache({ ContractName, artifacts })
+  } else {
+    address = await _getAddressFromNpmPachages(ContractName)
   }
 
+  return address
+}
+
+async function _getAddressForLocalGanache ({ ContractName, artifacts }) {
+  const { address } = await artifacts.require(ContractName).deployed()
+  if (!address) {
+    throw new Error(`${ContractName} hasn't been deployed yet`)
+  }
+
+  return address
+}
+
+async function _getAddressFromNpmPachages ({ ContractName, dev }) {
   const networksFile = dev
     ? '@gnosis.pm/dx-contracts/networks-dev.json'
     : '@gnosis.pm/dx-contracts/networks.json'
@@ -20,10 +33,14 @@ module.exports = (web3, artifacts) => async (ContractName, dev = USE_DEV_CONTRAC
   const networksJSON = Object.assign(require(networksFile), gnoNetworksJSON)
 
   const Contract = networksJSON[ContractName]
-  if (!Contract) throw new Error(`No ${ContractName} in ${networksFile}`)
+  if (!Contract) {
+    throw new Error(`No ${ContractName} in ${networksFile}`)
+  }
 
   const address = Contract[networkId]
-  if (!address) throw new Error(`No address for ${ContractName} on network ${networkId} in ${networksFile}`)
+  if (!address) {
+    throw new Error(`No address for ${ContractName} on network ${networkId} in ${networksFile}`)
+  }
 
   return address
 }

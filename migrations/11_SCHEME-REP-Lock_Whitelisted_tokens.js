@@ -6,6 +6,7 @@ const FixedPriceOracle = artifacts.require('FixedPriceOracle')
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
+const getDXContractAddress = require('../src/helpers/getDXContractAddresses.js')(web3, artifacts)
 const dateUtil = require('../src/helpers/dateUtil')
 const registerScheme = require('./helpers/registerScheme')
 
@@ -25,9 +26,9 @@ module.exports = async function (deployer) {
 
   const gnoAddress = await getDXContractAddresses('TokenGNO')
 
-
   console.log('Deploy FixedPriceOracle for setting the prices for the tokens')
-  const fixedPriceOracle = await deployer.deploy(FixedPriceOracle)
+  const dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
+  await deployer.deploy(FixedPriceOracle, dutchXContractAddress)
   
   console.log('Deploy DxLockWhitelisted4Rep that inherits from LockingToken4Reputation') // TODO:
   const dxLockWhitelisted4Rep = await deployer.deploy(DxLockWhitelisted4Rep)
