@@ -6,9 +6,6 @@ const FixedPriceOracle = artifacts.require('FixedPriceOracle')
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
-// TODO: Remove not needed contract
-const GnoToken = artifacts.require('GnoToken')
-
 const dateUtil = require('../src/helpers/dateUtil')
 const registerScheme = require('./helpers/registerScheme')
 
@@ -20,10 +17,13 @@ const {
   maxLockingPeriod
 } = require('../src/config/schemes/old/lockingeth4reputationparams.json')
 
+const getDXContractAddresses = require('../src/helpers/getDXContractAddresses')(web3, artifacts)
+
 module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
-  const gnoToken = await GnoToken.deployed()
+
+  const gnoAddress = await getDXContractAddresses('TokenGNO')
 
 
   console.log('Deploy FixedPriceOracle for setting the prices for the tokens')
@@ -47,7 +47,7 @@ module.exports = async function (deployer) {
   console.log('  - Locking end time:', dateUtil.formatDateTime(lockingEndTime))
   console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemEnableTime))
   console.log('  - max locking period:', maxLockingPeriod)
-  console.log('  - locking token address (GNO):', gnoToken.address)
+  console.log('  - locking token address (GNO):', gnoAddress)
 
   await dxLockWhitelisted4Rep.initialize(
     dxAvatar.address,
@@ -56,7 +56,7 @@ module.exports = async function (deployer) {
     dateUtil.toEthereumTimestamp(lockingEndTime),
     dateUtil.toEthereumTimestamp(redeemEnableTime),
     maxLockingPeriod,
-    gnoToken.address
+    gnoAddress
   )
 
   await registerScheme({

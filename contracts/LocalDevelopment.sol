@@ -4,6 +4,8 @@ pragma solidity ^0.4.24;
 import "@daostack/arc/contracts/universalSchemes/SchemeRegistrar.sol";
 import "@daostack/arc/contracts/universalSchemes/UpgradeScheme.sol";
 import "@daostack/arc/contracts/universalSchemes/GlobalConstraintRegistrar.sol";
+import "@daostack/arc/contracts/universalSchemes/ContributionReward.sol";
+import "@daostack/arc/contracts/universalSchemes/GenericScheme.sol";
 
 // Tokens
 //  First aproach, maybe later we take it from DutchX contracts

@@ -20,11 +20,11 @@ module.exports = async function (deployer, network, accounts) {
   }
 }
 
-async function deployTokens (deployer, owner) {
+async function deployTokens(deployer, owner) {
   const GenToken = artifacts.require('GenToken') // GEN (Dao Stack)
-  const MgnToken = artifacts.require('MgnToken') // MGN (Token FRT)
+  const MgnToken = artifacts.require('TokenFRT') // MGN (Token FRT)
   const WethToken = artifacts.require('WethToken') // (Wrapped Ether)
-  const GnoToken = artifacts.require('GnoToken') // GNO
+  const GnoToken = artifacts.require('TokenGNO') // GNO
 
   const { testTokensInitialBalance: initialBalance } = devLocalConfig
   assert(initialBalance, 'testTokensInitialBalance is mandatory')
@@ -40,10 +40,12 @@ async function deployTokens (deployer, owner) {
   await deployer.deploy(GnoToken, initialBalanceWei)
 }
 
-async function deployUniversalControllers (deployer) {
+async function deployUniversalControllers(deployer) {
   const SchemeRegistrar = artifacts.require('SchemeRegistrar')
   const UpgradeScheme = artifacts.require('UpgradeScheme')
   const GlobalConstraintRegistrar = artifacts.require('GlobalConstraintRegistrar')
+  const ContributionReward = artifacts.require('ContributionReward')
+  const GenericScheme = artifacts.require('GenericScheme')
 
   // Deploy some DaoStack Universal Controllers
   console.log('Scheme: Deploying SchemeRegistrar:')
@@ -57,4 +59,14 @@ async function deployUniversalControllers (deployer) {
   console.log('Scheme: Deploying GlobalConstraintRegistrar')
   console.log('  - register or remove new global constraints')
   await deployer.deploy(GlobalConstraintRegistrar)
+
+  console.log('Scheme: Deploying ContributionReward')
+  console.log('  - propose and rewarde contributions to an organization')
+  await deployer.deploy(ContributionReward)
+
+  console.log('Scheme: Deploying GenericScheme')
+  console.log(`  - propose and execute calls to an arbitrary function
+    on a specific contract on behalf of the organization avatar`
+  )
+  await deployer.deploy(GenericScheme)
 }

@@ -1,7 +1,7 @@
 
 /* global artifacts, web3, contract, it, before, beforeEach, after, afterEach, assert, expect, should */
 
-const MgnToken = artifacts.require('MgnToken')
+const MgnToken = artifacts.require('TokenFRT')
 const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
 const DxReputation = artifacts.require('DxReputation')
 const BN = require('bn.js')
@@ -37,7 +37,7 @@ contract('Locking MGN for REP', accounts => {
     console.log('locked MGN: ', lockedMGN.toString())
     assert(lockedMGN.eq(new BN(0)), 'shouldn\t have any MGN locked initially')
     try {
-      await DxLock4Rep.lock({from: master})
+      await DxLock4Rep.lock({ from: master })
       // should be unreachable
       assert.fail('shouldn\'t lock when no MGN locked')
     } catch (error) {
@@ -77,7 +77,7 @@ contract('Locking MGN for REP', accounts => {
     assert(lockingStartTime.gt(new BN(now)), 'lockingStartTime should be in the future')
 
     try {
-      await DxLock4Rep.lock({from: master})
+      await DxLock4Rep.lock({ from: master })
       // should be unreachable
       assert.fail('shouldn\'t lock before lockingStartTime')
     } catch (error) {
@@ -104,7 +104,7 @@ contract('Locking MGN for REP', accounts => {
 
     assert(lockingStartTime.lt(new BN(timestamp2)), 'lockingStartTime should be in the past')
 
-    await DxLock4Rep.lock({from: master})
+    await DxLock4Rep.lock({ from: master })
 
     const score = await DxLock4Rep.scores(master)
     assert(score.eq(lockedMGN), 'score should be equal to locked MGN')
@@ -112,7 +112,7 @@ contract('Locking MGN for REP', accounts => {
 
   it('can\'t lock twice', async () => {
     try {
-      await DxLock4Rep.lock({from: master})
+      await DxLock4Rep.lock({ from: master })
       // should be unreachable
       assert.fail('shouldn\'t lock twice for one same account')
     } catch (error) {

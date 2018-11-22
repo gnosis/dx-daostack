@@ -1,5 +1,7 @@
 const USE_DEV_CONTRACTS = process.env.USE_DEV_CONTRACTS
 
+const gnoNetworksJSON = require('@gnosis.pm/gno-token/networks.json')
+
 module.exports = (web3, artifacts) => async (ContractName, dev = USE_DEV_CONTRACTS) => {
   const networkId = await web3.eth.net.getId()
 
@@ -15,7 +17,7 @@ module.exports = (web3, artifacts) => async (ContractName, dev = USE_DEV_CONTRAC
     ? '@gnosis.pm/dx-contracts/networks-dev.json'
     : '@gnosis.pm/dx-contracts/networks.json'
 
-  const networksJSON = require(networksFile)
+  const networksJSON = Object.assign(require(networksFile), gnoNetworksJSON)
 
   const Contract = networksJSON[ContractName]
   if (!Contract) throw new Error(`No ${ContractName} in ${networksFile}`)
