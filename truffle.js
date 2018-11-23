@@ -22,6 +22,7 @@ function truffleConfig ({
   gas = GAS_LIMIT,
   optimizedEnabled = true,
   urlRinkeby = 'https://rinkeby.infura.io/',
+  urlKovan = 'https://kovan.infura.io/',
   urlMainnet = 'https://mainnet.infura.io',
   urlDevelopment = 'localhost',
   portDevelopment = 8545
@@ -70,7 +71,13 @@ function truffleConfig ({
         network_id: '4',
         gas,
         gasPrice
-      }
+      },
+      kovan: {
+        provider: _getProvider(urlKovan),
+        network_id: '42',
+        gas,
+        gasPrice
+      },
     },
     compilers: {
       solc: {
