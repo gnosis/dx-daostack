@@ -22,6 +22,11 @@ module.exports = async function (deployer, network, accounts) {
       thresholdNewTokenPairUsd: process.env.THRESHOLD_NEW_TOKEN_PAIR_USD,
       thresholdAuctionStartUsd: process.env.THRESHOLD_AUCTION_START_USD
     })
+
+    // Deploy 0x Token Registry
+    const TokenRegistry = artifacts.require('TokenRegistry')
+    deployer.deploy(TokenRegistry)
+    
     
     // deploy MGN (FRT), GEN, WETH
     await deployTokens(deployer, owner)
