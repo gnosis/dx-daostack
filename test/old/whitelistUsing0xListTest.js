@@ -30,7 +30,7 @@ async function setup ({
     schemes
   } = await testHelper.setupDao({
     schemes: [{
-      type: 'ZeroXDutchXValidateAndCall',
+      type: 'WhitelistUsing0xList',
       data: {
         zeroXTokenRegistryContract: zeroXRegistryContract.address,
         dutchXContract: dxContract.address
@@ -49,9 +49,9 @@ async function setup ({
   }
 
   // Get an scheme instance
-  const { ZeroXDutchXValidateAndCall } = await testHelper.getDaoStackContracts();
+  const { WhitelistUsing0xList } = await testHelper.getDaoStackContracts();
   const schemeAddress = schemes[0].address;
-  const zeroXDutchXValidateAndCall = await ZeroXDutchXValidateAndCall.at(schemeAddress);
+  const whitelistUsing0xList = await WhitelistUsing0xList.at(schemeAddress);
 
   debug(
     'Created DAO (%s) with REP (%s) and TOKEN (%s). Schemes: %s',
@@ -65,7 +65,7 @@ async function setup ({
     testHelper,
     avatarAddress,
     schemes,
-    zeroXDutchXValidateAndCall,
+    whitelistUsing0xList,
     zeroXRegistryContract,
     dxContract
   };
@@ -74,20 +74,20 @@ async function setup ({
 contract('Scheme ZeroX to DutchX', accounts => {
   it('constructor', async () => {
     const {
-      zeroXDutchXValidateAndCall,
+      whitelistUsing0xList,
       zeroXRegistryContract,
       dxContract
     } = await setup({
       accounts
     });
 
-    const _zeroXTokenRegistryContract = await zeroXDutchXValidateAndCall
+    const _zeroXTokenRegistryContract = await whitelistUsing0xList
       .zeroXTokenRegistryContract
       .call();
 
     assert.strictEqual(_zeroXTokenRegistryContract, zeroXRegistryContract.address);
 
-    const _dutchXContract = await zeroXDutchXValidateAndCall
+    const _dutchXContract = await whitelistUsing0xList
       .dutchXContract
       .call();
 
@@ -98,36 +98,36 @@ contract('Scheme ZeroX to DutchX', accounts => {
 
   it('validateTokenAndCall', async () => {
     const {
-      zeroXDutchXValidateAndCall
+      whitelistUsing0xList
     } = await setup({
       accounts
     });
-    var tx = await zeroXDutchXValidateAndCall.validateTokenAndCall(accounts[0], options);
+    var tx = await whitelistUsing0xList.validateTokenAndCall(accounts[0], options);
     assert.strictEqual(tx.logs.length, 1);
     var log = tx.logs[0];
-    debug('Lock zeroXDutchXValidateAndCall log: %o', log);
+    debug('Lock whitelistUsing0xList log: %o', log);
     assert.strictEqual(tx.logs[0].event, 'Update');
     assert.strictEqual(tx.logs[0].args._token, accounts[0]);
     assert.strictEqual(tx.logs[0].args._approved, true);
 
-    tx = await zeroXDutchXValidateAndCall.validateTokenAndCall(accounts[5], options);
+    tx = await whitelistUsing0xList.validateTokenAndCall(accounts[5], options);
     assert.strictEqual(tx.logs.length, 1);
     log = tx.logs[0];
-    debug('Lock zeroXDutchXValidateAndCall log: %o', log);
+    debug('Lock whitelistUsing0xList log: %o', log);
     assert.strictEqual(tx.logs[0].event, 'Update');
     assert.strictEqual(tx.logs[0].args._token, accounts[5]);
     assert.strictEqual(tx.logs[0].args._approved, false);
 
-    tx = await zeroXDutchXValidateAndCall.validateTokensAndCall([accounts[0], accounts[1]], options);
+    tx = await whitelistUsing0xList.validateTokensAndCall([accounts[0], accounts[1]], options);
     assert.strictEqual(tx.logs.length, 2);
     log = tx.logs[0];
-    debug('Lock zeroXDutchXValidateAndCall log: %o', log);
+    debug('Lock whitelistUsing0xList log: %o', log);
     assert.strictEqual(tx.logs[0].event, 'Update');
     assert.strictEqual(tx.logs[0].args._token, accounts[0]);
     assert.strictEqual(tx.logs[0].args._approved, true);
 
     try {
-      await zeroXDutchXValidateAndCall.validateTokensAndCall([accounts[4], accounts[5]], options);
+      await whitelistUsing0xList.validateTokensAndCall([accounts[4], accounts[5]], options);
       assert(false, 'should revert!');
     } catch (ex) {
       let condition = (

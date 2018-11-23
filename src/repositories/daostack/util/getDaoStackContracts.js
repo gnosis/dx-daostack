@@ -29,7 +29,7 @@ const CONTRACTS = [
   'LockingEth4Reputation',
   'LockingToken4Reputation',
   'GenericScheme',
-  'ZeroXDutchXValidateAndCall'
+  'WhitelistUsing0xList'
 ];
 
 async function getDaoStackContracts ({
@@ -41,7 +41,7 @@ async function getDaoStackContracts ({
   if (!contractInstances) {
     contractInstances = contracts.reduce((acc, contractName) => {
       let contractUrl = `${DAO_STACK_BUILD_CONTRACTS_DIR}/${contractName}`
-      if (contractName === 'ZeroXDutchXValidateAndCall') {
+      if (contractName === 'WhitelistUsing0xList') {
         contractUrl = `../../../../build/contracts/${contractName}`;
       }
       // console.log(`Load contract: ${contractUrl}`)

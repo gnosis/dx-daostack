@@ -2,7 +2,7 @@ const assert = require('assert');
 const constants = require('../util/constants');
 
 module.exports = ({
-  ZeroXDutchXValidateAndCall
+  WhitelistUsing0xList
 }) => async ({
   avatarAddress,
   zeroXTokenRegistryContract,
@@ -12,7 +12,7 @@ module.exports = ({
   assert(zeroXTokenRegistryContract, 'zeroXTokenRegistryContract is required');
   assert(dutchXContract, 'dutchXContract is required');
 
-  return ZeroXDutchXValidateAndCall.new(
+  return WhitelistUsing0xList.new(
     avatarAddress,
     zeroXTokenRegistryContract,
     dutchXContract,
