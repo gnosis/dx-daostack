@@ -8,9 +8,16 @@ module.exports = (web3, artifacts) => async (ContractName, dev = USE_DEV_CONTRAC
   // on local development network
   let address
   if (networkId > Date.now() / 10) {
-    address = await _getAddressForLocalGanache({ ContractName, artifacts })
+    address = await _getAddressForLocalGanache({
+      ContractName,
+      artifacts
+    })
   } else {
-    address = await _getAddressFromNpmPachages(ContractName)
+    address = await _getAddressFromNpmPachages({
+      ContractName,
+      dev,
+      networkId
+    })
   }
 
   return address
@@ -25,7 +32,7 @@ async function _getAddressForLocalGanache ({ ContractName, artifacts }) {
   return address
 }
 
-async function _getAddressFromNpmPachages ({ ContractName, dev }) {
+async function _getAddressFromNpmPachages ({ ContractName, dev, networkId }) {
   const networksFile = dev
     ? '@gnosis.pm/dx-contracts/networks-dev.json'
     : '@gnosis.pm/dx-contracts/networks.json'
