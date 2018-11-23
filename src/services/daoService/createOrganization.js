@@ -44,8 +44,8 @@ module.exports = ({
           ...scheme.data,
           avatarAddress: avatar.address
         });
-      case 'ZeroXDutchXValidateAndCall':
-        return daoStackRepo.createSchemeZeroXDutchXValidateAndCall({
+      case 'WhitelistUsing0xList':
+        return daoStackRepo.createSchemeWhitelistUsing0xList({
           ...scheme.data,
           avatarAddress: avatar.address
         });

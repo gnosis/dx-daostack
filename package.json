@@ -12,7 +12,7 @@
     "rpc": "ganache-cli -d",
     "networks-extract": "npx truffle networks --clean && npx tnt extractNetworks",
     "networks-inject": "npx tnt injectNetworks",
-    "networks-reset": "mkdir -p build/contracts && truffle networks --clean && npm run networks-inject",
+    "networks-reset": "truffle networks --clean && npm run networks-inject",
     "compile": "truffle compile",
     "migrate": "truffle migrate",
     "preversion": "npm run restore",

@@ -1,34 +1,32 @@
 pragma solidity ^0.4.24;
 
-import "./0xcontract/TokenRegistry.sol";
+import "../../whitelisting/0x/TokenRegistry.sol";
 import "@daostack/arc/contracts/controller/ControllerInterface.sol";
 
 /**
  * @title A scheme for validate tokens in 0x project TokenRegistry list and update that on dutchX contract
  */
 
-contract ZeroXDutchXValidateAndCall {
-
-
+contract WhitelistUsing0xList {
     event Update(address _token, bool _approved);
 
     Avatar public avatar;
-    TokenRegistry public zeroXTokenRegistryContract;
+    TokenRegistry public tokenRegistry;
     address public dutchXContract;
+
     /**
      * @dev constructor
      * @param _avatar the avatar of the organization.
-     * @param _zeroXTokenRegistryContract the contract which is used for validation.
+     * @param _tokenRegistry the contract which is used for validation.
      * @param _dutchXContract the destination contract which the data will be written to.
-     *
      */
-    constructor(Avatar _avatar,
-                TokenRegistry _zeroXTokenRegistryContract,
-                address _dutchXContract)
-    public
-    {
+    constructor(
+        Avatar _avatar,
+        TokenRegistry _tokenRegistry,
+        address _dutchXContract
+    ) public {
         avatar = _avatar;
-        zeroXTokenRegistryContract = _zeroXTokenRegistryContract;
+        tokenRegistry = _tokenRegistry;
         dutchXContract = _dutchXContract;
     }
 
@@ -66,12 +64,24 @@ contract ZeroXDutchXValidateAndCall {
      */
     function isValid(address _token) public view returns(bool) {
         address tokenAddress;
-        string  memory name;
-        string  memory symbol;
-        uint8   decimal;
-        bytes   memory ipfsHash;
-        bytes   memory swarmHash;
-        (tokenAddress,name,symbol,decimal,ipfsHash,swarmHash) = zeroXTokenRegistryContract.getTokenMetaData(_token);
+        /*
+        string memory name;
+        string memory symbol;
+        uint8 decimal;
+        bytes memory ipfsHash;
+        bytes memory swarmHash;
+        */
+        (
+            tokenAddress,
+            /*
+            name,
+            symbol,
+            decimal,
+            ipfsHash,
+            swarmHash
+            */
+        ) = tokenRegistry.getTokenMetaData(_token);
+
         return (tokenAddress != address(0));
     }
 
@@ -82,11 +92,16 @@ contract ZeroXDutchXValidateAndCall {
      */
     function callDutchX(address[] _tokens,bool _valid) internal {
         ControllerInterface controller = ControllerInterface(Avatar(avatar).owner());
-        bytes memory callData = abi.encodeWithSignature("updateApprovalOfToken(address[],bool)",_tokens,_valid);
+        bytes memory callData = abi.encodeWithSignature(
+            "updateApprovalOfToken(address[],bool)",
+            _tokens,
+            _valid
+        );
 
         controller.genericCall(
-        dutchXContract,
-        callData,
-        avatar);
+            dutchXContract,
+            callData,
+            avatar
+        );
     }
 }
