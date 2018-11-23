@@ -400,6 +400,14 @@
       "transactionHash": "0xcacbaad934701c4ca1807e44e6e99618652b001dd3a2dc865dbccf34077c7164"
     }
   },
+  "DxLockWhitelisted4Rep": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0x892882b566c618E6e83eeF68b7AE51f9d76644a2",
+      "transactionHash": "0xb9c82d2273b536a9e0c5a1b9b5b22af570cb50087bed0fa4b22fb9d66a1f67e5"
+    }
+  },
   "DxRedeemDappconCards": {
     "4": {
       "events": {},
@@ -611,6 +619,14 @@
       "links": {},
       "address": "0x58C9Db789B91eB69ad342a79FEA84B18fa14aE03",
       "transactionHash": "0x8e1daabfc355f7e92f54286c9a74b90ed438d34696662a3bb9d5ce20ae75d7ff"
+    }
+  },
+  "FixedPriceOracle": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0x3B0eab16c4Ca2F88614d8Fc4114AD62E47a6f40F",
+      "transactionHash": "0x5d7fe02c5b1402cad8487942c637b8b74b00dc63d66771a535cfb5b6ada76aef"
     }
   },
   "GenToken": {
