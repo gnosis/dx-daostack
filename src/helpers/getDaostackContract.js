@@ -3,6 +3,8 @@ const networksJSON = require(networksFile)
 // QUESTION: there are only kovan addresses,
 // should we deploy ourselves when on other networks (rikeby)?
 
+const genTokenNetworks = require('../config/gen-token')
+
 const Id2Network = {
   1: 'mainnet',
   2: 'morden',
@@ -20,13 +22,19 @@ const getContract = (web3, artifacts) => async (ContractName) => {
     return Artifact.deployed()
   }
 
+  if (ContractName === 'GenToken') {
+    const address = genTokenNetworks[networkId]
+    if (!address) throw new Error(`No address for GenToken} on network ${networkId} in src/config/gen-token`)
+    return Artifact.at(address)
+  }
+
   const network = Id2Network[networkId]
   if (!network) throw new Error(`Unknown ${networkId}. Unable to retrieve Daostack contract address`)
 
   const ContractsOnNetwork = networksJSON[network]
   if (!ContractsOnNetwork) throw new Error(`No deployed contracts on ${network}`)
 
-  const address = ContractsOnNetwork[ContractName]
+  const address = ContractsOnNetwork.base[ContractName]
   if (!address) throw new Error(`No address for ${ContractName} on network ${network} in ${networksFile}`)
 
   return Artifact.at(address)

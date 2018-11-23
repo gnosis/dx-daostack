@@ -2,37 +2,14 @@
 /* eslint no-undef: "error" */
 const assert = require('assert')
 
+const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
+
+
 module.exports = async function (deployer) {
-  const DxGenesisProtocol = artifacts.require('DxGenesisProtocol')
-  const GenToken = artifacts.require('GenToken')
-
-  // Deploy Genesis Protocol voting machine
-  // CAN ALSO REUSE
-  await deployGenesisProtocol(DxGenesisProtocol, GenToken, deployer)
-
   // Configure Genesis Protocol voting machine
-  await configureGenesisProtocol(DxGenesisProtocol)
-}
-
-async function deployGenesisProtocol(DxGenesisProtocol, GenToken, deployer) {
-  // Get instances
-  const genToken = await GenToken.deployed()
-
-  // Get token symbol
-  const symbol = await genToken.symbol.call()
-
-  // TODO: Are we staking using GEN? (review this part)
-  console.log('Deploying DxGenesisProtocol voting machine')
-  console.log("  - GenesisProtocol implementation. An organization's voting machine scheme.")
-
-  console.log('  - Using ' + symbol + ' Token for staking')
-  console.log('  - Token address: ' + genToken.address)
-  await deployer.deploy(DxGenesisProtocol, genToken.address)
-}
-
-async function configureGenesisProtocol(DxGenesisProtocol) {
   const genesisProtocolConf = require('../src/config/votingMachines/GenesisProtocol')
-  const genesisProtocol = await DxGenesisProtocol.deployed()
+  // reuse GenesisProtocol if available on the network
+  const genesisProtocol = await getDaostackContract('GenesisProtocol')
 
   // Genesis Protocol params:
   //    https://github.com/daostack/infra/blob/master/contracts/VotingMachines/GenesisProtocol.sol#L27
