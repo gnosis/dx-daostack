@@ -39,16 +39,9 @@
   "dependencies": {
     "@daostack/arc": "0.0.0-alpha.56",
     "@daostack/arc.js": "0.0.0-alpha.89",
-<<<<<<< HEAD
-    "@gnosis.pm/dx-contracts": "^1.0.8",
-    "@gnosis.pm/gno-token": "^1.0.2",
-    "@gnosis.pm/util-contracts": "^1.0.2",
-=======
     "@gnosis.pm/dx-contracts": "^2.0.0-SNAPSHOT.5",
     "@gnosis.pm/gno-token": "^1.1.2",
-    "@gnosis.pm/owl-token": "^1.2.2",
     "@gnosis.pm/util-contracts": "1.1.1",
->>>>>>> feature/add-migrations
     "debug": "^4.1.0",
     "truffle-contract": "^3.0.6",
     "truffle-hdwallet-provider": "^1.0.0-web3one.1"
