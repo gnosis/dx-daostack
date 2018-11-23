@@ -7,6 +7,26 @@
       "transactionHash": "0xf3e99335a985e6cb5c8f195af9ee8f7110030bde5f78518b8ae1a511bbba92e8"
     }
   },
+  "TokenRegistry": {
+    "1": {
+      "events": {},
+      "links": {},
+      "address": "0x926a74c5c36adf004c87399e65f75628b0f98d2c",
+      "transactionHash": "0xf8f6fdfed7a5db1c8fa8637b3c67789346c8d111a9437519749e9eb49787283c"
+    },
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0x4E9Aad8184DE8833365fEA970Cd9149372FDF1e6",
+      "transactionHash": "0x63e1c3bcb6b284c67ca6c5c98960aa3f8afee990a68139c822f3942ef7386d26"
+    },
+    "42": {
+      "events": {},
+      "links": {},
+      "address": "0xf18e504561f4347bea557f3d4558f559dddbae7f",
+      "transactionHash": "0x0239a91f3e45c72671ddcf6ca601ea82eb05ba3a1cac266bdcea4e4816e3930f"
+    }
+  },
   "DxAvatar": {
     "4": {
       "events": {
