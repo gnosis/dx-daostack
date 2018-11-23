@@ -44,10 +44,10 @@ async function _getAddressFromNpmPachages ({ ContractName, dev, networkId }) {
     throw new Error(`No ${ContractName} in ${networksFile}`)
   }
 
-  const address = Contract[networkId]
-  if (!address) {
+  const networkInfo = Contract[networkId]
+  if (!networkInfo) {
     throw new Error(`No address for ${ContractName} on network ${networkId} in ${networksFile}`)
   }
 
-  return address
+  return networkInfo.address
 }

@@ -26,8 +26,9 @@ module.exports = async function (deployer) {
 
   const gnoAddress = await getDXContractAddresses('TokenGNO')
 
-  console.log('Deploy FixedPriceOracle for setting the prices for the tokens')
   const dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
+  console.log('Deploy FixedPriceOracle: for setting the prices for the tokens')
+  console.log('  - DutchX address: %s', dutchXContractAddress)
   await deployer.deploy(FixedPriceOracle, dutchXContractAddress)
   
   console.log('Deploy DxLockWhitelisted4Rep that inherits from LockingToken4Reputation') // TODO:
