@@ -198,14 +198,6 @@
       "transactionHash": "0x6649a6ad43a2d859c4e2e0f707be6b93691493e181b5e7d4980ba715a4232db9"
     }
   },
-  "DxContributionReward": {
-    "4": {
-      "events": {},
-      "links": {},
-      "address": "0x8CA066Ece5441E156CAa4f9fC9D7DeddB422Db36",
-      "transactionHash": "0x77899c9ece2a139b3f6104be2748b7a91cf0d330265cc902b65eeae9248933dd"
-    }
-  },
   "DxController": {
     "4": {
       "events": {
@@ -384,14 +376,6 @@
       "transactionHash": "0x9170a9a02652aa0e1033fa910ad79c0df482ce409eeefb4754fbf33e3934902f"
     }
   },
-  "DxGenericScheme": {
-    "4": {
-      "events": {},
-      "links": {},
-      "address": "0xc3f25378db664dA14c992f1e335a75B2DEF7b32A",
-      "transactionHash": "0x40f765bbc6c1f8f75e3329c17f1893e6c115326c91cc731ea3b4490217658624"
-    }
-  },
   "DxGenesisProtocol": {
     "4": {
       "events": {},
@@ -406,14 +390,6 @@
       "links": {},
       "address": "0x0220568fC992981b8506853B74C7B8c300c77091",
       "transactionHash": "0xebe86874c61c13eb10771a6315b499bdae31a95612507c2bdc6ca9ddabb861d6"
-    }
-  },
-  "DxLockGno4Rep": {
-    "4": {
-      "events": {},
-      "links": {},
-      "address": "0x357a9E8167F23F57F29C4c09B8960A9C6253e8Cb",
-      "transactionHash": "0x5edf52938e5f1416cdcb3ea08c31f17b58244abd831e7e6e84967a359283d715"
     }
   },
   "DxLockMgnForRep": {
@@ -653,22 +629,6 @@
       "transactionHash": "0x0377fb9b775186034410130d823805e614206956144f859a228a00b412f3bbbf"
     }
   },
-  "GnoToken": {
-    "4": {
-      "events": {},
-      "links": {},
-      "address": "0xd0dab4e640d95e9e8a47545598c33e31bdb53c7c",
-      "transactionHash": "0x6d142d88799961642e31e3fa14fc7b6f53b494c02ec5c016822c5b2549540026"
-    }
-  },
-  "MgnToken": {
-    "4": {
-      "events": {},
-      "links": {},
-      "address": "0x4edc383adea781762b74e7082c03f423523e61bb",
-      "transactionHash": "0xcaafd2e64aafb84f9f923314a19ca078c040ac3023a467b66fa71eb0031e9d2f"
-    }
-  },
   "Migrations": {
     "4": {
       "events": {},
@@ -691,14 +651,6 @@
       "links": {},
       "address": "0x86DafE98D492345a8Eb7527257b5a29a3C1EFeAB",
       "transactionHash": "0xee31763384940d6e626e6ed25da985ffb975bb1a935611dbb60b307829d45989"
-    }
-  },
-  "WethToken": {
-    "4": {
-      "events": {},
-      "links": {},
-      "address": "0xc778417e063141139fce010982780140aa0cd5ab",
-      "transactionHash": "0x7bc8e85f99556aa23a41dd3c107e92ec76f057e4cea39f376ffb1b15d514b11f"
     }
   }
 }
