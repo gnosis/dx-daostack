@@ -2,6 +2,8 @@
 /* eslint no-undef: "error" */
 
 const devLocalConfig = require('../src/config/dev-local')
+const migrateDx = require('@gnosis.pm/dx-contracts/src/migrations-truffle-1.5')
+
 const assert = require('assert')
 const BN = web3.utils.BN
 
@@ -9,6 +11,17 @@ module.exports = async function (deployer, network, accounts) {
   if (network === 'development') {
     console.log('Deploying some contracts into a local ganche-cli')
     const owner = accounts[0]
+
+    // Deploy DutchX
+    await migrateDx({
+      artifacts,
+      deployer,
+      network,
+      accounts,
+      web3,
+      thresholdNewTokenPairUsd: process.env.THRESHOLD_NEW_TOKEN_PAIR_USD,
+      thresholdAuctionStartUsd: process.env.THRESHOLD_AUCTION_START_USD
+    })
 
     // deploy MGN (FRT), GEN, WETH
     await deployTokens(deployer, owner)
@@ -20,12 +33,11 @@ module.exports = async function (deployer, network, accounts) {
   }
 }
 
-async function deployTokens(deployer, owner) {
-  // TODO: get address from config/networks
+async function deployTokens(deployer) {
   const GenToken = artifacts.require('GenToken') // GEN (Dao Stack)
-  const MgnToken = artifacts.require('TokenFRT') // MGN (Token FRT)
-  const WethToken = artifacts.require('EtherToken') // (Wrapped Ether)
-  const GnoToken = artifacts.require('TokenGNO') // GNO
+  // const MgnToken = artifacts.require('TokenFRT') // MGN (Token FRT)
+  // const WethToken = artifacts.require('EtherToken') // (Wrapped Ether)
+  // const GnoToken = artifacts.require('TokenGNO') // GNO
 
   const { testTokensInitialBalance: initialBalance } = devLocalConfig
   assert(initialBalance, 'testTokensInitialBalance is mandatory')
@@ -36,9 +48,9 @@ async function deployTokens(deployer, owner) {
     'ether'
   )
   await deployer.deploy(GenToken, initialBalanceWei)
-  await deployer.deploy(MgnToken, initialBalanceWei)
-  await deployer.deploy(WethToken, initialBalanceWei)
-  await deployer.deploy(GnoToken, initialBalanceWei)
+  // await deployer.deploy(MgnToken, initialBalanceWei)
+  // await deployer.deploy(WethToken, initialBalanceWei)
+  // await deployer.deploy(GnoToken, initialBalanceWei)
 }
 
 async function deployUniversalControllers(deployer) {
