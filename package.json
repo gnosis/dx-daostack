@@ -19,7 +19,8 @@
     "restore": "rm -rf build && npm run compile && npm run networks-reset",
     "networks": "truffle networks",
     "lint": "eslint .",
-    "solium": "solium --dir ./contracts/"
+    "solium": "solium --dir ./contracts/",
+    "get-0x-list": "truffle exec src/scripts/get-0x-list.js"
   },
   "license": "ISC",
   "devDependencies": {
