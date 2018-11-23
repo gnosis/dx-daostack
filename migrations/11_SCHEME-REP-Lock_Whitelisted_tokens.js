@@ -1,12 +1,13 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
 
-const DxLockGno4Rep = artifacts.require('DxLockGno4Rep')
+const DxLockWhitelisted4Rep = artifacts.require('DxLockWhitelisted4Rep')
+const FixedPriceOracle = artifacts.require('FixedPriceOracle')
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
+const getDXContractAddress = require('../src/helpers/getDXContractAddresses.js')(web3, artifacts)
 const dateUtil = require('../src/helpers/dateUtil')
-
 const registerScheme = require('./helpers/registerScheme')
 
 const {
@@ -25,8 +26,12 @@ module.exports = async function (deployer) {
 
   const gnoAddress = await getDXContractAddresses('TokenGNO')
 
-  console.log('Deploy DxLockGno4Rep that inherits from LockingToken4Reputation')
-  const dxLockGno4Rep = await deployer.deploy(DxLockGno4Rep)
+  console.log('Deploy FixedPriceOracle for setting the prices for the tokens')
+  const dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
+  await deployer.deploy(FixedPriceOracle, dutchXContractAddress)
+  
+  console.log('Deploy DxLockWhitelisted4Rep that inherits from LockingToken4Reputation') // TODO:
+  const dxLockWhitelisted4Rep = await deployer.deploy(DxLockWhitelisted4Rep)
 
   console.log('Configure DxLockGno4Rep')
 
@@ -45,7 +50,7 @@ module.exports = async function (deployer) {
   console.log('  - max locking period:', maxLockingPeriod)
   console.log('  - locking token address (GNO):', gnoAddress)
 
-  await dxLockGno4Rep.initialize(
+  await dxLockWhitelisted4Rep.initialize(
     dxAvatar.address,
     reputationReward,
     dateUtil.toEthereumTimestamp(lockingStartTime),
@@ -57,7 +62,7 @@ module.exports = async function (deployer) {
 
   await registerScheme({
     label: 'DxLockGno4Rep',
-    schemeAddress: dxLockGno4Rep.address,
+    schemeAddress: dxLockWhitelisted4Rep.address,
     avatarAddress: dxAvatar.address,
     controller: dxController,
     web3
