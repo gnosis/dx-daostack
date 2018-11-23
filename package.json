@@ -20,22 +20,25 @@
     "networks": "truffle networks",
     "lint": "eslint .",
     "solium": "solium --dir ./contracts/",
-    "get-0x-list": "truffle exec src/scripts/get-0x-list.js"
+    "get-0x-list": "truffle exec src/scripts/get-0x-list.js",
+    "get-token-prices": "node src/scripts/get-token-prices.js"
   },
   "license": "ISC",
   "devDependencies": {
     "@gnosis.pm/truffle-nice-tools": "^1.2.1",
-    "dotenv": "^6.1.0",
     "babel-eslint": "^10.0.1",
+    "dotenv": "^6.1.0",
     "eslint": "^5.9.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-promise": "^4.0.0",
     "eslint-plugin-standard": "^4.0.0",
+    "got": "^9.3.2",
     "moment-timezone": "^0.5.23",
     "solium": "^1.1.8",
-    "truffle": "^5.0.0-user-level-mnemonic.0"
+    "truffle": "^5.0.0-user-level-mnemonic.0",
+    "yargs": "^12.0.5"
   },
   "dependencies": {
     "@daostack/arc": "0.0.0-alpha.56",

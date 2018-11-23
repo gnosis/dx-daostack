@@ -3,7 +3,6 @@
 
 const fs = require('fs-extra')
 const path = require('path')
-// const assert = require('assert')
 const OUTPUT_DIR = path.join(__dirname, '../resources/0x-whitelist')
 
 // Usage example:
@@ -11,12 +10,14 @@ const OUTPUT_DIR = path.join(__dirname, '../resources/0x-whitelist')
 //  yarn get-0x-list
 
 var argv = require('yargs')
-  .usage('Usage: yarn get-0x-list [--network name]')
+  .usage('Usage: yarn get-0x-list [--network name]')  
   .option('network', {
     type: 'string',
-    default: 'development',
     describe: 'One of the ethereum networks defined in truffle config'
   })
+  .demandOption([
+    'network'
+  ])
   .help('h')
   .strict()
   .argv
@@ -25,7 +26,7 @@ async function main () {
   if (!argv._[0]) {
     argv.showHelp()
   } else {
-    const network = argv.network || 'development'
+    const network = argv.network
     const TokenRegistry = artifacts.require('TokenRegistry')
     const tokenRegisty = await TokenRegistry.deployed()
 
@@ -42,7 +43,6 @@ async function main () {
     console.log('Getting metadata...')
     const tokenInfoPromises = addresses.map(async address => {
       const {
-        0: tokenAddress,
         1: name,
         2: symbol,
         3: decimals,
@@ -51,7 +51,7 @@ async function main () {
       } = await tokenRegisty.getTokenMetaData(address)
 
       return {
-        tokenAddress,
+        address: address,
         name,
         symbol,
         decimals,
