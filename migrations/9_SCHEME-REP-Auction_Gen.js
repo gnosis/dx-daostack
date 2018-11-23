@@ -3,11 +3,11 @@
 const DxAuction4Rep = artifacts.require('DxAuction4Rep')
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
-const GenToken = artifacts.require('GenToken')
 
 const dateUtil = require('../src/helpers/dateUtil')
 
 const registerScheme = require('./helpers/registerScheme')
+const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
 const {
   numberOfAuctions
@@ -24,7 +24,7 @@ const {
 
 module.exports = async function (deployer) {
   // TODO: get address from config/networks/GenesisProtocol.stakingToken()
-  const genToken = await GenToken.deployed()
+  const genToken = await getDaostackContract('GenToken')
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 

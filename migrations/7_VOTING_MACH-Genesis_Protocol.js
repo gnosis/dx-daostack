@@ -7,20 +7,19 @@ const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, 
 
 module.exports = async function (deployer, network) {
   const GenesisProtocol = artifacts.require('GenesisProtocol')
-  const GenToken = artifacts.require('GenToken')
 
   // Deploy Genesis Protocol voting machine
   if (network === 'development') {
-    await deployGenesisProtocol(GenesisProtocol, GenToken, deployer)
+    await deployGenesisProtocol(GenesisProtocol, deployer)
   }
 
   // Configure Genesis Protocol voting machine
   await configureGenesisProtocol(GenesisProtocol)
 }
 
-async function deployGenesisProtocol(GenesisProtocol, GenToken, deployer) {
+async function deployGenesisProtocol(GenesisProtocol, deployer) {
   // Get instances
-  const genToken = await GenToken.deployed()
+  const genToken = await getDaostackContract('GenToken')
 
   // Get token symbol
   const symbol = await genToken.symbol.call()
