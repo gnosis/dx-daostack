@@ -13,22 +13,32 @@ async function getAux (path) {
   return response.body
 }
 
-async function getPrices () {
+async function getPrices (tokens) {
   const pricesInfo = await getAux('/tokens/pairs')
 
   const markets = Object.keys(pricesInfo)
 
-  return markets.reduce((prices, market) => {
+  const priceByAddress = markets.reduce((prices, market) => {
     const { contractAddress: address , ...priceInfo } = pricesInfo[market]
+    const addressLower = address.toLowerCase()
+    
+    // Is one of the requested tokens
+    const isRequestedToken = tokens.some(
+      ({ address }) => address.toLowerCase() === addressLower
+    )
 
-    prices[address.toLowerCase()] = {
-      address,
-      ...priceInfo,
-      market
+    if (isRequestedToken) {
+      prices[addressLower] = {
+        address,
+        ...priceInfo,
+        market
+      }
     }
 
     return prices
   }, {})
+
+  return priceByAddress
 }
 
 module.exports = {
