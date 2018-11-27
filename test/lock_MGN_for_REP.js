@@ -13,6 +13,8 @@ const {
   getTimestamp
 } = require('../src/helpers/web3helpers')(web3)
 
+const LOCK_AMOUNT = 20
+
 contract('Locking MGN for REP', accounts => {
   let MGN, DxLock4Rep, DxRep
   let master
@@ -35,7 +37,7 @@ contract('Locking MGN for REP', accounts => {
   it('can\'t lock through the scheme initially', async () => {
     const lockedMGN = await MGN.lockedTokenBalances.call(master)
     console.log('locked MGN: ', lockedMGN.toString())
-    assert(lockedMGN.eq(new BN(0)), 'shouldn\t have any MGN locked initially')
+    assert(lockedMGN.eq(new BN(0)), 'shouldn\'t have any MGN locked initially')
     try {
       await DxLock4Rep.lock({ from: master })
       // should be unreachable
@@ -45,24 +47,26 @@ contract('Locking MGN for REP', accounts => {
     }
   })
 
-  it('can lock MGN tokens', async () => {
+  it('can lock or mint MGN tokens', async () => {
     const balance = await MGN.balanceOf(master)
     console.log('MGN balance: ', balance.toString())
-    assert(balance.gt(0), 'balance should not be 0')
 
     const lockedTokensBefore = await MGN.lockedTokenBalances.call(master)
     console.log('lockedTokensBefore: ', lockedTokensBefore.toString())
 
-    const lockAmount = 20
-
-    await MGN.lockTokens(lockAmount)
+    if (balance.lt(new BN(LOCK_AMOUNT))) {
+      // minted tokens are added to lockedBalances
+      await mintTokensFor(MGN, master, accounts, LOCK_AMOUNT)
+    } else {
+      await MGN.lockTokens(LOCK_AMOUNT)
+    }
 
     const lockedTokensAfter = await MGN.lockedTokenBalances.call(master)
     console.log('lockedTokensAfter: ', lockedTokensAfter.toString())
 
     const diff = lockedTokensAfter.sub(lockedTokensBefore)
 
-    assert(diff.eq(new BN(lockAmount)), 'the exact amount should be locked')
+    assert(diff.eq(new BN(LOCK_AMOUNT)), 'the exact amount should be locked')
   })
 
   it('can\'t lock through the scheme before lockingStartTime', async () => {
@@ -187,3 +191,31 @@ contract('Locking MGN for REP', accounts => {
     }
   })
 })
+
+async function mintTokensFor(Token, address, accounts, amount) {
+  const oldMinter = await Token.minter()
+
+  let minter = oldMinter
+  let owner
+
+  // if minter not available in accounts
+  if (!accounts.includes(minter)) {
+    // check owner
+    owner = await Token.owner()
+
+    // owner not available in accounts, nothing we can do
+    if (!accounts.includes(owner)) throw new Error(`
+      Neither Token owner nor minter are among available addresses.
+      Unable to get tokens for sunsequent locking. Terminating.
+    `)
+
+    // switch to an available account as minter
+    await Token.updateMinter(owner, { from: owner })
+    minter = owner
+  }
+
+  await Token.mintTokens(address, amount, { from: minter })
+
+  // switch minter back if needed
+  if (minter !== oldMinter) await Token.updateMinter(oldMinter, { from: owner })
+}
