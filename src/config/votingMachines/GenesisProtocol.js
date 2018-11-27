@@ -73,5 +73,5 @@ module.exports = {
   daoBountyLimit: 10,
 
   // This address is allowed to vote on behalf of someone else
-  voteOnBehalf: 0
+  voteOnBehalf: '0x0000000000000000000000000000000000000000'
 }
