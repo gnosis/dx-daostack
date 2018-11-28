@@ -48,6 +48,17 @@ contract FixedPriceOracle {
     }
     
     function getPrice(address token) public view returns (uint, uint) {
+        bool memory approvedToken = whitelist.approvedTokens(token);
+
+        if (approvedToken) {
+            return getPriceValue(token);
+        } else {
+            return (0, 0);
+        }
+
+    }
+
+    function getPriceValue(address token) public view returns (uint, uint) {
         Price memory price = prices[token];
         return (price.numerator, price.denominator);
     }
