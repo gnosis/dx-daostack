@@ -13,7 +13,7 @@ async function getAux (path) {
   return response.body
 }
 
-async function getPrices (tokens) {
+async function getPrices ({ tokens }) {
   const pricesInfo = await getAux('/tokens/pairs')
 
   const markets = Object.keys(pricesInfo)

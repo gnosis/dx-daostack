@@ -11,7 +11,9 @@ const OUTPUT_DIR = path.join(__dirname, '../resources/token-prices')
 // Price feeds
 const kyberPriceFeed = require('./helpers/kyberPriceFeed')
 const zeroXPriceFeed = require('./helpers/zeroXPriceFeed')
+const cryptoComparePriceFeed = require('./helpers/cryptoComparePriceFeed')
 
+const USE_CRYPTO_COMPARE = true
 const USE_KYBER = true
 const USE_0X = true
 
@@ -46,38 +48,59 @@ async function main () {
 
 
   console.log('Getting prices...')
-  let kyberPrices
-  let zeroXPrices
+  let kyberPrices, zeroXPrices, cryptoComparePrices
 
   if (USE_KYBER) {
-    kyberPrices = await kyberPriceFeed.getPrices(tokens)
+    kyberPrices = await kyberPriceFeed.getPrices({
+      tokens
+    })
     console.log('Kyber has %d prices', Object.keys(kyberPrices).length)
   }
   if (USE_0X) {
-    zeroXPrices = await zeroXPriceFeed.getPrices(tokens)
+    const etherPriceInUsd = await cryptoComparePriceFeed.getEtherPrice('USD')
+
+    zeroXPrices = await zeroXPriceFeed.getPrices({
+      tokens,
+      etherPriceInUsd
+    })
     console.log('Ox has %d prices', Object.keys(zeroXPrices).length)
+  }
+  if (USE_CRYPTO_COMPARE) {
+    cryptoComparePrices = await cryptoComparePriceFeed.getPrices({
+      tokens
+    })
+    console.log('Crypto Compare has %d prices', Object.keys(cryptoComparePrices).length)
   }
 
 
   
   const tokenInfoPromises = tokens.map(async token => {
     const { address, name, symbol } = token
+    const addressLowercase = address.toLowerCase()
+    // Get Crypto Compare prices
+    let priceInfoCryptoCompare
+    if (cryptoComparePrices) {
+      priceInfoCryptoCompare = cryptoComparePrices[addressLowercase] || null
+    }
+
     // Get kyber prices
     let priceInfoKyber
     if (kyberPrices) {
-      priceInfoKyber = kyberPrices[address.toLowerCase()] || null
+      priceInfoKyber = kyberPrices[addressLowercase] || null
     }
 
     // Get 0x prices
     let priceInfo0x
     if (zeroXPrices) {
-      priceInfo0x = zeroXPrices[address.toLowerCase()] || null
+      priceInfo0x = zeroXPrices[addressLowercase] || null
     }
     
-    // TODO: Decide which price to use
     let priceSource = null
     let price = null
-    if (priceInfoKyber && priceInfoKyber.currentPrice) {
+    if (priceInfoCryptoCompare && priceInfoCryptoCompare.price) {
+      priceSource = 'crypto compare'
+      price = priceInfoCryptoCompare.price
+    } else if (priceInfoKyber && priceInfoKyber.currentPrice) {
       priceSource = 'kyber'
       price = priceInfoKyber.currentPrice
     } else if (priceInfo0x && priceInfo0x.lastPrice) {
@@ -93,7 +116,8 @@ async function main () {
       price,
       details: {
         kyber: priceInfoKyber,
-        zeroX: priceInfo0x
+        zeroX: priceInfo0x,
+        cryptoCompare: priceInfoCryptoCompare
       }
     }
   })
@@ -116,7 +140,7 @@ async function main () {
     return total
   }, 0)
   console.log(
-    'Found %d prices out of %d tokens: %d%',
+    '\nFound %d prices out of %d tokens: %d%',
     numTokensWithPrice,
     tokens.length,
     Math.round(100 * numTokensWithPrice / tokens.length)

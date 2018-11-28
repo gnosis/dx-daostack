@@ -13,38 +13,40 @@ async function getAux (path) {
   return response.body
 }
 
-async function getPrices (tokens) {
-  // const coinListRaw = require('../')
-  // Object.keys.
-
-  // const pricesInfoPromises = tokens.map(token => {
-  //   return getAux('/tokens/' + token.address.toLowerCase())
-  //     .catch(error => {
-  //       if (error.statusCode === 404) {
-  //         return null
-  //       }
-
-  //       throw error
-  //     })
-  // })
-  // const pricesInfo = await Promise.all(pricesInfoPromises)
-
-  // const priceByAddress = pricesInfo.reduce((prices, pricesInfo) => {
-  //   if (pricesInfo) {
-  //     prices[pricesInfo.address.toLowerCase()] = {
-  //       ...pricesInfo,
-  //       lastPrice: pricesInfo.price.lastPrice        
-  //     }
-  //   }
-
-  //   return prices
-  // }, {})
+async function getPrices ({ tokens }) {
+  const allTokensInfo = require('../../resources/crypto-compare/tokens')
   
-  // return priceByAddress
-}
+  // Ger token info for the tokens
+  const tokenInfoPromises = tokens.map(async token => {
+    const addressLowercase = token.address.toLowerCase()
+    const tokenInfo = allTokensInfo[addressLowercase]
 
-async function _getTokenInfo({ coinList, token }) {
-  coinList.Data.find()
+    if (tokenInfo) {
+      const price = await getPriceBySymbol(tokenInfo.Symbol)
+  
+      return {
+        ...tokenInfo,
+        address: token.address,
+        price: price.ETH
+      }
+    } else {
+      return null
+    }
+  })
+  let tokensInfo = await Promise.all(tokenInfoPromises)
+
+  // Discard the tokens without info
+  tokensInfo = tokensInfo.filter(tokenInfo => tokenInfo !== null)
+
+  const priceByAddress = tokensInfo.reduce((acc, tokenInfo) => {
+    if (tokenInfo) {
+      acc[tokenInfo.address.toLowerCase()] = tokenInfo
+    }
+
+    return acc
+  })
+
+  return priceByAddress
 }
 
 // Ether price
@@ -65,10 +67,12 @@ async function geExchanges () {
   return getAux('/all/exchanges')
 }
 
-async function getEtherPrice () {
+async function getEtherPrice (priceUnits = 'USD') {
   // Ether price
   // https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,JPY,EUR
-  return getAux('/price?fsym=ETH&tsyms=USD')    
+  const price = await getAux('/price?fsym=ETH&tsyms=' + priceUnits)
+  
+  return price[priceUnits]
 }
 
 module.exports = {

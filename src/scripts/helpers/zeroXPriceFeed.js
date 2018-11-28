@@ -13,7 +13,7 @@ async function getAux (path) {
   return response.body
 }
 
-async function getPrices (tokens) {
+async function getPrices ({ tokens, etherPriceInUsd }) {
   // Get the info for all the tokens
   //  i.e. https://api.0xtracker.com/tokens/0x6810e776880c02933d47db1b9fc05908e5386b96? 
   const pricesInfoPromises = tokens.map(token => {
@@ -32,7 +32,8 @@ async function getPrices (tokens) {
     if (pricesInfo) {
       prices[pricesInfo.address.toLowerCase()] = {
         ...pricesInfo,
-        lastPrice: pricesInfo.price.lastPrice        
+        lastPrice: pricesInfo.price.lastPrice / etherPriceInUsd, // Price should be expressed in ETH not USD
+        etherPriceInUsd
       }
     }
 
