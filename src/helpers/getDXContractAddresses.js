@@ -1,6 +1,7 @@
 const USE_DEV_CONTRACTS = process.env.USE_DEV_CONTRACTS
 
 const gnoNetworksJSON = require('@gnosis.pm/gno-token/networks.json')
+const wethNetworksJSON = require('@gnosis.pm/util-contracts/networks.json')
 
 module.exports = (web3, artifacts) => async (ContractName, dev = USE_DEV_CONTRACTS) => {
   const networkId = await web3.eth.net.getId()
@@ -37,7 +38,7 @@ async function _getAddressFromNpmPachages ({ ContractName, dev, networkId }) {
     ? '@gnosis.pm/dx-contracts/networks-dev.json'
     : '@gnosis.pm/dx-contracts/networks.json'
 
-  const networksJSON = Object.assign(require(networksFile), gnoNetworksJSON)
+  const networksJSON = Object.assign(require(networksFile), gnoNetworksJSON, wethNetworksJSON)
 
   const Contract = networksJSON[ContractName]
   if (!Contract) {

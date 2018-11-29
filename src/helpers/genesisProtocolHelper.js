@@ -21,15 +21,15 @@ const { voteOnBehalf } = genesisProtocolConf
 const parameters = parameterNames.map(parameterName => genesisProtocolConf[parameterName])
 
 module.exports = artifacts => {
-  const DxGenesisProtocol = artifacts.require('DxGenesisProtocol')
+  const GenesisProtocol = artifacts.require('GenesisProtocol')
 
-  async function getGenesisProtocolData () {
-    const dxGenesisProtocol = await DxGenesisProtocol.deployed()
-    const genesisProtocolParamsHash = await dxGenesisProtocol.getParametersHash(parameters, voteOnBehalf)
+  async function getGenesisProtocolData() {
+    const genesisProtocol = await GenesisProtocol.deployed()
+    const genesisProtocolParamsHash = await genesisProtocol.getParametersHash(parameters, voteOnBehalf)
 
     return {
       genesisProtocolParamsHash,
-      genesisProtocolAddress: dxGenesisProtocol.address
+      genesisProtocolAddress: genesisProtocol.address
     }
   }
 

@@ -4,6 +4,8 @@
 const devLocalConfig = require('../src/config/dev-local')
 const migrateDx = require('@gnosis.pm/dx-contracts/src/migrations-truffle-1.5')
 
+const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
+
 const assert = require('assert')
 const BN = web3.utils.BN
 
@@ -27,12 +29,14 @@ module.exports = async function (deployer, network, accounts) {
     const TokenRegistry = artifacts.require('TokenRegistry')
     deployer.deploy(TokenRegistry)
     
-    
     // deploy MGN (FRT), GEN, WETH
     await deployTokens(deployer, owner)
 
     // Deploy DaoStack Universal Controllers
     await deployUniversalControllers(deployer)
+
+    // Deploy GenesisProtocol
+    await deployGenesisProtocol(deployer)
   } else {
     console.log('Not in development, so nothing to do. Current network is %s', network)
   }
@@ -41,7 +45,7 @@ module.exports = async function (deployer, network, accounts) {
 async function deployTokens(deployer) {
   const GenToken = artifacts.require('GenToken') // GEN (Dao Stack)
   // const MgnToken = artifacts.require('TokenFRT') // MGN (Token FRT)
-  // const WethToken = artifacts.require('WethToken') // (Wrapped Ether)
+  // const WethToken = artifacts.require('EtherToken') // (Wrapped Ether)
   // const GnoToken = artifacts.require('TokenGNO') // GNO
 
   const { testTokensInitialBalance: initialBalance } = devLocalConfig
@@ -87,4 +91,21 @@ async function deployUniversalControllers(deployer) {
     on a specific contract on behalf of the organization avatar`
   )
   await deployer.deploy(GenericScheme)
+}
+
+async function deployGenesisProtocol(deployer) {
+  const GenesisProtocol = artifacts.require('GenesisProtocol')
+  // Get instances
+  const genToken = await getDaostackContract('GenToken')
+
+  // Get token symbol
+  const symbol = await genToken.symbol.call()
+
+  // TODO: Are we staking using GEN? (review this part)
+  console.log('Deploying GenesisProtocol voting machine')
+  console.log("  - GenesisProtocol implementation. An organization's voting machine scheme.")
+
+  console.log('  - Using ' + symbol + ' Token for staking')
+  console.log('  - Token address: ' + genToken.address)
+  await deployer.deploy(GenesisProtocol, genToken.address)
 }
