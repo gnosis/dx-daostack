@@ -1,6 +1,6 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
-const DxAuction4Rep = artifacts.require('DxAuction4Rep')
+const DxGenAuction4Rep = artifacts.require('DxGenAuction4Rep')
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
@@ -28,11 +28,11 @@ module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  console.log('Deploy DxAuction4Rep that inherits from Auction4Reputation')
-  const dxAuction4Rep = await deployer.deploy(DxAuction4Rep)
+  console.log('Deploy DxGenAuction4Rep that inherits from Auction4Reputation')
+  const dxGenAuction4Rep = await deployer.deploy(DxGenAuction4Rep)
   console.log('  - Scheme for conducting ERC20 Tokens auctions for reputation')
 
-  console.log('Configure DxAuction4Rep')
+  console.log('Configure DxGenAuction4Rep')
 
   const redeemEnableTime = auctionEndTime
 
@@ -48,7 +48,7 @@ module.exports = async function (deployer) {
   console.log('  - Staking token address (GEN):', genToken.address)
   console.log('  - wallet address (DxAvatar.address): ', walletAddress)
 
-  await dxAuction4Rep.initialize(
+  await dxGenAuction4Rep.initialize(
     dxAvatar.address,
     reputationReward,
     dateUtil.toEthereumTimestamp(auctionStartTime),
@@ -60,8 +60,8 @@ module.exports = async function (deployer) {
   )
 
   await registerScheme({
-    label: 'DxAuction4Rep',
-    schemeAddress: dxAuction4Rep.address,
+    label: 'DxGenAuction4Rep',
+    schemeAddress: dxGenAuction4Rep.address,
     avatarAddress: dxAvatar.address,
     controller: dxController,
     web3
