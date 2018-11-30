@@ -146,7 +146,7 @@ async function getTokensToUpdate ({
   const actualPrices = await Promise.all(actualPricePromises)
 
   const { tokensAlreadyUpdated, tokensToUpdate } = actualPrices.reduce((acc, token) => {
-    console.log('%s: %s = %s? %s', token.symbol, token.price, token.priceContract, token.price.equals(token.priceContract))
+    // console.log('%s: %s = %s? %s', token.symbol, token.price, token.priceContract, token.price.equals(token.priceContract))
     if (token.price.equals(token.priceContract)) {
       acc.tokensAlreadyUpdated.push(token)
     } else {
@@ -160,7 +160,7 @@ async function getTokensToUpdate ({
 
   if (tokensAlreadyUpdated.length > 0) {
     console.log(
-      '%d tokens are already updated:\n%s',
+      '%d tokens are already updated:\n  %s',
       tokensAlreadyUpdated.length,
       tokensAlreadyUpdated.map(token => token.symbol).join(', ')
     )
@@ -170,12 +170,12 @@ async function getTokensToUpdate ({
 
   if (tokensToUpdate.length > 0) {
     console.log(
-      '\n%d tokens need to be updated:\n%s',
+      '\n%d tokens need to be updated:\n  %s',
       tokensToUpdate.length,
       tokensToUpdate.map(token => token.symbol).join(', ')
     )
   } else {
-    console.log('All tokens are already updated')
+    console.log("\nThere's nothing to do")
   }
 
   return tokensToUpdate
