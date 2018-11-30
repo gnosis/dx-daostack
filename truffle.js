@@ -1,6 +1,6 @@
 const assert = require('assert')
 const HDWalletProvider = require('truffle-hdwallet-provider')
-const DEFAULT_GAS_PRICE_GWEI = 5
+const GAS_PRICE_GWEI = process.env.GAS_PRICE_GWEI || 10
 const GAS_LIMIT = 6.5e6
 
 const DEFAULT_MNEMONIC = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
@@ -18,7 +18,7 @@ if (!privateKey && !mnemonic) {
 function truffleConfig ({
   mnemonic = DEFAULT_MNEMONIC,
   privateKey,
-  gasPriceGWei = DEFAULT_GAS_PRICE_GWEI,
+  gasPriceGWei = GAS_PRICE_GWEI,
   gas = GAS_LIMIT,
   optimizedEnabled = true,
   urlRinkeby = 'https://rinkeby.infura.io/',

@@ -1,14 +1,21 @@
-/* global artifacts, Promise */
+/* global artifacts, Promise, web3 */
 /* eslint no-undef: "error" */
 
+const FixedPriceOracle = artifacts.require('FixedPriceOracle')
 const path = require('path')
-const fs = require('fs-extra')
+const dateUtil = require('../helpers/dateUtil')
+const Fraction = require('fractional').Fraction
+// const BN = web3.utils.BN
 // const assert = require('assert')
-const PRICES_DIR = path.join(__dirname, '../resources/token-prices')
+
+const GAS = 16e5
+
+// How many prices we update at once
+const DEFAULT_BATCH = 50
 
 // Usage example:
 //  yarn yarn update-price-oracle -h
-//  yarn update-price-oracle
+//  yarn update-price-oracle -f ./src/resources/token-prices/priceOracle-prices-mainnet.json --network rinkeby  --dry-run
 
 const argv = require('yargs')
   .usage('Usage: yarn update-price-oracle [--network name]')
@@ -17,43 +24,127 @@ const argv = require('yargs')
     describe: 'One of the ethereum networks defined in truffle config'
   })
   .demandOption([
-    'network'
+    'network',
+    'f'
   ])
+  .option('f', {
+    type: 'string',
+    demandOption: true,
+    describe: 'File with the that will be set to the price oracle'
+  })
+  .option('dryRun', {
+    type: 'boolean',
+    default: false,
+    describe: 'Dry run. Do not update the price oracle, do just the validations.'
+  })
+  .option('batchSize', {
+    type: 'integer',
+    default: DEFAULT_BATCH,
+    describe: 'How many prices are approved at once'
+  })
   .help('h')
   .strict()
   .argv
 
-console.log(argv)
-
 async function main () {
-  const network = argv.network
-  const { tokens } = require(path.join(PRICES_DIR, `prices-${network}.json`))
-  const tokensWithPrices = tokens.filter(token => token.price !== null && token.price > 0)
+  const { f, network, dryRun, batchSize } = argv
+  const pricesFile = path.join('../..', f)
+  const { tokens, lastCheck } = require(pricesFile)
 
   console.log('\n **************  Update price oracle  **************\n')
   console.log(`Data:
     Network: ${network}
+    Prices file: ${f}
+    Prices date: ${dateUtil.formatDateTime(lastCheck)}
     Number of tokens: ${tokens.length}
-    Number of with prices: ${tokensWithPrices.length}
-    Percentage of token with prices: ${Math.round(100 * tokensWithPrices.length / tokens.length)}%
+
+    Dry run: ${dryRun ? 'Yes' : 'No'}
+    Batch size: ${batchSize}
 `)
 
-  tokensWithPrices.forEach(({
+  const fixedPriceOracle = await FixedPriceOracle.deployed()
+
+  // Get the actual prices for the tokens in the smart contract
+  const actualPricePromises = tokens.map(async token => {
+    const { price: priceDecimal, ...tokenFields } = token
+
+    // Get current price
+    const { 
+      0: numeratorBn,
+      1: denominatorBn 
+    } = await fixedPriceOracle.getPriceValue(token.address) // { 0: 389, 1: 2500 }
+    const numerator = numeratorBn.toNumber()
+    let denominator = denominatorBn.toNumber()
+    
+    if (numerator === 0 && denominator === 0) {
+       // A 0/0 means it's not initialized, so we assign the fraction 0/1 = 0
+       denominator = 1
+    }
+    const priceContract = new Fraction(
+      numerator,
+      denominator
+    )
+
+    // Get actual price
+    const price = new Fraction(priceDecimal)
+
+    return {
+      ...tokenFields,
+      priceDecimal,
+      price,
+      priceContract
+    }
+  })
+
+  // Wait for all the prices of the tokens
+  const actualPrices = await Promise.all(actualPricePromises)
+
+  const { tokensAlreadyUpdated, tokensToUpdate } = actualPrices.reduce((acc, token) => {
+    if (token.price.equals(token.priceContract)) {
+      acc.tokensAlreadyUpdated.push(token)
+    } else {
+      acc.tokensToUpdate.push(token)
+    }
+    return acc
+  }, {
+    tokensAlreadyUpdated: [],
+    tokensToUpdate: []
+  })
+
+  if (tokensAlreadyUpdated.length > 0) {
+    console.log(
+      '%d tokens are already updated:\n%s',
+      tokensAlreadyUpdated.length,
+      tokensAlreadyUpdated.map(token => token.symbol).join(', ')
+    )
+  } else {
+    console.log('All tokens need to be updated')
+  }
+
+  if (tokensToUpdate.length > 0) {
+    console.log(
+      '\n%d tokens need to be updated:\n%s',
+      tokensToUpdate.length,
+      tokensToUpdate.map(token => token.symbol).join(', ')
+    )
+  } else {
+    console.log('All tokens are already updated')
+  }
+  
+  tokensToUpdate.slice(0, 5).forEach(({
     address,
     name, 
-    symbol, 
-    priceSource, 
+    symbol,
+    priceContract,
     price
   }) => {
     console.log('  %s (%s)', name, symbol)
     console.log('    - address: %s', address)
+    console.log('    - contract price: %s', priceContract)
     console.log('    - price: %s', price)
-    console.log('    - priceSource: %s', priceSource)
   })
 }
 
-// module.exports = callback => {
-//   main().then(callback).catch(callback)
-// }
-
-main().catch(console.error)
+module.exports = callback => {
+  main().then(callback).catch(callback)
+}

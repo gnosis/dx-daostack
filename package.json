@@ -23,7 +23,7 @@
     "get-0x-list": "truffle exec src/scripts/get-0x-list.js",
     "get-cryptocompare-tokens": "node src/scripts/get-cryptocompare-tokens",
     "get-token-prices": "node src/scripts/get-token-prices.js",
-    "update-price-oracle": "node src/scripts/update-price-oracle.js"
+    "update-price-oracle": "truffle exec src/scripts/update-price-oracle.js"
   },
   "license": "ISC",
   "devDependencies": {
@@ -36,11 +36,12 @@
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-promise": "^4.0.0",
     "eslint-plugin-standard": "^4.0.0",
+    "fractional": "^1.0.0",
     "got": "^9.3.2",
     "moment-timezone": "^0.5.23",
     "solium": "^1.1.8",
-    "yargs": "^12.0.5",
-    "truffle": "^5.0.0-beta.2"
+    "truffle": "^5.0.0-beta.2",
+    "yargs": "^12.0.5"
   },
   "dependencies": {
     "@daostack/arc": "0.0.0-alpha.56",

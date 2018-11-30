@@ -1,5 +1,32 @@
 {
   "network": "rinkeby",
   "lastCheck": "2018-11-30T12:25:47.669Z",
-  "tokens": []
+  "tokens": [{
+    "address": "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
+    "name": "0x Protocol Token",
+    "symbol": "ZRX",
+    "price": 0,
+    "priceSource": "crypto compare"
+  },
+  {
+    "address": "0x4156D3342D5c385a87D264F90653733592000581",
+    "name": "Salt",
+    "symbol": "SALT",
+    "price": 0.001966,
+    "priceSource": "crypto compare"
+  },
+  {
+    "address": "0x05f4a42e251f2d52b8ed15E9FEdAacFcEF1FAD27",
+    "name": "Zilliqa",
+    "symbol": "ZIL",
+    "price": 0.0001442,
+    "priceSource": "crypto compare"
+  },
+  {
+    "address": "0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A",
+    "name": "Digix DAO Token",
+    "symbol": "DGD",
+    "price": 0.1556,
+    "priceSource": "crypto compare"
+  }]
 }
