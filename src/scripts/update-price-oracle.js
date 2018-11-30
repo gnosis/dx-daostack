@@ -64,28 +64,74 @@ async function main () {
 
   const fixedPriceOracle = await FixedPriceOracle.deployed()
 
+  // Get the subset of tokens that needs to be updated
+  const tokensToUpdate = await getTokensToUpdate({
+    fixedPriceOracle,
+    tokens
+  })
+
+  // Get the subset of tokens that needs to be updated
+  const tokenBatches = await getUpdateBatches(tokensToUpdate, batchSize)
+
+  // Update the prices in batches
+  for (let i=0; i< tokenBatches.length; i++) {
+    const tokenBatch = tokenBatches[i]
+
+    console.log('\n***********  update prices (%d/%d)  ************** ',
+      (i + 1), tokenBatches.length)
+
+    tokensToUpdate.slice(0, 5).forEach(({
+      address,
+      symbol,
+      priceContract,
+      price
+    }) => {
+      console.log('  - %s (%s) from %s to %s', symbol, address, priceContract, price)
+    })
+
+    const { tokens, numerators, denominators } = tokenBatch.reduce((acc, { address, price }) => {
+      acc.tokens.push(address)
+      acc.numerators.push(price.numerator)
+      acc.denominators.push(price.denominator)
+
+      return acc
+    }, {
+      tokens: [],
+      numerators: [],
+      denominators: []
+    })
+
+
+    // console.log('tokens', tokens)
+    // console.log('numerators', numerators)
+    // console.log('denominators', denominators)
+    if (dryRun) {
+      await fixedPriceOracle.setPrices.call(tokens, numerators, denominators)
+      console.log('Dry run: %d token prices call succeed', tokenBatch.length)
+    } else {
+      const setPriceResult = await fixedPriceOracle.setPrices(tokens, numerators, denominators)
+      console.log('%d token prices were updated. Transaction: %s', tokenBatch.length, setPriceResult.tx)
+    }
+  }
+
+  console.log('\n **************  All prices were updated  **************\n')
+}
+
+async function getTokensToUpdate ({
+  fixedPriceOracle,
+  tokens
+}) {
   // Get the actual prices for the tokens in the smart contract
   const actualPricePromises = tokens.map(async token => {
     const { price: priceDecimal, ...tokenFields } = token
 
-    // Get current price
-    const { 
-      0: numeratorBn,
-      1: denominatorBn 
-    } = await fixedPriceOracle.getPriceValue(token.address) // { 0: 389, 1: 2500 }
-    const numerator = numeratorBn.toNumber()
-    let denominator = denominatorBn.toNumber()
-    
-    if (numerator === 0 && denominator === 0) {
-       // A 0/0 means it's not initialized, so we assign the fraction 0/1 = 0
-       denominator = 1
-    }
-    const priceContract = new Fraction(
-      numerator,
-      denominator
-    )
+    // Get price in the contract
+    const priceContract = await getPriceValue({
+      address: token.address,
+      fixedPriceOracle
+    })
 
-    // Get actual price
+    // Get price
     const price = new Fraction(priceDecimal)
 
     return {
@@ -100,6 +146,7 @@ async function main () {
   const actualPrices = await Promise.all(actualPricePromises)
 
   const { tokensAlreadyUpdated, tokensToUpdate } = actualPrices.reduce((acc, token) => {
+    console.log('%s: %s = %s? %s', token.symbol, token.price, token.priceContract, token.price.equals(token.priceContract))
     if (token.price.equals(token.priceContract)) {
       acc.tokensAlreadyUpdated.push(token)
     } else {
@@ -130,19 +177,40 @@ async function main () {
   } else {
     console.log('All tokens are already updated')
   }
+
+  return tokensToUpdate
+}
+
+async function getPriceValue({
+  address,
+  fixedPriceOracle
+}) {
+  const { 
+    0: numeratorBn,
+    1: denominatorBn 
+  } = await fixedPriceOracle.getPriceValue(address) // { 0: 389, 1: 2500 }
+  const numerator = numeratorBn.toNumber()
+  let denominator = denominatorBn.toNumber()
   
-  tokensToUpdate.slice(0, 5).forEach(({
-    address,
-    name, 
-    symbol,
-    priceContract,
-    price
-  }) => {
-    console.log('  %s (%s)', name, symbol)
-    console.log('    - address: %s', address)
-    console.log('    - contract price: %s', priceContract)
-    console.log('    - price: %s', price)
-  })
+  if (numerator === 0 && denominator === 0) {
+     // A 0/0 means it's not initialized, so we assign the fraction 0/1 = 0
+     denominator = 1
+  }
+  return new Fraction(
+    numerator,
+    denominator
+  )
+}
+
+function getUpdateBatches(tokens, batchSize = DEFAULT_BATCH) {
+  const batches = []
+
+  for (let i=0; i < tokens.length; i += batchSize) {
+      const batch = tokens.slice(i, i + batchSize)
+      batches.push(batch)
+  }
+
+  return batches
 }
 
 module.exports = callback => {
