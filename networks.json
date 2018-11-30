@@ -396,14 +396,6 @@
       "transactionHash": "0x9170a9a02652aa0e1033fa910ad79c0df482ce409eeefb4754fbf33e3934902f"
     }
   },
-  "DxGenesisProtocol": {
-    "4": {
-      "events": {},
-      "links": {},
-      "address": "0xa714D217a440bf65B5D4c8026a5D66b8858275a3",
-      "transactionHash": "0xbf198a3a7c11413ba9ba0e8298cdbb5abf7c7759169d4d02ba1c15f631ac1a46"
-    }
-  },
   "DxLockEth4Rep": {
     "4": {
       "events": {},
