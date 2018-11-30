@@ -68,7 +68,7 @@ contract FixedPriceOracle {
         uint[] numerators,
         uint[] denominators
     ) public onlyOwner notFrozen {
-        for (uint i = 1 ; i < tokens.length ; i++) {
+        for (uint i = 0 ; i < tokens.length ; i++) {
             address token = tokens[i];
             uint numerator = numerators[i];
             uint denominator = denominators[i];
