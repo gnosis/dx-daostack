@@ -34,8 +34,6 @@ const argv = require('yargs')
   .strict()
   .argv
 
-console.log(argv)
-
 async function main () {
   const network = argv.network
   const { tokens } = require(path.join(WHITELIST_DIR, `info0xList-${network}.json`))
@@ -125,14 +123,50 @@ async function main () {
   // Wait for all the metadata
   const tokensPricesInfo = await Promise.all(tokenInfoPromises)
   
-  const filePath = path.join(OUTPUT_DIR, `prices-${network}.json`)
+  let filePath = path.join(OUTPUT_DIR, `prices-${network}.json`)
+  const lastCheck = (new Date()).toISOString()
   console.log('Writting file %s', filePath)
   const tokenPrices = {
     network,
-    lastCheck: (new Date()).toISOString(),
+    lastCheck,
     tokens: tokensPricesInfo
   }
-  
+
+  await fs.ensureDir(OUTPUT_DIR)
+  await fs.writeJson(
+    filePath,
+    tokenPrices, {
+      spaces: 2
+  })
+
+  filePath = path.join(OUTPUT_DIR, `priceOracle-prices-${network}.json`)
+  console.log('Writting file %s', filePath)
+  const priceOraclePrices = Object
+    // Get token addreses
+    .keys(tokensPricesInfo)
+    // Get token info
+    .map(address => tokensPricesInfo[address])
+    // Remove tokens without price
+    .filter(token => !!token.price)
+    // to a simple data representation
+    .map(({ address, name, symbol, price, priceSource }) => ({
+      address,
+      name,
+      symbol,
+      price,
+      priceSource
+    }))
+
+  await fs.writeJson(
+    filePath,
+    {
+      network,
+      lastCheck,
+      tokens: priceOraclePrices
+    }, {
+      spaces: 2
+  })
+
   const numTokensWithPrice = tokensPricesInfo.reduce((total, tokenPriceInfo) => {
     if (tokenPriceInfo.price) {
       total++
@@ -145,17 +179,6 @@ async function main () {
     tokens.length,
     Math.round(100 * numTokensWithPrice / tokens.length)
   )
-
-  await fs.ensureDir(OUTPUT_DIR)
-  await fs.writeJson(
-    filePath,
-    tokenPrices, {
-      spaces: 2
-  })
 }
-
-// module.exports = callback => {
-//   main().then(callback).catch(callback)
-// }
 
 main().catch(console.error)

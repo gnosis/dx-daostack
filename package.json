@@ -21,9 +21,9 @@
     "lint": "eslint .",
     "solium": "solium --dir ./contracts/",
     "get-0x-list": "truffle exec src/scripts/get-0x-list.js",
+    "get-cryptocompare-tokens": "node src/scripts/get-cryptocompare-tokens",
     "get-token-prices": "node src/scripts/get-token-prices.js",
-    "update-price-oracle": "node src/scripts/update-price-oracle.js",
-    "get-cryptocompare-tokens": "node src/scripts/get-cryptocompare-tokens"
+    "update-price-oracle": "node src/scripts/update-price-oracle.js"
   },
   "license": "ISC",
   "devDependencies": {

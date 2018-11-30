@@ -44,7 +44,7 @@ async function getPrices ({ tokens }) {
     }
 
     return acc
-  })
+  }, {})
 
   return priceByAddress
 }
