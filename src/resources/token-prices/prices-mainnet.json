@@ -1,24 +1,24 @@
 {
   "network": "mainnet",
-  "lastCheck": "2018-11-30T12:44:53.472Z",
+  "lastCheck": "2018-12-04T14:06:37.385Z",
   "tokens": [
     {
       "address": "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
       "name": "0x Protocol Token",
       "symbol": "ZRX",
       "priceSource": "crypto compare",
-      "price": 0.003439,
+      "price": 0.003466,
       "details": {
         "kyber": {
           "address": "0xe41d2489571d322189246dafa5ebde1f4699f498",
           "symbol": "ZRX",
           "name": "0x",
           "decimals": 18,
-          "currentPrice": 0.003366893655555101,
-          "lastPrice": 0.0036462983646,
-          "lastTimestamp": 1543543278,
-          "baseVolume": 5.6266916638,
-          "quoteVolume": 1537.5357751480938,
+          "currentPrice": 0.003442017043407242,
+          "lastPrice": 0.0034800693563609075,
+          "lastTimestamp": 1543932062,
+          "baseVolume": 36.0807945134,
+          "quoteVolume": 10332.342833876464,
           "market": "ETH_ZRX"
         },
         "zeroX": {
@@ -28,13 +28,13 @@
           "symbol": "ZRX",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T12:07:56.000Z",
-              "id": "5c0128fd09444c0004bfe270"
+              "date": "2018-12-04T14:00:53.000Z",
+              "id": "5c06896d704d000004995626"
             },
-            "lastPrice": 0.4282308420056764
+            "lastPrice": 0.378360492313087
           },
-          "lastPrice": 0.0038139547738303917,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0033945854325595462,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
@@ -55,7 +55,7 @@
           "SortOrder": "1353",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.003439
+          "price": 0.003466
         }
       }
     },
@@ -64,18 +64,18 @@
       "name": "Salt",
       "symbol": "SALT",
       "priceSource": "crypto compare",
-      "price": 0.001966,
+      "price": 0.002237,
       "details": {
         "kyber": {
           "address": "0x4156d3342d5c385a87d264f90653733592000581",
           "symbol": "SALT",
           "name": "Salt",
           "decimals": 8,
-          "currentPrice": 0.00195951333807083,
-          "lastPrice": 0.002005406400219527,
-          "lastTimestamp": 1543579225,
-          "baseVolume": 2.9355394124,
-          "quoteVolume": 1338.30987283,
+          "currentPrice": 0.002233990559431543,
+          "lastPrice": 0.002113981738396592,
+          "lastTimestamp": 1543905614,
+          "baseVolume": 2.6519638206,
+          "quoteVolume": 1254.48757311,
           "market": "ETH_SALT"
         },
         "zeroX": {
@@ -90,8 +90,8 @@
             },
             "lastPrice": 0.2618309091441679
           },
-          "lastPrice": 0.002331946109228428,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.002349102002011196,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x4156D3342D5c385a87D264F90653733592000581",
@@ -112,7 +112,7 @@
           "SortOrder": "1613",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.001966
+          "price": 0.002237
         }
       }
     },
@@ -121,18 +121,18 @@
       "name": "Zilliqa",
       "symbol": "ZIL",
       "priceSource": "crypto compare",
-      "price": 0.0001442,
+      "price": 0.0001502,
       "details": {
         "kyber": {
           "address": "0x05f4a42e251f2d52b8ed15e9fedaacfcef1fad27",
           "symbol": "ZIL",
           "name": "Zilliqa",
           "decimals": 12,
-          "currentPrice": 0.000143689036013256,
-          "lastPrice": 0.00015050546232176702,
-          "lastTimestamp": 1543567787,
-          "baseVolume": 4.3524292281,
-          "quoteVolume": 27590.005792219148,
+          "currentPrice": 0.000149342375135089,
+          "lastPrice": 0.00015107501941678768,
+          "lastTimestamp": 1543931939,
+          "baseVolume": 38.2056031151,
+          "quoteVolume": 256189.914567393,
           "market": "ETH_ZIL"
         },
         "zeroX": {
@@ -142,13 +142,13 @@
           "symbol": "ZIL",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T11:07:23.000Z",
-              "id": "5c011aa309444c0004bfe1b0"
+              "date": "2018-12-03T08:37:42.000Z",
+              "id": "5c04ec2d7259780004c0cd25"
             },
-            "lastPrice": 0.01662436136973843
+            "lastPrice": 0.016779195292872886
           },
-          "lastPrice": 0.00014806164383450687,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00015054006184167312,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x05f4a42e251f2d52b8ed15E9FEdAacFcEF1FAD27",
@@ -169,7 +169,7 @@
           "SortOrder": "2152",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0001442
+          "price": 0.0001502
         }
       }
     },
@@ -178,7 +178,7 @@
       "name": "Digix DAO Token",
       "symbol": "DGD",
       "priceSource": "crypto compare",
-      "price": 0.1556,
+      "price": 0.1559,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -188,13 +188,13 @@
           "symbol": "DGD",
           "price": {
             "lastTrade": {
-              "date": "2018-11-28T05:29:19.000Z",
-              "id": "5bfe286a7e8d410004c43f7c"
+              "date": "2018-12-01T21:24:08.000Z",
+              "id": "5c02fcd49f26ae0004bf9051"
             },
-            "lastPrice": 18.454357218401196
+            "lastPrice": 19.336610186455037
           },
-          "lastPrice": 0.16436014622729958,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.17348474956446291,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A",
@@ -215,7 +215,7 @@
           "SortOrder": "503",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.1556
+          "price": 0.1559
         }
       }
     },
@@ -224,7 +224,7 @@
       "name": "Lunyr",
       "symbol": "LUN",
       "priceSource": "crypto compare",
-      "price": 0.01489,
+      "price": 0.01857,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -247,7 +247,7 @@
           "SortOrder": "1188",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.01489
+          "price": 0.01857
         }
       }
     },
@@ -264,10 +264,10 @@
           "name": "Wrapped Ether",
           "decimals": 18,
           "currentPrice": 1,
-          "lastPrice": 1,
-          "lastTimestamp": 1543564776,
-          "baseVolume": 53.4192220955,
-          "quoteVolume": 53.41922209546112,
+          "lastPrice": 0.9999999999970661,
+          "lastTimestamp": 1543925968,
+          "baseVolume": 43.2983755414,
+          "quoteVolume": 43.2983755414493,
           "market": "ETH_WETH"
         },
         "zeroX": {
@@ -277,13 +277,13 @@
           "symbol": "WETH",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T12:40:31.000Z",
-              "id": "5c01307a09444c0004bfe2a5"
+              "date": "2018-12-04T14:03:46.000Z",
+              "id": "5c0689cd704d000004995631"
             },
-            "lastPrice": 112.19
+            "lastPrice": 111.30999999999999
           },
-          "lastPrice": 0.999198432490203,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.998654225731204,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": null
       }
@@ -292,8 +292,8 @@
       "address": "0xBEB9eF514a379B997e0798FDcC901Ee474B6D9A1",
       "name": "Melon Token",
       "symbol": "MLN",
-      "priceSource": "0x",
-      "price": 0.12198350715693347,
+      "priceSource": "crypto compare",
+      "price": 0.05965,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -308,8 +308,8 @@
             },
             "lastPrice": 13.69630818358049
           },
-          "lastPrice": 0.12198350715693347,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.1228809275397496,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xBEB9eF514a379B997e0798FDcC901Ee474B6D9A1",
@@ -329,7 +329,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1096",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.05965
         }
       }
     },
@@ -337,8 +338,8 @@
       "address": "0x9a642d6b3368ddc662CA244bAdf32cDA716005BC",
       "name": "Qtum",
       "symbol": "QTUM",
-      "priceSource": "crypto compare",
-      "price": 0.01745,
+      "priceSource": null,
+      "price": null,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -350,7 +351,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x9a642d6b3368ddc662CA244bAdf32cDA716005BC",
@@ -370,8 +371,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1242",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.01745
+          "IsTrading": true
         }
       }
     },
@@ -379,19 +379,19 @@
       "address": "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07",
       "name": "OmiseGO",
       "symbol": "OMG",
-      "priceSource": "crypto compare",
-      "price": 0.01285,
+      "priceSource": "kyber",
+      "price": 0.013407361578105091,
       "details": {
         "kyber": {
           "address": "0xd26114cd6ee289accf82350c8d8487fedb8a0c07",
           "symbol": "OMG",
           "name": "OmiseGO",
           "decimals": 18,
-          "currentPrice": 0.012827365051084443,
-          "lastPrice": 0.012852789131559293,
-          "lastTimestamp": 1543578274,
-          "baseVolume": 103.8478299608,
-          "quoteVolume": 7522.041378404309,
+          "currentPrice": 0.013407361578105091,
+          "lastPrice": 0.013269318358210526,
+          "lastTimestamp": 1543927210,
+          "baseVolume": 60.3458941452,
+          "quoteVolume": 4524.848009366144,
           "market": "ETH_OMG"
         },
         "zeroX": {
@@ -401,13 +401,13 @@
           "symbol": "OMG",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T11:17:33.000Z",
-              "id": "5c011cfc09444c0004bfe1e1"
+              "date": "2018-12-04T13:27:09.000Z",
+              "id": "5c0681c3704d0000049955c4"
             },
-            "lastPrice": 1.465741527780869
+            "lastPrice": 1.48514656668345
           },
-          "lastPrice": 0.01305434207143631,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.013324480232221875,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07",
@@ -427,8 +427,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1362",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.01285
+          "IsTrading": true
         }
       }
     },
@@ -437,18 +436,18 @@
       "name": "TenXPay",
       "symbol": "PAY",
       "priceSource": "crypto compare",
-      "price": 0.00253,
+      "price": 0.002495,
       "details": {
         "kyber": {
           "address": "0xB97048628DB6B661D4C2aA833e95Dbe1A905B280",
           "symbol": "PAY",
           "name": "TenX",
           "decimals": 18,
-          "currentPrice": 0.002528341715233101,
-          "lastPrice": 0.0025972237124249017,
-          "lastTimestamp": 1543581259,
-          "baseVolume": 3.460924552,
-          "quoteVolume": 1341.6181452295634,
+          "currentPrice": 0.002481803203732327,
+          "lastPrice": 0.0025069425836816987,
+          "lastTimestamp": 1543917577,
+          "baseVolume": 4.7193525553,
+          "quoteVolume": 1933.782267689666,
           "market": "ETH_PAY"
         },
         "zeroX": {
@@ -460,7 +459,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xB97048628DB6B661D4C2aA833e95Dbe1A905B280",
@@ -481,7 +480,7 @@
           "SortOrder": "1098",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.00253
+          "price": 0.002495
         }
       }
     },
@@ -502,7 +501,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": null
       }
@@ -512,7 +511,7 @@
       "name": "Iconomi",
       "symbol": "ICN",
       "priceSource": "crypto compare",
-      "price": 0.001566,
+      "price": 0.001617,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -527,8 +526,8 @@
             },
             "lastPrice": 0.6021333333333333
           },
-          "lastPrice": 0.005362783517396983,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0054022369758956875,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x888666CA69E0f178DED6D75b5726Cee99A87D698",
@@ -549,7 +548,7 @@
           "SortOrder": "710",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.001566
+          "price": 0.001617
         }
       }
     },
@@ -558,18 +557,18 @@
       "name": "StatusNetwork",
       "symbol": "SNT",
       "priceSource": "crypto compare",
-      "price": 0.0001635,
+      "price": 0.0001703,
       "details": {
         "kyber": {
           "address": "0x744d70fdbe2ba4cf95131626614a1763df805b9e",
           "symbol": "SNT",
           "name": "Status Network",
           "decimals": 18,
-          "currentPrice": 0.000162537440668532,
-          "lastPrice": 0.00016760552354674077,
-          "lastTimestamp": 1543573433,
-          "baseVolume": 11.1235035031,
-          "quoteVolume": 63823.265211787846,
+          "currentPrice": 0.000169715750351054,
+          "lastPrice": 0.00017020413517630797,
+          "lastTimestamp": 1543884981,
+          "baseVolume": 2.2512498109,
+          "quoteVolume": 13296.141992026904,
           "market": "ETH_SNT"
         },
         "zeroX": {
@@ -579,13 +578,13 @@
           "symbol": "SNT",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T11:07:23.000Z",
-              "id": "5c011aa309444c0004bfe1b2"
+              "date": "2018-12-01T12:36:14.000Z",
+              "id": "5c0280dd9f26ae0004bf86c9"
             },
-            "lastPrice": 0.01934215721265493
+            "lastPrice": 0.0209922
           },
-          "lastPrice": 0.00017226716434498514,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0001883384173694599,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x744d70FDBE2Ba4CF95131626614a1763DF805B9E",
@@ -606,7 +605,7 @@
           "SortOrder": "1264",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0001635
+          "price": 0.0001703
         }
       }
     },
@@ -615,7 +614,7 @@
       "name": "Gnosis",
       "symbol": "GNO",
       "priceSource": "crypto compare",
-      "price": 0.1055,
+      "price": 0.1139,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -630,8 +629,8 @@
             },
             "lastPrice": 19.001986553385
           },
-          "lastPrice": 0.16923750047546313,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.1704825637303517,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x6810e776880C02933D47DB1b9fc05908e5386b96",
@@ -652,7 +651,7 @@
           "SortOrder": "1181",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.1055
+          "price": 0.1139
         }
       }
     },
@@ -661,18 +660,18 @@
       "name": "Basic Attention Token",
       "symbol": "BAT",
       "priceSource": "crypto compare",
-      "price": 0.001412,
+      "price": 0.001496,
       "details": {
         "kyber": {
           "address": "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
           "symbol": "BAT",
           "name": "Basic Attention Token",
           "decimals": 18,
-          "currentPrice": 0.001408397113745291,
-          "lastPrice": 0.0014462203834956983,
-          "lastTimestamp": 1543578065,
-          "baseVolume": 217.5496664328,
-          "quoteVolume": 150508.6508862732,
+          "currentPrice": 0.001490297672800054,
+          "lastPrice": 0.0014900153579522086,
+          "lastTimestamp": 1543921270,
+          "baseVolume": 81.5001416996,
+          "quoteVolume": 54228.1688170226,
           "market": "ETH_BAT"
         },
         "zeroX": {
@@ -682,13 +681,13 @@
           "symbol": "BAT",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T12:13:47.000Z",
-              "id": "5c012a4909444c0004bfe27e"
+              "date": "2018-12-04T12:44:14.000Z",
+              "id": "5c067724704d000004995501"
             },
-            "lastPrice": 0.16124428537800006
+            "lastPrice": 0.17004848694776767
           },
-          "lastPrice": 0.0014360908922158894,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0015256458545466326,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x0D8775F648430679A709E98d2b0Cb6250d2887EF",
@@ -709,7 +708,7 @@
           "SortOrder": "1238",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.001412
+          "price": 0.001496
         }
       }
     },
@@ -718,7 +717,7 @@
       "name": "Storj",
       "symbol": "STORJ",
       "priceSource": "crypto compare",
-      "price": 0.001467,
+      "price": 0.001503,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -733,8 +732,8 @@
             },
             "lastPrice": 0.31752446696231185
           },
-          "lastPrice": 0.0028279699586953315,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.002848775049006925,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xB64ef51C888972c908CFacf59B47C1AfBC0Ab8aC",
@@ -755,7 +754,7 @@
           "SortOrder": "1360",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.001467
+          "price": 0.001503
         }
       }
     },
@@ -763,19 +762,19 @@
       "address": "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C",
       "name": "Bancor",
       "symbol": "BNT",
-      "priceSource": "crypto compare",
-      "price": 0.005847,
+      "priceSource": "kyber",
+      "price": 0.006051267028354197,
       "details": {
         "kyber": {
           "address": "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c",
           "symbol": "BNT",
           "name": "Bancor",
           "decimals": 18,
-          "currentPrice": 0.005830089812493771,
-          "lastPrice": 0.0058929633167877915,
-          "lastTimestamp": 1543524438,
-          "baseVolume": 0.0397735498,
-          "quoteVolume": 6.710902049455963,
+          "currentPrice": 0.006051267028354197,
+          "lastPrice": 0.006004493942746051,
+          "lastTimestamp": 1543842543,
+          "baseVolume": 0,
+          "quoteVolume": 0,
           "market": "ETH_BNT"
         },
         "zeroX": {
@@ -785,13 +784,13 @@
           "symbol": "BNT",
           "price": {
             "lastTrade": {
-              "date": "2018-11-29T06:43:12.000Z",
-              "id": "5bff8af9e5a5d80004db67b3"
+              "date": "2018-12-04T08:30:48.000Z",
+              "id": "5c063c5d704d0000049950f1"
             },
-            "lastPrice": 0.07734999999999999
+            "lastPrice": 0.07244899999999728
           },
-          "lastPrice": 0.0006889027431421445,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0006499999999999756,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C",
@@ -811,8 +810,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "657",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.005847
+          "IsTrading": true
         }
       }
     },
@@ -821,7 +819,7 @@
       "name": "Aragon",
       "symbol": "ANT",
       "priceSource": "crypto compare",
-      "price": 0.003861,
+      "price": 0.003956,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -831,13 +829,13 @@
           "symbol": "ANT",
           "price": {
             "lastTrade": {
-              "date": "2018-11-29T22:03:50.000Z",
-              "id": "5c00630ce5a5d80004db745b"
+              "date": "2018-12-03T18:38:49.000Z",
+              "id": "5c0579417259780004c0d952"
             },
-            "lastPrice": 0.36445500000000003
+            "lastPrice": 0.414305833392
           },
-          "lastPrice": 0.0032459476309226933,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0037170808666068546,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x960b236A07cf122663c4303350609A66A7B288C0",
@@ -858,7 +856,7 @@
           "SortOrder": "1216",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.003861
+          "price": 0.003956
         }
       }
     },
@@ -867,7 +865,7 @@
       "name": "district0x",
       "symbol": "DNT",
       "priceSource": "crypto compare",
-      "price": 0.0001009,
+      "price": 0.0001121,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -877,13 +875,13 @@
           "symbol": "DNT",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T12:27:37.000Z",
-              "id": "5c012d9609444c0004bfe28f"
+              "date": "2018-11-30T13:10:46.000Z",
+              "id": "5c0137d209444c0004bfe2dc"
             },
-            "lastPrice": 0.011722520501545168
+            "lastPrice": 0.013583128744101813
           },
-          "lastPrice": 0.0001044043507440788,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0001218655010237019,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x0AbdAce70D3790235af448C88547603b945604ea",
@@ -904,7 +902,7 @@
           "SortOrder": "1294",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0001009
+          "price": 0.0001121
         }
       }
     },
@@ -913,7 +911,7 @@
       "name": "SingularDTV",
       "symbol": "SNGLS",
       "priceSource": "crypto compare",
-      "price": 0.0001058,
+      "price": 0.0001193,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -925,7 +923,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xaeC2E87E0A235266D9C5ADc9DEb4b2E29b54D009",
@@ -946,7 +944,7 @@
           "SortOrder": "697",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0001058
+          "price": 0.0001193
         }
       }
     },
@@ -954,8 +952,8 @@
       "address": "0x419D0d8BdD9aF5e606Ae2232ed285Aff190E711b",
       "name": "FunFair",
       "symbol": "FUN",
-      "priceSource": "crypto compare",
-      "price": 0.00004325,
+      "priceSource": "0x",
+      "price": 0.00004190005205438661,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -965,13 +963,13 @@
           "symbol": "FUN",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T12:38:21.000Z",
-              "id": "5c012fd309444c0004bfe29b"
+              "date": "2018-12-03T15:39:35.000Z",
+              "id": "5c054e927259780004c0d64b"
             },
-            "lastPrice": 0.005018220397080198
+            "lastPrice": 0.004670179801981931
           },
-          "lastPrice": 0.00004469380474777519,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00004190005205438661,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x419D0d8BdD9aF5e606Ae2232ed285Aff190E711b",
@@ -991,8 +989,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1304",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.00004325
+          "IsTrading": true
         }
       }
     },
@@ -1001,7 +998,7 @@
       "name": "FirstBlood",
       "symbol": "1ST",
       "priceSource": "crypto compare",
-      "price": 0.0002461,
+      "price": 0.000287,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -1024,7 +1021,7 @@
           "SortOrder": "759",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0002461
+          "price": 0.000287
         }
       }
     },
@@ -1033,7 +1030,7 @@
       "name": "Edgeless",
       "symbol": "EDG",
       "priceSource": "crypto compare",
-      "price": 0.0006076,
+      "price": 0.0006716,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -1056,7 +1053,7 @@
           "SortOrder": "1136",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0006076
+          "price": 0.0006716
         }
       }
     },
@@ -1065,18 +1062,18 @@
       "name": "Polymath",
       "symbol": "POLY",
       "priceSource": "kyber",
-      "price": 0.001130099211173173,
+      "price": 0.001165395581039532,
       "details": {
         "kyber": {
           "address": "0x9992ec3cf6a55b00978cddf2b27bc6882d88d1ec",
           "symbol": "POLY",
           "name": "Polymath",
           "decimals": 18,
-          "currentPrice": 0.001130099211173173,
-          "lastPrice": 0.0012322759371929824,
-          "lastTimestamp": 1543529030,
-          "baseVolume": 2.6196406421,
-          "quoteVolume": 2070.430919142113,
+          "currentPrice": 0.001165395581039532,
+          "lastPrice": 0.0012149341805929152,
+          "lastTimestamp": 1543795619,
+          "baseVolume": 0,
+          "quoteVolume": 0,
           "market": "ETH_POLY"
         },
         "zeroX": {
@@ -1086,13 +1083,13 @@
           "symbol": "POLY",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T11:09:48.000Z",
-              "id": "5c011b9a09444c0004bfe1bc"
+              "date": "2018-12-01T14:01:11.000Z",
+              "id": "5c0294ed9f26ae0004bf8804"
             },
-            "lastPrice": 0.13036829457677412
+            "lastPrice": 0.1472490595657718
           },
-          "lastPrice": 0.0011610998804486474,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.001321093303120149,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x9992eC3cF6A55b00978cdDF2b27BC6882d88D1eC",
@@ -1120,8 +1117,8 @@
       "address": "0x607F4C5BB672230e8672085532f7e901544a7375",
       "name": "iExec",
       "symbol": "RLC",
-      "priceSource": "crypto compare",
-      "price": 0.001939,
+      "priceSource": "0x",
+      "price": 0.00214566601307016,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -1131,13 +1128,13 @@
           "symbol": "RLC",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T10:29:00.000Z",
-              "id": "5c0111b009444c0004bfe14b"
+              "date": "2018-11-30T18:12:37.000Z",
+              "id": "5c017e3009444c0004bfe67a"
             },
-            "lastPrice": 0.23869601855946002
+            "lastPrice": 0.2391559338168
           },
-          "lastPrice": 0.0021258997021683292,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00214566601307016,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x607F4C5BB672230e8672085532f7e901544a7375",
@@ -1157,8 +1154,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1171",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.001939
+          "IsTrading": true
         }
       }
     },
@@ -1167,18 +1163,18 @@
       "name": "Wings",
       "symbol": "WINGS",
       "priceSource": "crypto compare",
-      "price": 0.000737,
+      "price": 0.0008358,
       "details": {
         "kyber": {
           "address": "0x667088b212ce3d06a1b553a7221E1fD19000d9aF",
           "symbol": "WINGS",
           "name": "Wings",
           "decimals": 18,
-          "currentPrice": 0.000733627131499999,
-          "lastPrice": 0.0007599706520031161,
-          "lastTimestamp": 1543579012,
-          "baseVolume": 32.8377838896,
-          "quoteVolume": 42470.88373052849,
+          "currentPrice": 0.000829220927999999,
+          "lastPrice": 0.0008300252159963363,
+          "lastTimestamp": 1543921169,
+          "baseVolume": 9.0103997802,
+          "quoteVolume": 10836.817395056849,
           "market": "ETH_WINGS"
         },
         "zeroX": {
@@ -1190,7 +1186,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x667088b212ce3d06a1b553a7221E1fD19000d9aF",
@@ -1211,7 +1207,7 @@
           "SortOrder": "712",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.000737
+          "price": 0.0008358
         }
       }
     },
@@ -1220,18 +1216,18 @@
       "name": "Civic",
       "symbol": "CVC",
       "priceSource": "crypto compare",
-      "price": 0.0005545,
+      "price": 0.0005702,
       "details": {
         "kyber": {
           "address": "0x41e5560054824ea6b0732e656e3ad64e20e94e45",
           "symbol": "CVC",
           "name": "Civic",
           "decimals": 8,
-          "currentPrice": 0.000555354032337024,
-          "lastPrice": 0.0005780810075828555,
-          "lastTimestamp": 1543518052,
-          "baseVolume": 0.1175690232,
-          "quoteVolume": 203.37811078,
+          "currentPrice": 0.000567831640306179,
+          "lastPrice": 0.0005649743331642551,
+          "lastTimestamp": 1543891607,
+          "baseVolume": 0.9669039588,
+          "quoteVolume": 1681.40462832,
           "market": "ETH_CVC"
         },
         "zeroX": {
@@ -1241,13 +1237,13 @@
           "symbol": "CVC",
           "price": {
             "lastTrade": {
-              "date": "2018-11-28T03:07:21.000Z",
-              "id": "5bfe078000a1c20004a8b80d"
+              "date": "2018-11-30T23:12:41.000Z",
+              "id": "5c01c4a409444c0004bfe987"
             },
-            "lastPrice": 0.06409566769877867
+            "lastPrice": 0.06754160084998502
           },
-          "lastPrice": 0.0005708556082897993,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0006059716566479905,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x41e5560054824eA6B0732E656E3Ad64E20e94E45",
@@ -1268,7 +1264,7 @@
           "SortOrder": "1266",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0005545
+          "price": 0.0005702
         }
       }
     },
@@ -1277,7 +1273,7 @@
       "name": "Monaco",
       "symbol": "MCO",
       "priceSource": "crypto compare",
-      "price": 0.01879,
+      "price": 0.02241,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -1291,8 +1287,8 @@
             },
             "lastPrice": 2.2505152013600003
           },
-          "lastPrice": 0.02004377628571429,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.02019123633016329,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xB63B606Ac810a52cCa15e44bB630fd42D8d1d83d",
@@ -1313,7 +1309,7 @@
           "SortOrder": "1275",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.01879
+          "price": 0.02241
         }
       }
     },
@@ -1322,18 +1318,18 @@
       "name": "Metal",
       "symbol": "MTL",
       "priceSource": "crypto compare",
-      "price": 0.002743,
+      "price": 0.002917,
       "details": {
         "kyber": {
           "address": "0xF433089366899D83a9f26A773D59ec7eCF30355e",
           "symbol": "MTL",
           "name": "Metal",
           "decimals": 8,
-          "currentPrice": 0.002716799682799998,
-          "lastPrice": 0.002753234960831029,
-          "lastTimestamp": 1543581524,
-          "baseVolume": 40.7577004651,
-          "quoteVolume": 12456.55114214,
+          "currentPrice": 0.002906341269999997,
+          "lastPrice": 0.002865410937968366,
+          "lastTimestamp": 1543903450,
+          "baseVolume": 13.7063049227,
+          "quoteVolume": 4563.23499635,
           "market": "ETH_MTL"
         },
         "zeroX": {
@@ -1348,8 +1344,8 @@
             },
             "lastPrice": 0.69571702
           },
-          "lastPrice": 0.006196268436052726,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.006241853759196125,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xF433089366899D83a9f26A773D59ec7eCF30355e",
@@ -1370,7 +1366,7 @@
           "SortOrder": "1308",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.002743
+          "price": 0.002917
         }
       }
     },
@@ -1379,7 +1375,7 @@
       "name": "Cofoundit",
       "symbol": "CFI",
       "priceSource": "crypto compare",
-      "price": 0.000135,
+      "price": 0.00013,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -1394,8 +1390,8 @@
             },
             "lastPrice": 0.0033545999999999992
           },
-          "lastPrice": 0.00002987709298183113,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.000030096895747353306,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x12FEF5e57bF45873Cd9B62E9DBd7BFb99e32D73e",
@@ -1416,7 +1412,7 @@
           "SortOrder": "1263",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.000135
+          "price": 0.00013
         }
       }
     },
@@ -1425,7 +1421,7 @@
       "name": "Monolith TKN",
       "symbol": "TKN",
       "priceSource": "crypto compare",
-      "price": 0.00298,
+      "price": 0.002403,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -1448,7 +1444,7 @@
           "SortOrder": "1197",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.00298
+          "price": 0.002403
         }
       }
     },
@@ -1457,7 +1453,7 @@
       "name": "Token-as-a-Service",
       "symbol": "TAAS",
       "priceSource": "crypto compare",
-      "price": 0.002461,
+      "price": 0.002319,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -1469,7 +1465,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xE7775A6e9Bcf904eb39DA2b68c5efb4F9360e08C",
@@ -1490,7 +1486,7 @@
           "SortOrder": "1183",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.002461
+          "price": 0.002319
         }
       }
     },
@@ -1511,7 +1507,7 @@
       "name": "Trustcoin",
       "symbol": "TRST",
       "priceSource": "crypto compare",
-      "price": 0.0001085,
+      "price": 0.0001163,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -1526,8 +1522,8 @@
             },
             "lastPrice": 0.0006933403360344194
           },
-          "lastPrice": 0.000006175100962187562,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.000006220530558356536,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xCb94be6f13A1182E4A4B6140cb7bf2025d28e41B",
@@ -1548,7 +1544,7 @@
           "SortOrder": "983",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0001085
+          "price": 0.0001163
         }
       }
     },
@@ -1557,7 +1553,7 @@
       "name": "Numeraire",
       "symbol": "NMR",
       "priceSource": "0x",
-      "price": 0.05566843380953884,
+      "price": 0.05607798087327312,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -1572,8 +1568,8 @@
             },
             "lastPrice": 6.2504517481350215
           },
-          "lastPrice": 0.05566843380953884,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.05607798087327312,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x1776e1F26f98b1A5dF9cD347953a26dd3Cb46671",
@@ -1601,8 +1597,8 @@
       "address": "0x7C5A0CE9267ED19B22F8cae653F198e3E8daf098",
       "name": "Santiment Network Token",
       "symbol": "SAN",
-      "priceSource": "crypto compare",
-      "price": 0.002205,
+      "priceSource": null,
+      "price": null,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -1614,7 +1610,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x7C5A0CE9267ED19B22F8cae653F198e3E8daf098",
@@ -1634,8 +1630,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1299",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.002205
+          "IsTrading": true
         }
       }
     },
@@ -1644,18 +1639,18 @@
       "name": "Kyber Network Crystal",
       "symbol": "KNC",
       "priceSource": "crypto compare",
-      "price": 0.001504,
+      "price": 0.001655,
       "details": {
         "kyber": {
           "address": "0xdd974d5c2e2928dea5f71b9825b8b646686bd200",
           "symbol": "KNC",
           "name": "Kyber Network",
           "decimals": 18,
-          "currentPrice": 0.001499143448906479,
-          "lastPrice": 0.0015090935131095282,
-          "lastTimestamp": 1543580902,
-          "baseVolume": 20.1709454256,
-          "quoteVolume": 12352.807415378287,
+          "currentPrice": 0.001648437818846042,
+          "lastPrice": 0.0016257554915899987,
+          "lastTimestamp": 1543927795,
+          "baseVolume": 57.6029132753,
+          "quoteVolume": 35054.49311439994,
           "market": "ETH_KNC"
         },
         "zeroX": {
@@ -1665,13 +1660,13 @@
           "symbol": "KNC",
           "price": {
             "lastTrade": {
-              "date": "2018-11-21T07:53:38.000Z",
-              "id": "5bf50ff7d69b080004b27990"
+              "date": "2018-12-01T05:34:15.000Z",
+              "id": "5c021e0a9f26ae0004bf8340"
             },
-            "lastPrice": 0.19803724191141198
+            "lastPrice": 0.173319993
           },
-          "lastPrice": 0.0017637802093998216,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0015549972456486633,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
@@ -1692,7 +1687,7 @@
           "SortOrder": "1595",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.001504
+          "price": 0.001655
         }
       }
     },
@@ -1701,7 +1696,7 @@
       "name": "Walton",
       "symbol": "WTC",
       "priceSource": "crypto compare",
-      "price": 0.009968,
+      "price": 0.01131,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -1715,8 +1710,8 @@
             },
             "lastPrice": 1.188429022334286
           },
-          "lastPrice": 0.010584512133365568,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.010662381323652305,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xb7cB1C96dB6B22b0D3d9536E0108d062BD488F74",
@@ -1737,7 +1732,7 @@
           "SortOrder": "1567",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.009968
+          "price": 0.01131
         }
       }
     },
@@ -1745,8 +1740,8 @@
       "address": "0xD0D6D6C5Fe4a677D343cC433536BB717bAe167dD",
       "name": "adToken",
       "symbol": "ADT",
-      "priceSource": "crypto compare",
-      "price": 0.00005907,
+      "priceSource": null,
+      "price": null,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -1768,8 +1763,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1374",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.00005907
+          "IsTrading": true
         }
       }
     },
@@ -1778,7 +1772,7 @@
       "name": "SpankChain",
       "symbol": "SPANK",
       "priceSource": "crypto compare",
-      "price": 0.0001758,
+      "price": 0.0002,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -1788,13 +1782,13 @@
           "symbol": "SPANK",
           "price": {
             "lastTrade": {
-              "date": "2018-11-29T21:31:12.000Z",
-              "id": "5c005b81e5a5d80004db7415"
+              "date": "2018-12-04T07:09:06.000Z",
+              "id": "5c0628c67259780004c0e25a"
             },
-            "lastPrice": 0.0277128
+            "lastPrice": 0.0289671535
           },
-          "lastPrice": 0.0002468186676166726,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00025988833213708954,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x42d6622deCe394b54999Fbd73D108123806f6a18",
@@ -1815,7 +1809,7 @@
           "SortOrder": "1897",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0001758
+          "price": 0.0002
         }
       }
     },
@@ -1824,7 +1818,7 @@
       "name": "openANX",
       "symbol": "OAX",
       "priceSource": "crypto compare",
-      "price": 0.0009015,
+      "price": 0.001,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -1847,7 +1841,7 @@
           "SortOrder": "1319",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0009015
+          "price": 0.001
         }
       }
     },
@@ -1855,19 +1849,19 @@
       "address": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
       "name": "ChainLink",
       "symbol": "LINK",
-      "priceSource": "crypto compare",
-      "price": 0.002831,
+      "priceSource": "kyber",
+      "price": 0.002669592941435474,
       "details": {
         "kyber": {
           "address": "0x514910771af9ca656af840dff83e8264ecf986ca",
           "symbol": "LINK",
           "name": "Chain Link",
           "decimals": 18,
-          "currentPrice": 0.002797856998080935,
-          "lastPrice": 0.002846246910852874,
-          "lastTimestamp": 1543581467,
-          "baseVolume": 103.1614505619,
-          "quoteVolume": 34332.21460350297,
+          "currentPrice": 0.002669592941435474,
+          "lastPrice": 0.0026610027775609366,
+          "lastTimestamp": 1543927884,
+          "baseVolume": 58.5335205792,
+          "quoteVolume": 21727.249173969874,
           "market": "ETH_LINK"
         },
         "zeroX": {
@@ -1882,8 +1876,8 @@
             },
             "lastPrice": 0.24604536763506105
           },
-          "lastPrice": 0.002191355251470084,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0022074768314647502,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x514910771AF9Ca656af840dff83E8264EcF986CA",
@@ -1903,8 +1897,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1591",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.002831
+          "IsTrading": true
         }
       }
     },
@@ -1913,18 +1906,18 @@
       "name": "Request Network",
       "symbol": "REQ",
       "priceSource": "crypto compare",
-      "price": 0.0002004,
+      "price": 0.0002231,
       "details": {
         "kyber": {
           "address": "0x8f8221afbb33998d8584a2b05749ba73c37a938a",
           "symbol": "REQ",
           "name": "Request",
           "decimals": 18,
-          "currentPrice": 0.000200369777425605,
-          "lastPrice": 0.000205883965280949,
-          "lastTimestamp": 1543577357,
-          "baseVolume": 33.5298037421,
-          "quoteVolume": 149788.9919354946,
+          "currentPrice": 0.00022241481829705,
+          "lastPrice": 0.00022509717553626798,
+          "lastTimestamp": 1543922539,
+          "baseVolume": 12.3641004708,
+          "quoteVolume": 54691.48918568316,
           "market": "ETH_REQ"
         },
         "zeroX": {
@@ -1934,13 +1927,13 @@
           "symbol": "REQ",
           "price": {
             "lastTrade": {
-              "date": "2018-11-29T19:17:01.000Z",
-              "id": "5c003bebe5a5d80004db726b"
+              "date": "2018-12-04T06:03:58.000Z",
+              "id": "5c0619a77259780004c0e1ac"
             },
-            "lastPrice": 0.026371691173466348
+            "lastPrice": 0.023478208723699916
           },
-          "lastPrice": 0.00023487434247832515,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0002106424611851778,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x8f8221aFbB33998d8584A2B05749bA73c37a938a",
@@ -1961,7 +1954,7 @@
           "SortOrder": "1665",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0002004
+          "price": 0.0002231
         }
       }
     },
@@ -1970,18 +1963,18 @@
       "name": "AirSwap",
       "symbol": "AST",
       "priceSource": "crypto compare",
-      "price": 0.0002887,
+      "price": 0.0003514,
       "details": {
         "kyber": {
           "address": "0x27054b13b1b798b345b591a4d22e6562d47ea75a",
           "symbol": "AST",
           "name": "AirSwap",
           "decimals": 4,
-          "currentPrice": 0.000287030431763513,
-          "lastPrice": 0.0002916106186,
-          "lastTimestamp": 1543576633,
-          "baseVolume": 4.3689190208,
-          "quoteVolume": 14026.2417,
+          "currentPrice": 0.000349474664359293,
+          "lastPrice": 0.00035449980786110417,
+          "lastTimestamp": 1543926700,
+          "baseVolume": 11.1526488257,
+          "quoteVolume": 30235.8034,
           "market": "ETH_AST"
         },
         "zeroX": {
@@ -1991,13 +1984,13 @@
           "symbol": "AST",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T11:17:13.000Z",
-              "id": "5c011cc009444c0004bfe1dc"
+              "date": "2018-12-04T05:31:23.000Z",
+              "id": "5c06121d7259780004c0e16a"
             },
-            "lastPrice": 0.0346732094016
+            "lastPrice": 0.037854236678317194
           },
-          "lastPrice": 0.0003088102012967581,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0003396217179106154,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x27054b13b1B798B345b591a4d22e6562d47eA75a",
@@ -2018,7 +2011,7 @@
           "SortOrder": "1673",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0002887
+          "price": 0.0003514
         }
       }
     },
@@ -2026,19 +2019,19 @@
       "address": "0xf0Ee6b27b759C9893Ce4f094b49ad28fd15A23e4",
       "name": "Enigma",
       "symbol": "ENG",
-      "priceSource": "kyber",
-      "price": 0.002673829669999997,
+      "priceSource": "crypto compare",
+      "price": 0.002754,
       "details": {
         "kyber": {
           "address": "0xf0ee6b27b759c9893ce4f094b49ad28fd15a23e4",
           "symbol": "ENG",
           "name": "Enigma",
           "decimals": 8,
-          "currentPrice": 0.002673829669999997,
-          "lastPrice": 0.0028949541549827197,
-          "lastTimestamp": 1543555707,
-          "baseVolume": 0.5111468389,
-          "quoteVolume": 176.69023433,
+          "currentPrice": 0.002731979375883047,
+          "lastPrice": 0.002740325536159601,
+          "lastTimestamp": 1543888393,
+          "baseVolume": 0.0109887054,
+          "quoteVolume": 4.01,
           "market": "ETH_ENG"
         },
         "zeroX": {
@@ -2050,7 +2043,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xf0Ee6b27b759C9893Ce4f094b49ad28fd15A23e4",
@@ -2070,7 +2063,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1680",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.002754
         }
       }
     },
@@ -2079,7 +2073,7 @@
       "name": "Kin",
       "symbol": "KIN",
       "priceSource": "crypto compare",
-      "price": 2.5e-7,
+      "price": 2.7e-7,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2089,13 +2083,13 @@
           "symbol": "KIN",
           "price": {
             "lastTrade": {
-              "date": "2018-11-29T17:49:50.000Z",
-              "id": "5c00278ee5a5d80004db711c"
+              "date": "2018-12-04T01:24:16.000Z",
+              "id": "5c05d7fc7259780004c0def2"
             },
-            "lastPrice": 0.000034719091415781883
+            "lastPrice": 0.0000276154203125
           },
-          "lastPrice": 3.0921884053956077e-7,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 2.4776081385698905e-7,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x818Fc6C2Ec5986bc6E2CBf00939d90556aB12ce5",
@@ -2116,7 +2110,7 @@
           "SortOrder": "1300",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 2.5e-7
+          "price": 2.7e-7
         }
       }
     },
@@ -2140,8 +2134,8 @@
             },
             "lastPrice": 0.00332751672
           },
-          "lastPrice": 0.000029635881011756326,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.000029853909205096,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x27Dce1eC4d3f72C3E457Cc50354f1F975dDEf488",
@@ -2170,19 +2164,19 @@
       "address": "0x12480E24eb5bec1a9D4369CaB6a80caD3c0A377A",
       "name": "Substratum",
       "symbol": "SUB",
-      "priceSource": "kyber",
-      "price": 0.000401882240072419,
+      "priceSource": "crypto compare",
+      "price": 0.000433,
       "details": {
         "kyber": {
           "address": "0x12480e24eb5bec1a9d4369cab6a80cad3c0a377a",
           "symbol": "SUB",
           "name": "Substratum",
           "decimals": 2,
-          "currentPrice": 0.000401882240072419,
-          "lastPrice": 0.0004478720226500566,
-          "lastTimestamp": 1543524438,
-          "baseVolume": 0.7739814142,
-          "quoteVolume": 1723.08,
+          "currentPrice": 0.000428630712396936,
+          "lastPrice": 0.00042945603048855877,
+          "lastTimestamp": 1543921270,
+          "baseVolume": 0.9378331957,
+          "quoteVolume": 2183.77,
           "market": "ETH_SUB"
         },
         "zeroX": {
@@ -2197,8 +2191,8 @@
             },
             "lastPrice": 0.07750434815822545
           },
-          "lastPrice": 0.0006902774150180392,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0006953557164742997,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x12480E24eb5bec1a9D4369CaB6a80caD3c0A377A",
@@ -2218,7 +2212,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1457",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.000433
         }
       }
     },
@@ -2226,8 +2221,8 @@
       "address": "0x0E8d6b471e332F140e7d9dbB99E5E3822F728DA6",
       "name": "ABYSS",
       "symbol": "ABYSS",
-      "priceSource": "0x",
-      "price": 0.0008664878250801566,
+      "priceSource": "crypto compare",
+      "price": 0.0000502,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2242,8 +2237,8 @@
             },
             "lastPrice": 0.09728925299999999
           },
-          "lastPrice": 0.0008664878250801566,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0008728624887852144,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x0E8d6b471e332F140e7d9dbB99E5E3822F728DA6",
@@ -2263,7 +2258,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1911",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.0000502
         }
       }
     },
@@ -2272,7 +2268,7 @@
       "name": "AION",
       "symbol": "AION",
       "priceSource": "0x",
-      "price": 0.002814624153900962,
+      "price": 0.0028353310604701237,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2287,8 +2283,8 @@
             },
             "lastPrice": 0.316026
           },
-          "lastPrice": 0.002814624153900962,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0028353310604701237,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": null
       }
@@ -2298,7 +2294,7 @@
       "name": "Pluton",
       "symbol": "PLU",
       "priceSource": "crypto compare",
-      "price": 0.003326,
+      "price": 0.003384,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2310,7 +2306,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xD8912C10681D8B21Fd3742244f44658dBA12264E",
@@ -2331,7 +2327,7 @@
           "SortOrder": "1062",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.003326
+          "price": 0.003384
         }
       }
     },
@@ -2339,19 +2335,19 @@
       "address": "0x1a7a8BD9106F2B8D977E08582DC7d24c723ab0DB",
       "name": "AppCoins",
       "symbol": "APPC",
-      "priceSource": "kyber",
-      "price": 0.000403615023883594,
+      "priceSource": "crypto compare",
+      "price": 0.000465,
       "details": {
         "kyber": {
           "address": "0x1a7a8bd9106f2b8d977e08582dc7d24c723ab0db",
           "symbol": "APPC",
           "name": "AppCoins",
           "decimals": 18,
-          "currentPrice": 0.000403615023883594,
-          "lastPrice": 0.0004221611958245367,
-          "lastTimestamp": 1543453563,
-          "baseVolume": 0,
-          "quoteVolume": 0,
+          "currentPrice": 0.000460317641534871,
+          "lastPrice": 0.00044860937014824104,
+          "lastTimestamp": 1543909577,
+          "baseVolume": 0.9038691473,
+          "quoteVolume": 2014.82449419485,
           "market": "ETH_APPC"
         },
         "zeroX": null,
@@ -2373,7 +2369,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1726",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.000465
         }
       }
     },
@@ -2382,7 +2379,7 @@
       "name": "Aeron",
       "symbol": "ARN",
       "priceSource": "crypto compare",
-      "price": 0.003265,
+      "price": 0.00273,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2397,8 +2394,8 @@
             },
             "lastPrice": 0.44216931968418277
           },
-          "lastPrice": 0.003938095116531731,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.003967067285879982,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xBA5F11b16B155792Cf3B2E6880E8706859A8AEB6",
@@ -2419,7 +2416,7 @@
           "SortOrder": "1666",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.003265
+          "price": 0.00273
         }
       }
     },
@@ -2428,7 +2425,7 @@
       "name": "Maecenas ART Token",
       "symbol": "ART",
       "priceSource": "crypto compare",
-      "price": 0.0003868,
+      "price": 0.00038,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2440,7 +2437,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xfec0cF7fE078a500abf15F1284958F22049c2C7e",
@@ -2461,7 +2458,7 @@
           "SortOrder": "1605",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0003868
+          "price": 0.00038
         }
       }
     },
@@ -2470,18 +2467,18 @@
       "name": "Decentraland",
       "symbol": "MANA",
       "priceSource": "crypto compare",
-      "price": 0.0005039,
+      "price": 0.0006077,
       "details": {
         "kyber": {
           "address": "0x0f5d2fb29fb7d3cfee444a200298f468908cc942",
           "symbol": "MANA",
           "name": "Decentraland",
           "decimals": 18,
-          "currentPrice": 0.000502222183541578,
-          "lastPrice": 0.0005165777281021734,
-          "lastTimestamp": 1543576106,
-          "baseVolume": 32.3500845999,
-          "quoteVolume": 60700.19158727644,
+          "currentPrice": 0.000605816249001579,
+          "lastPrice": 0.0006041618686025935,
+          "lastTimestamp": 1543928316,
+          "baseVolume": 111.0455180707,
+          "quoteVolume": 175752.19539957936,
           "market": "ETH_MANA"
         },
         "zeroX": {
@@ -2491,13 +2488,13 @@
           "symbol": "MANA",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T05:20:13.000Z",
-              "id": "5c00c94409444c0004bfddd6"
+              "date": "2018-12-04T13:49:55.000Z",
+              "id": "5c0686d3704d000004995614"
             },
-            "lastPrice": 0.06246711780148485
+            "lastPrice": 0.06637787308260294
           },
-          "lastPrice": 0.0005563512451147565,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0005955308907464826,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x0F5D2fB29fb7d3CFeE444a200298f468908cC942",
@@ -2518,7 +2515,7 @@
           "SortOrder": "1415",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0005039
+          "price": 0.0006077
         }
       }
     },
@@ -2527,7 +2524,7 @@
       "name": "BlockMason Credit Protocol Token",
       "symbol": "BCPT",
       "priceSource": "crypto compare",
-      "price": 0.0003259,
+      "price": 0.0003525,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -2550,7 +2547,7 @@
           "SortOrder": "1815",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0003259
+          "price": 0.0003525
         }
       }
     },
@@ -2559,7 +2556,7 @@
       "name": "XY Oracle",
       "symbol": "XYO",
       "priceSource": "crypto compare",
-      "price": 0.0000185,
+      "price": 0.000033,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2569,13 +2566,13 @@
           "symbol": "XYO",
           "price": {
             "lastTrade": {
-              "date": "2018-11-29T14:10:18.000Z",
-              "id": "5bfff488e5a5d80004db6ceb"
+              "date": "2018-12-04T10:49:29.000Z",
+              "id": "5c065cf5704d00000499533d"
             },
-            "lastPrice": 0.0022256570066197306
+            "lastPrice": 0.003700206611212796
           },
-          "lastPrice": 0.000019822381605092006,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00003319761897732636,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x55296f69f40Ea6d20E478533C15A6B08B654E758",
@@ -2596,7 +2593,7 @@
           "SortOrder": "2414",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0000185
+          "price": 0.000033
         }
       }
     },
@@ -2605,7 +2602,7 @@
       "name": "BrahmaOS",
       "symbol": "BRM",
       "priceSource": "0x",
-      "price": 0.0000417404098821823,
+      "price": 0.000040735931840152006,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2615,13 +2612,13 @@
           "symbol": "BRM",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T12:08:01.000Z",
-              "id": "5c01290d09444c0004bfe275"
+              "date": "2018-12-04T14:03:46.000Z",
+              "id": "5c0689cd704d000004995631"
             },
-            "lastPrice": 0.004686613221571429
+            "lastPrice": 0.004540426962903342
           },
-          "lastPrice": 0.0000417404098821823,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.000040735931840152006,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": null
       }
@@ -2630,8 +2627,8 @@
       "address": "0x7d4b8Cce0591C9044a22ee543533b72E976E36C3",
       "name": "Change Coin",
       "symbol": "CAG",
-      "priceSource": null,
-      "price": null,
+      "priceSource": "crypto compare",
+      "price": 0.0006,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2643,7 +2640,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x7d4b8Cce0591C9044a22ee543533b72E976E36C3",
@@ -2663,7 +2660,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1712",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.0006
         }
       }
     },
@@ -2672,7 +2670,7 @@
       "name": "CanYaCoin",
       "symbol": "CAN",
       "priceSource": "crypto compare",
-      "price": 0.0002271,
+      "price": 0.0001749,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2687,8 +2685,8 @@
             },
             "lastPrice": 0.09799500000000001
           },
-          "lastPrice": 0.0008727734235838975,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0008791943298044143,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x1d462414fe14cf489c7A21CaC78509f4bF8CD7c0",
@@ -2709,7 +2707,7 @@
           "SortOrder": "1651",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0002271
+          "price": 0.0001749
         }
       }
     },
@@ -2748,19 +2746,19 @@
       "address": "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359",
       "name": "Dai Stablecoin v1.0",
       "symbol": "DAI",
-      "priceSource": "kyber",
-      "price": 0.008693763705409616,
+      "priceSource": "crypto compare",
+      "price": 0.009016,
       "details": {
         "kyber": {
           "address": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
           "symbol": "DAI",
           "name": "Dai Stablecoin",
           "decimals": 18,
-          "currentPrice": 0.008693763705409616,
-          "lastPrice": 0.00895094880055242,
-          "lastTimestamp": 1543581467,
-          "baseVolume": 638.2325942434,
-          "quoteVolume": 75227.22231689235,
+          "currentPrice": 0.008986891301409963,
+          "lastPrice": 0.008986891301398126,
+          "lastTimestamp": 1543932182,
+          "baseVolume": 531.8454726015,
+          "quoteVolume": 58121.66541018536,
           "market": "ETH_DAI"
         },
         "zeroX": {
@@ -2770,13 +2768,13 @@
           "symbol": "DAI",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T12:10:42.000Z",
-              "id": "5c01299409444c0004bfe276"
+              "date": "2018-12-04T13:56:23.000Z",
+              "id": "5c068843704d000004995622"
             },
-            "lastPrice": 0.9947115930069373
+            "lastPrice": 1.012121540560821
           },
-          "lastPrice": 0.008859205495252381,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.009080580841206004,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359",
@@ -2796,7 +2794,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "2290",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.009016
         }
       }
     },
@@ -2805,7 +2804,7 @@
       "name": "Streamr DATAcoin",
       "symbol": "DATA",
       "priceSource": "crypto compare",
-      "price": 0.0001709,
+      "price": 0.0001811,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2820,8 +2819,8 @@
             },
             "lastPrice": 0.10962675
           },
-          "lastPrice": 0.0009763693444959031,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0009835523954781985,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x0Cf0Ee63788A0849fE5297F3407f701E122cC023",
@@ -2842,7 +2841,7 @@
           "SortOrder": "1784",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0001709
+          "price": 0.0001811
         }
       }
     },
@@ -2850,8 +2849,8 @@
       "address": "0x151202C9c18e495656f372281F493EB7698961D5",
       "name": "DEBITUM",
       "symbol": "DEB",
-      "priceSource": "crypto compare",
-      "price": 0.00004852,
+      "priceSource": null,
+      "price": null,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2863,7 +2862,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x151202C9c18e495656f372281F493EB7698961D5",
@@ -2883,8 +2882,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1888",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.00004852
+          "IsTrading": true
         }
       }
     },
@@ -2893,7 +2891,7 @@
       "name": "HelloGold Token",
       "symbol": "HGT",
       "priceSource": "crypto compare",
-      "price": 0.0000218,
+      "price": 0.000023,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -2908,8 +2906,8 @@
             },
             "lastPrice": 0.000022251
           },
-          "lastPrice": 1.9817420733879586e-7,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 1.9963215503319578e-7,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xba2184520A1cC49a6159c57e61E1844E085615B6",
@@ -2930,7 +2928,7 @@
           "SortOrder": "1496",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0000218
+          "price": 0.000023
         }
       }
     },
@@ -2938,8 +2936,8 @@
       "address": "0x13f11C9905A08ca76e3e853bE63D4f0944326C72",
       "name": "Divi Exchange Token",
       "symbol": "DIVX",
-      "priceSource": null,
-      "price": null,
+      "priceSource": "crypto compare",
+      "price": 0.004563,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -2961,7 +2959,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1927",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.004563
         }
       }
     },
@@ -2970,7 +2969,7 @@
       "name": "EDU Token",
       "symbol": "EDU",
       "priceSource": "crypto compare",
-      "price": 0.00003031,
+      "price": 0.0000225,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -2993,7 +2992,7 @@
           "SortOrder": "2496",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.00003031
+          "price": 0.0000225
         }
       }
     },
@@ -3001,19 +3000,19 @@
       "address": "0xD49ff13661451313cA1553fd6954BD1d9b6E02b9",
       "name": "ElectrifyAsia",
       "symbol": "ELEC",
-      "priceSource": "kyber",
-      "price": 0.000052619027899999,
+      "priceSource": "crypto compare",
+      "price": 0.00005508,
       "details": {
         "kyber": {
           "address": "0xd49ff13661451313ca1553fd6954bd1d9b6e02b9",
           "symbol": "ELEC",
           "name": "ElectrifyAsia",
           "decimals": 18,
-          "currentPrice": 0.000052619027899999,
-          "lastPrice": 0.00005325619126804441,
-          "lastTimestamp": 1543574650,
-          "baseVolume": 1.7527449958,
-          "quoteVolume": 33394.250760703,
+          "currentPrice": 0.000051363679999999,
+          "lastPrice": 0.00005759019999661741,
+          "lastTimestamp": 1543898776,
+          "baseVolume": 0.8689981177,
+          "quoteVolume": 14832.742280516328,
           "market": "ETH_ELEC"
         },
         "zeroX": {
@@ -3028,8 +3027,8 @@
             },
             "lastPrice": 0.001768159580797403
           },
-          "lastPrice": 0.000015747769690037434,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.000015863624446414885,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xD49ff13661451313cA1553fd6954BD1d9b6E02b9",
@@ -3049,7 +3048,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "2510",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.00005508
         }
       }
     },
@@ -3058,7 +3058,7 @@
       "name": "EtheremonToken",
       "symbol": "EMONT",
       "priceSource": "0x",
-      "price": 0.0007041490024937656,
+      "price": 0.0005091763861474969,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3068,13 +3068,13 @@
           "symbol": "EMONT",
           "price": {
             "lastTrade": {
-              "date": "2018-11-29T14:29:39.000Z",
-              "id": "5bfff869e5a5d80004db6d42"
+              "date": "2018-12-04T12:03:53.000Z",
+              "id": "5c066df0704d000004995451"
             },
-            "lastPrice": 0.07906185
+            "lastPrice": 0.0567528
           },
-          "lastPrice": 0.0007041490024937656,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0005091763861474969,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": null
       }
@@ -3083,8 +3083,8 @@
       "address": "0x5BC7e5f0Ab8b2E10D2D0a3F21739FCe62459aeF3",
       "name": "Hut34 Entropy Token",
       "symbol": "ENTR",
-      "priceSource": "0x",
-      "price": 0.0008851264695404346,
+      "priceSource": "crypto compare",
+      "price": 0.00058,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3099,8 +3099,8 @@
             },
             "lastPrice": 0.099382
           },
-          "lastPrice": 0.0008851264695404346,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0008916382558765476,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x5BC7e5f0Ab8b2E10D2D0a3F21739FCe62459aeF3",
@@ -3120,7 +3120,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1488",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.00058
         }
       }
     },
@@ -3129,7 +3130,7 @@
       "name": "Devery.io",
       "symbol": "EVE",
       "priceSource": "0x",
-      "price": 0.00017537495546847165,
+      "price": 0.00017666517136192354,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3144,8 +3145,8 @@
             },
             "lastPrice": 0.019691099999999996
           },
-          "lastPrice": 0.00017537495546847165,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00017666517136192354,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x923108a439C4e8C2315c4f6521E5cE95B44e9B4c",
@@ -3173,8 +3174,8 @@
       "address": "0xf8e386EDa857484f5a12e4B5DAa9984E06E73705",
       "name": "Indorse Token",
       "symbol": "IND",
-      "priceSource": "0x",
-      "price": 0.00047894581853364754,
+      "priceSource": "crypto compare",
+      "price": 0.0001072,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3189,8 +3190,8 @@
             },
             "lastPrice": 0.05377603650495794
           },
-          "lastPrice": 0.00047894581853364754,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00048246937470803827,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xf8e386EDa857484f5a12e4B5DAa9984E06E73705",
@@ -3210,7 +3211,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1350",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.0001072
         }
       }
     },
@@ -3231,7 +3233,7 @@
       "name": "DAOstack",
       "symbol": "GEN",
       "priceSource": "crypto compare",
-      "price": 0.0002992,
+      "price": 0.00029,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3246,8 +3248,8 @@
             },
             "lastPrice": 0.03689189605506666
           },
-          "lastPrice": 0.00032857050280607995,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00033098776292003106,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf",
@@ -3268,7 +3270,7 @@
           "SortOrder": "2532",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0002992
+          "price": 0.00029
         }
       }
     },
@@ -3276,8 +3278,8 @@
       "address": "0x8a854288a5976036A725879164Ca3e91d30c6A1B",
       "name": "Guaranteed Entrance Token",
       "symbol": "GET",
-      "priceSource": "0x",
-      "price": 0.002218304712405402,
+      "priceSource": "crypto compare",
+      "price": 0.002058,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3287,13 +3289,13 @@
           "symbol": "GET",
           "price": {
             "lastTrade": {
-              "date": "2018-11-29T08:44:01.000Z",
-              "id": "5bffa7bde5a5d80004db68e6"
+              "date": "2018-12-04T11:30:46.000Z",
+              "id": "5c066627704d0000049953cf"
             },
-            "lastPrice": 0.24907125310887854
+            "lastPrice": 0.231288923875231
           },
-          "lastPrice": 0.002218304712405402,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0020750845493919885,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x8a854288a5976036A725879164Ca3e91d30c6A1B",
@@ -3313,7 +3315,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "2014",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.002058
         }
       }
     },
@@ -3322,18 +3325,18 @@
       "name": "Maker",
       "symbol": "MKR",
       "priceSource": "crypto compare",
-      "price": 3.21,
+      "price": 3.58,
       "details": {
         "kyber": {
           "address": "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
           "symbol": "MKR",
           "name": "Maker",
           "decimals": 18,
-          "currentPrice": 3.1956676108539486,
-          "lastPrice": 3.211950000007137,
-          "lastTimestamp": 1543557633,
-          "baseVolume": 67.1709581971,
-          "quoteVolume": 21.105314089798682,
+          "currentPrice": 3.5411249999999987,
+          "lastPrice": 3.65250291561882,
+          "lastTimestamp": 1543927210,
+          "baseVolume": 54.2688317764,
+          "quoteVolume": 15.245118665018293,
           "market": "ETH_MKR"
         },
         "zeroX": {
@@ -3343,13 +3346,13 @@
           "symbol": "MKR",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T05:40:55.000Z",
-              "id": "5c00ce5c09444c0004bfde13"
+              "date": "2018-12-04T10:27:02.000Z",
+              "id": "5c065759704d0000049952e8"
             },
-            "lastPrice": 380.49804
+            "lastPrice": 400.5895442158162
           },
-          "lastPrice": 3.388831848949056,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 3.5940206730290347,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2",
@@ -3370,7 +3373,7 @@
           "SortOrder": "1032",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 3.21
+          "price": 3.58
         }
       }
     },
@@ -3379,7 +3382,7 @@
       "name": "Hydro Protocol Token",
       "symbol": "HOT",
       "priceSource": "crypto compare",
-      "price": 0.00002895,
+      "price": 0.00003189,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3389,13 +3392,13 @@
           "symbol": "HOT",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T07:24:04.000Z",
-              "id": "5c00e61509444c0004bfdf50"
+              "date": "2018-12-04T07:50:09.000Z",
+              "id": "5c063283704d000004995092"
             },
-            "lastPrice": 0.003540036544729847
+            "lastPrice": 0.003957109841270515
           },
-          "lastPrice": 0.00003152864753054727,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00003550251068787471,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x9AF839687F6C94542ac5ece2e317dAAE355493A1",
@@ -3416,7 +3419,7 @@
           "SortOrder": "2753",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.00002895
+          "price": 0.00003189
         }
       }
     },
@@ -3424,8 +3427,8 @@
       "address": "0x0D262e5dC4A06a0F1c90cE79C7a60C09DfC884E4",
       "name": "JET8 Token",
       "symbol": "J8T",
-      "priceSource": "crypto compare",
-      "price": 0.000011,
+      "priceSource": null,
+      "price": null,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -3447,8 +3450,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "2486",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.000011
+          "IsTrading": true
         }
       }
     },
@@ -3489,7 +3491,7 @@
       "name": "Loom Network Token",
       "symbol": "LOOM",
       "priceSource": "crypto compare",
-      "price": 0.0004255,
+      "price": 0.0004707,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3504,8 +3506,8 @@
             },
             "lastPrice": 0.04761586722230119
           },
-          "lastPrice": 0.00042408146795779473,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00042720139262785925,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xA4e8C3Ec456107eA67d3075bF9e3DF3A75823DB0",
@@ -3526,7 +3528,7 @@
           "SortOrder": "2512",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.0004255
+          "price": 0.0004707
         }
       }
     },
@@ -3534,8 +3536,8 @@
       "address": "0x957c30aB0426e0C93CD8241E2c60392d08c6aC8e",
       "name": "Modum Token",
       "symbol": "MOD",
-      "priceSource": "crypto compare",
-      "price": 0.003203,
+      "priceSource": null,
+      "price": null,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -3557,8 +3559,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1721",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.003203
+          "IsTrading": true
         }
       }
     },
@@ -3579,7 +3580,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": null
       }
@@ -3588,19 +3589,19 @@
       "address": "0x263c618480DBe35C300D8d5EcDA19bbB986AcaeD",
       "name": "MOT",
       "symbol": "MOT",
-      "priceSource": "crypto compare",
-      "price": 0.0006566,
+      "priceSource": "kyber",
+      "price": 0.000645366949999999,
       "details": {
         "kyber": {
           "address": "0x263c618480dbe35c300d8d5ecda19bbb986acaed",
           "symbol": "MOT",
           "name": "Olympus Labs",
           "decimals": 18,
-          "currentPrice": 0.000653297099999999,
-          "lastPrice": 0.00066108795005291,
-          "lastTimestamp": 1543502511,
-          "baseVolume": 0.6247281128,
-          "quoteVolume": 945,
+          "currentPrice": 0.000645366949999999,
+          "lastPrice": 0.0006552852852852853,
+          "lastTimestamp": 1543838473,
+          "baseVolume": 0,
+          "quoteVolume": 0,
           "market": "ETH_MOT"
         },
         "zeroX": {
@@ -3615,8 +3616,8 @@
             },
             "lastPrice": 0.0767666461381282
           },
-          "lastPrice": 0.0006837072153378001,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0006887371804963951,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x263c618480DBe35C300D8d5EcDA19bbB986AcaeD",
@@ -3636,8 +3637,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "2151",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.0006566
+          "IsTrading": true
         }
       }
     },
@@ -3657,7 +3657,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xFFE02ee4C69eDf1b340fCaD64fbd6b37a7b9e265",
@@ -3687,7 +3687,7 @@
       "name": "BoatPilot Token",
       "symbol": "NAVI",
       "priceSource": "0x",
-      "price": 0.00008293803546766479,
+      "price": 0.00008354820224573301,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3702,8 +3702,8 @@
             },
             "lastPrice": 0.009312282622309402
           },
-          "lastPrice": 0.00008293803546766479,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00008354820224573301,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": null
       }
@@ -3712,8 +3712,8 @@
       "address": "0x9E46A38F5DaaBe8683E10793b06749EEF7D733d1",
       "name": "PolySwarm Nectar",
       "symbol": "NCT",
-      "priceSource": "crypto compare",
-      "price": 0.00001403,
+      "priceSource": "0x",
+      "price": 0.00002516864567237352,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3728,8 +3728,8 @@
             },
             "lastPrice": 0.0028052972466427527
           },
-          "lastPrice": 0.000024984834758129255,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00002516864567237352,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x9E46A38F5DaaBe8683E10793b06749EEF7D733d1",
@@ -3749,8 +3749,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "2642",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.00001403
+          "IsTrading": true
         }
       }
     },
@@ -3759,7 +3758,7 @@
       "name": "NEVERDIE Coin",
       "symbol": "NDC",
       "priceSource": "crypto compare",
-      "price": 0.000042,
+      "price": 0.000035,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3771,7 +3770,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xA54ddC7B3CcE7FC8b1E3Fa0256D0DB80D2c10970",
@@ -3792,7 +3791,7 @@
           "SortOrder": "1372",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.000042
+          "price": 0.000035
         }
       }
     },
@@ -3801,7 +3800,7 @@
       "name": "Nexo",
       "symbol": "NEXO",
       "priceSource": "0x",
-      "price": 0.0008762510142376467,
+      "price": 0.0011116271027447884,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3811,13 +3810,13 @@
           "symbol": "NEXO",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T10:29:17.000Z",
-              "id": "5c0111b509444c0004bfe14f"
+              "date": "2018-12-04T13:48:07.000Z",
+              "id": "5c06869b704d000004995612"
             },
-            "lastPrice": 0.09838546387860297
+            "lastPrice": 0.12390195687193412
           },
-          "lastPrice": 0.0008762510142376467,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0011116271027447884,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": null
       }
@@ -3826,8 +3825,8 @@
       "address": "0x0235fE624e044A05eeD7A43E16E3083bc8A4287A",
       "name": "Original Crypto Coin",
       "symbol": "OCC",
-      "priceSource": "crypto compare",
-      "price": 0.002742,
+      "priceSource": "0x",
+      "price": 2.142518117435577e-8,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3837,13 +3836,13 @@
           "symbol": "OCC",
           "price": {
             "lastTrade": {
-              "date": "2018-11-25T23:42:34.000Z",
-              "id": "5bfb3410685ae600044e57fc"
+              "date": "2018-12-01T13:21:37.000Z",
+              "id": "5c028bc29f26ae0004bf877e"
             },
-            "lastPrice": 0.0000011761053333333333
+            "lastPrice": 0.000002388050693693694
           },
-          "lastPrice": 1.0474753592209951e-8,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 2.142518117435577e-8,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x0235fE624e044A05eeD7A43E16E3083bc8A4287A",
@@ -3863,8 +3862,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "2889",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.002742
+          "IsTrading": true
         }
       }
     },
@@ -3873,7 +3871,7 @@
       "name": "Omix",
       "symbol": "OMX",
       "priceSource": "0x",
-      "price": 0.00016499027843889467,
+      "price": 0.0001662040953088022,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -3888,8 +3886,8 @@
             },
             "lastPrice": 0.018525108463119094
           },
-          "lastPrice": 0.00016499027843889467,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0001662040953088022,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": null
       }
@@ -3899,7 +3897,7 @@
       "name": "PolicyPal Network Token",
       "symbol": "PAL",
       "priceSource": "crypto compare",
-      "price": 0.00004403,
+      "price": 0.00004232,
       "details": {
         "kyber": {
           "address": "0xfedae5642668f8636a11987ff386bfd215f942ee",
@@ -3925,8 +3923,8 @@
             },
             "lastPrice": 0.0015615807935058822
           },
-          "lastPrice": 0.00001390791586663593,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.000014010235003641506,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xfeDAE5642668f8636A11987Ff386bfd215F942EE",
@@ -3947,7 +3945,7 @@
           "SortOrder": "2706",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.00004403
+          "price": 0.00004232
         }
       }
     },
@@ -3956,7 +3954,7 @@
       "name": "Playkey Token",
       "symbol": "PKT",
       "priceSource": "crypto compare",
-      "price": 0.000436,
+      "price": 0.000467,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -3979,7 +3977,7 @@
           "SortOrder": "1713",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.000436
+          "price": 0.000467
         }
       }
     },
@@ -3987,8 +3985,8 @@
       "address": "0xE477292f1B3268687A29376116B0ED27A9c76170",
       "name": "Herocoin",
       "symbol": "PLAY",
-      "priceSource": "crypto compare",
-      "price": 0.0000464,
+      "priceSource": null,
+      "price": null,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -4010,8 +4008,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1787",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.0000464
+          "IsTrading": true
         }
       }
     },
@@ -4019,19 +4016,19 @@
       "address": "0x1985365e9f78359a9B6AD760e32412f4a445E862",
       "name": "Augur",
       "symbol": "REP",
-      "priceSource": "crypto compare",
-      "price": 0.0718,
+      "priceSource": "kyber",
+      "price": 0.07090171296050594,
       "details": {
         "kyber": {
           "address": "0x1985365e9f78359a9b6ad760e32412f4a445e862",
           "symbol": "REP",
           "name": "Augur",
           "decimals": 18,
-          "currentPrice": 0.07140152362588718,
-          "lastPrice": 0.07404337998979284,
-          "lastTimestamp": 1543537138,
-          "baseVolume": 1.7361387364,
-          "quoteVolume": 23.517512301531827,
+          "currentPrice": 0.07090171296050594,
+          "lastPrice": 0.07042976612766533,
+          "lastTimestamp": 1543899538,
+          "baseVolume": 2.0538961055,
+          "quoteVolume": 28.787216695331814,
           "market": "ETH_REP"
         },
         "zeroX": {
@@ -4041,13 +4038,13 @@
           "symbol": "REP",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T00:31:31.000Z",
-              "id": "5c0085bae5a5d80004db7632"
+              "date": "2018-12-04T04:54:41.000Z",
+              "id": "5c0609b67259780004c0e121"
             },
-            "lastPrice": 8.870436315352235
+            "lastPrice": 7.67061841425
           },
-          "lastPrice": 0.07900281720121335,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.06881947258433518,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x1985365e9f78359a9B6AD760e32412f4a445E862",
@@ -4067,8 +4064,7 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "498",
           "Sponsored": false,
-          "IsTrading": true,
-          "price": 0.0718
+          "IsTrading": true
         }
       }
     },
@@ -4077,18 +4073,18 @@
       "name": "Republic Protocol",
       "symbol": "REN",
       "priceSource": "kyber",
-      "price": 0.000157580845860871,
+      "price": 0.000180099523916013,
       "details": {
         "kyber": {
           "address": "0x408e41876cccdc0f92210600ef50372656052a38",
           "symbol": "REN",
           "name": "Republic",
           "decimals": 18,
-          "currentPrice": 0.000157580845860871,
-          "lastPrice": 0.00015984448322566957,
-          "lastTimestamp": 1543516418,
-          "baseVolume": 0.6870927556,
-          "quoteVolume": 4309.182844165099,
+          "currentPrice": 0.000180099523916013,
+          "lastPrice": 0.000179578755159328,
+          "lastTimestamp": 1543921136,
+          "baseVolume": 2.3429866057,
+          "quoteVolume": 13079.867257525018,
           "market": "ETH_REN"
         },
         "zeroX": {
@@ -4103,8 +4099,8 @@
             },
             "lastPrice": 0.025660741401902623
           },
-          "lastPrice": 0.00022854240650073586,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00023022376997938835,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x408e41876cCCDC0F92210600ef50372656052a38",
@@ -4133,7 +4129,7 @@
       "name": "Refereum",
       "symbol": "RFR",
       "priceSource": "0x",
-      "price": 0.000031840177817097405,
+      "price": 0.00003207442280014083,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -4148,8 +4144,8 @@
             },
             "lastPrice": 0.0035750151653036965
           },
-          "lastPrice": 0.000031840177817097405,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00003207442280014083,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xd0929d411954c47438dc1d871dd6081F5C5e149c",
@@ -4177,8 +4173,8 @@
       "address": "0x3d1BA9be9f66B8ee101911bC36D3fB562eaC2244",
       "name": "Rivetz",
       "symbol": "RVT",
-      "priceSource": "0x",
-      "price": 0.0010095855967224795,
+      "priceSource": "crypto compare",
+      "price": 0.0005,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -4193,8 +4189,8 @@
             },
             "lastPrice": 0.1133562708
           },
-          "lastPrice": 0.0010095855967224795,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0010170130163287279,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x3d1BA9be9f66B8ee101911bC36D3fB562eaC2244",
@@ -4214,7 +4210,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1288",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.0005
         }
       }
     },
@@ -4222,8 +4219,8 @@
       "address": "0x6888a16eA9792c15A4DCF2f6C623D055c8eDe792",
       "name": "Spectiv Signal Token",
       "symbol": "SIG",
-      "priceSource": null,
-      "price": null,
+      "priceSource": "crypto compare",
+      "price": 0.00003194,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -4245,7 +4242,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "2663",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.00003194
         }
       }
     },
@@ -4253,8 +4251,8 @@
       "address": "0x20F7A3DdF244dc9299975b4Da1C39F8D5D75f05A",
       "name": "Sapien Network Token",
       "symbol": "SPN",
-      "priceSource": null,
-      "price": null,
+      "priceSource": "crypto compare",
+      "price": 0.00002045,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -4266,7 +4264,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x20F7A3DdF244dc9299975b4Da1C39F8D5D75f05A",
@@ -4286,7 +4284,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "3002",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.00002045
         }
       }
     },
@@ -4295,7 +4294,7 @@
       "name": "Sharder",
       "symbol": "SS",
       "priceSource": "crypto compare",
-      "price": 0.00005992,
+      "price": 0.00005462,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -4310,8 +4309,8 @@
             },
             "lastPrice": 0.006232472866666667
           },
-          "lastPrice": 0.00005550830839567747,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00005591667743286082,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xbbFF862d906E348E9946Bfb2132ecB157Da3D4b4",
@@ -4332,7 +4331,7 @@
           "SortOrder": "2689",
           "Sponsored": false,
           "IsTrading": true,
-          "price": 0.00005992
+          "price": 0.00005462
         }
       }
     },
@@ -4340,8 +4339,8 @@
       "address": "0x12B306fA98F4CbB8d4457FdFf3a0A0a56f07cCdf",
       "name": "Spectre.ai D-Token",
       "symbol": "SXDT",
-      "priceSource": "0x",
-      "price": 0.0016683641343070894,
+      "priceSource": "crypto compare",
+      "price": 0.00186,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -4351,13 +4350,13 @@
           "symbol": "SXDT",
           "price": {
             "lastTrade": {
-              "date": "2018-11-30T07:42:35.000Z",
-              "id": "5c00eab009444c0004bfdf92"
+              "date": "2018-12-04T07:49:03.000Z",
+              "id": "5c063246704d000004995090"
             },
-            "lastPrice": 0.187323925
+            "lastPrice": 0.20698296037893477
           },
-          "lastPrice": 0.0016683641343070894,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0018570156143812558,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x12B306fA98F4CbB8d4457FdFf3a0A0a56f07cCdf",
@@ -4377,7 +4376,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "2182",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.00186
         }
       }
     },
@@ -4385,8 +4385,8 @@
       "address": "0xFf3519eeeEA3e76F1F699CCcE5E23ee0bdDa41aC",
       "name": "Blockchain Capital",
       "symbol": "BCAP",
-      "priceSource": null,
-      "price": null,
+      "priceSource": "crypto compare",
+      "price": 0.0089,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -4398,7 +4398,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xFf3519eeeEA3e76F1F699CCcE5E23ee0bdDa41aC",
@@ -4418,7 +4418,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1204",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.0089
         }
       }
     },
@@ -4438,8 +4439,8 @@
       "address": "0xC86D054809623432210c107af2e3F619DcFbf652",
       "name": "SENTINEL PROTOCOL",
       "symbol": "UPP",
-      "priceSource": "0x",
-      "price": 0.000027956721999349648,
+      "priceSource": "crypto compare",
+      "price": 0.0001786,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -4454,8 +4455,8 @@
             },
             "lastPrice": 0.0031389807460869786
           },
-          "lastPrice": 0.000027956721999349648,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00002816239678886577,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xC86D054809623432210c107af2e3F619DcFbf652",
@@ -4475,7 +4476,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "2864",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.0001786
         }
       }
     },
@@ -4484,7 +4486,7 @@
       "name": "Wand Token",
       "symbol": "WAND",
       "priceSource": "0x",
-      "price": 0.0005856488778054862,
+      "price": 0.0005899574376457922,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -4499,8 +4501,8 @@
             },
             "lastPrice": 0.065756656
           },
-          "lastPrice": 0.0005856488778054862,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0005899574376457922,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": null
       }
@@ -4521,19 +4523,19 @@
       "address": "0x5CA9a71B1d01849C0a95490Cc00559717fCF0D1d",
       "name": "Aeternity",
       "symbol": "AE",
-      "priceSource": "kyber",
-      "price": 0.004863252762234248,
+      "priceSource": "crypto compare",
+      "price": 0.004686,
       "details": {
         "kyber": {
           "address": "0x5ca9a71b1d01849c0a95490cc00559717fcf0d1d",
           "symbol": "AE",
           "name": "Aeternity",
           "decimals": 18,
-          "currentPrice": 0.004863252762234248,
-          "lastPrice": 0.005088824876565671,
-          "lastTimestamp": 1543555910,
-          "baseVolume": 10.0073515604,
-          "quoteVolume": 1961.9557111640877,
+          "currentPrice": 0.004672910188369895,
+          "lastPrice": 0.0047014616,
+          "lastTimestamp": 1543912686,
+          "baseVolume": 0.0147014616,
+          "quoteVolume": 3.0618635042429614,
           "market": "ETH_AE"
         },
         "zeroX": {
@@ -4548,8 +4550,8 @@
             },
             "lastPrice": 0.524178385
           },
-          "lastPrice": 0.004668492919486997,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.0047028385519468875,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x5CA9a71B1d01849C0a95490Cc00559717fCF0D1d",
@@ -4569,7 +4571,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1375",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.004686
         }
       }
     },
@@ -4577,8 +4580,8 @@
       "address": "0xBC86727E770de68B1060C91f6BB6945c73e10388",
       "name": "Ink Protocol",
       "symbol": "XNK",
-      "priceSource": null,
-      "price": null,
+      "priceSource": "crypto compare",
+      "price": 0.00007252,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -4590,7 +4593,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0xBC86727E770de68B1060C91f6BB6945c73e10388",
@@ -4610,7 +4613,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "2412",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.00007252
         }
       }
     },
@@ -4631,7 +4635,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": null
       }
@@ -4640,8 +4644,8 @@
       "address": "0xB9e7F8568e08d5659f5D29C4997173d84CdF2607",
       "name": "Swarm City Token",
       "symbol": "SWT",
-      "priceSource": null,
-      "price": null,
+      "priceSource": "crypto compare",
+      "price": 0.001201,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -4663,7 +4667,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "1118",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.001201
         }
       }
     },
@@ -4684,7 +4689,7 @@
       "name": "Tronix",
       "symbol": "TRX",
       "priceSource": "0x",
-      "price": 0.00031060796307022515,
+      "price": 0.00015292932089846784,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -4694,13 +4699,13 @@
           "symbol": "TRX",
           "price": {
             "lastTrade": {
-              "date": "2018-10-08T21:05:57.000Z",
-              "id": "5bbbc7ae01583e0004cd816e"
+              "date": "2018-12-01T07:26:54.000Z",
+              "id": "5c0238a79f26ae0004bf83fc"
             },
-            "lastPrice": 0.03487506209352488
+            "lastPrice": 0.017045502107343225
           },
-          "lastPrice": 0.00031060796307022515,
-          "etherPriceInUsd": 112.28
+          "lastPrice": 0.00015292932089846784,
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": null
       }
@@ -4709,8 +4714,8 @@
       "address": "0x5c543e7AE0A1104f78406C340E9C64FD9fCE5170",
       "name": "vSlice",
       "symbol": "VSL",
-      "priceSource": null,
-      "price": null,
+      "priceSource": "crypto compare",
+      "price": 0.00001761,
       "details": {
         "kyber": null,
         "zeroX": null,
@@ -4732,7 +4737,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "892",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.00001761
         }
       }
     },
@@ -4740,8 +4746,8 @@
       "address": "0x4DF812F6064def1e5e029f1ca858777CC98D2D81",
       "name": "Xaurum",
       "symbol": "XAUR",
-      "priceSource": null,
-      "price": null,
+      "priceSource": "crypto compare",
+      "price": 0.0003604,
       "details": {
         "kyber": null,
         "zeroX": {
@@ -4753,7 +4759,7 @@
             "lastTrade": {}
           },
           "lastPrice": null,
-          "etherPriceInUsd": 112.28
+          "etherPriceInUsd": 111.46
         },
         "cryptoCompare": {
           "address": "0x4DF812F6064def1e5e029f1ca858777CC98D2D81",
@@ -4773,7 +4779,8 @@
           "TotalCoinsFreeFloat": "N/A",
           "SortOrder": "698",
           "Sponsored": false,
-          "IsTrading": true
+          "IsTrading": true,
+          "price": 0.0003604
         }
       }
     }
