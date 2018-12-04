@@ -17,15 +17,16 @@ async function getPrices ({ tokens }) {
   const pricesInfo = await getAux('/tokens/pairs')
 
   const markets = Object.keys(pricesInfo)
+  const requestedAddresses = new Set(
+    tokens.map(t => t.address.toLowerCase())
+  )
 
   const priceByAddress = markets.reduce((prices, market) => {
     const { contractAddress: address , ...priceInfo } = pricesInfo[market]
     const addressLower = address.toLowerCase()
     
     // Is one of the requested tokens
-    const isRequestedToken = tokens.some(
-      ({ address }) => address.toLowerCase() === addressLower
-    )
+    const isRequestedToken = requestedAddresses.has(address.toLowerCase())
 
     if (isRequestedToken) {
       prices[addressLower] = {

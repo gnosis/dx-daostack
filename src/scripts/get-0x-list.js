@@ -51,7 +51,7 @@ async function main () {
       } = await tokenRegisty.getTokenMetaData(address)
 
       return {
-        address: address,
+        address,
         name,
         symbol,
         decimals,

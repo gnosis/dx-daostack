@@ -26,9 +26,8 @@ async function main () {
   const { Data: coinList } = await cryptoComparePriceFeed.getCoinList()
   const tokens = Object
     // Get symbols
-    .keys(coinList)
-    // Get coin
-    .map(symbol => coinList[symbol])
+    .values(coinList)
+
     // Take only coins with address
     .filter(coin => coin.SmartContractAddress !== 'N/A')
 

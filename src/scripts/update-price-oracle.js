@@ -185,12 +185,12 @@ async function getPriceValue({
   address,
   fixedPriceOracle
 }) {
-  const { 
-    0: numeratorBn,
-    1: denominatorBn 
+  let { 
+    0: numerator,
+    1: denominator 
   } = await fixedPriceOracle.getPriceValue(address) // { 0: 389, 1: 2500 }
-  const numerator = numeratorBn.toNumber()
-  let denominator = denominatorBn.toNumber()
+  numerator = numerator.toNumber()
+  denominator = denominator.toNumber()
   
   if (numerator === 0 && denominator === 0) {
      // A 0/0 means it's not initialized, so we assign the fraction 0/1 = 0

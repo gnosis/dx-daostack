@@ -141,11 +141,7 @@ async function main () {
 
   filePath = path.join(OUTPUT_DIR, `priceOracle-prices-${network}.json`)
   console.log('Writting file %s', filePath)
-  const priceOraclePrices = Object
-    // Get token addreses
-    .keys(tokensPricesInfo)
-    // Get token info
-    .map(address => tokensPricesInfo[address])
+  const priceOraclePrices = tokensPricesInfo
     // Remove tokens without price
     .filter(token => !!token.price)
     // to a simple data representation
