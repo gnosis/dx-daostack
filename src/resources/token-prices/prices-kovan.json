@@ -1,0 +1,90 @@
+{
+  "network": "kovan",
+  "lastCheck": "2018-11-30T12:45:16.135Z",
+  "tokens": [
+    {
+      "address": "0x6Ff6C0Ff1d68b964901F986d4C9FA3ac68346570",
+      "name": "0x Protocol Token",
+      "symbol": "ZRX",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x323B5d4C32345ced77393B3530b1EeD0f346429D",
+      "name": "Melon Token",
+      "symbol": "MLN",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x1Dad4783cf3fe3085C1426157aB175A6119A04bA",
+      "name": "Maker DAO",
+      "symbol": "MKR",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xeeE3870657E4716670f185dF08652dd848fe8f7e",
+      "name": "Digix DAO Token",
+      "symbol": "DGD",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xB18845c260F680d5B9D84649638813E342E4F8C9",
+      "name": "Augur Reputation Token",
+      "symbol": "REP",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xeF7FfF64389B814A946f3E92105513705CA6B990",
+      "name": "Golem Network Token",
+      "symbol": "GNT",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
+      "name": "Wrapped Ether",
+      "symbol": "WETH",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    }
+  ]
+}
