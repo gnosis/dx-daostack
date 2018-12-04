@@ -1,0 +1,270 @@
+{
+  "network": "rinkeby",
+  "lastCheck": "2018-11-30T12:25:47.669Z",
+  "tokens": [
+    {
+      "address": "0x561CFa66c4c9842bD9e40a7e3C9ac9Aecbf15a1d",
+      "name": "token0",
+      "symbol": "TKN0",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x36219ae0804D4B194f6c15553c4D4D1823b9163E",
+      "name": "token1",
+      "symbol": "TKN1",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x1B7adC2Acc21dDd07bc4eAeA4fe35Db3cdA11382",
+      "name": "token2",
+      "symbol": "TKN2",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x1cDF5229852faF7EDbd90950Ce2236010885B8B4",
+      "name": "token3",
+      "symbol": "TKN3",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xBf5Ec72564f3D1bFCFe87ed58d95c4bAf5D6d097",
+      "name": "token4",
+      "symbol": "TKN4",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x4D262B5f51605FC82583d7F06A706674275FB740",
+      "name": "token5",
+      "symbol": "TKN5",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xF3E367C8BBc0Db03cd58dd42811B3479E9F7A683",
+      "name": "token6",
+      "symbol": "TKN6",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xec8e82FCa52a3d3c0873bcA28BA3c6daB1A8F6d7",
+      "name": "token7",
+      "symbol": "TKN7",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x7BDb85A7b0c23286bdDFcD9FAfDC792d1F8083d0",
+      "name": "token8",
+      "symbol": "TKN8",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xb3B216b40677735ec08Aec60A6569C3a641F7Cce",
+      "name": "token9",
+      "symbol": "TKN9",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xD22967A6aA687c232117d7a504f9dE75D2d1243b",
+      "name": "token10",
+      "symbol": "TKN10",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x5671560Eac4Cc04a25723899cDd5c36155C701d5",
+      "name": "token11",
+      "symbol": "TKN11",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xDd7852b72584a29a42DD5f3C7810620d902b0005",
+      "name": "token12",
+      "symbol": "TKN12",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x96DE8D2aA510547f7354fd65b2c953553cBdF7F1",
+      "name": "token13",
+      "symbol": "TKN13",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xb76Ed70C313bfF0A8F97FAf4A6bab7f084cb6E38",
+      "name": "token14",
+      "symbol": "TKN14",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xf93deaAe891BcCd4B3F5fEAA37436f184B120142",
+      "name": "token15",
+      "symbol": "TKN15",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x8367544fE9cF48593517051a9d9f3580263Cd56b",
+      "name": "token16",
+      "symbol": "TKN16",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x087Eed4Bc1ee3DE49BeFbd66C662B434B15d49d4",
+      "name": "token17",
+      "symbol": "TKN17",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x8457CFD7075939f7cE7aab497F7A22ec8b218cb9",
+      "name": "token18",
+      "symbol": "TKN18",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x6Ff6C0Ff1d68b964901F986d4C9FA3ac68346570",
+      "name": "token19",
+      "symbol": "TKN19",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0x00F58D6d585F84B2d7267940CeDe30Ce2FE6eAE8",
+      "name": "0x Protocol Token",
+      "symbol": "ZRX",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    },
+    {
+      "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+      "name": "Ether Token",
+      "symbol": "WETH",
+      "priceSource": null,
+      "price": null,
+      "details": {
+        "kyber": null,
+        "zeroX": null,
+        "cryptoCompare": null
+      }
+    }
+  ]
+}

@@ -19,7 +19,11 @@
     "restore": "rm -rf build && npm run compile && npm run networks-reset",
     "networks": "truffle networks",
     "lint": "eslint .",
-    "solium": "solium --dir ./contracts/"
+    "solium": "solium --dir ./contracts/",
+    "get-0x-list": "truffle exec src/scripts/get-0x-list.js",
+    "get-cryptocompare-tokens": "node src/scripts/get-cryptocompare-tokens",
+    "get-token-prices": "node src/scripts/get-token-prices.js",
+    "update-price-oracle": "truffle exec src/scripts/update-price-oracle.js"
   },
   "license": "ISC",
   "devDependencies": {
@@ -32,9 +36,12 @@
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-promise": "^4.0.0",
     "eslint-plugin-standard": "^4.0.0",
+    "fractional": "^1.0.0",
+    "got": "^9.3.2",
     "moment-timezone": "^0.5.23",
     "solium": "^1.1.8",
-    "truffle": "^5.0.0-beta.2"
+    "truffle": "^5.0.0-beta.2",
+    "yargs": "^12.0.5"
   },
   "dependencies": {
     "@daostack/arc": "0.0.0-alpha.56",
@@ -44,6 +51,7 @@
     "@gnosis.pm/owl-token": "1.2.3",
     "@gnosis.pm/util-contracts": "1.1.1",
     "debug": "^4.1.0",
+    "event-stream": "^3.3.5",
     "truffle-contract": "^3.0.6",
     "truffle-hdwallet-provider": "^1.0.0-web3one.1"
   }
