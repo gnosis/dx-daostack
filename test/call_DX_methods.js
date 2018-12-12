@@ -238,7 +238,7 @@ function setupBeforeAfter(accounts) {
     console.log('--------------------')
   })
 
-  // after(() => revertSnapshot(snapshotId))
+  after(() => revertSnapshot(snapshotId))
 
   return context
 }
