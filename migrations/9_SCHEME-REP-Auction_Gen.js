@@ -12,8 +12,8 @@ const registerScheme = require('./helpers/registerScheme')
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
 const {
-  numberOfAuctions
-} = require('../src/config/schemes/old/auction4reputationparams.json')
+  numberOfGenAuctions
+} = require('../src/config/bootstrap')
 
 const {
   initialDistributionStart,
@@ -34,6 +34,8 @@ module.exports = async function (deployer) {
   assert(initialDistributionStart, `The parameter initialDistributionStart was not defined`)
   assert(initialDistributionEnd, `The parameter initialDistributionEnd was not defined`)
   assert(redeemReputationStart, `The parameter redeemReputationStart was not defined`)
+  assert(numberOfGenAuctions, `The parameter numberOfGenAuctions was not defined`)
+  
 
   console.log('Deploy DxGenAuction4Rep that inherits from Auction4Reputation')
   const dxGenAuction4Rep = await deployer.deploy(DxGenAuction4Rep)
@@ -47,7 +49,7 @@ module.exports = async function (deployer) {
   console.log('  - Auction start time:', dateUtil.formatDateTime(initialDistributionStart))
   console.log('  - Auction end time:', dateUtil.formatDateTime(initialDistributionEnd))
   console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemReputationStart))
-  console.log('  - number of auctions:', numberOfAuctions)
+  console.log('  - Number of auctions:', numberOfGenAuctions)
   // QUESTION: is GEN token - staking token?
   console.log('  - Staking token address (GEN):', genToken.address)
   console.log('  - wallet address (DxAvatar.address): ', walletAddress)
@@ -57,7 +59,7 @@ module.exports = async function (deployer) {
     reputationReward,
     dateUtil.toEthereumTimestamp(initialDistributionStart),
     dateUtil.toEthereumTimestamp(initialDistributionEnd),
-    numberOfAuctions,
+    numberOfGenAuctions,
     dateUtil.toEthereumTimestamp(redeemReputationStart),
     genToken.address,
     walletAddress

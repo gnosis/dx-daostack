@@ -1,4 +1,9 @@
 module.exports = {
-  // MGN: Get REP out of the locked MGN
-  getLockedMgnSignature: 'lockedTokenBalances(address)'
+  // Locked MGN
+  //  - Get REP out of the locked MGN
+  getLockedMgnSignature: 'lockedTokenBalances(address)',
+
+  // GEN Auctions
+  //  - Get REP out of auctioning GEN
+  numberOfGenAuctions: 5
 }
