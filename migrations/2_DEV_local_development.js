@@ -1,7 +1,5 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
-
-const developmentConfig = require('../src/config/development')
 const migrateDx = require('@gnosis.pm/dx-contracts/src/migrations-truffle-1.5')
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
@@ -29,8 +27,8 @@ module.exports = async function (deployer, network, accounts) {
     const TokenRegistry = artifacts.require('TokenRegistry')
     deployer.deploy(TokenRegistry)
     
-    // deploy MGN (FRT), GEN, WETH
-    await deployTokens(deployer, owner)
+    // deploy test GEN
+    await deployGen(deployer, owner)
 
     // Deploy DaoStack Universal Controllers
     await deployUniversalControllers(deployer)
@@ -42,24 +40,16 @@ module.exports = async function (deployer, network, accounts) {
   }
 }
 
-async function deployTokens(deployer) {
+async function deployGen(deployer) {
   const GenToken = artifacts.require('GenToken') // GEN (Dao Stack)
-  // const MgnToken = artifacts.require('TokenFRT') // MGN (Token FRT)
-  // const WethToken = artifacts.require('EtherToken') // (Wrapped Ether)
-  // const GnoToken = artifacts.require('TokenGNO') // GNO
 
-  const { testTokensInitialBalance: initialBalance } = developmentConfig
-  assert(initialBalance, 'testTokensInitialBalance is mandatory')
-
-  console.log('Create GEN, MGN, WETH with %dM as the initial balance for the deployer', initialBalance * 1e6)
+  const initialBalance = 1e6 // 1M
+  console.log('Create GEN with %dM as the initial balance for the deployer', initialBalance * 1e6)
   const initialBalanceWei = web3.utils.toWei(
     new BN(initialBalance),
     'ether'
   )
   await deployer.deploy(GenToken, initialBalanceWei)
-  // await deployer.deploy(MgnToken, initialBalanceWei)
-  // await deployer.deploy(WethToken, initialBalanceWei)
-  // await deployer.deploy(GnoToken, initialBalanceWei)
 }
 
 async function deployUniversalControllers(deployer) {
