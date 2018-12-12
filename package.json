@@ -7,7 +7,7 @@
     "gasLimit": "7000000"
   },
   "scripts": {
-    "test": "truffle test test/*.js",
+    "test": "NODE_ENV=test truffle test test/*.js",
     "test-debug": "DEBUG=app:*,test:* truffle test test/*.js",
     "rpc": "ganache-cli -d",
     "networks-extract": "npx truffle networks --clean && npx tnt extractNetworks",

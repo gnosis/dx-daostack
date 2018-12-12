@@ -1,5 +1,7 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
+const assert = require('assert')
+
 const DxGenAuction4Rep = artifacts.require('DxGenAuction4Rep')
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
@@ -14,13 +16,14 @@ const {
 } = require('../src/config/schemes/old/auction4reputationparams.json')
 
 const {
-  startDate: auctionStartTime,
-  endDate: auctionEndTime
-} = require('../src/config/timePeriods/initialLocking')
+  initialDistributionStart,
+  initialDistributionEnd,
+  redeemReputationStart
+} = require('../src/config/timePeriods')
 
 const {
   genReward: reputationReward
-} = require('../src/config/rep/initalRepDistribution')
+} = require('../src/config/initalRepDistribution')
 
 module.exports = async function (deployer) {
   // TODO: get address from config/networks/GenesisProtocol.stakingToken()
@@ -28,21 +31,22 @@ module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
+  assert(initialDistributionStart, `The parameter initialDistributionStart was not defined`)
+  assert(initialDistributionEnd, `The parameter initialDistributionEnd was not defined`)
+  assert(redeemReputationStart, `The parameter redeemReputationStart was not defined`)
+
   console.log('Deploy DxGenAuction4Rep that inherits from Auction4Reputation')
   const dxGenAuction4Rep = await deployer.deploy(DxGenAuction4Rep)
   console.log('  - Scheme for conducting ERC20 Tokens auctions for reputation')
 
   console.log('Configure DxGenAuction4Rep')
 
-  const redeemEnableTime = auctionEndTime
-
   const walletAddress = dxAvatar.address
-
   console.log('  - Avatar address:', dxAvatar.address)
   console.log('  - Reputation reward:', reputationReward)
-  console.log('  - Auction start time:', dateUtil.formatDateTime(auctionStartTime))
-  console.log('  - Auction end time:', dateUtil.formatDateTime(auctionEndTime))
-  console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemEnableTime))
+  console.log('  - Auction start time:', dateUtil.formatDateTime(initialDistributionStart))
+  console.log('  - Auction end time:', dateUtil.formatDateTime(initialDistributionEnd))
+  console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemReputationStart))
   console.log('  - number of auctions:', numberOfAuctions)
   // QUESTION: is GEN token - staking token?
   console.log('  - Staking token address (GEN):', genToken.address)
@@ -51,10 +55,10 @@ module.exports = async function (deployer) {
   await dxGenAuction4Rep.initialize(
     dxAvatar.address,
     reputationReward,
-    dateUtil.toEthereumTimestamp(auctionStartTime),
-    dateUtil.toEthereumTimestamp(auctionEndTime),
+    dateUtil.toEthereumTimestamp(initialDistributionStart),
+    dateUtil.toEthereumTimestamp(initialDistributionEnd),
     numberOfAuctions,
-    dateUtil.toEthereumTimestamp(redeemEnableTime),
+    dateUtil.toEthereumTimestamp(redeemReputationStart),
     genToken.address,
     walletAddress
   )

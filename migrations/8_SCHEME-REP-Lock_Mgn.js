@@ -8,14 +8,18 @@ const {
   getBalanceFuncSignature
 } = require('../src/config/schemes/DxLockMgnForRep')
 
+// TODO: Once we use the latest contracts, we should use all this dates.
 const {
-  startDate: lockingStartTime,
-  endDate: lockingEndTime
-} = require('../src/config/timePeriods/initialLocking')
+  initialDistributionStart,
+  initialDistributionEnd,
+  claimingMgnStart,
+  claimingMgnEnd,
+  redeemReputationStart
+} = require('../src/config/timePeriods')
 
 const {
   mgnReward
-} = require('../src/config/rep/initalRepDistribution')
+} = require('../src/config/initalRepDistribution')
 
 const getDXContractAddresses = require('../src/helpers/getDXContractAddresses')(web3, artifacts)
 
@@ -39,27 +43,30 @@ module.exports = async function (deployer) {
   const dxLockMgnForRep = await DxLockMgnForRep.deployed()
   console.log('Configure DxLockMgnForRep scheme:')
   assert(mgnReward, `The parameter reputationReward was not defined`)
-  assert(lockingStartTime, `The parameter lockingStartTime was not defined`)
-  assert(lockingEndTime, `The parameter lockingEndTime was not defined`)
+  assert(initialDistributionStart, `The parameter initialDistributionStart was not defined`)
+  assert(initialDistributionEnd, `The parameter initialDistributionEnd was not defined`)
+  assert(claimingMgnStart, `The parameter claimingMgnStart was not defined`)
+  assert(claimingMgnEnd, `The parameter claimingMgnEnd was not defined`)
+  assert(redeemReputationStart, `The parameter redeemReputationStart was not defined`)
   assert(getBalanceFuncSignature, `The parameter getBalanceFuncSignature was not defined`)
-
-  // TODO: Make sure that this is correct
-  const redeemEnableTime = lockingEndTime
 
   console.log('  - Avatar address: ' + dxAvatar.address)
   console.log('  - Reputation reward: %dK', mgnReward / 1000)
-  console.log('  - Locking start time: ' + dateUtil.formatDateTime(lockingStartTime))
-  console.log('  - Locking end time: ' + dateUtil.formatDateTime(lockingEndTime))
-  console.log('  - Redeem enable time: ' + dateUtil.formatDateTime(redeemEnableTime))
+  console.log('  - Opt in start time: ' + dateUtil.formatDateTime(initialDistributionStart))
+  console.log('  - Opt in end time: ' + dateUtil.formatDateTime(initialDistributionEnd))
+  console.log('  - Claim start time: ' + dateUtil.formatDateTime(claimingMgnStart))
+  console.log('  - Claim end time: ' + dateUtil.formatDateTime(claimingMgnEnd))  
+  console.log('  - Redeem enable time: ' + dateUtil.formatDateTime(redeemReputationStart))
   console.log('  - MGN address (external locking contract): ' + mgnTokenAddress)
   console.log('  - Get balance function signature: ' + getBalanceFuncSignature)
 
   let txResult = await dxLockMgnForRep.initialize(
     dxAvatar.address,
     mgnReward,
-    dateUtil.toEthereumTimestamp(lockingStartTime),
-    dateUtil.toEthereumTimestamp(lockingEndTime),
-    dateUtil.toEthereumTimestamp(redeemEnableTime),
+    dateUtil.toEthereumTimestamp(initialDistributionStart),
+    dateUtil.toEthereumTimestamp(initialDistributionEnd),
+    // TODO: Add claiming times
+    dateUtil.toEthereumTimestamp(redeemReputationStart),
     mgnTokenAddress,
     getBalanceFuncSignature
   )
