@@ -5,8 +5,8 @@ const dateUtil = require('../src/helpers/dateUtil')
 const registerScheme = require('./helpers/registerScheme')
 
 const {
-  getBalanceFuncSignature
-} = require('../src/config/schemes/DxLockMgnForRep')
+  getLockedMgnSignature
+} = require('../src/config/bootstrap')
 
 // TODO: Once we use the latest contracts, we should use all this dates.
 const {
@@ -48,7 +48,7 @@ module.exports = async function (deployer) {
   assert(claimingMgnStart, `The parameter claimingMgnStart was not defined`)
   assert(claimingMgnEnd, `The parameter claimingMgnEnd was not defined`)
   assert(redeemReputationStart, `The parameter redeemReputationStart was not defined`)
-  assert(getBalanceFuncSignature, `The parameter getBalanceFuncSignature was not defined`)
+  assert(getLockedMgnSignature, `The parameter getBalanceFuncSignature was not defined`)
 
   console.log('  - Avatar address: ' + dxAvatar.address)
   console.log('  - Reputation reward: %dK', mgnReward / 1000)
@@ -58,7 +58,7 @@ module.exports = async function (deployer) {
   console.log('  - Claim end time: ' + dateUtil.formatDateTime(claimingMgnEnd))  
   console.log('  - Redeem enable time: ' + dateUtil.formatDateTime(redeemReputationStart))
   console.log('  - MGN address (external locking contract): ' + mgnTokenAddress)
-  console.log('  - Get balance function signature: ' + getBalanceFuncSignature)
+  console.log('  - Get balance function signature: ' + getLockedMgnSignature)
 
   let txResult = await dxLockMgnForRep.initialize(
     dxAvatar.address,
@@ -68,7 +68,7 @@ module.exports = async function (deployer) {
     // TODO: Add claiming times
     dateUtil.toEthereumTimestamp(redeemReputationStart),
     mgnTokenAddress,
-    getBalanceFuncSignature
+    getLockedMgnSignature
   )
   console.log('  - Transaction: ' + txResult.tx)
   console.log('  - Gas used: ' + txResult.receipt.gasUsed)
