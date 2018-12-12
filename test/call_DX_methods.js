@@ -86,6 +86,16 @@ contract('Execute updateAuctioneer proposal', (accounts) => {
   })
 
   voteAndExecute(context)
+
+  // test fro when proposal actually executes
+  xit('auctioneer is changed', async () => {
+    const { DX } = context.contracts
+
+    const auctioneer = await DX.auctioneer()
+    console.log('auctioneer: ', auctioneer);
+
+    assert.equal(auctioneer, RAND_ADDRESS, 'auctioneer should have been changed')
+  })
 })
 
 contract.skip('Execute updateThresholdNewTokenPair proposal', (accounts) => {
@@ -228,7 +238,7 @@ function setupBeforeAfter(accounts) {
     console.log('--------------------')
   })
 
-  after(() => revertSnapshot(snapshotId))
+  // after(() => revertSnapshot(snapshotId))
 
   return context
 }
@@ -311,6 +321,8 @@ function voteAndExecute(context) {
       const events = tx.logs.map((log) => { return log.event })
 
       console.log(acc, 'voted on proposal', proposalId)
+      // we also should receive ProposalDeleted and ProposalExecuted from GenericScheme.executeProposal
+      // but we don't, (ノ°Д°）ノ︵ ┻━┻
       console.log('events: ', tx.logs.map((log) => { return log.event }).join(', '));
 
       if (events.includes('ExecuteProposal')) {
