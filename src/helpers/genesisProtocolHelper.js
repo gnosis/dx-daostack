@@ -15,10 +15,10 @@ const parameterNames = [
   'daoBountyLimit'
 ]
 
-const genesisProtocolConf = require('../config/genesisProtocol')
-const { voteOnBehalf } = genesisProtocolConf
+const votingConf = require('../config/voting')
+const { voteOnBehalf } = votingConf
 
-const parameters = parameterNames.map(parameterName => genesisProtocolConf[parameterName])
+const parameters = parameterNames.map(parameterName => votingConf[parameterName])
 
 module.exports = artifacts => {
   const GenesisProtocol = artifacts.require('GenesisProtocol')

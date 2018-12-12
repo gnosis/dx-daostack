@@ -7,7 +7,7 @@ const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, 
 
 module.exports = async function (deployer) {
   // Configure Genesis Protocol voting machine
-  const genesisProtocolConf = require('../src/config/votingMachines/GenesisProtocol')
+  const votingConf = require('../src/config/voting')
   // reuse GenesisProtocol if available on the network
   const genesisProtocol = await getDaostackContract('GenesisProtocol')
 
@@ -30,17 +30,17 @@ module.exports = async function (deployer) {
     'daoBountyLimit'
   ]
 
-  const { voteOnBehalf } = genesisProtocolConf
+  const { voteOnBehalf } = votingConf
 
   console.log('Configure Genesis Protocol voting machine:')
   parameterNames.concat('voteOnBehalf').forEach(parameterName => {
-    const parameter = genesisProtocolConf[parameterName]
+    const parameter = votingConf[parameterName]
     console.log(`  - ${parameterName}: ${parameter}`)
     assert(parameter !== undefined, `The parameter ${parameterName} for genesisProtocol was not defined`)
   })
 
   const parameters = parameterNames
-    .map(parameterName => genesisProtocolConf[parameterName])
+    .map(parameterName => votingConf[parameterName])
 
   const txResult = await genesisProtocol.setParameters(parameters, voteOnBehalf)
   console.log('  - Transaction: ' + txResult.tx)
