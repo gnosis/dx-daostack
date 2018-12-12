@@ -1,7 +1,7 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
 
-const devLocalConfig = require('../src/config/dev-local')
+const developmentConfig = require('../src/config/development')
 const migrateDx = require('@gnosis.pm/dx-contracts/src/migrations-truffle-1.5')
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
@@ -48,7 +48,7 @@ async function deployTokens(deployer) {
   // const WethToken = artifacts.require('EtherToken') // (Wrapped Ether)
   // const GnoToken = artifacts.require('TokenGNO') // GNO
 
-  const { testTokensInitialBalance: initialBalance } = devLocalConfig
+  const { testTokensInitialBalance: initialBalance } = developmentConfig
   assert(initialBalance, 'testTokensInitialBalance is mandatory')
 
   console.log('Create GEN, MGN, WETH with %dM as the initial balance for the deployer', initialBalance * 1e6)

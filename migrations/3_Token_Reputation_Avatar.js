@@ -2,7 +2,7 @@
 /* eslint no-undef: "error" */
 
 const assert = require('assert')
-const daoConfig = require('../src/config/DutchX-dao')
+const daoConfig = require('../src/config/dao')
 
 module.exports = async (deployer, network, accounts) => {
   const DxToken = artifacts.require('DxToken')

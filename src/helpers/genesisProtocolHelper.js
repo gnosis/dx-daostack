@@ -15,7 +15,7 @@ const parameterNames = [
   'daoBountyLimit'
 ]
 
-const genesisProtocolConf = require('../config/votingMachines/GenesisProtocol')
+const genesisProtocolConf = require('../config/genesisProtocol')
 const { voteOnBehalf } = genesisProtocolConf
 
 const parameters = parameterNames.map(parameterName => genesisProtocolConf[parameterName])
