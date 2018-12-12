@@ -1,3 +1,5 @@
+// Bootstrap schemes config
+
 module.exports = {
   // Locked MGN
   //  - Get REP out of the locked MGN
@@ -11,4 +13,9 @@ module.exports = {
   // ETH Locking
   // TODO: Decide
   maxLockingEthPeriod: 3000
+
+  // Whitelisted tokens Locking
+  //
+
+  // dappConf card conf
 }

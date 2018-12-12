@@ -1,3 +1,5 @@
+// Voting config
+
 /*
 * Genesis Protocol voting machine config
 *   Use absolute and relative decision method.

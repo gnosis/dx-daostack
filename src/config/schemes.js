@@ -1,6 +1,5 @@
-/*
-* Scheme for proposing and rewarding contributions to an organization
-*/
+// Config for aditional schemes (no bootstraping config is in this file)
+
 module.exports = {
   // ************  SCHEME: Contribution reward  ************
   /*

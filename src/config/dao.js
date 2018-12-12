@@ -1,5 +1,5 @@
 /*
-* DutchX Dao main config
+* dxDao main config
 */
 
 // Defauls (may be overrided by env vars)

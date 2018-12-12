@@ -1,9 +1,18 @@
 /*
-* Initial REP distribution amonts
+* Initial REP distribution amounts
 */
-const assert = require('assert')
+
+/*
+TOTAL: 1M
+  GNO: 30%
+  ETH: 8%
+  dAppCon: 2%
+  GEN: 10%
+  MGN: 50%
+*/
 
 const INITIAL_REP_DISTRIBUTION = 1e6
+ 
 const GNO_PERCENTAGE = 30
 const ETH_PERCENTAGE = 8
 const DAPPCON_CARDS_PERCENTAGE = 2
@@ -17,6 +26,7 @@ const totalAssignedRep =
   GEN_PERCENTAGE +
   MGN_PERCENTAGE
 
+const assert = require('assert')
 assert(totalAssignedRep === 100, 'The percecentages must sum 100%')
 
 module.exports = {
