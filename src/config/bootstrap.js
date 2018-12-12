@@ -5,5 +5,10 @@ module.exports = {
 
   // GEN Auctions
   //  - Get REP out of auctioning GEN
-  numberOfGenAuctions: 5
+  // TODO: Decide
+  numberOfGenAuctions: 5,
+
+  // ETH Locking
+  // TODO: Decide
+  maxLockingEthPeriod: 3000
 }
