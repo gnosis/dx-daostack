@@ -11,7 +11,7 @@ const { REGISTERED, ADD_REMOVE_GLOBAL_CONSTRAINTS } = SchemePermissions
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
-module.exports = async function () {
+module.exports = async function (deployer, network) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 

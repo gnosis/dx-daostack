@@ -11,7 +11,7 @@ const { CALL_DELEGATECALL } = SchemePermissions
 const getDXContractAddress = require('../src/helpers/getDXContractAddresses')(web3, artifacts)
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
-module.exports = async function () {
+module.exports = async function (deployer, network) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 

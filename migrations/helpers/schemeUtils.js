@@ -47,7 +47,7 @@ async function setParameters ({
   assert(parameters, `The parameter parameters was not defined`)
   assert(typeof parameters === 'object', `The parameter should be an array`)
   
-  console.log('Set scheme parameters:')
+  console.log('\nSet scheme parameters:')
   Object.keys(parameters).forEach(paramName => {
     console.log(`  - ${paramName}: ${parameters[paramName]}`)
   })

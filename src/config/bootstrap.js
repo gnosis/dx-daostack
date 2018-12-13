@@ -12,10 +12,10 @@ module.exports = {
 
   // ETH Locking
   // TODO: Decide
-  maxLockingEthPeriod: 3000
+  maxLockingEthPeriod: 3000,
 
   // Whitelisted tokens Locking
-  //
+  maxLockingWhitelistedTokensPeriod: 3000
 
   // dappConf card conf
 }
