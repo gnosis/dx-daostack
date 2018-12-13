@@ -1,38 +1,42 @@
-/* global artifacts */
+/* global artifacts, web3 */
 /* eslint no-undef: "error" */
 
+const assert = require('assert')
 const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')(artifacts)
 
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
-const registerScheme = require('./helpers/registerScheme')
-const { SchemePermissions: { REGISTER_SCHEMES, UPGRADE_CONTROLLER } } = registerScheme
+const { registerScheme, setParameters, SchemePermissions } = require('./helpers/schemeUtils')
+const { REGISTER_SCHEMES, UPGRADE_CONTROLLER } = SchemePermissions
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
 
-module.exports = async function (deployer) {
+module.exports = async function () {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
   const upgradeScheme = await getDaostackContract('UpgradeScheme')
-
-  console.log('Configure UpgradeScheme')
 
   const {
     genesisProtocolParamsHash,
     genesisProtocolAddress
   } = await getGenesisProtocolData()
 
-  const upgradeSchemeParams = [
-    genesisProtocolParamsHash,
-    genesisProtocolAddress
-  ]
+  assert(genesisProtocolParamsHash, `The parameter genesisProtocolParamsHash was not defined`)
+  assert(genesisProtocolAddress, `The parameter genesisProtocolAddress was not defined`)
 
-  await upgradeScheme.setParameters(...upgradeSchemeParams)
-
-  const paramsHash = await upgradeScheme.getParametersHash(...upgradeSchemeParams)
+  console.log('Configure UpgradeScheme')
+  
+  // Set parameters
+  const paramsHash = await setParameters({
+    scheme: upgradeScheme,
+    parameters: {
+      voteParams: genesisProtocolParamsHash,
+      intVote: genesisProtocolAddress
+    }
+  })
 
   await registerScheme({
     label: 'UpgradeScheme',

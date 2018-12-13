@@ -8,7 +8,7 @@ const DxController = artifacts.require('DxController')
 
 const dateUtil = require('../src/helpers/dateUtil')
 
-const registerScheme = require('./helpers/registerScheme')
+const { registerScheme } = require('./helpers/schemeUtils')
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
 const {
@@ -18,7 +18,7 @@ const {
 const {
   initialDistributionStart,
   initialDistributionEnd,
-  redeemReputationStart
+  redeemStart
 } = require('../src/config/timePeriods')
 
 const {
@@ -33,7 +33,7 @@ module.exports = async function (deployer) {
 
   assert(initialDistributionStart, `The parameter initialDistributionStart was not defined`)
   assert(initialDistributionEnd, `The parameter initialDistributionEnd was not defined`)
-  assert(redeemReputationStart, `The parameter redeemReputationStart was not defined`)
+  assert(redeemStart, `The parameter redeemStart was not defined`)
   assert(numberOfGenAuctions, `The parameter numberOfGenAuctions was not defined`)
   
 
@@ -48,7 +48,7 @@ module.exports = async function (deployer) {
   console.log('  - Reputation reward:', reputationReward)
   console.log('  - Auction start time:', dateUtil.formatDateTime(initialDistributionStart))
   console.log('  - Auction end time:', dateUtil.formatDateTime(initialDistributionEnd))
-  console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemReputationStart))
+  console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemStart))
   console.log('  - Number of auctions:', numberOfGenAuctions)
   // QUESTION: is GEN token - staking token?
   console.log('  - Staking token address (GEN):', genToken.address)
@@ -60,7 +60,7 @@ module.exports = async function (deployer) {
     dateUtil.toEthereumTimestamp(initialDistributionStart),
     dateUtil.toEthereumTimestamp(initialDistributionEnd),
     numberOfGenAuctions,
-    dateUtil.toEthereumTimestamp(redeemReputationStart),
+    dateUtil.toEthereumTimestamp(redeemStart),
     genToken.address,
     walletAddress
   )

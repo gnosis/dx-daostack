@@ -7,7 +7,7 @@ const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
-const registerScheme = require('./helpers/registerScheme')
+const { registerScheme } = require('./helpers/schemeUtils')
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 

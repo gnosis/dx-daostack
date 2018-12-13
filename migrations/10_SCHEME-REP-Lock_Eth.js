@@ -7,7 +7,7 @@ const DxController = artifacts.require('DxController')
 
 const dateUtil = require('../src/helpers/dateUtil')
 
-const registerScheme = require('./helpers/registerScheme')
+const { registerScheme } = require('./helpers/schemeUtils')
 
 const {
   maxLockingEthPeriod
@@ -36,13 +36,6 @@ module.exports = async function (deployer) {
 
   console.log('Configure DxLockEth4Rep')
 
-  // TODO: have real times in config, for now current time + from config
-  // to ensure times are in the future
-  const lockingStartTime = new Date(Date.now() + startTime * 1000)
-  const lockingEndTime = new Date(Date.now() + endTime * 1000)
-
-  const redeemEnableTime = lockingEndTime
-
   console.log('  - Avatar address:', dxAvatar.address)
   console.log('  - Reputation reward:', ethReward)
   console.log('  - Locking start time:', dateUtil.formatDateTime(initialDistributionStart))
@@ -53,9 +46,9 @@ module.exports = async function (deployer) {
   await dxLockEth4Rep.initialize(
     dxAvatar.address,
     ethReward,
-    dateUtil.toEthereumTimestamp(lockingStartTime),
-    dateUtil.toEthereumTimestamp(lockingEndTime),
-    dateUtil.toEthereumTimestamp(redeemEnableTime),
+    dateUtil.toEthereumTimestamp(initialDistributionStart),
+    dateUtil.toEthereumTimestamp(initialDistributionEnd),
+    dateUtil.toEthereumTimestamp(redeemStart),
     maxLockingEthPeriod
   )
 

@@ -4,7 +4,7 @@
 const DxController = artifacts.require('DxController')
 const DxAvatar = artifacts.require('DxAvatar')
 
-module.exports = async function (deployer) {
+module.exports = async function () {
   const dxController = await DxController.deployed()
   const dxAvatar = await DxAvatar.deployed()
 

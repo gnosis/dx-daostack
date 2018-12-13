@@ -8,21 +8,22 @@ const DxController = artifacts.require('DxController')
 
 const dateUtil = require('../src/helpers/dateUtil')
 
-const registerScheme = require('./helpers/registerScheme')
+const { registerScheme } = require('./helpers/schemeUtils')
 
 const {
   dappConReward: reputationReward
 } = require('../src/config/initalRepDistribution')
 
 const {
-  redeemReputationStart
+  redeemStart
 } = require('../src/config/timePeriods')
 
 module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  assert(redeemReputationStart, `The parameter redeemReputationStart was not defined`)
+  assert(reputationReward, `The parameter redeemStart was not defined`)
+  assert(redeemStart, `The parameter redeemStart was not defined`)
 
   console.log('Deploy DxRedeemDappconCards that inherits from FixedReputationAllocation')
   const dxRedeemDappconCards = await deployer.deploy(DxRedeemDappconCards)
@@ -31,12 +32,12 @@ module.exports = async function (deployer) {
 
   console.log('  - Avatar address:', dxAvatar.address)
   console.log('  - Reputation reward:', reputationReward)
-  console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemReputationStart))
+  console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemStart))
 
   await dxRedeemDappconCards.initialize(
     dxAvatar.address,
     reputationReward,
-    dateUtil.toEthereumTimestamp(redeemReputationStart)
+    dateUtil.toEthereumTimestamp(redeemStart)
   )
 
   await registerScheme({

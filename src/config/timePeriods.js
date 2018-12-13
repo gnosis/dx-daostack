@@ -1,6 +1,6 @@
 // Time period
 
-const dateUtil = require('../../helpers/dateUtil')
+const dateUtil = require('../helpers/dateUtil')
 
 // Initial distribution (Feb 18 - Mar 20, at noon):
 //   - Start of the locking for REP period

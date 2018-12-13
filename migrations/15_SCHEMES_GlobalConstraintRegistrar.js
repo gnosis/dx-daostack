@@ -6,12 +6,12 @@ const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
-const registerScheme = require('./helpers/registerScheme')
-const { SchemePermissions: { REGISTERED, ADD_REMOVE_GLOBAL_CONSTRAINTS } } = registerScheme
+const { registerScheme, setParameters, SchemePermissions } = require('./helpers/schemeUtils')
+const { REGISTERED, ADD_REMOVE_GLOBAL_CONSTRAINTS } = SchemePermissions
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
-module.exports = async function (deployer) {
+module.exports = async function () {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
@@ -24,15 +24,15 @@ module.exports = async function (deployer) {
     genesisProtocolAddress
   } = await getGenesisProtocolData()
 
-  const globalConstraintRegistrarParams = [
-    genesisProtocolParamsHash,
-    genesisProtocolAddress
-  ]
-
-  await globalConstraintRegistrar.setParameters(...globalConstraintRegistrarParams)
-
-  const paramsHash = await globalConstraintRegistrar.getParametersHash(...globalConstraintRegistrarParams)
-
+  // Set parameters
+  const paramsHash = await setParameters({
+    scheme: globalConstraintRegistrar,
+    parameters: {
+      voteRegisterParams: genesisProtocolParamsHash,
+      intVote: genesisProtocolAddress
+    }
+  })
+  
   await registerScheme({
     label: 'GlobalConstraintRegistrar',
     paramsHash,

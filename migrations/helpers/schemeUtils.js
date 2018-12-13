@@ -1,4 +1,5 @@
 const SchemePermissions = require('./SchemePermissions')
+const assert = require('assert')
 
 async function registerScheme ({
   web3,
@@ -14,6 +15,12 @@ async function registerScheme ({
   // we have decimal int (.e.g. 31), therefore
   // 31 =toHex=> 1f =0x+padding=> 0x0000001f
   const permissionsInHex = '0x' + permissions.toString(16).padStart(8, '0')
+
+  assert(schemeAddress, `The parameter schemeAddress was not defined`)
+  assert(paramsHash, `The parameter paramsHash was not defined`)
+  assert(permissionsInHex, `The parameter permissionsInHex was not defined`)
+  assert(avatarAddress, `The parameter avatarAddress was not defined`)
+  assert(controller.address, `The parameter controller address was not defined`)
 
   console.log('\nRegister ' + label + ' scheme in the controller:')
   console.log('  - Scheme address: ' + schemeAddress)
@@ -32,6 +39,28 @@ async function registerScheme ({
   console.log()
 }
 
-registerScheme.SchemePermissions = SchemePermissions
+async function setParameters ({
+  scheme,
+  parameters
+}) {
+  assert(scheme, `The parameter scheme was not defined`)
+  assert(parameters, `The parameter parameters was not defined`)
+  assert(typeof parameters === 'object', `The parameter should be an array`)
+  
+  console.log('Set scheme parameters:')
+  Object.keys(parameters).forEach(paramName => {
+    console.log(`  - ${paramName}: ${parameters[paramName]}`)
+  })
 
-module.exports = registerScheme
+  const paramList = Object.values(parameters)
+  await scheme.setParameters(...paramList)
+  const paramsHash = await scheme.getParametersHash(...paramList)
+  
+  return paramsHash
+}
+
+module.exports = {
+  registerScheme,
+  setParameters,
+  SchemePermissions
+}

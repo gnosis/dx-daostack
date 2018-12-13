@@ -2,7 +2,7 @@
 /* eslint no-undef: "error" */
 const assert = require('assert')
 const dateUtil = require('../src/helpers/dateUtil')
-const registerScheme = require('./helpers/registerScheme')
+const { registerScheme } = require('./helpers/schemeUtils')
 
 const {
   getLockedMgnSignature
@@ -14,7 +14,7 @@ const {
   initialDistributionEnd,
   claimingMgnStart,
   claimingMgnEnd,
-  redeemReputationStart
+  redeemStart
 } = require('../src/config/timePeriods')
 
 const {
@@ -47,7 +47,7 @@ module.exports = async function (deployer) {
   assert(initialDistributionEnd, `The parameter initialDistributionEnd was not defined`)
   assert(claimingMgnStart, `The parameter claimingMgnStart was not defined`)
   assert(claimingMgnEnd, `The parameter claimingMgnEnd was not defined`)
-  assert(redeemReputationStart, `The parameter redeemReputationStart was not defined`)
+  assert(redeemStart, `The parameter redeemStart was not defined`)
   assert(getLockedMgnSignature, `The parameter getBalanceFuncSignature was not defined`)
 
   console.log('  - Avatar address: ' + dxAvatar.address)
@@ -56,7 +56,7 @@ module.exports = async function (deployer) {
   console.log('  - Opt in end time: ' + dateUtil.formatDateTime(initialDistributionEnd))
   console.log('  - Claim start time: ' + dateUtil.formatDateTime(claimingMgnStart))
   console.log('  - Claim end time: ' + dateUtil.formatDateTime(claimingMgnEnd))  
-  console.log('  - Redeem enable time: ' + dateUtil.formatDateTime(redeemReputationStart))
+  console.log('  - Redeem enable time: ' + dateUtil.formatDateTime(redeemStart))
   console.log('  - MGN address (external locking contract): ' + mgnTokenAddress)
   console.log('  - Get balance function signature: ' + getLockedMgnSignature)
 
@@ -66,7 +66,7 @@ module.exports = async function (deployer) {
     dateUtil.toEthereumTimestamp(initialDistributionStart),
     dateUtil.toEthereumTimestamp(initialDistributionEnd),
     // TODO: Add claiming times
-    dateUtil.toEthereumTimestamp(redeemReputationStart),
+    dateUtil.toEthereumTimestamp(redeemStart),
     mgnTokenAddress,
     getLockedMgnSignature
   )

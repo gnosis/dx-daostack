@@ -1,6 +1,6 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
-
+const assert = require('assert')
 const DxLockWhitelisted4Rep = artifacts.require('DxLockWhitelisted4Rep')
 const FixedPriceOracle = artifacts.require('FixedPriceOracle')
 const DxAvatar = artifacts.require('DxAvatar')
@@ -8,15 +8,15 @@ const DxController = artifacts.require('DxController')
 
 const getDXContractAddress = require('../src/helpers/getDXContractAddresses.js')(web3, artifacts)
 const dateUtil = require('../src/helpers/dateUtil')
-const registerScheme = require('./helpers/registerScheme')
+const { registerScheme } = require('./helpers/schemeUtils')
 
 const {
-  reputationReward,
-  // TODO: update times, now in the past
-  lockingStartTime: startTime,
-  lockingEndTime: endTime,
-  maxLockingPeriod
-} = require('../src/config/schemes/old/lockingeth4reputationparams.json')
+  maxLockingWhitelistedTokensPeriod
+} = require('../src/config/bootstrap')
+
+const {
+  whitelistedTokensReward
+} = require('../src/config/initalRepDistribution')
 
 const getDXContractAddresses = require('../src/helpers/getDXContractAddresses')(web3, artifacts)
 
@@ -43,21 +43,28 @@ module.exports = async function (deployer) {
 
   const redeemEnableTime = lockingEndTime
 
+  assert(whitelistedTokensReward, `The parameter whitelistedTokensReward was not defined`)
+  assert(lockingStartTime, `The parameter lockingStartTime was not defined`)
+  assert(lockingEndTime, `The parameter lockingEndTime was not defined`)
+  assert(redeemEnableTime, `The parameter redeemEnableTime was not defined`)
+  assert(maxLockingWhitelistedTokensPeriod, `The parameter maxLockingWhitelistedTokensPeriod was not defined`)
+  assert(gnoAddress, `The parameter gnoAddress was not defined`)
+
   console.log('  - Avatar address:', dxAvatar.address)
-  console.log('  - Reputation reward:', reputationReward)
+  console.log('  - Reputation reward:', whitelistedTokensReward)
   console.log('  - Locking start time:', dateUtil.formatDateTime(lockingStartTime))
   console.log('  - Locking end time:', dateUtil.formatDateTime(lockingEndTime))
   console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemEnableTime))
-  console.log('  - max locking period:', maxLockingPeriod)
+  console.log('  - max locking period:', maxLockingWhitelistedTokensPeriod)
   console.log('  - locking token address (GNO):', gnoAddress)
 
   await dxLockWhitelisted4Rep.initialize(
     dxAvatar.address,
-    reputationReward,
+    whitelistedTokensReward,
     dateUtil.toEthereumTimestamp(lockingStartTime),
     dateUtil.toEthereumTimestamp(lockingEndTime),
     dateUtil.toEthereumTimestamp(redeemEnableTime),
-    maxLockingPeriod,
+    maxLockingWhitelistedTokensPeriod,
     gnoAddress
   )
 

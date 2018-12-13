@@ -1,24 +1,24 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
-
+const assert = require('assert')
 const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')(artifacts)
 
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
-const registerScheme = require('./helpers/registerScheme')
-const { SchemePermissions: {
+const { registerScheme, setParameters, SchemePermissions } = require('./helpers/schemeUtils')
+const {
   REGISTERED,
   REGISTER_SCHEMES,
   ADD_REMOVE_GLOBAL_CONSTRAINTS,
   UPGRADE_CONTROLLER,
   CALL_DELEGATECALL
-} } = registerScheme
+} = SchemePermissions
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
 
-module.exports = async function (deployer) {
+module.exports = async function () {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
@@ -31,23 +31,27 @@ module.exports = async function (deployer) {
     genesisProtocolAddress
   } = await getGenesisProtocolData()
 
-  const schemeRegistrarParams = [
-    genesisProtocolParamsHash,
-    genesisProtocolParamsHash,
-    genesisProtocolAddress
-  ]
+  assert(genesisProtocolParamsHash, `The parameter genesisProtocolParamsHash was not defined`)
+  assert(genesisProtocolAddress, `The parameter genesisProtocolAddress was not defined`)
 
-  await schemeRegistrar.setParameters(...schemeRegistrarParams)
-
-  const paramsHash = await schemeRegistrar.getParametersHash(...schemeRegistrarParams)
-
+  // Set parameters
+  const paramsHash = await setParameters({
+    scheme: schemeRegistrar,
+    parameters: {
+      voteRegisterParams: genesisProtocolParamsHash,
+      voteRemoveParams: genesisProtocolParamsHash,
+      intVoteAddress: genesisProtocolAddress
+    }
+  })
+  
   await registerScheme({
     label: 'SchemeRegistrar',
-    paramsHash,
-    permissions: REGISTERED | REGISTER_SCHEMES | ADD_REMOVE_GLOBAL_CONSTRAINTS |
-      UPGRADE_CONTROLLER | CALL_DELEGATECALL,
     schemeAddress: schemeRegistrar.address,
     avatarAddress: dxAvatar.address,
-    controller: dxController
+    controller: dxController,
+    permissions: REGISTERED | REGISTER_SCHEMES | ADD_REMOVE_GLOBAL_CONSTRAINTS |
+      UPGRADE_CONTROLLER | CALL_DELEGATECALL,
+    
+    paramsHash,
   })
 }

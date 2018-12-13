@@ -1,17 +1,17 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
 
+const assert = require('assert')
 const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')(artifacts)
-
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
-const registerScheme = require('./helpers/registerScheme')
-const { SchemePermissions: { CALL_DELEGATECALL } } = registerScheme
+const { registerScheme, setParameters, SchemePermissions } = require('./helpers/schemeUtils')
+const { CALL_DELEGATECALL } = SchemePermissions
 const getDXContractAddress = require('../src/helpers/getDXContractAddresses')(web3, artifacts)
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
-module.exports = async function (deployer, network) {
+module.exports = async function () {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
@@ -24,21 +24,22 @@ module.exports = async function (deployer, network) {
     genesisProtocolAddress
   } = await getGenesisProtocolData()
 
-  // TODO: deploy DX and DXProxy locally
-  let dutchXContractAddress
-  // For now substitute a valid address, otherwise breaks
-  if (network === 'development') dutchXContractAddress = '0x039fb002d21c1c5eeb400612aef3d64d49eb0d94'
-  else dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
+  // DutchX address
+  const dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
 
-  const genericSchemeParams = [
-    genesisProtocolParamsHash,
-    genesisProtocolAddress,
-    dutchXContractAddress
-  ]
+  assert(genesisProtocolParamsHash, `The parameter genesisProtocolParamsHash was not defined`)
+  assert(genesisProtocolAddress, `The parameter genesisProtocolAddress was not defined`)
+  assert(dutchXContractAddress, `The parameter dutchXContractAddress was not defined`)
 
-  await genericScheme.setParameters(...genericSchemeParams)
-
-  const paramsHash = await genericScheme.getParametersHash(...genericSchemeParams)
+  // Set parameters
+  const paramsHash = await setParameters({
+    scheme: genericScheme,
+    parameters: {
+      voteParams: genesisProtocolParamsHash,
+      intVote: genesisProtocolAddress,
+      contractToCall: dutchXContractAddress
+    }
+  })
 
   await registerScheme({
     label: 'GenericScheme',

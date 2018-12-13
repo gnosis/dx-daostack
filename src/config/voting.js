@@ -13,6 +13,8 @@
 *     - Contract (params): https://github.com/daostack/infra/blob/master/contracts/VotingMachines/GenesisProtocol.sol#L27
 */
 
+const NOBODYS_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 module.exports = {
   // The absolute vote percentages bar
   preBoostedVoteRequiredPercentage: 50,
@@ -75,5 +77,5 @@ module.exports = {
   daoBountyLimit: 10,
 
   // This address is allowed to vote on behalf of someone else
-  voteOnBehalf: '0x0000000000000000000000000000000000000000'
+  voteOnBehalf: NOBODYS_ADDRESS
 }
