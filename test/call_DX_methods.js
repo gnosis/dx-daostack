@@ -94,7 +94,7 @@ contract('Execute updateAuctioneer proposal', (accounts) => {
   checkStateChanged(context, 'auctioneer', RAND_ADDRESS)
 })
 
-contract.skip('Execute updateThresholdNewTokenPair proposal', (accounts) => {
+contract('Execute updateThresholdNewTokenPair proposal', (accounts) => {
   const context = setupBeforeAfter(accounts)
 
   checkSchemeParams(context)
@@ -114,7 +114,7 @@ contract.skip('Execute updateThresholdNewTokenPair proposal', (accounts) => {
   checkStateChanged(context, 'thresholdNewTokenPair', RAND_THRESHOLD)
 })
 
-contract.skip('Execute updateThresholdNewAuction proposal', (accounts) => {
+contract('Execute updateThresholdNewAuction proposal', (accounts) => {
   const context = setupBeforeAfter(accounts)
 
   checkSchemeParams(context)
@@ -134,7 +134,7 @@ contract.skip('Execute updateThresholdNewAuction proposal', (accounts) => {
   checkStateChanged(context, 'thresholdNewAuction', RAND_THRESHOLD)
 })
 
-contract.skip('Execute updateMasterCopy proposal', (accounts) => {
+contract('Execute updateMasterCopy proposal', (accounts) => {
   const context = setupBeforeAfter(accounts)
 
   checkSchemeParams(context)
@@ -169,7 +169,7 @@ contract.skip('Execute updateMasterCopy proposal', (accounts) => {
   checkStateChanged(context, 'masterCopy', RAND_ADDRESS)
 })
 
-contract.skip('Execute updateEthUSDOracle proposal', (accounts) => {
+contract('Execute updateEthUSDOracle proposal', (accounts) => {
   const context = setupBeforeAfter(accounts)
 
   checkSchemeParams(context)
@@ -201,7 +201,7 @@ contract.skip('Execute updateEthUSDOracle proposal', (accounts) => {
   checkStateChanged(context, 'ethUSDOracle', RAND_ADDRESS)
 })
 
-contract.skip('Execute updateApprovalOfToken proposal', (accounts) => {
+contract('Execute updateApprovalOfToken proposal', (accounts) => {
   const context = setupBeforeAfter(accounts)
 
   checkSchemeParams(context)
@@ -300,9 +300,9 @@ function checkAvatarIsAuctioneer(context) {
     const { contracts: { Avatar, DX } } = context
 
     const avatar = await Avatar.address
-    console.log('avatar: ', avatar);
+    // console.log('avatar: ', avatar);
     const auctioneer = await DX.auctioneer()
-    console.log('auctioneer: ', auctioneer);
+    // console.log('auctioneer: ', auctioneer);
 
     assert.equal(avatar, auctioneer, 'avatar should be auctioneer to be able to change DX state')
   })
@@ -346,7 +346,7 @@ function addProposal(
 
 function voteAndExecute(context) {
   it('can vote and execute', async () => {
-    const { contracts: { GenesisP, DX }, accounts, proposalId } = context
+    const { contracts: { GenesisP }, accounts, proposalId } = context
 
     // const ex = await GenesisP.execute.call(proposalId)
     // console.log('ex: ', ex);
@@ -367,7 +367,7 @@ function voteAndExecute(context) {
       console.log('events: ', tx.logs.map((log) => { return log.event }).join(', '));
 
       if (events.includes('ExecuteProposal')) {
-        console.log('tx: ', JSON.stringify(tx.logs, null, 2));
+        // console.log('tx: ', JSON.stringify(tx.logs, null, 2));
         break
       }
     }
@@ -428,14 +428,14 @@ async function ensureRep(accounts, { MGN, DxLock4Rep, DxRep }) {
 
   await callForAll(accounts, async (acc, i) => {
     if (repBalances[i].gt(new BN(0))) return
-    console.log('repBalances[i]: ', repBalances[i].toString());
+    // console.log('repBalances[i]: ', repBalances[i].toString());
 
     if (balances[i].lt(new BN(LOCK_AMOUNT))) {
       // minted tokens are added to lockedBalances
-      console.log('mint tokens for', acc)
+      // console.log('mint tokens for', acc)
       await mintTokensFor(MGN, acc, accounts, LOCK_AMOUNT)
     } else {
-      console.log('lock tokens for', acc)
+      // console.log('lock tokens for', acc)
       await MGN.lockTokens(LOCK_AMOUNT, { from: acc })
     }
   })
@@ -448,8 +448,8 @@ async function ensureRep(accounts, { MGN, DxLock4Rep, DxRep }) {
   await increaseTimeAndMine(advanceBy.toNumber())
 
   await callForAll(accounts, async (acc) => {
-    const locked = await DxLock4Rep.externalLockers(acc)
-    console.log(acc, 'locked:', locked);
+    /*const locked =*/ await DxLock4Rep.externalLockers(acc)
+    // console.log(acc, 'locked:', locked);
   })
   await callForAll(accounts, (acc) => { return DxLock4Rep.lock({ from: acc }) })
 
