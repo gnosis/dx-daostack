@@ -3,10 +3,11 @@
 */
 
 // Defauls (may be overrided by env vars)
-const TOKEN_NAME = 'DutchX'
-const TOKEN_SYMBOL = 'DUX' // TODO: Confirm
-const TOKENS_CAP = 1.5e6 // TODO: Confirm
-const ORGANIZATION_NAME = 'DutchX'
+// TODO: Confirm
+const TOKEN_NAME = 'dxDAO'
+const TOKEN_SYMBOL = 'DXD'
+const TOKENS_CAP = 1.5e6
+const ORGANIZATION_NAME = 'dxDAO'
 
 module.exports = {
   // Basic info
