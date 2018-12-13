@@ -80,7 +80,7 @@ contract('Execute updateAuctioneer proposal', (accounts) => {
   checkSchemeParams(context)
 
   checkRepBalances(context)
-  checkControllerIsAuctioneer(context)
+  checkAvatarIsAuctioneer(context)
 
   const RAND_ADDRESS = '0x0000000000000000000000000000000000000001'
 
@@ -100,7 +100,7 @@ contract.skip('Execute updateThresholdNewTokenPair proposal', (accounts) => {
   checkSchemeParams(context)
 
   checkRepBalances(context)
-  checkControllerIsAuctioneer(context)
+  checkAvatarIsAuctioneer(context)
 
   const RAND_THRESHOLD = Math.floor(Math.random() * 2000 + 1000)
 
@@ -120,7 +120,7 @@ contract.skip('Execute updateThresholdNewAuction proposal', (accounts) => {
   checkSchemeParams(context)
 
   checkRepBalances(context)
-  checkControllerIsAuctioneer(context)
+  checkAvatarIsAuctioneer(context)
 
   const RAND_THRESHOLD = Math.floor(Math.random() * 2000 + 1000)
 
@@ -140,7 +140,7 @@ contract.skip('Execute updateMasterCopy proposal', (accounts) => {
   checkSchemeParams(context)
 
   checkRepBalances(context)
-  checkControllerIsAuctioneer(context)
+  checkAvatarIsAuctioneer(context)
 
   const RAND_ADDRESS = '0x0000000000000000000000000000000000000001'
 
@@ -175,7 +175,7 @@ contract.skip('Execute updateEthUSDOracle proposal', (accounts) => {
   checkSchemeParams(context)
 
   checkRepBalances(context)
-  checkControllerIsAuctioneer(context)
+  checkAvatarIsAuctioneer(context)
 
   const RAND_ADDRESS = '0x0000000000000000000000000000000000000001'
 
@@ -207,7 +207,7 @@ contract.skip('Execute updateApprovalOfToken proposal', (accounts) => {
   checkSchemeParams(context)
 
   checkRepBalances(context)
-  checkControllerIsAuctioneer(context)
+  checkAvatarIsAuctioneer(context)
 
   const RAND_ADDRESS = '0x0000000000000000000000000000000000000001'
 
@@ -295,7 +295,7 @@ function checkRepBalances(context) {
   })
 }
 
-function checkControllerIsAuctioneer(context) {
+function checkAvatarIsAuctioneer(context) {
   it('controller (Avatar\'s owner should be auctioneer)', async () => {
     const { contracts: { Avatar, DX } } = context
 
@@ -367,7 +367,7 @@ function voteAndExecute(context) {
       console.log('events: ', tx.logs.map((log) => { return log.event }).join(', '));
 
       if (events.includes('ExecuteProposal')) {
-        // console.log('tx: ', JSON.stringify(tx.logs, null, 2));
+        console.log('tx: ', JSON.stringify(tx.logs, null, 2));
         break
       }
     }
