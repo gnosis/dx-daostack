@@ -45,6 +45,8 @@ const GenericScheme = artifacts.require('GenericScheme')
 const GenesisProtocol = artifacts.require('GenesisProtocol')
 const DutchExchange = artifacts.require('DutchExchange')
 const DutchExchangeProxy = artifacts.require('DutchExchangeProxy')
+const DxController = artifacts.require('DxController')
+
 const BN = require('bn.js')
 const {
   increaseTimeAndMine,
@@ -75,6 +77,8 @@ contract('Execute updateAuctioneer proposal', (accounts) => {
 
   const context = setupBeforeAfter(accounts)
 
+  checkSchemeParams(context)
+
   checkRepBalances(context)
   checkControllerIsAuctioneer(context)
 
@@ -87,19 +91,13 @@ contract('Execute updateAuctioneer proposal', (accounts) => {
 
   voteAndExecute(context)
 
-  // test fro when proposal actually executes
-  xit('auctioneer is changed', async () => {
-    const { DX } = context.contracts
-
-    const auctioneer = await DX.auctioneer()
-    console.log('auctioneer: ', auctioneer);
-
-    assert.equal(auctioneer, RAND_ADDRESS, 'auctioneer should have been changed')
-  })
+  checkStateChanged(context, 'auctioneer', RAND_ADDRESS)
 })
 
 contract.skip('Execute updateThresholdNewTokenPair proposal', (accounts) => {
   const context = setupBeforeAfter(accounts)
+
+  checkSchemeParams(context)
 
   checkRepBalances(context)
   checkControllerIsAuctioneer(context)
@@ -112,10 +110,14 @@ contract.skip('Execute updateThresholdNewTokenPair proposal', (accounts) => {
   })
 
   voteAndExecute(context)
+
+  checkStateChanged(context, 'thresholdNewTokenPair', RAND_THRESHOLD)
 })
 
 contract.skip('Execute updateThresholdNewAuction proposal', (accounts) => {
   const context = setupBeforeAfter(accounts)
+
+  checkSchemeParams(context)
 
   checkRepBalances(context)
   checkControllerIsAuctioneer(context)
@@ -128,10 +130,14 @@ contract.skip('Execute updateThresholdNewAuction proposal', (accounts) => {
   })
 
   voteAndExecute(context)
+
+  checkStateChanged(context, 'thresholdNewAuction', RAND_THRESHOLD)
 })
 
 contract.skip('Execute updateMasterCopy proposal', (accounts) => {
   const context = setupBeforeAfter(accounts)
+
+  checkSchemeParams(context)
 
   checkRepBalances(context)
   checkControllerIsAuctioneer(context)
@@ -145,8 +151,10 @@ contract.skip('Execute updateMasterCopy proposal', (accounts) => {
 
   voteAndExecute(context)
 
+  checkStateChanged(context, 'newMasterCopy', RAND_ADDRESS)
+
   it('skips 30 days', async () => {
-    await increaseTimeAndMine(30 * 24 * 60 * 60)
+    await increaseTimeAndMine(31 * 24 * 60 * 60)
   })
 
   addProposal(context, {
@@ -154,10 +162,17 @@ contract.skip('Execute updateMasterCopy proposal', (accounts) => {
   })
 
   voteAndExecute(context)
+
+  // .masterCopy var is on the proxy contract directly,
+  // so can be accessed even if proxied to RANDOM_ADDRESS
+  // any other props break
+  checkStateChanged(context, 'masterCopy', RAND_ADDRESS)
 })
 
 contract.skip('Execute updateEthUSDOracle proposal', (accounts) => {
   const context = setupBeforeAfter(accounts)
+
+  checkSchemeParams(context)
 
   checkRepBalances(context)
   checkControllerIsAuctioneer(context)
@@ -171,6 +186,8 @@ contract.skip('Execute updateEthUSDOracle proposal', (accounts) => {
 
   voteAndExecute(context)
 
+  checkStateChanged(context, 'newProposalEthUSDOracle', RAND_ADDRESS)
+
   it('skips 30 days', async () => {
     await increaseTimeAndMine(30 * 24 * 60 * 60)
   })
@@ -180,10 +197,14 @@ contract.skip('Execute updateEthUSDOracle proposal', (accounts) => {
   })
 
   voteAndExecute(context)
+
+  checkStateChanged(context, 'ethUSDOracle', RAND_ADDRESS)
 })
 
 contract.skip('Execute updateApprovalOfToken proposal', (accounts) => {
   const context = setupBeforeAfter(accounts)
+
+  checkSchemeParams(context)
 
   checkRepBalances(context)
   checkControllerIsAuctioneer(context)
@@ -196,6 +217,8 @@ contract.skip('Execute updateApprovalOfToken proposal', (accounts) => {
   })
 
   voteAndExecute(context)
+
+  checkStateChanged(context, 'approvedTokens', true, RAND_ADDRESS)
 })
 
 function setupBeforeAfter(accounts) {
@@ -215,6 +238,8 @@ function setupBeforeAfter(accounts) {
     const DXProxy = await DutchExchangeProxy.deployed()
     const DX = await DutchExchange.at(DXProxy.address)
 
+    const Controller = await DxController.deployed()
+
     context.contracts = {
       Avatar,
       GenericS,
@@ -223,7 +248,8 @@ function setupBeforeAfter(accounts) {
       MGN,
       DxLock4Rep,
       DxRep,
-      DXProxy
+      DXProxy,
+      Controller,
     }
 
     context.accounts = accounts.slice()
@@ -231,7 +257,7 @@ function setupBeforeAfter(accounts) {
 
     await ensureRep(accounts, context.contracts)
 
-    await ensureControllerIsAuctioneer(accounts, context.contracts)
+    await ensureAvatarIsAuctioneer(accounts, context.contracts)
   })
 
   afterEach(() => {
@@ -241,6 +267,21 @@ function setupBeforeAfter(accounts) {
   after(() => revertSnapshot(snapshotId))
 
   return context
+}
+
+function checkSchemeParams(context) {
+  it('scheme parameters are correct', async () => {
+    const { Controller, Avatar, GenericS, DX } = context.contracts
+
+    const paramsHash = await Controller.getSchemeParameters(GenericS.address, Avatar.address)
+    console.log('paramsHash: ', paramsHash);
+
+    console.log('DX: ', DX.address);
+    const parameters = await GenericS.parameters(paramsHash)
+    // console.log('parameters: ', JSON.stringify(parameters, null, 2));
+
+    assert.equal(DX.address, parameters.contractToCall, 'contractToCall should be DX address')
+  })
 }
 
 function checkRepBalances(context) {
@@ -258,12 +299,12 @@ function checkControllerIsAuctioneer(context) {
   it('controller (Avatar\'s owner should be auctioneer)', async () => {
     const { contracts: { Avatar, DX } } = context
 
-    const controller = await Avatar.owner()
-    console.log('controller: ', controller);
+    const avatar = await Avatar.address
+    console.log('avatar: ', avatar);
     const auctioneer = await DX.auctioneer()
     console.log('auctioneer: ', auctioneer);
 
-    assert.equal(controller, auctioneer, 'controller should be auctioneer to be able to change DX state')
+    assert.equal(avatar, auctioneer, 'avatar should be auctioneer to be able to change DX state')
   })
 }
 
@@ -344,27 +385,38 @@ function voteAndExecute(context) {
 
     assert(state.eq(EXECUTED_STATE), 'proposal should be in executed state')
     assert(winningVote.eq(YES_VOTE), 'winnigVote should be YES')
-
-    const auctioneer = await DX.auctioneer()
-
-    console.log('auctioneer: ', auctioneer);
   })
 }
 
-async function ensureControllerIsAuctioneer(accounts, { Avatar, DX }) {
-  const controller = await Avatar.owner()
+function checkStateChanged(context, variable, expected, ...input) {
+  it(`${variable} is changed`, async () => {
+    const { DX } = context.contracts
+
+    const changed = await DX[variable](...input)
+    const isBN = BN.isBN(changed)
+
+    console.log(variable, ':', isBN ? changed.toString() : changed);
+
+    isBN ?
+      assert(changed.eq(new BN(expected), `${variable} should have been changed`)) :
+      assert.equal(changed, expected, `${variable} should have been changed`)
+  })
+}
+
+async function ensureAvatarIsAuctioneer(accounts, { Avatar, DX }) {
+  const avatar = await Avatar.address
   const auctioneer = await DX.auctioneer()
 
-  if (controller === auctioneer) return
+  if (avatar === auctioneer) return
 
   if (accounts.includes(auctioneer)) {
     console.log('Changing DX auctioneer to Controller address')
-    await DX.updateAuctioneer(controller, { from: auctioneer })
+    await DX.updateAuctioneer(avatar, { from: auctioneer })
     return
   }
 
   throw new Error(`
-    Auctioneer is neither the controller nor among the available accounts.
+    Auctioneer is neither the avatar nor among the available accounts.
     Unable to proceed.`
   )
 }
