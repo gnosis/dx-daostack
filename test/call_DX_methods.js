@@ -153,9 +153,7 @@ contract('Execute updateMasterCopy proposal', (accounts) => {
 
   checkStateChanged(context, 'newMasterCopy', RAND_ADDRESS)
 
-  it('skips 30 days', async () => {
-    await increaseTimeAndMine(31 * 24 * 60 * 60)
-  })
+  skip30Days()
 
   addProposal(context, {
     method: 'updateMasterCopy'
@@ -188,9 +186,7 @@ contract('Execute updateEthUSDOracle proposal', (accounts) => {
 
   checkStateChanged(context, 'newProposalEthUSDOracle', RAND_ADDRESS)
 
-  it('skips 30 days', async () => {
-    await increaseTimeAndMine(30 * 24 * 60 * 60)
-  })
+  skip30Days()
 
   addProposal(context, {
     method: 'updateEthUSDOracle'
@@ -220,6 +216,12 @@ contract('Execute updateApprovalOfToken proposal', (accounts) => {
 
   checkStateChanged(context, 'approvedTokens', true, RAND_ADDRESS)
 })
+
+function skip30Days() {
+  it('skips 30 days', async () => {
+    await increaseTimeAndMine(30 * 24 * 60 * 60)
+  })
+}
 
 function setupBeforeAfter(accounts) {
   let snapshotId
