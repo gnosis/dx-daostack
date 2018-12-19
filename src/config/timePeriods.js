@@ -12,13 +12,12 @@ let INITIAL_DISTRIBUTION_END =   '2019-03-20 11:59:59'
 //    - The MGN cannot be claimed until the 21th (all other can start being claimed on the 20th)
 const CLAIMING_MGN_START = '2019-03-20 12:00'
 const CLAIMING_MGN_END =   '2019-03-21 11:59:59'
-const REDEEM_MGN_START =   '2019-03-21 12:00'
 
 // Redeem period (Mar 20):
 //   - Users can redeem the REP
 //   - This period continues indefinetely
 //   - All claimings but MGN are active on this date (MGN needs to wait the 24h window)
-const REDEEM_START = '2019-03-20 12:00'
+const REDEEM_START = '2019-03-21 12:00'
 
 // Governance period start (Apr 4):
 const GOVERNANCE_START = '2019-04-04 12:00'
@@ -47,10 +46,6 @@ module.exports = {
   ),
   claimingMgnEnd: dateUtil.parse(
     process.env.CLAIMING_MGN_END || CLAIMING_MGN_END
-  ),
-  redeemMgnStart: dateUtil.parse(
-    // Same as claimingMgnEnd
-    process.env.REDEEM_MGN_START || REDEEM_MGN_START
   ),
 
   // Redeem period
