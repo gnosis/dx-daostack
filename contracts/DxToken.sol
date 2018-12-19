@@ -1,6 +1,7 @@
 pragma solidity ^0.4.24;
 import "@daostack/arc/contracts/controller/DAOToken.sol";
 
+
 // is DAOToken
 contract DxToken is DAOToken {
     constructor (

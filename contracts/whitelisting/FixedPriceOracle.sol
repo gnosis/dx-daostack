@@ -2,6 +2,7 @@ pragma solidity ^0.4.24;
 
 import "@gnosis.pm/dx-contracts/contracts/base/TokenWhitelist.sol";
 
+
 /**
  * @title An Ether-ERC20 token price oracle with an unmutable price
  * 
@@ -40,7 +41,7 @@ contract FixedPriceOracle {
     
     constructor (address whitelistAddress) public {
         owner = msg.sender;
-        whitelist = TokenWhitelist(whitelist);
+        whitelist = TokenWhitelist(whitelistAddress);
     }
 
     function hasReliablePrice (address token) public view returns (bool) {
@@ -67,7 +68,10 @@ contract FixedPriceOracle {
         address[] tokens,
         uint[] numerators,
         uint[] denominators
-    ) public onlyOwner notFrozen {
+    ) public 
+    onlyOwner 
+    notFrozen
+    {
         for (uint i = 0 ; i < tokens.length ; i++) {
             address token = tokens[i];
             uint numerator = numerators[i];
@@ -82,7 +86,10 @@ contract FixedPriceOracle {
         address token, 
         uint numerator, 
         uint denominator
-    ) public onlyOwner notFrozen {
+    ) public
+    onlyOwner 
+    notFrozen
+    {
         prices[token] = Price(numerator, denominator);
         emit PriceSet(token, numerator, denominator);
     }
