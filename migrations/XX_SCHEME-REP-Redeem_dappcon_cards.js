@@ -11,7 +11,7 @@ const dateUtil = require('../src/helpers/dateUtil')
 const { registerScheme } = require('./helpers/schemeUtils')
 
 const {
-  dappConReward: reputationReward
+  contributorsReward: reputationReward
 } = require('../src/config/initalRepDistribution')
 
 const {
@@ -47,4 +47,6 @@ module.exports = async function (deployer) {
     controller: dxController,
     web3
   })
+
+  throw new Error('Dappcon cards are not used for REP')
 }
