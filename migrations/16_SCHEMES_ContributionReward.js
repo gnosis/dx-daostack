@@ -2,7 +2,7 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
 
-const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')(artifacts)
+const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')({ artifacts, web3 })
 
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
