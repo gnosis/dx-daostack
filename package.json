@@ -36,6 +36,7 @@
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-promise": "^4.0.0",
     "eslint-plugin-standard": "^4.0.0",
+    "ganache-cli": "^6.2.4-beta.1",
     "fractional": "^1.0.0",
     "got": "^9.3.2",
     "moment-timezone": "^0.5.23",

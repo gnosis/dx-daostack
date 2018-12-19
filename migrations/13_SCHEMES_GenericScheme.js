@@ -11,7 +11,7 @@ const { SchemePermissions: { CALL_DELEGATECALL } } = registerScheme
 const getDXContractAddress = require('../src/helpers/getDXContractAddresses')(web3, artifacts)
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
-module.exports = async function (deployer, network) {
+module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
@@ -24,17 +24,15 @@ module.exports = async function (deployer, network) {
     genesisProtocolAddress
   } = await getGenesisProtocolData()
 
-  // TODO: deploy DX and DXProxy locally
-  let dutchXContractAddress
-  // For now substitute a valid address, otherwise breaks
-  if (network === 'development') dutchXContractAddress = '0x039fb002d21c1c5eeb400612aef3d64d49eb0d94'
-  else dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
+  const dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
 
   const genericSchemeParams = [
     genesisProtocolParamsHash,
     genesisProtocolAddress,
     dutchXContractAddress
   ]
+  console.log('dutchXContractAddress: ', dutchXContractAddress);
+  console.log('dutchXContractAddress: ', artifacts.require('DutchExchangeProxy').address);
 
   await genericScheme.setParameters(...genericSchemeParams)
 
