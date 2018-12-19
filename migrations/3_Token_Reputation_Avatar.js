@@ -4,7 +4,7 @@
 const assert = require('assert')
 const daoConfig = require('../src/config/dao')
 
-module.exports = async (deployer, network, accounts) => {
+module.exports = async (deployer) => { // eslint-disable-line no-unused-vars
   const DxToken = artifacts.require('DxToken')
   const DxReputation = artifacts.require('DxReputation')
   const DxAvatar = artifacts.require('DxAvatar')

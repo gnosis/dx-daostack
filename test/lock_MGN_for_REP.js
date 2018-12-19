@@ -1,5 +1,5 @@
 
-/* global artifacts, web3, contract, it, before, beforeEach, after, afterEach, assert, expect, should */
+/* global artifacts, web3, contract, it, before, after, afterEach, assert */
 
 const MgnToken = artifacts.require('TokenFRT')
 const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')

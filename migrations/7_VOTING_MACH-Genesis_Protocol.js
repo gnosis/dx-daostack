@@ -1,11 +1,13 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
+/*eslint no-unused-vars: ["error", {"args": "after-used"}]*/
+
 const assert = require('assert')
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
 
-module.exports = async function (deployer) {
+module.exports = async function (deployer) { // eslint-disable-line no-unused-vars
   // Configure Genesis Protocol voting machine
   const votingConf = require('../src/config/voting')
   // reuse GenesisProtocol if available on the network

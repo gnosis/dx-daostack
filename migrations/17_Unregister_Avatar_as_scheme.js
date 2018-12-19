@@ -4,7 +4,7 @@
 const DxController = artifacts.require('DxController')
 const DxAvatar = artifacts.require('DxAvatar')
 
-module.exports = async function (deployer, network) {
+module.exports = async function (deployer) { // eslint-disable-line no-unused-vars
   const dxController = await DxController.deployed()
   const dxAvatar = await DxAvatar.deployed()
 

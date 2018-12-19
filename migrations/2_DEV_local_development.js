@@ -4,7 +4,7 @@ const migrateDx = require('@gnosis.pm/dx-contracts/src/migrations-truffle-1.5')
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
-const assert = require('assert')
+// const assert = require('assert')
 const BN = web3.utils.BN
 
 module.exports = async function (deployer, network, accounts) {

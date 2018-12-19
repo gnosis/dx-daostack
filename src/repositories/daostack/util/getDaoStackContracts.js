@@ -1,7 +1,7 @@
 const contract = require('truffle-contract')
 const fs = require('fs')
 
-var constants = require('@daostack/arc/test/constants')
+// var constants = require('@daostack/arc/test/constants')
 let contractInstances
 const DAO_STACK_BUILD_CONTRACTS_DIR = '@daostack/arc/build/contracts'
 
@@ -36,7 +36,7 @@ async function getDaoStackContracts ({
   contracts = CONTRACTS,
   provider,
   transactionDefaults,
-  gas = constants.ARC_GAS_LIMIT
+  // gas = constants.ARC_GAS_LIMIT
 } = {}) {
   if (!contractInstances) {
     contractInstances = contracts.reduce((acc, contractName) => {
@@ -74,6 +74,6 @@ async function getDaoStackContracts ({
   // console.log('contractInstances: ', Object.keys(contractInstances))
 
   return contractInstances;
-};
+}
 
 module.exports = getDaoStackContracts;

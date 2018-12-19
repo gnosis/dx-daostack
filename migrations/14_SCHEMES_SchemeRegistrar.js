@@ -18,7 +18,7 @@ const {
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
 
-module.exports = async function (deployer, network) {
+module.exports = async function (deployer) { // eslint-disable-line no-unused-vars
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
