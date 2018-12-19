@@ -23,9 +23,9 @@ module.exports = async function (deployer, network, accounts) {
       thresholdAuctionStartUsd: process.env.THRESHOLD_AUCTION_START_USD
     })
 
-    // Deploy 0x Token Registry
-    const TokenRegistry = artifacts.require('TokenRegistry')
-    deployer.deploy(TokenRegistry)
+    // // Deploy 0x Token Registry
+    // const TokenRegistry = artifacts.require('TokenRegistry')
+    // deployer.deploy(TokenRegistry)
     
     // deploy test GEN
     await deployGen(deployer, owner)
