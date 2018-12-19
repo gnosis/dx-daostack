@@ -47,6 +47,8 @@ const DutchExchange = artifacts.require('DutchExchange')
 const DutchExchangeProxy = artifacts.require('DutchExchangeProxy')
 const DxController = artifacts.require('DxController')
 
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 const BN = require('bn.js')
 const {
   increaseTimeAndMine,
@@ -453,7 +455,7 @@ async function ensureRep(accounts, { MGN, DxLock4Rep, DxRep }) {
     /*const locked =*/ await DxLock4Rep.externalLockers(acc)
     // console.log(acc, 'locked:', locked);
   })
-  await callForAll(accounts, (acc) => { return DxLock4Rep.lock({ from: acc }) })
+  await callForAll(accounts, (acc) => { return DxLock4Rep.claim(ZERO_ADDRESS, { from: acc }) })
 
   const redeemEnableTime = await DxLock4Rep.redeemEnableTime()
   const timestamp2 = await getTimestamp()
