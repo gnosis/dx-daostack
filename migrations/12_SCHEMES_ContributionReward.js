@@ -7,13 +7,13 @@ const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
-const { registerScheme } = require('./helpers/schemeUtils')
+const { registerScheme, setParameters } = require('./helpers/schemeUtils')
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
 const { contributionRewardSubmissionFee } = require('../src/config/schemes')
 
-module.exports = async function () {
+module.exports = async function (deployer) { // eslint-disable-line no-unused-vars
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
@@ -26,16 +26,20 @@ module.exports = async function () {
     genesisProtocolAddress
   } = await getGenesisProtocolData()
 
-  const contributionRewardParams = [
-    // a fee (in the organization's token) that is to be paid for submitting a contribution
-    contributionRewardSubmissionFee,
-    genesisProtocolParamsHash,
-    genesisProtocolAddress
-  ]
-
-  await contributionReward.setParameters(...contributionRewardParams)
-
-  const paramsHash = await contributionReward.getParametersHash(...contributionRewardParams)
+  // Set parameters
+  const paramsHash = await setParameters({
+    scheme: contributionReward,
+    parameters: [{
+      name: 'orgNativeTokenFee',
+      value: contributionRewardSubmissionFee
+    }, {
+      name: 'voteApproveParams',
+      value: genesisProtocolParamsHash
+    }, {
+      name: 'intVote',
+      value: genesisProtocolAddress
+    }
+  ]})
 
   await registerScheme({
     label: 'ContributionReward',
