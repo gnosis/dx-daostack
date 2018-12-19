@@ -27,11 +27,14 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
   // Set parameters
   const paramsHash = await setParameters({
     scheme: globalConstraintRegistrar,
-    parameters: {
-      voteRegisterParams: genesisProtocolParamsHash,
-      intVote: genesisProtocolAddress
+    parameters: [{
+      name: 'voteRegisterParams',
+      value: genesisProtocolParamsHash
+    }, {
+      name: 'intVote',
+      value: genesisProtocolAddress
     }
-  })
+  ]})
   
   await registerScheme({
     label: 'GlobalConstraintRegistrar',

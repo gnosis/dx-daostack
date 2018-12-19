@@ -45,14 +45,17 @@ async function setParameters ({
 }) {
   assert(scheme, `The parameter scheme was not defined`)
   assert(parameters, `The parameter parameters was not defined`)
-  assert(typeof parameters === 'object', `The parameter should be an array`)
+  assert(Array.isArray(parameters), `The parameter should be an array`)
+  assert(parameters.length > 0, `Parameters list should contain at least one parameter`)
   
   console.log('\nSet scheme parameters:')
-  Object.keys(parameters).forEach(paramName => {
-    console.log(`  - ${paramName}: ${parameters[paramName]}`)
+  parameters.forEach(({ name, value }) => {
+    console.log(`  - ${name}: ${value}`)
+    assert(value, 'The parameter `${name}` is required')
   })
+  console.log()
 
-  const paramList = Object.values(parameters)
+  const paramList = parameters.map(parameter => parameter.value)
   await scheme.setParameters(...paramList)
   const paramsHash = await scheme.getParametersHash(...paramList)
   
