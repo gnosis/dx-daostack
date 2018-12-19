@@ -14,7 +14,7 @@ module.exports = (web3, artifacts) => async (ContractName, dev = USE_DEV_CONTRAC
       artifacts
     })
   } else {
-    address = await _getAddressFromNpmPachages({
+    address = await _getAddressFromNpmPackages({
       ContractName,
       dev,
       networkId
@@ -24,7 +24,7 @@ module.exports = (web3, artifacts) => async (ContractName, dev = USE_DEV_CONTRAC
   return address
 }
 
-async function _getAddressForLocalGanache ({ ContractName, artifacts }) {
+async function _getAddressForLocalGanache({ ContractName, artifacts }) {
   const { address } = await artifacts.require(ContractName).deployed()
   if (!address) {
     throw new Error(`${ContractName} hasn't been deployed yet`)
@@ -33,7 +33,7 @@ async function _getAddressForLocalGanache ({ ContractName, artifacts }) {
   return address
 }
 
-async function _getAddressFromNpmPachages ({ ContractName, dev, networkId }) {
+async function _getAddressFromNpmPackages({ ContractName, dev, networkId }) {
   const networksFile = dev
     ? '@gnosis.pm/dx-contracts/networks-dev.json'
     : '@gnosis.pm/dx-contracts/networks.json'
