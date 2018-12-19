@@ -23,7 +23,7 @@ const getContract = (web3, artifacts) => async (ContractName) => {
   }
 
   if (ContractName === 'GenToken') {
-    const address = genTokenNetworks[networkId]
+    const { address } = genTokenNetworks[networkId]
     if (!address) throw new Error(`No address for GenToken} on network ${networkId} in src/config/gen-token`)
     return Artifact.at(address)
   }
