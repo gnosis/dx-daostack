@@ -40,7 +40,7 @@ module.exports = async function (deployer) {
   console.log('Deploy DxLockWhitelisted4Rep that inherits from LockingToken4Reputation') // TODO:
   const dxLockWhitelisted4Rep = await deployer.deploy(DxLockWhitelisted4Rep)
 
-  console.log('Configure DxLockGno4Rep')
+  console.log('Configure DxLockWhitelisted4Rep')
   assert(whitelistedTokensReward, `The parameter whitelistedTokensReward was not defined`)
   assert(initialDistributionStart, `The parameter initialDistributionStart was not defined`)
   assert(initialDistributionEnd, `The parameter initialDistributionEnd was not defined`)
@@ -68,7 +68,7 @@ module.exports = async function (deployer) {
   )
 
   await registerScheme({
-    label: 'DxLockGno4Rep',
+    label: 'DxLockWhitelisted4Rep',
     schemeAddress: dxLockWhitelisted4Rep.address,
     avatarAddress: dxAvatar.address,
     controller: dxController,
