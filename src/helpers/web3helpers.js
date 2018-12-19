@@ -38,7 +38,7 @@ module.exports = web3 => {
   }
 
   async function getTimestamp (block = 'latest') {
-    return (await web3.eth.getBlock('latest')).timestamp
+    return (await web3.eth.getBlock(block)).timestamp
   }
 
   return {
