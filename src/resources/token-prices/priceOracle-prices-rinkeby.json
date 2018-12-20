@@ -1,32 +1,48 @@
 {
   "network": "rinkeby",
   "lastCheck": "2018-11-30T12:25:47.669Z",
-  "tokens": [{
-    "address": "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
-    "name": "0x Protocol Token",
-    "symbol": "ZRX",
-    "price": 0,
-    "priceSource": "crypto compare"
-  },
-  {
-    "address": "0x4156D3342D5c385a87D264F90653733592000581",
-    "name": "Salt",
-    "symbol": "SALT",
-    "price": 0.001966,
-    "priceSource": "crypto compare"
-  },
-  {
-    "address": "0x05f4a42e251f2d52b8ed15E9FEdAacFcEF1FAD27",
-    "name": "Zilliqa",
-    "symbol": "ZIL",
-    "price": 0.0001442,
-    "priceSource": "crypto compare"
-  },
-  {
-    "address": "0xE0B7927c4aF23765Cb51314A0E0521A9645F0E2A",
-    "name": "Digix DAO Token",
-    "symbol": "DGD",
-    "price": 0.1556,
-    "priceSource": "crypto compare"
-  }]
+  "tokens": [
+    {
+      "address": "0xc778417e063141139fce010982780140aa0cd5ab",
+      "name": "Wrapped Ether",
+      "symbol": "WETH",
+      "price": 1,
+      "priceSource": "test manual"
+    },
+    {
+      "address": "0x3615757011112560521536258c1e7325ae3b48ae",
+      "name": "Raiden network tokens",
+      "symbol": "RDN",
+      "price": 0.0019020354,
+      "priceSource": "test manual"
+    },
+    {
+      "address": "0x00df91984582e6e96288307e9c2f20b38c8fece9",
+      "name": "OmiseGO",
+      "symbol": "OMG",
+      "price": 0.014634449,
+      "priceSource": "test manual"
+    },
+    {
+      "address": "0xa1f34744c80e7a9019a5cd2bf697f13df00f9773",
+      "name": "testGEN",
+      "symbol": "testGEN",
+      "price": 0.00042109355,
+      "priceSource": "test manual"
+    },
+    {
+      "address": "0x543ff227f64aa17ea132bf9886cab5db55dcaddf",
+      "name": "DAOstack",
+      "symbol": "GEN",
+      "price": 0.00042109355,
+      "priceSource": "test manual"
+    },
+    {
+      "address": "0x1638578de407719a486db086b36b53750db0199e",
+      "name": "testDAI",
+      "symbol": "testDAI",
+      "price": 1,
+      "priceSource": "test manual"
+    }
+]
 }
