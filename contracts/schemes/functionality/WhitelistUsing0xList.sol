@@ -3,10 +3,10 @@ pragma solidity ^0.4.24;
 import "../../whitelisting/0x/TokenRegistry.sol";
 import "@daostack/arc/contracts/controller/ControllerInterface.sol";
 
+
 /**
  * @title A scheme for validate tokens in 0x project TokenRegistry list and update that on dutchX contract
  */
-
 contract WhitelistUsing0xList {
     event Update(address _token, bool _approved);
 

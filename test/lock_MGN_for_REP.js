@@ -1,5 +1,5 @@
 
-/* global artifacts, web3, contract, it, before, beforeEach, after, afterEach, assert, expect, should */
+/* global artifacts, web3, contract, it, before, after, afterEach, assert */
 
 const MgnToken = artifacts.require('TokenFRT')
 const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
@@ -14,6 +14,7 @@ const {
 } = require('../src/helpers/web3helpers')(web3)
 
 const LOCK_AMOUNT = 20
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 contract('Locking MGN for REP', accounts => {
   let MGN, DxLock4Rep, DxRep
@@ -39,7 +40,7 @@ contract('Locking MGN for REP', accounts => {
     console.log('locked MGN: ', lockedMGN.toString())
     assert(lockedMGN.eq(new BN(0)), 'shouldn\'t have any MGN locked initially')
     try {
-      await DxLock4Rep.lock({ from: master })
+      await DxLock4Rep.claim(ZERO_ADDRESS, { from: master })
       // should be unreachable
       assert.fail('shouldn\'t lock when no MGN locked')
     } catch (error) {
@@ -81,7 +82,7 @@ contract('Locking MGN for REP', accounts => {
     assert(lockingStartTime.gt(new BN(now)), 'lockingStartTime should be in the future')
 
     try {
-      await DxLock4Rep.lock({ from: master })
+      await DxLock4Rep.claim(ZERO_ADDRESS, { from: master })
       // should be unreachable
       assert.fail('shouldn\'t lock before lockingStartTime')
     } catch (error) {
@@ -108,7 +109,7 @@ contract('Locking MGN for REP', accounts => {
 
     assert(lockingStartTime.lt(new BN(timestamp2)), 'lockingStartTime should be in the past')
 
-    await DxLock4Rep.lock({ from: master })
+    await DxLock4Rep.claim(ZERO_ADDRESS, { from: master })
 
     const score = await DxLock4Rep.scores(master)
     assert(score.eq(lockedMGN), 'score should be equal to locked MGN')
@@ -116,11 +117,11 @@ contract('Locking MGN for REP', accounts => {
 
   it('can\'t lock twice', async () => {
     try {
-      await DxLock4Rep.lock({ from: master })
+      await DxLock4Rep.claim(ZERO_ADDRESS, { from: master })
       // should be unreachable
       assert.fail('shouldn\'t lock twice for one same account')
     } catch (error) {
-      assert.include(error.message, 'locking twice is not allowed', 'error message should contain string specified')
+      assert.include(error.message, 'claiming twice for the same beneficiary is not allowed', 'error message should contain string specified')
     }
   })
 

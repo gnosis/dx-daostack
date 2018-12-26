@@ -1,3 +1,4 @@
+
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
 
@@ -6,13 +7,13 @@ const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
-const registerScheme = require('./helpers/registerScheme')
+const { registerScheme } = require('./helpers/schemeUtils')
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
-const { submissionFee } = require('../src/config/schemes/DxContributionReward')
+const { contributionRewardSubmissionFee } = require('../src/config/schemes')
 
-module.exports = async function (deployer) {
+module.exports = async function () {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
@@ -27,7 +28,7 @@ module.exports = async function (deployer) {
 
   const contributionRewardParams = [
     // a fee (in the organization's token) that is to be paid for submitting a contribution
-    submissionFee,
+    contributionRewardSubmissionFee,
     genesisProtocolParamsHash,
     genesisProtocolAddress
   ]

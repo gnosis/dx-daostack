@@ -1,4 +1,4 @@
-/* global artifacts, Promise, web3 */
+/* global artifacts, Promise */
 /* eslint no-undef: "error" */
 
 const FixedPriceOracle = artifacts.require('FixedPriceOracle')
@@ -8,7 +8,7 @@ const Fraction = require('fractional').Fraction
 // const BN = web3.utils.BN
 // const assert = require('assert')
 
-const GAS = 16e5
+// const GAS = 16e5
 
 // How many prices we update at once
 const DEFAULT_BATCH = 50

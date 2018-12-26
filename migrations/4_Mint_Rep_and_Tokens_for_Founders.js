@@ -1,8 +1,8 @@
 /* global artifacts */
 /* eslint no-undef: "error" */
-const daoConfig = require('../src/config/DutchX-dao')
+const daoConfig = require('../src/config/dao')
 
-module.exports = async (deployer, network, accounts) => {
+module.exports = async (deployer) => { // eslint-disable-line no-unused-vars
   const { founders, foundersInitialTokens, foundersInitialRep } = daoConfig
   /*
   const { founders: foundersAux, foundersInitialTokens, foundersInitialRep } = daoConfig

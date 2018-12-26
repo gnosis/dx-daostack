@@ -1,4 +1,4 @@
-/* global artifacts, Promise */
+/* global Promise */
 /* eslint no-undef: "error" */
 
 const path = require('path')

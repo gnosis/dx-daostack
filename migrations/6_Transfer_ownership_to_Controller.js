@@ -1,7 +1,8 @@
 /* global artifacts */
 /* eslint no-undef: "error" */
+/*eslint no-unused-vars: "error"*/
 
-module.exports = async (deployer, network, accounts) => {
+module.exports = async (deployer) => { // eslint-disable-line no-unused-vars
   const DxController = artifacts.require('DxController')
   const DxAvatar = artifacts.require('DxAvatar')
   const DxToken = artifacts.require('DxToken')

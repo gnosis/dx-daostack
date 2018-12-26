@@ -4,8 +4,8 @@ const getDaoStackContracts = require('./util/getDaoStackContracts');
 
 module.exports = async ({
   contracts,
-  provider,
-  fromDefault
+  provider
+  // fromDefault
 }) => {
   const {
     ControllerCreator,

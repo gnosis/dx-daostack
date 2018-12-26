@@ -3,7 +3,7 @@ const networksJSON = require(networksFile)
 // QUESTION: there are only kovan addresses,
 // should we deploy ourselves when on other networks (rikeby)?
 
-const genTokenNetworks = require('../config/gen-token')
+const genTokenNetworks = require('../config/genTokenAddress')
 
 const Id2Network = {
   1: 'mainnet',

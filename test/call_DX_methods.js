@@ -35,7 +35,7 @@
 // GenericProtocol.vote(bytes32 _proposalId, {from: accountWithRep})
 // winning vote calls GenericProtocol._execute(bytes32 _proposalId)
 
-/* global artifacts, web3, contract, it, before, beforeEach, after, afterEach, assert, expect, should */
+/* global artifacts, web3, contract, it, before, after, afterEach, assert */
 
 const MgnToken = artifacts.require('TokenFRT')
 const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
@@ -46,6 +46,8 @@ const GenesisProtocol = artifacts.require('GenesisProtocol')
 const DutchExchange = artifacts.require('DutchExchange')
 const DutchExchangeProxy = artifacts.require('DutchExchangeProxy')
 const DxController = artifacts.require('DxController')
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const BN = require('bn.js')
 const {
@@ -453,7 +455,7 @@ async function ensureRep(accounts, { MGN, DxLock4Rep, DxRep }) {
     /*const locked =*/ await DxLock4Rep.externalLockers(acc)
     // console.log(acc, 'locked:', locked);
   })
-  await callForAll(accounts, (acc) => { return DxLock4Rep.lock({ from: acc }) })
+  await callForAll(accounts, (acc) => { return DxLock4Rep.claim(ZERO_ADDRESS, { from: acc }) })
 
   const redeemEnableTime = await DxLock4Rep.redeemEnableTime()
   const timestamp2 = await getTimestamp()

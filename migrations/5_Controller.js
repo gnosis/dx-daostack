@@ -1,7 +1,7 @@
 /* global artifacts */
 /* eslint no-undef: "error" */
 
-module.exports = async (deployer, network, accounts) => {
+module.exports = async (deployer) => {
   // TODO: Make sure we will deploy the controller. If we save gas on each transaction seems to be a good idea. The controller deploymemt is not expensive (0.00072912 ETH - 15 cents)
   const DxController = artifacts.require('DxController')
   // const Avatar = artifacts.require('Avatar')

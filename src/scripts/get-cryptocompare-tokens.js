@@ -1,4 +1,4 @@
-/* global artifacts, Promise */
+/* global */
 /* eslint no-undef: "error" */
 
 const path = require('path')
@@ -14,11 +14,11 @@ const cryptoComparePriceFeed = require('./helpers/cryptoComparePriceFeed')
 //  yarn yarn get-cryptocompare-tokens -h
 //  yarn get-cryptocompare-tokens
 
-const argv = require('yargs')
-  .usage('Usage: yarn get-cryptocompare-tokens')
-  .help('h')
-  .strict()
-  .argv
+// const argv = require('yargs')
+//   .usage('Usage: yarn get-cryptocompare-tokens')
+//   .help('h')
+//   .strict()
+//   .argv
 
 async function main () {
   console.log('\n **************  Get tokens CryptoCompare tokens  **************\n')
