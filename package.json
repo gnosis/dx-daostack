@@ -1,6 +1,6 @@
 {
   "name": "@gnosis.pm/dx-daostack",
-  "version": "0.2.0",
+  "version": "0.3.3",
   "description": "",
   "main": "index.js",
   "config": {
@@ -29,31 +29,32 @@
   "devDependencies": {
     "@gnosis.pm/truffle-nice-tools": "^1.2.1",
     "babel-eslint": "^10.0.1",
-    "dotenv": "^6.1.0",
-    "eslint": "^5.9.0",
+    "dotenv": "^6.2.0",
+    "eslint": "^5.10.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-promise": "^4.0.0",
     "eslint-plugin-standard": "^4.0.0",
-    "ganache-cli": "^6.2.4-beta.1",
     "fractional": "^1.0.0",
-    "got": "^9.3.2",
+    "ganache-cli": "^6.2.4",
+    "got": "^9.5.0",
     "moment-timezone": "^0.5.23",
     "solium": "^1.1.8",
-    "truffle": "^5.0.0-beta.2",
+    "truffle": "^5.0.0",
+    "truffle-flattener": "^1.2.10",
     "yargs": "^12.0.5"
   },
   "dependencies": {
     "@daostack/arc": "0.0.0-alpha.58",
-    "@daostack/arc.js": "0.0.0-alpha.97",
+    "@daostack/arc.js": "0.0.0-alpha.101",
     "@gnosis.pm/dx-contracts": "2.0.0-SNAPSHOT.5",
     "@gnosis.pm/gno-token": "1.1.2",
     "@gnosis.pm/owl-token": "1.2.3",
     "@gnosis.pm/util-contracts": "1.1.1",
     "debug": "^4.1.0",
     "event-stream": "^3.3.5",
-    "truffle-contract": "^3.0.6",
-    "truffle-hdwallet-provider": "^1.0.0-web3one.1"
+    "truffle-contract": "^4.0.0",
+    "truffle-hdwallet-provider": "^1.0.0"
   }
 }

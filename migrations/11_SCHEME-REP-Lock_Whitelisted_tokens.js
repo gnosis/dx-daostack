@@ -24,18 +24,15 @@ const {
   redeemStart
 } = require('../src/config/timePeriods')
 
-const getDXContractAddresses = require('../src/helpers/getDXContractAddresses')(web3, artifacts)
-
 module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
-
-  const gnoAddress = await getDXContractAddresses('TokenGNO')
 
   const dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
   console.log('Deploy FixedPriceOracle: for setting the prices for the tokens')
   console.log('  - DutchX address: %s', dutchXContractAddress)
   await deployer.deploy(FixedPriceOracle, dutchXContractAddress)
+  const fixedPriceOracle = await FixedPriceOracle.deployed()
   
   console.log('Deploy DxLockWhitelisted4Rep that inherits from LockingToken4Reputation') // TODO:
   const dxLockWhitelisted4Rep = await deployer.deploy(DxLockWhitelisted4Rep)
@@ -47,7 +44,6 @@ module.exports = async function (deployer) {
   
   assert(redeemStart, `The parameter redeemStart was not defined`)
   assert(maxLockingWhitelistedTokensPeriod, `The parameter maxLockingWhitelistedTokensPeriod was not defined`)
-  assert(gnoAddress, `The parameter gnoAddress was not defined`)
 
   console.log('  - Avatar address:', dxAvatar.address)
   console.log('  - Reputation reward:', whitelistedTokensReward)
@@ -55,7 +51,7 @@ module.exports = async function (deployer) {
   console.log('  - Locking end time:', dateUtil.formatDateTime(initialDistributionEnd))
   console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemStart))
   console.log('  - max locking period:', maxLockingWhitelistedTokensPeriod)
-  console.log('  - locking token address (GNO):', gnoAddress)
+  console.log('  - Price Oracle address:', fixedPriceOracle.address)
 
   await dxLockWhitelisted4Rep.initialize(
     dxAvatar.address,
@@ -64,7 +60,7 @@ module.exports = async function (deployer) {
     dateUtil.toEthereumTimestamp(initialDistributionEnd),
     dateUtil.toEthereumTimestamp(redeemStart),
     maxLockingWhitelistedTokensPeriod,
-    gnoAddress
+    fixedPriceOracle.address
   )
 
   await registerScheme({

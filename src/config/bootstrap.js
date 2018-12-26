@@ -1,4 +1,5 @@
 // Bootstrap schemes config
+const SECONDS_PER_DAY = 24 * 60 * 60
 
 module.exports = {
   // Locked MGN
@@ -10,12 +11,11 @@ module.exports = {
   // TODO: Decide
   numberOfGenAuctions: 5,
 
-  // ETH Locking
-  // TODO: Decide
-  maxLockingEthPeriod: 3000,
+  // ETH Locking (in seconds)
+  maxLockingEthPeriod: 180 * SECONDS_PER_DAY ,
 
   // Whitelisted tokens Locking
-  maxLockingWhitelistedTokensPeriod: 3000
+  maxLockingWhitelistedTokensPeriod: 180 * SECONDS_PER_DAY
 
   // dappConf card conf
 }

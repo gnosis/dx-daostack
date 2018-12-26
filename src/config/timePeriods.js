@@ -10,26 +10,35 @@ let INITIAL_DISTRIBUTION_END =   '2019-03-20 11:59:59'
 // Claiming period for REP for Locked MGN (Mar 20, at noon)
 //    - 24h period, starts at noon, on the 20th
 //    - The MGN cannot be claimed until the 21th (all other can start being claimed on the 20th)
-const CLAIMING_MGN_START = '2019-03-20 12:00'
-const CLAIMING_MGN_END =   '2019-03-21 11:59:59'
-const REDEEM_MGN_START =   '2019-03-21 12:00'
+let CLAIMING_MGN_START = '2019-03-20 12:00'
+let CLAIMING_MGN_END =   '2019-03-21 11:59:59'
 
 // Redeem period (Mar 20):
 //   - Users can redeem the REP
 //   - This period continues indefinetely
 //   - All claimings but MGN are active on this date (MGN needs to wait the 24h window)
-const REDEEM_START = '2019-03-20 12:00'
+let REDEEM_START = '2019-03-21 12:00'
 
 // Governance period start (Apr 4):
-const GOVERNANCE_START = '2019-04-04 12:00'
+let GOVERNANCE_START = '2019-04-04 12:00'
 
 
 // Defaults for testing
 if (process.env.NODE_ENV === 'test') {
-  // Default dates (+1 month, +3 month)
   const now = new Date()
+  // LOCKING: Starts in one month from now, last 30 days
   INITIAL_DISTRIBUTION_START = dateUtil.add(now, 1, 'month')
-  INITIAL_DISTRIBUTION_END = dateUtil.add(now, 3, 'month')
+  INITIAL_DISTRIBUTION_END = dateUtil.add(INITIAL_DISTRIBUTION_START, 30, 'days')
+
+  // CLAIMING MGN: Right after the initial distribution, last 24h
+  CLAIMING_MGN_START = dateUtil.add(INITIAL_DISTRIBUTION_END, 1, 'second')
+  CLAIMING_MGN_END = dateUtil.add(CLAIMING_MGN_START, 24, 'hours')
+
+  // REDEEM: Right after the claiming of MGN
+  REDEEM_START = dateUtil.add(CLAIMING_MGN_END, 1, 'second')
+
+  // GOVERNANCE: 14 days after redeem the period starts
+  GOVERNANCE_START = dateUtil.add(REDEEM_START, 14, 'days')
 }
 
 module.exports = {
@@ -47,10 +56,6 @@ module.exports = {
   ),
   claimingMgnEnd: dateUtil.parse(
     process.env.CLAIMING_MGN_END || CLAIMING_MGN_END
-  ),
-  redeemMgnStart: dateUtil.parse(
-    // Same as claimingMgnEnd
-    process.env.REDEEM_MGN_START || REDEEM_MGN_START
   ),
 
   // Redeem period

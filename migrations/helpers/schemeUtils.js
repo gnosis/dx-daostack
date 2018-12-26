@@ -51,7 +51,7 @@ async function setParameters ({
   console.log('\nSet scheme parameters:')
   parameters.forEach(({ name, value }) => {
     console.log(`  - ${name}: ${value}`)
-    assert(value, 'The parameter `${name}` is required')
+    assert(value !== null, `The parameter ${name} is required`)
   })
   console.log()
 

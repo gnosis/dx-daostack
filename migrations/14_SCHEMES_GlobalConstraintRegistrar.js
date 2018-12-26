@@ -1,51 +1,46 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
 
-const assert = require('assert')
-const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')(artifacts)
+const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')({ artifacts, web3 })
 
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
 
 const { registerScheme, setParameters, SchemePermissions } = require('./helpers/schemeUtils')
-const { REGISTER_SCHEMES, UPGRADE_CONTROLLER } = SchemePermissions
+const { REGISTERED, ADD_REMOVE_GLOBAL_CONSTRAINTS } = SchemePermissions
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
-
 
 module.exports = async function (deployer) { // eslint-disable-line no-unused-vars
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  const upgradeScheme = await getDaostackContract('UpgradeScheme')
+  const globalConstraintRegistrar = await getDaostackContract('GlobalConstraintRegistrar')
+
+  console.log('Configure GlobalConstraintRegistrar')
 
   const {
     genesisProtocolParamsHash,
     genesisProtocolAddress
   } = await getGenesisProtocolData()
 
-  assert(genesisProtocolParamsHash, `The parameter genesisProtocolParamsHash was not defined`)
-  assert(genesisProtocolAddress, `The parameter genesisProtocolAddress was not defined`)
-
-  console.log('Configure UpgradeScheme')
-  
   // Set parameters
   const paramsHash = await setParameters({
-    scheme: upgradeScheme,
+    scheme: globalConstraintRegistrar,
     parameters: [{
-      name: 'voteParams',
+      name: 'voteRegisterParams',
       value: genesisProtocolParamsHash
     }, {
       name: 'intVote',
       value: genesisProtocolAddress
-    }]
-  })
-
+    }
+  ]})
+  
   await registerScheme({
-    label: 'UpgradeScheme',
+    label: 'GlobalConstraintRegistrar',
     paramsHash,
-    permissions: REGISTER_SCHEMES | UPGRADE_CONTROLLER,
-    schemeAddress: upgradeScheme.address,
+    permissions: REGISTERED | ADD_REMOVE_GLOBAL_CONSTRAINTS,
+    schemeAddress: globalConstraintRegistrar.address,
     avatarAddress: dxAvatar.address,
     controller: dxController
   })

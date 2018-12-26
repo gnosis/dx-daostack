@@ -20,17 +20,22 @@ const { voteOnBehalf } = votingConf
 
 const parameters = parameterNames.map(parameterName => votingConf[parameterName])
 
-module.exports = artifacts => {
-  const GenesisProtocol = artifacts.require('GenesisProtocol')
-
+module.exports = ({ artifacts, web3 }) => {
+  let genesisProtocolData
+  
   async function getGenesisProtocolData() {
-    const genesisProtocol = await GenesisProtocol.deployed()
-    const genesisProtocolParamsHash = await genesisProtocol.getParametersHash(parameters, voteOnBehalf)
+    if (!genesisProtocolData) {
+      const getDaostackContract = require('../helpers/getDaostackContract')(web3, artifacts)
+      const genesisProtocol = await getDaostackContract('GenesisProtocol')
+      const genesisProtocolParamsHash = await genesisProtocol.getParametersHash(parameters, voteOnBehalf)
 
-    return {
-      genesisProtocolParamsHash,
-      genesisProtocolAddress: genesisProtocol.address
+      genesisProtocolData = {
+        genesisProtocolParamsHash,
+        genesisProtocolAddress: genesisProtocol.address
+      }
     }
+
+    return genesisProtocolData
   }
 
   return {
