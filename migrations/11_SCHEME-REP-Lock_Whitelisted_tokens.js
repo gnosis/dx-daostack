@@ -5,6 +5,7 @@ const DxLockWhitelisted4Rep = artifacts.require('DxLockWhitelisted4Rep')
 const FixedPriceOracle = artifacts.require('FixedPriceOracle')
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
+const BasicTokenWhitelist = artifacts.require('BasicTokenWhitelist')
 
 const getDXContractAddress = require('../src/helpers/getDXContractAddresses.js')(web3, artifacts)
 const dateUtil = require('../src/helpers/dateUtil')
@@ -24,16 +25,14 @@ const {
   redeemStart
 } = require('../src/config/timePeriods')
 
-module.exports = async function (deployer) {
+module.exports = async function (deployer, network) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  const dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
-  console.log('Deploy FixedPriceOracle: for setting the prices for the tokens')
-  console.log('  - DutchX address: %s', dutchXContractAddress)
-  await deployer.deploy(FixedPriceOracle, dutchXContractAddress)
-  const fixedPriceOracle = await FixedPriceOracle.deployed()
+  // Deploy Price Oracle
+  const fixedPriceOracle = await deployPriceOracle(deployer, network)
   
+  // Deploy DxLockWhitelisted4Rep scheme
   console.log('Deploy DxLockWhitelisted4Rep that inherits from LockingToken4Reputation') // TODO:
   const dxLockWhitelisted4Rep = await deployer.deploy(DxLockWhitelisted4Rep)
 
@@ -70,4 +69,41 @@ module.exports = async function (deployer) {
     controller: dxController,
     web3
   })
+}
+
+
+async function deployPriceOracle (deployer, network) {
+  let tokenWhitelistAddress, whiteListAddressMsg
+
+  if (network === 'rinkeby') {
+    await deployer.deploy(BasicTokenWhitelist)
+    console.log('Deploy BasicTokenWhitelist for testing in Rinkeby:')
+    const basicTokenWhitelist = await BasicTokenWhitelist.deployed()
+    whiteListAddressMsg = 'Token White List Address (BasicTokenWhitelist, only for testing): %s', tokenWhitelistAddress
+
+    // Add some test tokens for Rinkeby    
+    const whitelistedTokens = {
+      WETH: '0xc778417e063141139fce010982780140aa0cd5ab',
+      RDN: '0x3615757011112560521536258c1e7325ae3b48ae',
+      OMG: '0x00df91984582e6e96288307e9c2f20b38c8fece9',
+      testGEN: '0xa1f34744c80e7a9019a5cd2bf697f13df00f9773',
+      GEN: '0x543ff227f64aa17ea132bf9886cab5db55dcaddf'
+    }
+    console.log('\nWhite list the tokens: ')
+    Object.keys(whitelistedTokens).forEach(tokenName => {
+      console.log('  - %s: %s', tokenName, whitelistedTokens[tokenName])
+    })
+    await basicTokenWhitelist.updateApprovalOfToken(whitelistedTokens, true)
+    tokenWhitelistAddress = basicTokenWhitelist.address
+  } else {
+    tokenWhitelistAddress = await getDXContractAddress('DutchExchangeProxy')
+    whiteListAddressMsg = 'Token White List Address (DutchX): %s', tokenWhitelistAddress    
+  }
+  
+  console.log('Deploy FixedPriceOracle: for setting the prices for the tokens')
+  console.log('  - ' + whiteListAddressMsg)
+  await deployer.deploy(FixedPriceOracle, tokenWhitelistAddress)
+  const fixedPriceOracle = await FixedPriceOracle.deployed()
+
+  return fixedPriceOracle
 }
