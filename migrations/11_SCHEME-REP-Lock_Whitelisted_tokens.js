@@ -79,7 +79,7 @@ async function deployPriceOracle (deployer, network) {
     await deployer.deploy(BasicTokenWhitelist)
     console.log('Deploy BasicTokenWhitelist for testing in Rinkeby:')
     const basicTokenWhitelist = await BasicTokenWhitelist.deployed()
-    whiteListAddressMsg = 'Token White List Address (BasicTokenWhitelist, only for testing): %s', tokenWhitelistAddress
+    whiteListAddressMsg = 'Token White List Address (BasicTokenWhitelist, only for testing): ' + tokenWhitelistAddress
 
     // Add some test tokens for Rinkeby    
     const whitelistedTokens = {
@@ -93,14 +93,14 @@ async function deployPriceOracle (deployer, network) {
     Object.keys(whitelistedTokens).forEach(tokenName => {
       console.log('  - %s: %s', tokenName, whitelistedTokens[tokenName])
     })
-    await basicTokenWhitelist.updateApprovalOfToken(whitelistedTokens, true)
+    await basicTokenWhitelist.updateApprovalOfToken(Object.values(whitelistedTokens), true)
     tokenWhitelistAddress = basicTokenWhitelist.address
   } else {
     tokenWhitelistAddress = await getDXContractAddress('DutchExchangeProxy')
-    whiteListAddressMsg = 'Token White List Address (DutchX): %s', tokenWhitelistAddress    
+    whiteListAddressMsg = 'Token White List Address (DutchX): ' + tokenWhitelistAddress    
   }
   
-  console.log('Deploy FixedPriceOracle: for setting the prices for the tokens')
+  console.log('\nDeploy FixedPriceOracle: for setting the prices for the tokens')
   console.log('  - ' + whiteListAddressMsg)
   await deployer.deploy(FixedPriceOracle, tokenWhitelistAddress)
   const fixedPriceOracle = await FixedPriceOracle.deployed()
