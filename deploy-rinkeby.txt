@@ -1,8 +1,305 @@
+yarn run v1.10.1
+$ truffle migrate --network rinkeby --reset
 Using gas limit: 6500 K
 Using gas price: 10 Gwei
 Optimizer enabled: true
 Using default mnemonic: true
 Using private key
+Compiling ./contracts/DxAvatar.sol...
+Compiling ./contracts/DxController.sol...
+Compiling ./contracts/DxReputation.sol...
+Compiling ./contracts/DxToken.sol...
+Compiling ./contracts/LocalDevelopment.sol...
+Compiling ./contracts/Migrations.sol...
+Compiling ./contracts/schemes/bootstrap/DxGenAuction4Rep.sol...
+Compiling ./contracts/schemes/bootstrap/DxLockEth4Rep.sol...
+Compiling ./contracts/schemes/bootstrap/DxLockMgnForRep.sol...
+Compiling ./contracts/schemes/bootstrap/DxLockWhitelisted4Rep.sol...
+Compiling ./contracts/schemes/bootstrap/DxRedeemDappconCards.sol...
+Compiling ./contracts/whitelisting/BasicTokenWhitelist.sol...
+Compiling ./contracts/whitelisting/FixedPriceOracle.sol...
+Compiling ./test/contracts/GenToken.sol...
+Compiling ./test/contracts/TestToken.sol...
+Compiling @daostack/arc/contracts/controller/Avatar.sol...
+Compiling @daostack/arc/contracts/controller/Controller.sol...
+Compiling @daostack/arc/contracts/controller/ControllerInterface.sol...
+Compiling @daostack/arc/contracts/controller/DAOToken.sol...
+Compiling @daostack/arc/contracts/globalConstraints/GlobalConstraintInterface.sol...
+Compiling @daostack/arc/contracts/libs/RealMath.sol...
+Compiling @daostack/arc/contracts/schemes/Auction4Reputation.sol...
+Compiling @daostack/arc/contracts/schemes/ExternalLocking4Reputation.sol...
+Compiling @daostack/arc/contracts/schemes/FixedReputationAllocation.sol...
+Compiling @daostack/arc/contracts/schemes/Locking4Reputation.sol...
+Compiling @daostack/arc/contracts/schemes/LockingEth4Reputation.sol...
+Compiling @daostack/arc/contracts/schemes/LockingToken4Reputation.sol...
+Compiling @daostack/arc/contracts/schemes/PriceOracleInterface.sol...
+Compiling @daostack/arc/contracts/token/ERC827/ERC827.sol...
+Compiling @daostack/arc/contracts/token/ERC827/ERC827Token.sol...
+Compiling @daostack/arc/contracts/universalSchemes/ContributionReward.sol...
+Compiling @daostack/arc/contracts/universalSchemes/GenericScheme.sol...
+Compiling @daostack/arc/contracts/universalSchemes/GlobalConstraintRegistrar.sol...
+Compiling @daostack/arc/contracts/universalSchemes/SchemeRegistrar.sol...
+Compiling @daostack/arc/contracts/universalSchemes/UniversalScheme.sol...
+Compiling @daostack/arc/contracts/universalSchemes/UniversalSchemeInterface.sol...
+Compiling @daostack/arc/contracts/universalSchemes/UpgradeScheme.sol...
+Compiling @daostack/arc/contracts/votingMachines/VotingMachineCallbacks.sol...
+Compiling @daostack/infra/contracts/Reputation.sol...
+Compiling @daostack/infra/contracts/libs/OrderStatisticTree.sol...
+Compiling @daostack/infra/contracts/libs/RealMath.sol...
+Compiling @daostack/infra/contracts/votingMachines/GenesisProtocol.sol...
+Compiling @daostack/infra/contracts/votingMachines/IntVoteInterface.sol...
+Compiling @daostack/infra/contracts/votingMachines/ProposalExecuteInterface.sol...
+Compiling @daostack/infra/contracts/votingMachines/VotingMachineCallbacksInterface.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/DutchExchange.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/DutchExchangeProxy.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/DxDevDependencies.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/Oracle/DSAuth.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/Oracle/DSNote.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/Oracle/DSThing.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/Oracle/DSValue.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/Oracle/PriceFeed.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/Oracle/PriceOracleInterface.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/TokenFRT.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/base/AuctioneerManaged.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/base/DxMath.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/base/DxUpgrade.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/base/EthOracle.sol...
+Compiling @gnosis.pm/dx-contracts/contracts/base/TokenWhitelist.sol...
+Compiling @gnosis.pm/gno-token/contracts/TokenGNO.sol...
+Compiling @gnosis.pm/owl-token/contracts/OWLAirdrop.sol...
+Compiling @gnosis.pm/owl-token/contracts/TokenOWL.sol...
+Compiling @gnosis.pm/owl-token/contracts/TokenOWLProxy.sol...
+Compiling @gnosis.pm/util-contracts/contracts/EtherToken.sol...
+Compiling @gnosis.pm/util-contracts/contracts/GnosisStandardToken.sol...
+Compiling @gnosis.pm/util-contracts/contracts/Math.sol...
+Compiling @gnosis.pm/util-contracts/contracts/Proxy.sol...
+Compiling @gnosis.pm/util-contracts/contracts/Token.sol...
+Compiling openzeppelin-solidity/contracts/ECRecovery.sol...
+Compiling openzeppelin-solidity/contracts/math/SafeMath.sol...
+Compiling openzeppelin-solidity/contracts/ownership/Ownable.sol...
+Compiling openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol...
+Compiling openzeppelin-solidity/contracts/token/ERC20/BurnableToken.sol...
+Compiling openzeppelin-solidity/contracts/token/ERC20/ERC20.sol...
+Compiling openzeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol...
+Compiling openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol...
+Compiling openzeppelin-solidity/contracts/token/ERC20/SafeERC20.sol...
+Compiling openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol...
+
+Compilation warnings encountered:
+
+@gnosis.pm/util-contracts/contracts/Proxy.sol:14:5: Warning: Defining constructors as functions with the same name as the contract is deprecated. Use "constructor(...) { ... }" instead.
+    function Proxy(address _masterCopy)
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/gno-token/contracts/TokenGNO.sol:10:5: Warning: Defining constructors as functions with the same name as the contract is deprecated. Use "constructor(...) { ... }" instead.
+    function TokenGNO(
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/owl-token/contracts/TokenOWLProxy.sol:24:5: Warning: Defining constructors as functions with the same name as the contract is deprecated. Use "constructor(...) { ... }" instead.
+    function TokenOWLProxy(address proxied)
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/owl-token/contracts/OWLAirdrop.sol:18:5: Warning: Defining constructors as functions with the same name as the contract is deprecated. Use "constructor(...) { ... }" instead.
+    function OWLAirdrop(TokenOWL _tokenOWL, TokenGNO _tokenGNO, uint _endTime)
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSAuth.sol:19:5: Warning: Defining constructors as functions with the same name as the contract is deprecated. Use "constructor(...) { ... }" instead.
+    function DSAuth() public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSValue.sol:12:14: Warning: Use of the "var" keyword is deprecated.
+        var (wut, has) = peek();
+             ^-^
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSValue.sol:12:19: Warning: Use of the "var" keyword is deprecated.
+        var (wut, has) = peek();
+                  ^-^
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:20:25: Warning: "throw" is deprecated in favour of "revert()", "require()" and "assert()".
+        if (pos == 0x0) throw;
+                        ^---^
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:22:44: Warning: "throw" is deprecated in favour of "revert()", "require()" and "assert()".
+        if (wat != 0 && indexes[wat] != 0) throw;
+                                           ^---^
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:34:26: Warning: "throw" is deprecated in favour of "revert()", "require()" and "assert()".
+        if (min_ == 0x0) throw;
+                         ^---^
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:39:27: Warning: "throw" is deprecated in favour of "revert()", "require()" and "assert()".
+        if (next_ == 0x0) throw;
+                          ^---^
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:64:22: Warning: Use of the "var" keyword is deprecated.
+                var (wut, wuz) = DSValue(values[bytes12(i)]).peek();
+                     ^-^
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:64:27: Warning: Use of the "var" keyword is deprecated.
+                var (wut, wuz) = DSValue(values[bytes12(i)]).peek();
+                          ^-^
+,@gnosis.pm/dx-contracts/contracts/TokenFRT.sol:32:5: Warning: Defining constructors as functions with the same name as the contract is deprecated. Use "constructor(...) { ... }" instead.
+    function TokenFRT(
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/base/AuctioneerManaged.sol:7:5: Warning: Defining constructors as functions with the same name as the contract is deprecated. Use "constructor(...) { ... }" instead.
+    function AuctioneerManaged () public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/PriceOracleInterface.sol:26:5: Warning: Defining constructors as functions with the same name as the contract is deprecated. Use "constructor(...) { ... }" instead.
+    function PriceOracleInterface(
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/DutchExchangeProxy.sol:6:3: Warning: Defining constructors as functions with the same name as the contract is deprecated. Use "constructor(...) { ... }" instead.
+  function DutchExchangeProxy(address _masterCopy) Proxy (_masterCopy) {
+  ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSValue.sol:12:19: Warning: This declaration shadows an existing declaration.
+        var (wut, has) = peek();
+                  ^-^
+@gnosis.pm/dx-contracts/contracts/Oracle/DSValue.sol:6:5: The shadowed declaration is here:
+    bool    has;
+    ^---------^
+
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSAuth.sol:21:9: Warning: Invoking events without "emit" prefix is deprecated.
+        LogSetOwner(msg.sender);
+        ^---------------------^
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSAuth.sol:29:9: Warning: Invoking events without "emit" prefix is deprecated.
+        LogSetOwner(owner);
+        ^----------------^
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSAuth.sol:37:9: Warning: Invoking events without "emit" prefix is deprecated.
+        LogSetAuthority(authority);
+        ^------------------------^
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSNote.sol:23:9: Warning: Invoking events without "emit" prefix is deprecated.
+        LogNote(msg.sig, msg.sender, foo, bar, msg.value, msg.data);
+        ^---------------------------------------------------------^
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:24:32: Warning: Decimal literal assigned to bytesXX variable will be left-aligned. Use an explicit conversion to silence this warning.
+        indexes[values[pos]] = 0; // Making sure to remove a possible existing address in that position
+                               ^
+,@gnosis.pm/dx-contracts/contracts/base/TokenWhitelist.sol:22:13: Warning: Invoking events without "emit" prefix is deprecated.
+            Approval(token[i], approved);
+            ^--------------------------^
+,@gnosis.pm/dx-contracts/contracts/Oracle/PriceOracleInterface.sol:69:13: Warning: Invoking events without "emit" prefix is deprecated.
+            NonValidPriceFeed(priceFeedSource);
+            ^--------------------------------^
+,@gnosis.pm/dx-contracts/contracts/base/EthOracle.sol:30:9: Warning: Invoking events without "emit" prefix is deprecated.
+        NewOracleProposal(_ethUSDOracle);
+        ^------------------------------^
+,@gnosis.pm/dx-contracts/contracts/base/DxUpgrade.sol:29:9: Warning: Invoking events without "emit" prefix is deprecated.
+        NewMasterCopyProposal(_masterCopy);
+        ^--------------------------------^
+,@gnosis.pm/dx-contracts/contracts/DutchExchange.sol:261:9: Warning: Invoking events without "emit" prefix is deprecated.
+        NewTokenPair(token1, token2);
+        ^--------------------------^
+,@gnosis.pm/dx-contracts/contracts/DutchExchange.sol:278:9: Warning: Invoking events without "emit" prefix is deprecated.
+        NewDeposit(tokenAddress, amount);
+        ^------------------------------^
+,@gnosis.pm/dx-contracts/contracts/DutchExchange.sol:302:9: Warning: Invoking events without "emit" prefix is deprecated.
+        NewWithdrawal(tokenAddress, amount);
+        ^---------------------------------^
+,@gnosis.pm/dx-contracts/contracts/DutchExchange.sol:379:9: Warning: Invoking events without "emit" prefix is deprecated.
+        NewSellOrder(sellToken, buyToken, msg.sender, auctionIndex, amountAfterFee);
+        ^-------------------------------------------------------------------------^
+,@gnosis.pm/dx-contracts/contracts/DutchExchange.sol:444:13: Warning: Invoking events without "emit" prefix is deprecated.
+            NewBuyOrder(sellToken, buyToken, msg.sender, auctionIndex, amountAfterFee);
+            ^------------------------------------------------------------------------^
+,@gnosis.pm/dx-contracts/contracts/DutchExchange.sol:491:9: Warning: Invoking events without "emit" prefix is deprecated.
+        NewSellerFundsClaim(sellToken, buyToken, user, auctionIndex, returned, frtsIssued);
+        ^--------------------------------------------------------------------------------^
+,@gnosis.pm/dx-contracts/contracts/DutchExchange.sol:540:9: Warning: Invoking events without "emit" prefix is deprecated.
+        NewBuyerFundsClaim(sellToken, buyToken, user, auctionIndex, returned, frtsIssued);
+        ^-------------------------------------------------------------------------------^
+,@gnosis.pm/dx-contracts/contracts/DutchExchange.sol:657:13: Warning: Invoking events without "emit" prefix is deprecated.
+            Fee(primaryToken, secondaryToken, msg.sender, auctionIndex, fee);
+            ^--------------------------------------------------------------^
+,@gnosis.pm/dx-contracts/contracts/DutchExchange.sol:795:9: Warning: Invoking events without "emit" prefix is deprecated.
+        AuctionCleared(sellToken, buyToken, sellVolume, buyVolume, auctionIndex);
+        ^----------------------------------------------------------------------^
+,@gnosis.pm/dx-contracts/contracts/DutchExchange.sol:1004:9: Warning: Invoking events without "emit" prefix is deprecated.
+        AuctionStartScheduled(token1, token2, auctionIndex, auctionStart);
+        ^---------------------------------------------------------------^
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSValue.sol:8:5: Warning: No visibility specified. Defaulting to "public". 
+    function peek() constant returns (bytes32, bool) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSValue.sol:11:5: Warning: No visibility specified. Defaulting to "public". 
+    function read() constant returns (bytes32) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSValue.sol:16:5: Warning: No visibility specified. Defaulting to "public". 
+    function poke(bytes32 wut) note auth {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSValue.sol:20:5: Warning: No visibility specified. Defaulting to "public". 
+    function void() note auth { // unset the value
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:12:5: Warning: No visibility specified. Defaulting to "public". 
+    function set(address wat) auth {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:19:5: Warning: No visibility specified. Defaulting to "public". 
+    function set(bytes12 pos, address wat) note auth {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:33:5: Warning: No visibility specified. Defaulting to "public". 
+    function setMin(uint96 min_) note auth {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:38:5: Warning: No visibility specified. Defaulting to "public". 
+    function setNext(bytes12 next_) note auth {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:43:5: Warning: No visibility specified. Defaulting to "public". 
+    function unset(bytes12 pos) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:47:5: Warning: No visibility specified. Defaulting to "public". 
+    function unset(address wat) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:51:5: Warning: No visibility specified. Defaulting to "public". 
+    function poke() {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:55:5: Warning: No visibility specified. Defaulting to "public". 
+    function poke(bytes32) note {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/Medianizer.sol:59:5: Warning: No visibility specified. Defaulting to "public". 
+    function compute() constant returns (bytes32, bool) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/DutchExchangeProxy.sol:6:3: Warning: No visibility specified. Defaulting to "public". 
+  function DutchExchangeProxy(address _masterCopy) Proxy (_masterCopy) {
+  ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:10:5: Warning: Function state mutability can be restricted to pure
+    function add(uint256 x, uint256 y) constant internal returns (uint256 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:14:5: Warning: Function state mutability can be restricted to pure
+    function sub(uint256 x, uint256 y) constant internal returns (uint256 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:18:5: Warning: Function state mutability can be restricted to pure
+    function mul(uint256 x, uint256 y) constant internal returns (uint256 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:22:5: Warning: Function state mutability can be restricted to pure
+    function div(uint256 x, uint256 y) constant internal returns (uint256 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:26:5: Warning: Function state mutability can be restricted to pure
+    function min(uint256 x, uint256 y) constant internal returns (uint256 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:29:5: Warning: Function state mutability can be restricted to pure
+    function max(uint256 x, uint256 y) constant internal returns (uint256 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:38:5: Warning: Function state mutability can be restricted to pure
+    function hadd(uint128 x, uint128 y) constant internal returns (uint128 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:42:5: Warning: Function state mutability can be restricted to pure
+    function hsub(uint128 x, uint128 y) constant internal returns (uint128 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:46:5: Warning: Function state mutability can be restricted to pure
+    function hmul(uint128 x, uint128 y) constant internal returns (uint128 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:50:5: Warning: Function state mutability can be restricted to pure
+    function hdiv(uint128 x, uint128 y) constant internal returns (uint128 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:54:5: Warning: Function state mutability can be restricted to pure
+    function hmin(uint128 x, uint128 y) constant internal returns (uint128 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:57:5: Warning: Function state mutability can be restricted to pure
+    function hmax(uint128 x, uint128 y) constant internal returns (uint128 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:66:5: Warning: Function state mutability can be restricted to pure
+    function imin(int256 x, int256 y) constant internal returns (int256 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:69:5: Warning: Function state mutability can be restricted to pure
+    function imax(int256 x, int256 y) constant internal returns (int256 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/Oracle/DSMath.sol:158:5: Warning: Function state mutability can be restricted to pure
+    function cast(uint256 x) constant internal returns (uint128 z) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/TokenFRT.sol:140:5: Warning: Function state mutability can be restricted to pure
+    function safeToAdd(uint a, uint b)
+    ^ (Relevant source part starts here and spans across multiple lines).
+,@gnosis.pm/dx-contracts/contracts/TokenFRT.sol:152:5: Warning: Function state mutability can be restricted to pure
+    function safeToSub(uint a, uint b)
+    ^ (Relevant source part starts here and spans across multiple lines).
+
+Writing artifacts to ./build/contracts
+
 ⚠️  Important ⚠️
 If you're using an HDWalletProvider, it must be Web3 1.0 enabled or your migration will hang.
 Try: npm install --save truffle-hdwallet-provider@web3-one
@@ -12,7 +309,7 @@ Starting migrations...
 ======================
 > Network name:    'rinkeby'
 > Network id:      4
-> Block gas limit: 7004516
+> Block gas limit: 7008984
 
 
 1.Initial-migration.js
@@ -20,11 +317,11 @@ Starting migrations...
 
    Replacing 'Migrations'
    ----------------------
-   > transaction hash:    0x9b91b4248ba7c76e92b3470bb0424985ab09d728f06162b0a344f01126e2c015
-   > Blocks: 1            Seconds: 16
-   > contract address:    0x35305286ddE0E0bD33a05990a79C57C2A151697B
+   > transaction hash:    0xc203b6036aa3ad6b41b8e2e498f7470b92e8b3dcc009396f4d103b430f8e4e84
+   > Blocks: 0            Seconds: 12
+   > contract address:    0x409576742D7F7b4136B069C346858fc2b0f4569C
    > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
-   > balance:             5.631813001035547566
+   > balance:             5.468890461035547566
    > gas used:            224195
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -57,11 +354,11 @@ Deploying DutchX token:
 
    Replacing 'DxToken'
    -------------------
-   > transaction hash:    0xc91b8d9a9a7f906184a1ee57b51a7d9caed8c45383799478fb2c789b919b9e34
-   > Blocks: 4            Seconds: 72
-   > contract address:    0x6644435192f5706836f3A1B9034fEF09B6A4D2a5
+   > transaction hash:    0x7801e5d2d6108efe64a45a3369e649ae09774f5344698494be5889e22cc85601
+   > Blocks: 0            Seconds: 12
+   > contract address:    0x60964b5E3Df41A8AB2833e15d328f62b269564A6
    > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
-   > balance:             5.617476801035547566
+   > balance:             5.454554261035547566
    > gas used:            1364804
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -71,11 +368,11 @@ Deploying DutchX Reputation token
 
    Replacing 'DxReputation'
    ------------------------
-   > transaction hash:    0x627c1c5b30818ffa76c8477344a73603c8d3a69f36b10123df80e06a5ed2a8ce
-   > Blocks: 0            Seconds: 12
-   > contract address:    0xAb4ADe303dEFA019f064063373CD155f3806e87B
+   > transaction hash:    0x0911ff26179142a5e767da9b63e2fc6f7bd72bb4c6c76cfc99f54e58fe586086
+   > Blocks: 1            Seconds: 12
+   > contract address:    0xd0a7c53D3bFcd4Fe1A6151FD04256864b6E87B34
    > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
-   > balance:             5.610406151035547566
+   > balance:             5.447483611035547566
    > gas used:            707065
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -84,17 +381,17 @@ Deploying DutchX Reputation token
 
 Deploying DutchX avatar:
   - Organization name: dxDAO
-  - Token address: 0x6644435192f5706836f3A1B9034fEF09B6A4D2a5
-  - Reputation address: 0xAb4ADe303dEFA019f064063373CD155f3806e87B
+  - Token address: 0x60964b5E3Df41A8AB2833e15d328f62b269564A6
+  - Reputation address: 0xd0a7c53D3bFcd4Fe1A6151FD04256864b6E87B34
 
 
    Replacing 'DxAvatar'
    --------------------
-   > transaction hash:    0x080da37adf59dc680c4c14b9bd805734265740203f6775436d3eab6ea8542760
-   > Blocks: 0            Seconds: 12
-   > contract address:    0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
+   > transaction hash:    0x843b135d566062191acec922eedaa2e7a8f252fd63fb86e226b17f2a48a9017a
+   > Blocks: 1            Seconds: 12
+   > contract address:    0x99e5535c205267917474c161866B885E70F184B3
    > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
-   > balance:             5.600509391035547566
+   > balance:             5.437586851035547566
    > gas used:            989676
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -119,15 +416,15 @@ The DAO doesn't have founders with initial Tokens and REP.
 5_Controller.js
 ===============
 Deploying DutchX Dao Controller:
-  - Avatar: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
+  - Avatar: 0x99e5535c205267917474c161866B885E70F184B3
 
    Replacing 'DxController'
    ------------------------
-   > transaction hash:    0xe694eed03066b2b77a806f0a1ef78be04b567961786704447cb0c5c889be1280
-   > Blocks: 1            Seconds: 12
-   > contract address:    0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
+   > transaction hash:    0x20b4ad0a2b1e9fd07f51260b2ad1283a07cc7ad20a3666c38395ab516b999b1b
+   > Blocks: 0            Seconds: 12
+   > contract address:    0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
    > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
-   > balance:             5.557724691035547566
+   > balance:             5.394802151035547566
    > gas used:            4224654
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -143,21 +440,21 @@ Deploying DutchX Dao Controller:
 6_Transfer_ownership_to_Controller.js
 =====================================
 Transfer ownership of the Avatar to the Controller:
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
-  - Controller address: 0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
-  - Transaction: 0xd5026f9b69dc8e535975269508e98aac79732d40fcbd475e8a6f07cd11ae63fb
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
+  - Controller address: 0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
+  - Transaction: 0x57f5371382e819a539a2b23b5fffdd922a0ed9c3e617bb676427921931c112d0
   - Gas used: 30745
 
 Transfer ownership of the Token to the Controller:
-  - Token address: 0x6644435192f5706836f3A1B9034fEF09B6A4D2a5
-  - Controller address: 0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
-  - Transaction: 0xa516b170c7113a0630ccfcd3c132db4de9c9c897f1ce051996d52c855bf819c3
+  - Token address: 0x60964b5E3Df41A8AB2833e15d328f62b269564A6
+  - Controller address: 0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
+  - Transaction: 0x58182e1b499f60aef9736d3df160e0f4d04391f41fc08c6538f87599ff8ec73c
   - Gas used: 30946
 
 Transfer ownership of the Reputation to the Controller:
-  - Reputation address: 0xAb4ADe303dEFA019f064063373CD155f3806e87B
-  - Controller address: 0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
-  - Transaction: 0x8204e6821fdc14df1ec121597fd6286679eff99e9a52cb19d96fb7555ee4d062
+  - Reputation address: 0xd0a7c53D3bFcd4Fe1A6151FD04256864b6E87B34
+  - Controller address: 0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
+  - Transaction: 0x42998a2dc44bd8e3c038f1c99e827e803e4fde2e49028c84979ac9fa0730e937
   - Gas used: 30660
 
 
@@ -184,7 +481,7 @@ Configure Genesis Protocol voting machine:
   - daoBountyConst: 15
   - daoBountyLimit: 10
   - voteOnBehalf: 0x0000000000000000000000000000000000000000
-  - Transaction: 0xec68e4eca0bb461f690769ad97006262cc1028fbe91d9846b00d07c3a8e5a726
+  - Transaction: 0x30eebc103235a3a408628f1fec5b53bbaf8e4cb162aa7b351de4fa98137a66ca
   - Gas used: 104743
 
 
@@ -200,38 +497,36 @@ Deploying DxLockMgnForRep scheme
 
    Replacing 'DxLockMgnForRep'
    ---------------------------
-   > transaction hash:    0x86e4bd1ae45e131a04b8477d329f4088e7bd9548541e7f833e653be80d246f86
-   > Blocks: 0            Seconds: 12
-   > contract address:    0x68d312F9B297db04Ce4Fe57d50770D9BDb986b43
+   > transaction hash:    0xdc4344503a7d4793eccfff496355051c0ac12dbd480ba2503a820d9965684978
+   > Blocks: 1            Seconds: 24
+   > contract address:    0x82688d4D0FD18a700Dc5c6D282262157e810cb7b
    > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
-   > balance:             5.539202351035547566
+   > balance:             5.376279811035547566
    > gas used:            1574416
    > gas price:           10 gwei
    > value sent:          0 ETH
    > total cost:          0.01574416 ETH
 
 Configure DxLockMgnForRep scheme:
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
-  - Reputation reward: 500K
-  - Opt in start time: 26/12/2018 20:00
-  - Opt in end time: 27/12/2018 11:59
-  - Claim start time: 27/12/2018 12:00
-  - Claim end time: 27/12/2018 16:59
-  - Redeem enable time: 27/12/2018 17:00
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
+  - Register period: Register period: Currently any time, but only makes sense before the claiming period ends 28/12/2018 14:59
+  - Claim start time (24h period, actual locking): 28/12/2018 11:00
+  - Claim end time (24h period, actual locking): 28/12/2018 14:59
+  - Redeem enable time: 28/12/2018 15:00
   - MGN address (external locking contract): 0x152af9ad40ccef2060cd14356647ee1773a43437
   - Get balance function signature: lockedTokenBalances(address)
-  - Transaction: 0x613704b277eff9896c2d7a0cae650cf87ec7b89dcdd05e45772c98a838ed250f
+  - Transaction: 0x1186d19f8627d710d4c4abbe4a91aba5648b51eb15fdafd766089cd3928f2394
   - Gas used: 210637
 (*) Dates use Asia/Tel_Aviv time zone
 
 
 Register DxLockMgnForRep scheme in the controller:
-  - Scheme address: 0x68d312F9B297db04Ce4Fe57d50770D9BDb986b43
+  - Scheme address: 0x82688d4D0FD18a700Dc5c6D282262157e810cb7b
   - Param hash: 0x30
   - Permissions: 0x00000001
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
-  - Controller address: 0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
-  - Transaction: 0x9f840091f7c8b7809069fe6ee1dc038f4384fcfa1649e74f9c018451eed4ed41
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
+  - Controller address: 0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
+  - Transaction: 0xdc7c53e897bdff47c2b4a6d1c8d4ea952ad9ee5b64d90f0019ac148cb0621a25
   - Gas used: 70247
 
 
@@ -247,11 +542,11 @@ Deploy DxGenAuction4Rep that inherits from Auction4Reputation
 
    Replacing 'DxGenAuction4Rep'
    ----------------------------
-   > transaction hash:    0xec87801386aa00708cf35b10e26df533c2e29782f2a68c36186f761650d9f3c1
-   > Blocks: 0            Seconds: 8
-   > contract address:    0x7B39c4A6D3ced357a0D3dE5E81fdf8a9CB3151be
+   > transaction hash:    0x484a681c205bb6690c4ba1d336a2fcc03d68aca8df5f4d23418da9ef86bc660c
+   > Blocks: 0            Seconds: 12
+   > contract address:    0xe888211114266359E53a114c40939563B2Ce3110
    > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
-   > balance:             5.524695081035547566
+   > balance:             5.361772541035547566
    > gas used:            1142935
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -259,22 +554,22 @@ Deploy DxGenAuction4Rep that inherits from Auction4Reputation
 
   - Scheme for conducting ERC20 Tokens auctions for reputation
 Configure DxGenAuction4Rep
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
   - Reputation reward: 100000
-  - Auction start time: 26/12/2018 20:00
-  - Auction end time: 27/12/2018 11:59
-  - Redeem enable time: 27/12/2018 17:00
+  - Auction start time: 27/12/2018 17:30
+  - Auction end time: 28/12/2018 14:59
+  - Redeem enable time: 28/12/2018 15:00
   - Number of auctions: 5
   - Staking token address (GEN): 0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf
-  - wallet address (DxAvatar.address):  0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
+  - wallet address (DxAvatar.address):  0x99e5535c205267917474c161866B885E70F184B3
 
 Register DxGenAuction4Rep scheme in the controller:
-  - Scheme address: 0x7B39c4A6D3ced357a0D3dE5E81fdf8a9CB3151be
+  - Scheme address: 0xe888211114266359E53a114c40939563B2Ce3110
   - Param hash: 0x30
   - Permissions: 0x00000001
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
-  - Controller address: 0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
-  - Transaction: 0xd36b8af363c35f864f3be4910e748bdf47d7ab1872485348bdb12031937c7aae
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
+  - Controller address: 0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
+  - Transaction: 0x0a499ef8d8b236e058190d039686dc03cb8112b2a127b1bb5ebcccb53c2bcb19
   - Gas used: 70247
 
 
@@ -290,31 +585,31 @@ Deploy DxLockEth4Rep that inherits from LockingEth4Reputation
 
    Replacing 'DxLockEth4Rep'
    -------------------------
-   > transaction hash:    0xdff79bd7c9519958d42b63e891a4c73edd0d5d0e38979cd9d08156f2052b6fc0
+   > transaction hash:    0x3dccf6134dc79218630e401f625c4e7b9fdd9be9a7b49a18f553e984232b4ac4
    > Blocks: 0            Seconds: 12
-   > contract address:    0xb584827af44c09ecA2aa72b7491Bb962c02De15E
+   > contract address:    0x9A24fFBdafB082903810F8027B08cd502AD60bf5
    > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
-   > balance:             5.509150741035547566
+   > balance:             5.346228201035547566
    > gas used:            1227965
    > gas price:           10 gwei
    > value sent:          0 ETH
    > total cost:          0.01227965 ETH
 
 Configure DxLockEth4Rep
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
   - Reputation reward: 80000
-  - Locking start time: 26/12/2018 20:00
-  - Locking end time: 27/12/2018 11:59
-  - Redeem enable time: 27/12/2018 17:00
+  - Locking start time: 27/12/2018 17:30
+  - Locking end time: 28/12/2018 14:59
+  - Redeem enable time: 28/12/2018 15:00
   - max locking period: 15552000
 
 Register DxLockEth4Rep scheme in the controller:
-  - Scheme address: 0xb584827af44c09ecA2aa72b7491Bb962c02De15E
+  - Scheme address: 0x9A24fFBdafB082903810F8027B08cd502AD60bf5
   - Param hash: 0x30
   - Permissions: 0x00000001
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
-  - Controller address: 0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
-  - Transaction: 0x6529d1b430c8f3b658de43f3083cd1f7118afa3f56e9864a72e4ed2c6532a177
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
+  - Controller address: 0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
+  - Transaction: 0x463dd08224f9629a042ef91a73f7629363f7268e700aa446920d73e6ed92e85f
   - Gas used: 70247
 
 
@@ -326,16 +621,96 @@ Register DxLockEth4Rep scheme in the controller:
 
 11_SCHEME-REP-Lock_Whitelisted_tokens.js
 ========================================
+
+   Deploying 'BasicTokenWhitelist'
+   -------------------------------
+   > transaction hash:    0xe08ff56438e1ad28b8a9290d1a968c532530b5e1ee4acad2293f2e77af863b45
+   > Blocks: 0            Seconds: 8
+   > contract address:    0x8CbDc0A320Db8Bd0674077610e8FBFB07F0cb84c
+   > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
+   > balance:             5.340131271035547566
+   > gas used:            346697
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00346697 ETH
+
+Deploy BasicTokenWhitelist for testing in Rinkeby:
+
+White list the tokens: 
+  - WETH: 0xc778417e063141139fce010982780140aa0cd5ab
+  - RDN: 0x3615757011112560521536258c1e7325ae3b48ae
+  - OMG: 0x00df91984582e6e96288307e9c2f20b38c8fece9
+  - testGEN: 0xa1f34744c80e7a9019a5cd2bf697f13df00f9773
+  - GEN: 0x543ff227f64aa17ea132bf9886cab5db55dcaddf
+Error: expected array value (arg="token", coderType="array", value={"WETH":"0xc778417e063141139fce010982780140aa0cd5ab","RDN":"0x3615757011112560521536258c1e7325ae3b48ae","OMG":"0x00df91984582e6e96288307e9c2f20b38c8fece9","testGEN":"0xa1f34744c80e7a9019a5cd2bf697f13df00f9773","GEN":"0x543ff227f64aa17ea132bf9886cab5db55dcaddf"})
+    at Object.throwError (/Users/anxo/code/gnosis/dx-daostack/node_modules/truffle/build/webpack:/~/ethers/utils/errors.js:68:1)
+    at CoderArray.encode (/Users/anxo/code/gnosis/dx-daostack/node_modules/truffle/build/webpack:/~/ethers/utils/abi-coder.js:687:1)
+    at /Users/anxo/code/gnosis/dx-daostack/node_modules/truffle/build/webpack:/~/ethers/utils/abi-coder.js:605:21
+    at Array.forEach (<anonymous>)
+    at pack (/Users/anxo/code/gnosis/dx-daostack/node_modules/truffle/build/webpack:/~/ethers/utils/abi-coder.js:604:1)
+    at CoderTuple.encode (/Users/anxo/code/gnosis/dx-daostack/node_modules/truffle/build/webpack:/~/ethers/utils/abi-coder.js:764:1)
+    at AbiCoder.encode (/Users/anxo/code/gnosis/dx-daostack/node_modules/truffle/build/webpack:/~/ethers/utils/abi-coder.js:897:1)
+    at ABICoder.encodeParameters (/Users/anxo/code/gnosis/dx-daostack/node_modules/truffle/build/webpack:/~/web3-eth-abi/src/index.js:96:1)
+    at /Users/anxo/code/gnosis/dx-daostack/node_modules/truffle/build/webpack:/~/web3-eth/~/web3-eth-contract/src/index.js:426:1
+    at Array.map (<anonymous>)
+    at Object._encodeMethodABI (/Users/anxo/code/gnosis/dx-daostack/node_modules/truffle/build/webpack:/~/web3-eth/~/web3-eth-contract/src/index.js:425:10)
+    at constructor.detectNetwork.then.network (/Users/anxo/code/gnosis/dx-daostack/node_modules/truffle/build/webpack:/packages/truffle-contract/lib/execute.js:166:1)
+    at process._tickCallback (internal/process/next_tick.js:68:7)
+Truffle v5.0.0 (core: 5.0.0)
+Node v10.14.2
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+yarn run v1.10.1
+$ truffle migrate --network rinkeby
+Using gas limit: 6500 K
+Using gas price: 10 Gwei
+Optimizer enabled: true
+Using default mnemonic: true
+Using private key
+⚠️  Important ⚠️
+If you're using an HDWalletProvider, it must be Web3 1.0 enabled or your migration will hang.
+Try: npm install --save truffle-hdwallet-provider@web3-one
+
+
+Starting migrations...
+======================
+> Network name:    'rinkeby'
+> Network id:      4
+> Block gas limit: 7019808
+
+
+11_SCHEME-REP-Lock_Whitelisted_tokens.js
+========================================
+
+   Deploying 'BasicTokenWhitelist'
+   -------------------------------
+   > transaction hash:    0x765983a0325e915721ec8b6f203c957a7c61d7473905ec90758758856ad6cc62
+   > Blocks: 0            Seconds: 4
+   > contract address:    0x4A5F61187f794B338b610620B4069477c07fF53C
+   > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
+   > balance:             5.336664301035547566
+   > gas used:            346697
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00346697 ETH
+
+Deploy BasicTokenWhitelist for testing in Rinkeby:
+
+White list the tokens: 
+  - WETH: 0xc778417e063141139fce010982780140aa0cd5ab
+  - RDN: 0x3615757011112560521536258c1e7325ae3b48ae
+  - OMG: 0x00df91984582e6e96288307e9c2f20b38c8fece9
+  - testGEN: 0xa1f34744c80e7a9019a5cd2bf697f13df00f9773
+  - GEN: 0x543ff227f64aa17ea132bf9886cab5db55dcaddf
 Deploy FixedPriceOracle: for setting the prices for the tokens
-  - DutchX address: 0x4e69969d9270ff55fc7c5043b074d4e45f795587
+  - Token White List Address (BasicTokenWhitelist, only for testing): %s
 
    Replacing 'FixedPriceOracle'
    ----------------------------
-   > transaction hash:    0xc655273a782b82ed4ca5ac029e2bfc1d7082d236b40fef1e83699d91cdd42bb7
+   > transaction hash:    0xfad5bcccfcc075f989265ceb6836dbb6adf5c86bf9e5e8795816846d34e557c3
    > Blocks: 0            Seconds: 12
-   > contract address:    0xe7Fd17DEa742806B600cBd29DaC91f5686FacBe2
+   > contract address:    0x1C54f6146bA3656739A5c0781Cc054FA0C3951C1
    > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
-   > balance:             5.499703631035547566
+   > balance:             5.328446471035547566
    > gas used:            681715
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -345,39 +720,39 @@ Deploy DxLockWhitelisted4Rep that inherits from LockingToken4Reputation
 
    Replacing 'DxLockWhitelisted4Rep'
    ---------------------------------
-   > transaction hash:    0x8e5c23fc378d96f19e2d022c3bd8d44871e33adbd157d79e0a02c6de5e912552
-   > Blocks: 0            Seconds: 12
-   > contract address:    0x9C6C5E15F55b63cfD6bC8f0DBd6953Df8c65fe49
+   > transaction hash:    0x2fa5d7e6f624da0df8be96f0b6f6bb902b911dafc5f7ffaba9400530719716e8
+   > Blocks: 2            Seconds: 40
+   > contract address:    0x184f1F904Fff713e7417295bA988aA99eef8a196
    > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
-   > balance:             5.484603131035547566
+   > balance:             5.313345971035547566
    > gas used:            1510050
    > gas price:           10 gwei
    > value sent:          0 ETH
    > total cost:          0.0151005 ETH
 
 Configure DxLockWhitelisted4Rep
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
   - Reputation reward: 300000
-  - Locking start time: 26/12/2018 20:00
-  - Locking end time: 27/12/2018 11:59
-  - Redeem enable time: 27/12/2018 17:00
+  - Locking start time: 27/12/2018 17:30
+  - Locking end time: 28/12/2018 14:59
+  - Redeem enable time: 28/12/2018 15:00
   - max locking period: 15552000
-  - Price Oracle address: 0xe7Fd17DEa742806B600cBd29DaC91f5686FacBe2
+  - Price Oracle address: 0x1C54f6146bA3656739A5c0781Cc054FA0C3951C1
 
 Register DxLockWhitelisted4Rep scheme in the controller:
-  - Scheme address: 0x9C6C5E15F55b63cfD6bC8f0DBd6953Df8c65fe49
+  - Scheme address: 0x184f1F904Fff713e7417295bA988aA99eef8a196
   - Param hash: 0x30
   - Permissions: 0x00000001
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
-  - Controller address: 0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
-  - Transaction: 0x06e20379a52ec8eadf422c09f92fbe5973d0cbf38c46abe1a3ba66ebbaee6118
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
+  - Controller address: 0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
+  - Transaction: 0x91d83e6e8f5a9c57f15e76cd48545a40986b103bf9cac56d8a367766f542faa9
   - Gas used: 70247
 
 
    > Saving migration to chain.
    > Saving artifacts
    -------------------------------------
-   > Total cost:          0.02191765 ETH
+   > Total cost:          0.02538462 ETH
 
 
 12_SCHEMES_GenericScheme.js
@@ -394,9 +769,9 @@ Register GenericScheme scheme in the controller:
   - Scheme address: 0x369C0692Cfb9B39187F250257D10c7D177f05284
   - Param hash: 0xfdf8e4f3057e7ca4f82359170fd2d5e4dc51c4896ffd632a307659fb8f655350
   - Permissions: 0x00000010
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
-  - Controller address: 0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
-  - Transaction: 0xbfac4ba34a4787da6acb3ea40215abfe7408aeac59e16a7347e1e0a5ab1501a9
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
+  - Controller address: 0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
+  - Transaction: 0xb9388aaa03947d113dcdf4b4d300a08bb46750aad35122da35a350b7fd32c406
   - Gas used: 72231
 
 
@@ -419,9 +794,9 @@ Register SchemeRegistrar scheme in the controller:
   - Scheme address: 0x58977829D7ea1fB67aBB8dF8516dcffad6dCDBbe
   - Param hash: 0xd98ed796365617cf58bb9f91013eafc900f25d6b4aa59fd03251353ec72f71d5
   - Permissions: 0x0000001f
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
-  - Controller address: 0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
-  - Transaction: 0x5b544a03887b67b4f24901004d4d0a41fcca800bcbade8fcc5bec126051e57db
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
+  - Controller address: 0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
+  - Transaction: 0x051936cbece7f639bd61ac2c8d586e47cf3d4873e6e68bf4c6b9e8411f97d421
   - Gas used: 72167
 
 
@@ -443,9 +818,9 @@ Register GlobalConstraintRegistrar scheme in the controller:
   - Scheme address: 0x54b497A68080a99080Db2817d6e0f3e166245C7D
   - Param hash: 0xc0b9b70b4c75695b23541c2a1808b339d1c97068438bab372f483009d04a6152
   - Permissions: 0x00000005
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
-  - Controller address: 0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
-  - Transaction: 0x7e0b91fad282c28eecd91451c45e8b2cab2ee2e1fa6d801d50d21e891870ee3c
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
+  - Controller address: 0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
+  - Transaction: 0x5675d34d837a295b473aaf2fd6dc27ba67814f3168fb4a9f7da0a1936e57be4b
   - Gas used: 72231
 
 
@@ -467,9 +842,9 @@ Register UpgradeScheme scheme in the controller:
   - Scheme address: 0xB99924fdaEd4987F13fcD3952009b4cB0989f972
   - Param hash: 0xc0b9b70b4c75695b23541c2a1808b339d1c97068438bab372f483009d04a6152
   - Permissions: 0x0000000a
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
-  - Controller address: 0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
-  - Transaction: 0xb40bb12136c0cadf411a604b563d28de4fb355ee111994bdcf9d8622aa07b902
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
+  - Controller address: 0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
+  - Transaction: 0x6e24ea3fcc577747bd04a2f11874f9ab5b8617c7d465352dcf0419d89dc3914a
   - Gas used: 72231
 
 
@@ -492,9 +867,9 @@ Register ContributionReward scheme in the controller:
   - Scheme address: 0x631f9B01c091E47e199926099F6dE2700597Ee86
   - Param hash: 0xff66157f57fcf8036b35416290027d20e6063ee9d2b57690160121db0bb5fa9a
   - Permissions: 0x00000001
-  - Avatar address: 0xE978D4A98e23c52a9919FA3b7a0FC2eba5756642
-  - Controller address: 0x36272E4F2D8Afa40d0f6C9672BeCBAE9D543B620
-  - Transaction: 0x1929dc29d5307c52ac6b4f7bb6bff364c855442bd3cf271a44ec13cfc0aca5b0
+  - Avatar address: 0x99e5535c205267917474c161866B885E70F184B3
+  - Controller address: 0x5460b28E8b4eB21689D894e2059A7Ba0af81DE62
+  - Transaction: 0x55ce800e8399bc6ead2562560101ef1c1e63b23243e7ceae460d03994fd8c539
   - Gas used: 72231
 
 
@@ -515,7 +890,7 @@ TODO: Not sure if it is needed
 
 Summary
 =======
-> Total deployments:   10
-> Final cost:          0.13647475 ETH
+> Total deployments:   3
+> Final cost:          0.02538462 ETH
 
-Done in 1077.07s.
+Done in 436.82s.
