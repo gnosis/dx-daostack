@@ -1,7 +1,0 @@
-{
-  "reputationReward" : 100,
-  "lockingStartTime" : 1000,
-  "lockingEndTime" : 2000,
-  "externalLockingContract" : "0xabcd",
-  "getBalanceFuncSignature" : "lockedTokenBalances(address)"
-}

@@ -1,12 +1,14 @@
-const debug = require('debug')('test:helper');
+const debug = require('debug')('test:helper')
 const DEFAULT_GAS = 4712388;
-const daoServiceFactory = require('../../src/services/daoService/daoServiceFactory');
-const dxServiceFactory = require('../../src/services/dxService/dxServiceFactory');
+const daoServiceFactory = require('../../src/services/daoService/daoServiceFactory')
+const dxServiceFactory = require('../../src/services/dxService/dxServiceFactory')
 
 const getDaoStackContracts = require('../../src/repositories/daostack/util/getDaoStackContracts');
 const getDxContracts = require('../../src/repositories/dx/util/getDxContracts');
 
-let web3, artifacts, accounts, daoService, dxService;
+// const DEFAULT_GAS = 4712388
+
+let web3, artifacts, accounts, daoService, dxService
 
 async function setupDao ({
   // Optional params
@@ -71,7 +73,8 @@ const revertSnapshotFactory = (web3) => snapshotId => {
 module.exports = async ({
   artifacts: _artifacts,
   accounts: _accounts,
-  web3: _web3
+  web3: _web3,
+  contracts
 }) => {
   artifacts = _artifacts;
   accounts = _accounts;
@@ -79,6 +82,7 @@ module.exports = async ({
 
   const owner = accounts[0];
   daoService = await daoServiceFactory({
+    contracts,
     provider: web3.currentProvider,
     transactionDefaults: {
       from: owner,

@@ -1,17 +1,28 @@
-/* eslint no-console: "off" */
-const HDWalletProvider = require('truffle-hdwallet-provider');
-const assert = require('assert');
+const assert = require('assert')
+const HDWalletProvider = require('truffle-hdwallet-provider')
+const GAS_PRICE_GWEI = process.env.GAS_PRICE_GWEI || 10
+const GAS_LIMIT = 6.5e6
 
-const DEFAULT_GAS_PRICE_GWEI = 5;
-const GAS_LIMIT = 6.5e6;
-const DEFAULT_MNEMONIC = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat';
+const DEFAULT_MNEMONIC = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
+
+// Load env vars
+require('dotenv').config()
+
+// Get the mnemonic
+const privateKey = process.env.PK
+let mnemonic = process.env.MNEMONIC
+if (!privateKey && !mnemonic) {
+  mnemonic = DEFAULT_MNEMONIC
+}
 
 function truffleConfig ({
   mnemonic = DEFAULT_MNEMONIC,
-  gasPriceGWei = DEFAULT_GAS_PRICE_GWEI,
+  privateKey,
+  gasPriceGWei = GAS_PRICE_GWEI,
   gas = GAS_LIMIT,
   optimizedEnabled = true,
   urlRinkeby = 'https://rinkeby.infura.io/',
+  urlKovan = 'https://kovan.infura.io/',
   urlMainnet = 'https://mainnet.infura.io',
   urlDevelopment = 'localhost',
   portDevelopment = 8545
@@ -23,9 +34,22 @@ function truffleConfig ({
   console.log('Using default mnemonic: %s', mnemonic === DEFAULT_MNEMONIC);
   const gasPrice = gasPriceGWei * 1e9;
 
-  const _getProvider = url => {
-    return () => new HDWalletProvider({ mnemonic, url });
-  };
+  let _getProvider  
+  if (privateKey) {
+    console.log('Using private key')
+    _getProvider = url => {
+      return () => {
+        return new HDWalletProvider([ privateKey ], url)
+      }
+    }
+  } else {
+    console.log(mnemonic === DEFAULT_MNEMONIC ? 'Using default mnemonic' : 'Using custom mnemonic')    
+    _getProvider = url => {
+      return () => {
+        return new HDWalletProvider(mnemonic, url)
+      }
+    }
+  }
 
   return {
     networks: {
@@ -47,16 +71,32 @@ function truffleConfig ({
         network_id: '4',
         gas,
         gasPrice
-      }
+      },
+      kovan: {
+        provider: _getProvider(urlKovan),
+        network_id: '42',
+        gas,
+        gasPrice
+      },
     },
-    solc: {
-      optimizer: {
-        enabled: optimizedEnabled
+    compilers: {
+      solc: {
+        version: '0.4.25',
+        docker: process.env.SOLC_USE_DOCKER === 'true' || false,
+        settings: {
+          optimizer: {
+            enabled: optimizedEnabled, // Default: false
+            runs: 200
+          }
+          // evmVersion: "byzantium"  // Default: "byzantium". Others:  "homestead", ...
+        }
       }
     }
   };
 }
 
 module.exports = truffleConfig({
-  optimizedEnabled: true
-});
+  optimizedEnabled: true,
+  mnemonic,
+  privateKey
+})

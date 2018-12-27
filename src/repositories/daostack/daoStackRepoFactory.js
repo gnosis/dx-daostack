@@ -3,8 +3,9 @@ const constants = require('./util/constants');
 const getDaoStackContracts = require('./util/getDaoStackContracts');
 
 module.exports = async ({
-  provider,
-  transactionDefaults
+  contracts,
+  provider
+  // fromDefault
 }) => {
   const {
     ControllerCreator,
@@ -13,8 +14,9 @@ module.exports = async ({
     DAOToken,
     Reputation,
     ExternalLocking4Reputation,
-    ZeroXDutchXValidateAndCall
+    WhitelistUsing0xList
   } = await getDaoStackContracts({
+    contracts,
     provider,
     defaults: transactionDefaults
   });
@@ -50,8 +52,8 @@ module.exports = async ({
     ExternalLocking4Reputation
   });
 
-  const createSchemeZeroXDutchXValidateAndCall = require('./schemes/createZeroXDutchXValidateAndCall')({
-    ZeroXDutchXValidateAndCall
+  const createSchemeWhitelistUsing0xList = require('./schemes/createWhitelistUsing0xList')({
+    WhitelistUsing0xList
   });
 
   // Repo API
@@ -61,6 +63,6 @@ module.exports = async ({
 
     // Scheme creation
     createSchemeExternalLocking4Reputation,
-    createSchemeZeroXDutchXValidateAndCall
+    createSchemeWhitelistUsing0xList
   };
 };

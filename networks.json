@@ -1,0 +1,624 @@
+{
+  "DxAvatar": {
+    "4": {
+      "events": {
+        "0x60cb6ac4ce80ddf7e096689e155fdb7a4e5354b2fc7bd67157bde32a1ce44cb6": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_contract",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_params",
+              "type": "bytes"
+            }
+          ],
+          "name": "GenericCall",
+          "type": "event",
+          "signature": "0x60cb6ac4ce80ddf7e096689e155fdb7a4e5354b2fc7bd67157bde32a1ce44cb6"
+        },
+        "0x22fca66666089f39bc900dd6605b489df4aae6260cc8ea8257594cfb8c84926c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_amountInWei",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            }
+          ],
+          "name": "SendEther",
+          "type": "event",
+          "signature": "0x22fca66666089f39bc900dd6605b489df4aae6260cc8ea8257594cfb8c84926c"
+        },
+        "0x49dc2a60d2599a7b6932d78fb694c30dfc596fe4e0282b5d0fd184b52472c04d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_externalToken",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "ExternalTokenTransfer",
+          "type": "event",
+          "signature": "0x49dc2a60d2599a7b6932d78fb694c30dfc596fe4e0282b5d0fd184b52472c04d"
+        },
+        "0x179c15de44aa7ab84896301974328eb40b5b40fe01cfe0fee2924ea712c3e843": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_externalToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "ExternalTokenTransferFrom",
+          "type": "event",
+          "signature": "0x179c15de44aa7ab84896301974328eb40b5b40fe01cfe0fee2924ea712c3e843"
+        },
+        "0xbe7df27d98bd0614ae920a695c2c2be09c164d8456083da020a98538692c465f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_externalToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_addedValue",
+              "type": "uint256"
+            }
+          ],
+          "name": "ExternalTokenIncreaseApproval",
+          "type": "event",
+          "signature": "0xbe7df27d98bd0614ae920a695c2c2be09c164d8456083da020a98538692c465f"
+        },
+        "0x495e426dd61227fe840d969dfba17620c573364af8c37748ea71f96f744ae334": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_externalToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_subtractedValue",
+              "type": "uint256"
+            }
+          ],
+          "name": "ExternalTokenDecreaseApproval",
+          "type": "event",
+          "signature": "0x495e426dd61227fe840d969dfba17620c573364af8c37748ea71f96f744ae334"
+        },
+        "0xf32a9f77675fd5917534c7746608fd3e309eac68fbdcbf5925e24ca97a704396": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_sender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "ReceiveEther",
+          "type": "event",
+          "signature": "0xf32a9f77675fd5917534c7746608fd3e309eac68fbdcbf5925e24ca97a704396"
+        },
+        "0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipRenounced",
+          "type": "event",
+          "signature": "0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0x19787d457F66aC86d18884da86D9B8B71CcAd4be",
+      "transactionHash": "0x0ca65706b89e3914f20cc66766cbb77fde4f1df15673dbd388a31a63af105e47"
+    }
+  },
+  "DxController": {
+    "4": {
+      "events": {
+        "0x837f2931e3df0592458212be4e470025f197feb7a8e39deb5b7f1f1d42e6f262": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_sender",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "MintReputation",
+          "type": "event",
+          "signature": "0x837f2931e3df0592458212be4e470025f197feb7a8e39deb5b7f1f1d42e6f262"
+        },
+        "0x186d8887e1b22f9d9b16849c36baa748950d09d9c9b67a4a6ea140eaad00c21c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_sender",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "BurnReputation",
+          "type": "event",
+          "signature": "0x186d8887e1b22f9d9b16849c36baa748950d09d9c9b67a4a6ea140eaad00c21c"
+        },
+        "0x21f9c9a1a1f9a311a50f15fec5c1faa9e21fc9edf964f0fdecba5bd490484c5e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_sender",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_beneficiary",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "MintTokens",
+          "type": "event",
+          "signature": "0x21f9c9a1a1f9a311a50f15fec5c1faa9e21fc9edf964f0fdecba5bd490484c5e"
+        },
+        "0x546816e99403df442acb68ef69562682a50762c20a3fb6b472f7af9923736cfc": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_sender",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_scheme",
+              "type": "address"
+            }
+          ],
+          "name": "RegisterScheme",
+          "type": "event",
+          "signature": "0x546816e99403df442acb68ef69562682a50762c20a3fb6b472f7af9923736cfc"
+        },
+        "0x10bb2cf04cb8b902a8e736d494f1a51003be6d4b16ef6fb95ce62c38445023bf": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_sender",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_scheme",
+              "type": "address"
+            }
+          ],
+          "name": "UnregisterScheme",
+          "type": "event",
+          "signature": "0x10bb2cf04cb8b902a8e736d494f1a51003be6d4b16ef6fb95ce62c38445023bf"
+        },
+        "0xdb7cbacf8df312d794506c0cc9af07f64d29ca075796ea2e950a3832cc9a63dd": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_oldController",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_newController",
+              "type": "address"
+            }
+          ],
+          "name": "UpgradeController",
+          "type": "event",
+          "signature": "0xdb7cbacf8df312d794506c0cc9af07f64d29ca075796ea2e950a3832cc9a63dd"
+        },
+        "0x78800d7333b8d0174a0845569e3913b7ce4a3c03ca444dd9904172fc14f2fdad": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_globalConstraint",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_params",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "name": "_when",
+              "type": "uint8"
+            }
+          ],
+          "name": "AddGlobalConstraint",
+          "type": "event",
+          "signature": "0x78800d7333b8d0174a0845569e3913b7ce4a3c03ca444dd9904172fc14f2fdad"
+        },
+        "0xcdf1a50ea6b7de555bd409f8a4a53ea43c6dc6b4caa961889da9e005f21bbaa9": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_globalConstraint",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_index",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_isPre",
+              "type": "bool"
+            }
+          ],
+          "name": "RemoveGlobalConstraint",
+          "type": "event",
+          "signature": "0xcdf1a50ea6b7de555bd409f8a4a53ea43c6dc6b4caa961889da9e005f21bbaa9"
+        }
+      },
+      "links": {},
+      "address": "0x6d1ad6116e3858F9a2dEf5e3255b1b9949FC4324",
+      "transactionHash": "0x587d5157da298caaab678fc221e3528effbb6e858ce2ed6da74cbfc2d67f573c"
+    }
+  },
+  "DxGenAuction4Rep": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0xa4791a88bBAD5CF00893d8805015BdeFf0cEac15",
+      "transactionHash": "0xcee71529589fa21f01e5f8f7bac7ac3d7dcc228f4b970fee55d4b83eeb2c7520"
+    }
+  },
+  "DxLockEth4Rep": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0xD9dA31244BD91C28ec57D7175e6709aac7801097",
+      "transactionHash": "0x7820d49b312491a0b80f10db587eb7189ed2661fecf7d17d6dc49b3160c87b3e"
+    }
+  },
+  "DxLockMgnForRep": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0xB34A4dc762C7E387F271a06b0ed28623A059e518",
+      "transactionHash": "0xbe67a2860b64bcccc8b3cb87aaa368a8af36ff4e18bbe57f81435995fcd0acb5"
+    }
+  },
+  "DxLockWhitelisted4Rep": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0x041D747177b9CB1CECaB9a3c8B64F4D86E05b0CE",
+      "transactionHash": "0xb6717e9d35afe0abbddb257f985d4f55874d633e6cec4c0d5ad14d03cacc17cc"
+    }
+  },
+  "DxReputation": {
+    "4": {
+      "events": {
+        "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Mint",
+          "type": "event",
+          "signature": "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885"
+        },
+        "0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Burn",
+          "type": "event",
+          "signature": "0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5"
+        },
+        "0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipRenounced",
+          "type": "event",
+          "signature": "0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0x948cf98aac8410cDfE0D6f8d5CE2bb3a99D301F5",
+      "transactionHash": "0xc72c6f244e53903de3a3066cfce401840e99512b1357908d64b2a1eea26933c5"
+    }
+  },
+  "DxToken": {
+    "4": {
+      "events": {
+        "0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "burner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Burn",
+          "type": "event",
+          "signature": "0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5"
+        },
+        "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Mint",
+          "type": "event",
+          "signature": "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885"
+        },
+        "0xae5184fba832cb2b1f702aca6117b8d265eaf03ad33eb133f19dde0f5920fa08": {
+          "anonymous": false,
+          "inputs": [],
+          "name": "MintFinished",
+          "type": "event",
+          "signature": "0xae5184fba832cb2b1f702aca6117b8d265eaf03ad33eb133f19dde0f5920fa08"
+        },
+        "0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipRenounced",
+          "type": "event",
+          "signature": "0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event",
+          "signature": "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925"
+        },
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event",
+          "signature": "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+        }
+      },
+      "links": {},
+      "address": "0x8Aa5C0b4A8ffeC512Ee237aA2B2f081EE3B8d4Ef",
+      "transactionHash": "0x132a5623643955b1b02225c81dfb156becf9ad52e04eba70c7ce31235eb521e1"
+    }
+  },
+  "FixedPriceOracle": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0x1746c847b8f1c0a66Fb2b334a1994078b59C9d09",
+      "transactionHash": "0x736ef1c5e15c657300c5c6d08c252227c254618719a7765a5266ea5afafdc643"
+    }
+  },
+  "Migrations": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0x31b4De74Db33F120DB5aCca24188C0E7e06DFca0",
+      "transactionHash": "0x4b84a0d1bf878b9ff324a176c28134f8eb669c8997b10430aaa0faa96ef5c4f5"
+    }
+  }
+}

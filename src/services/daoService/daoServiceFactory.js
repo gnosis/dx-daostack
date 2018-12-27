@@ -2,11 +2,11 @@
 const daoStackRepoFactory = require('../../../src/repositories/daostack/daoStackRepoFactory');
 
 module.exports = async ({
-  provider,
-  transactionDefaults
-  // accounts,
+  contracts,
+  provider
 }) => {
   const daoStackRepo = await daoStackRepoFactory({
+    contracts,
     provider,
     transactionDefaults
   });
