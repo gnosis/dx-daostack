@@ -53,3 +53,17 @@ Mainnet:
 ```bash
 npm run migrate -- --network mainnet
 ```
+
+## Validate in Etherscan
+Make sure the dependencies are 
+```bash
+npm run install
+npm run restore
+```
+
+For every contract, get the flattened version:
+
+For example:
+```bash
+npx truffle-flattener contracts/whitelisting/FixedPriceOracle.sol > build/FixedPriceOracle.sol
+```
