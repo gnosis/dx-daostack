@@ -53,3 +53,29 @@ Mainnet:
 ```bash
 npm run migrate -- --network mainnet
 ```
+
+## Verify contracts in Etherscan
+Make sure the dependencies and addresses are updated:
+```bash
+npm run install
+npm run restore
+```
+
+For every contract, you need to get the flattened version. 
+
+```bash
+# Get the list of contracts:
+ls -Rl contracts
+
+# Flatten a contract
+npx truffle-flattener contracts/DxAvatar.sol > build/DxAvatar.sol
+```
+
+> To verify you will need to use the exact version of the compiler:
+>
+> Check it here:
+> * https://github.com/gnosis/dx-daostack/blob/master/truffle.js#L84
+
+Verify:
+* [https://etherscan.io/verifyContract2](https://etherscan.io/verifyContract2)
+

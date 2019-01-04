@@ -1,6 +1,6 @@
 {
   "name": "@gnosis.pm/dx-daostack",
-  "version": "0.3.3",
+  "version": "0.3.6",
   "description": "",
   "main": "index.js",
   "config": {
