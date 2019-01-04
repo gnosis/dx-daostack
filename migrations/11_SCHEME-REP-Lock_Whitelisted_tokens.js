@@ -31,7 +31,7 @@ module.exports = async function (deployer, network) {
 
   // Deploy Price Oracle
   const fixedPriceOracle = await deployPriceOracle(deployer, network)
-  
+
   // Deploy DxLockWhitelisted4Rep scheme
   console.log('Deploy DxLockWhitelisted4Rep that inherits from LockingToken4Reputation') // TODO:
   const dxLockWhitelisted4Rep = await deployer.deploy(DxLockWhitelisted4Rep)
@@ -40,7 +40,7 @@ module.exports = async function (deployer, network) {
   assert(whitelistedTokensReward, `The parameter whitelistedTokensReward was not defined`)
   assert(initialDistributionStart, `The parameter initialDistributionStart was not defined`)
   assert(initialDistributionEnd, `The parameter initialDistributionEnd was not defined`)
-  
+
   assert(redeemStart, `The parameter redeemStart was not defined`)
   assert(maxLockingWhitelistedTokensPeriod, `The parameter maxLockingWhitelistedTokensPeriod was not defined`)
 
@@ -72,13 +72,12 @@ module.exports = async function (deployer, network) {
 }
 
 
-async function deployPriceOracle (deployer, network) {
+async function deployPriceOracle(deployer, network) {
   let tokenWhitelistAddress, whiteListAddressMsg
 
   if (network === 'rinkeby') {
-    await deployer.deploy(BasicTokenWhitelist)
     console.log('Deploy BasicTokenWhitelist for testing in Rinkeby:')
-    const basicTokenWhitelist = await BasicTokenWhitelist.deployed()
+    const basicTokenWhitelist = await deployer.deploy(BasicTokenWhitelist)
     whiteListAddressMsg = 'Token White List Address (BasicTokenWhitelist, only for testing): ' + tokenWhitelistAddress
 
     // Add some test tokens for Rinkeby    
@@ -97,13 +96,12 @@ async function deployPriceOracle (deployer, network) {
     tokenWhitelistAddress = basicTokenWhitelist.address
   } else {
     tokenWhitelistAddress = await getDXContractAddress('DutchExchangeProxy')
-    whiteListAddressMsg = 'Token White List Address (DutchX): ' + tokenWhitelistAddress    
+    whiteListAddressMsg = 'Token White List Address (DutchX): ' + tokenWhitelistAddress
   }
-  
+
   console.log('\nDeploy FixedPriceOracle: for setting the prices for the tokens')
   console.log('  - ' + whiteListAddressMsg)
-  await deployer.deploy(FixedPriceOracle, tokenWhitelistAddress)
-  const fixedPriceOracle = await FixedPriceOracle.deployed()
+  const fixedPriceOracle = await deployer.deploy(FixedPriceOracle, tokenWhitelistAddress)
 
   return fixedPriceOracle
 }
