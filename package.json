@@ -30,23 +30,23 @@
     "@gnosis.pm/truffle-nice-tools": "^1.2.1",
     "babel-eslint": "^10.0.1",
     "dotenv": "^6.2.0",
-    "eslint": "^5.11.1",
+    "eslint": "^5.12.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^8.0.0",
-    "eslint-plugin-promise": "^4.0.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "fractional": "^1.0.0",
     "ganache-cli": "^6.2.5",
-    "got": "^9.5.0",
+    "got": "^9.5.1",
     "moment-timezone": "^0.5.23",
-    "solium": "^1.2.0",
-    "truffle": "^5.0.0",
+    "solium": "^1.2.2",
+    "truffle": "^5.0.1",
     "truffle-flattener": "^1.2.10",
     "yargs": "^12.0.5"
   },
   "dependencies": {
-    "@daostack/arc": "0.0.0-alpha.58",
+    "@daostack/arc": "0.0.1-rc.6",
     "@daostack/arc.js": "0.0.0-alpha.105",
     "@gnosis.pm/dx-contracts": "2.0.0-SNAPSHOT.5",
     "@gnosis.pm/gno-token": "1.1.2",
@@ -54,7 +54,7 @@
     "@gnosis.pm/util-contracts": "1.1.1",
     "debug": "^4.1.1",
     "event-stream": "^3.3.5",
-    "truffle-contract": "^4.0.0",
-    "truffle-hdwallet-provider": "^1.0.0"
+    "truffle-contract": "^4.0.1",
+    "truffle-hdwallet-provider": "^1.0.2"
   }
 }
