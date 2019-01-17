@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.2;
 
 import "../../whitelisting/0x/TokenRegistry.sol";
 import "@daostack/arc/contracts/controller/ControllerInterface.sol";

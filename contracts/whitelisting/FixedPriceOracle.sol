@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.2;
 
 import "@gnosis.pm/dx-contracts/contracts/base/TokenWhitelist.sol";
 
@@ -65,9 +65,9 @@ contract FixedPriceOracle {
     }
     
     function setPrices(
-        address[] tokens,
-        uint[] numerators,
-        uint[] denominators
+        address[] memory tokens,
+        uint[] memory numerators,
+        uint[] memory denominators
     ) public 
     onlyOwner 
     notFrozen

@@ -1,11 +1,11 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.2;
 
 import "@daostack/arc/contracts/controller/Avatar.sol";
 
 
 contract DxAvatar is Avatar {
     constructor (
-        string _orgName,
+        string memory _orgName,
         DAOToken _nativeToken,
         Reputation _nativeReputation
     ) Avatar(_orgName, _nativeToken, _nativeReputation) public {}
