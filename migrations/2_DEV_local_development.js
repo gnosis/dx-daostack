@@ -23,10 +23,13 @@ module.exports = async function (deployer, network, accounts) {
       thresholdAuctionStartUsd: process.env.THRESHOLD_AUCTION_START_USD
     })
 
+    // Deploy DxPriceFeed
+    await deployPriceFeed(deployer)
+
     // // Deploy 0x Token Registry
     // const TokenRegistry = artifacts.require('TokenRegistry')
     // deployer.deploy(TokenRegistry)
-    
+
     // deploy test GEN
     await deployGen(deployer, owner)
 
@@ -38,6 +41,20 @@ module.exports = async function (deployer, network, accounts) {
   } else {
     console.log('Not in development, so nothing to do. Current network is %s', network)
   }
+}
+
+async function deployPriceFeed(deployer) {
+  const DutchXPriceOracle = artifacts.require('DutchXPriceOracle')
+  const DutchExchangeProxy = artifacts.require('DutchExchangeProxy')
+  const EtherToken = artifacts.require('EtherToken')
+
+  const dxAddress = DutchExchangeProxy.address
+  const wethAddress = EtherToken.address
+
+  console.log('Deploy price feed:')
+  console.log('  dxAddress: ' + dxAddress)
+  console.log('  wethAddress: ' + wethAddress)
+  await deployer.deploy(DutchXPriceOracle, dxAddress, wethAddress)
 }
 
 async function deployGen(deployer) {
