@@ -33,7 +33,7 @@ module.exports = async function (deployer, network) {
   // Deploy Price Oracle
   // const fixedPriceOracle = await deployFixedPriceOracle(deployer, network)
   // const priceOracleAddress = fixedPriceOracle.address
-  const priceOracleAddress = getPriceOracleAddress()
+  const priceOracleAddress = await getPriceOracleAddress()
 
   // Deploy DxLockWhitelisted4Rep scheme
   console.log('Deploy DxLockWhitelisted4Rep that inherits from LockingToken4Reputation') // TODO:

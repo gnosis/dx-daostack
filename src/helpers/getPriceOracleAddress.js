@@ -23,7 +23,7 @@ async function _getAddressForLocalGanache({ artifacts }) {
     throw new Error(`${CONTRACT_NAME} hasn't been deployed yet`)
   }
 
-  return address
+  return priceOracle.address
 }
 
 async function _getAddressFromNpmPackages({ networkId }) {
