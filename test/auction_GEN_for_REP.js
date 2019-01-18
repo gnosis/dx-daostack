@@ -233,6 +233,22 @@ contract('Locking Token for REP', accounts => {
     }
   })
 
+  // redeemEnableTime and auctionsEndTime are too close, so check first
+  it('can\'t redeem before redeemEnableTime', async () => {
+    const redeemEnableTime = await Auction4Rep.redeemEnableTime()
+    const now = await getTimestamp()
+
+    assert(redeemEnableTime.gt(new BN(now)), 'redeemEnableTime should be in the future')
+
+    try {
+      await Auction4Rep.redeem(master, AuctionID)
+      // should be unreachable
+      assert.fail('shouldn\'t redeem before redeemEnableTime')
+    } catch (error) {
+      assert.include(error.message, 'now > redeemEnableTime', 'error message should contain string specified')
+    }
+  })
+
   it('increases time to reach auctionsEndTime', async () => {
     const auctionsEndTime = await Auction4Rep.auctionsEndTime()
     console.log('auctionsEndTime: ', auctionsEndTime.toString())
@@ -288,21 +304,6 @@ contract('Locking Token for REP', accounts => {
       assert.fail('shouldn\'t bid after auctionsEndTime')
     } catch (error) {
       assert.include(error.message, 'bidding should be within the allowed bidding period', 'error message should contain string specified')
-    }
-  })
-
-  it('can\'t redeem before redeemEnableTime', async () => {
-    const redeemEnableTime = await Auction4Rep.redeemEnableTime()
-    const now = await getTimestamp()
-
-    assert(redeemEnableTime.gt(new BN(now)), 'redeemEnableTime should be in the future')
-
-    try {
-      await Auction4Rep.redeem(master, AuctionID)
-      // should be unreachable
-      assert.fail('shouldn\'t redeem before redeemEnableTime')
-    } catch (error) {
-      assert.include(error.message, 'now > redeemEnableTime', 'error message should contain string specified')
     }
   })
 
