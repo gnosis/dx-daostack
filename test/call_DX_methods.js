@@ -38,6 +38,7 @@
 /* global artifacts, web3, contract, it, before, after, afterEach, assert */
 
 const MgnToken = artifacts.require('TokenFRT')
+const TokenFRTProxy = artifacts.require('TokenFRTProxy')
 const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
 const DxReputation = artifacts.require('DxReputation')
 const DxAvatar = artifacts.require('DxAvatar')
@@ -233,7 +234,8 @@ function setupBeforeAfter(accounts) {
     console.log('TIMESTAMP', await getTimestamp());
     snapshotId = await takeSnapshot();
     const [master] = accounts
-    const MGN = await MgnToken.deployed()
+    const FRTProxy = await TokenFRTProxy.deployed()
+    const MGN = await MgnToken.at(FRTProxy.address)
     const DxLock4Rep = await DxLockMgnForRep.deployed()
     const DxRep = await DxReputation.deployed()
     const Avatar = await DxAvatar.deployed()
