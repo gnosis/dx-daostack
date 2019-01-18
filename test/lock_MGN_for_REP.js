@@ -207,7 +207,7 @@ async function mintTokensFor(Token, address, accounts, amount) {
     // owner not available in accounts, nothing we can do
     if (!accounts.includes(owner)) throw new Error(`
       Neither Token owner nor minter are among available addresses.
-      Unable to get tokens for sunsequent locking. Terminating.
+      Unable to get tokens for subsequent locking. Terminating.
     `)
 
     // switch to an available account as minter
@@ -218,5 +218,5 @@ async function mintTokensFor(Token, address, accounts, amount) {
   await Token.mintTokens(address, amount, { from: minter })
 
   // switch minter back if needed
-  if (minter !== oldMinter) await Token.updateMinter(oldMinter, { from: owner })
+  if (+oldMinter && minter !== oldMinter) await Token.updateMinter(oldMinter, { from: owner })
 }
