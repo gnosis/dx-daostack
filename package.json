@@ -39,7 +39,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "fractional": "^1.0.0",
     "ganache-cli": "^6.2.5",
-    "got": "^9.5.0",
+    "got": "^9.6.0",
     "moment-timezone": "^0.5.23",
     "solium": "^1.2.2",
     "truffle": "^5.0.2",
@@ -49,14 +49,14 @@
   "dependencies": {
     "@daostack/arc": "0.0.1-rc.6",
     "@daostack/arc.js": "0.0.0-alpha.111",
-    "@gnosis.pm/dx-contracts": "^2.0.0-RC12",
-    "@gnosis.pm/gno-token": "^2.0.0-RC2",
-    "@gnosis.pm/owl-token": "^2.0.0-RC1",
-    "@gnosis.pm/util-contracts": "^2.0.0-RC1",
+    "@gnosis.pm/dx-contracts": "^2.0.0-RC13",
+    "@gnosis.pm/gno-token": "^2.0.0-RC3",
+    "@gnosis.pm/owl-token": "^2.0.0-RC2",
+    "@gnosis.pm/util-contracts": "^2.0.0-RC2",
     "debug": "^4.1.1",
     "event-stream": "^3.3.5",
     "prettier": "^1.15.3",
-    "prettier-plugin-solidity-refactor": "^1.0.0-alpha.12",
+    "prettier-plugin-solidity-refactor": "^1.0.0-alpha.14",
     "truffle-contract": "^4.0.2",
     "truffle-hdwallet-provider": "^1.0.2"
   }
