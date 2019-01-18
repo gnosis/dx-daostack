@@ -2,6 +2,7 @@
 /* global artifacts, web3, contract, it, before, after, afterEach, assert */
 
 const MgnToken = artifacts.require('TokenFRT')
+const TokenFRTProxy = artifacts.require('TokenFRTProxy')
 const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
 const DxReputation = artifacts.require('DxReputation')
 const BN = require('bn.js')
@@ -24,7 +25,8 @@ contract('Locking MGN for REP', accounts => {
   before(async () => {
     snapshotId = await takeSnapshot();
     [master] = accounts
-    MGN = await MgnToken.deployed()
+    const FRTProxy = await TokenFRTProxy.deployed()
+    MGN = await MgnToken.at(FRTProxy.address)
     DxLock4Rep = await DxLockMgnForRep.deployed()
     DxRep = await DxReputation.deployed()
   })
@@ -211,6 +213,7 @@ async function mintTokensFor(Token, address, accounts, amount) {
     `)
 
     // switch to an available account as minter
+    console.log('switching minter to: ', owner);
     await Token.updateMinter(owner, { from: owner })
     minter = owner
   }
@@ -218,5 +221,6 @@ async function mintTokensFor(Token, address, accounts, amount) {
   await Token.mintTokens(address, amount, { from: minter })
 
   // switch minter back if needed
+  console.log('switching minter back to: ', oldMinter);
   if (+oldMinter && minter !== oldMinter) await Token.updateMinter(oldMinter, { from: owner })
 }
