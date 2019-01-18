@@ -8,6 +8,7 @@ const DxController = artifacts.require('DxController')
 const BasicTokenWhitelist = artifacts.require('BasicTokenWhitelist')
 
 const getDXContractAddress = require('../src/helpers/getDXContractAddresses.js')(web3, artifacts)
+const getPriceOracleAddress = require('../src/helpers/getPriceOracleAddress.js')(web3, artifacts)
 const dateUtil = require('../src/helpers/dateUtil')
 const { registerScheme } = require('./helpers/schemeUtils')
 
@@ -30,7 +31,9 @@ module.exports = async function (deployer, network) {
   const dxController = await DxController.deployed()
 
   // Deploy Price Oracle
-  const fixedPriceOracle = await deployPriceOracle(deployer, network)
+  // const fixedPriceOracle = await deployFixedPriceOracle(deployer, network)
+  // const priceOracleAddress = fixedPriceOracle.address
+  const priceOracleAddress = getPriceOracleAddress()
 
   // Deploy DxLockWhitelisted4Rep scheme
   console.log('Deploy DxLockWhitelisted4Rep that inherits from LockingToken4Reputation') // TODO:
@@ -50,7 +53,7 @@ module.exports = async function (deployer, network) {
   console.log('  - Locking end time:', dateUtil.formatDateTime(initialDistributionEnd))
   console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemStart))
   console.log('  - max locking period:', maxLockingWhitelistedTokensPeriod)
-  console.log('  - Price Oracle address:', fixedPriceOracle.address)
+  console.log('  - Price Oracle address:', priceOracleAddress)
 
   await dxLockWhitelisted4Rep.initialize(
     dxAvatar.address,
@@ -59,7 +62,7 @@ module.exports = async function (deployer, network) {
     dateUtil.toEthereumTimestamp(initialDistributionEnd),
     dateUtil.toEthereumTimestamp(redeemStart),
     maxLockingWhitelistedTokensPeriod,
-    fixedPriceOracle.address
+    priceOracleAddress
   )
 
   await registerScheme({
@@ -72,7 +75,7 @@ module.exports = async function (deployer, network) {
 }
 
 
-async function deployPriceOracle(deployer, network) {
+async function deployFixedPriceOracle(deployer, network) {
   let tokenWhitelistAddress, whiteListAddressMsg
 
   if (network === 'rinkeby') {
