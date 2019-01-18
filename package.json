@@ -50,6 +50,7 @@
     "@daostack/arc": "0.0.0-alpha.58",
     "@daostack/arc.js": "0.0.0-alpha.105",
     "@gnosis.pm/dx-contracts": "2.0.0-SNAPSHOT.5",
+    "@gnosis.pm/dx-price-oracle": "^0.1.2",
     "@gnosis.pm/gno-token": "1.1.2",
     "@gnosis.pm/owl-token": "1.2.3",
     "@gnosis.pm/util-contracts": "1.1.1",
