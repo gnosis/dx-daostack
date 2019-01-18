@@ -23,7 +23,8 @@
     "get-0x-list": "truffle exec src/scripts/get-0x-list.js",
     "get-cryptocompare-tokens": "node src/scripts/get-cryptocompare-tokens",
     "get-token-prices": "node src/scripts/get-token-prices.js",
-    "update-price-oracle": "truffle exec src/scripts/update-price-oracle.js"
+    "update-price-oracle": "truffle exec src/scripts/update-price-oracle.js",
+    "prettier": "prettier --write --tab-width 4 --print-width 120 '**/*.sol'"
   },
   "license": "ISC",
   "devDependencies": {
@@ -54,6 +55,8 @@
     "@gnosis.pm/util-contracts": "^2.0.0-RC1",
     "debug": "^4.1.1",
     "event-stream": "^3.3.5",
+    "prettier": "^1.15.3",
+    "prettier-plugin-solidity-refactor": "^1.0.0-alpha.12",
     "truffle-contract": "^4.0.2",
     "truffle-hdwallet-provider": "^1.0.2"
   }

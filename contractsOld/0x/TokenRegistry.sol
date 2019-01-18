@@ -17,15 +17,13 @@
 */
 /* solium-disable */
 
-pragma solidity ^0.4.11;
+pragma solidity ^0.5.2;
 
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-
 
 /// @title Token Registry - Stores metadata associated with ERC20 tokens. See ERC22 https://github.com/ethereum/EIPs/issues/22
 /// @author Amir Bandeali - <amir@0xProject.com>, Will Warren - <will@0xProject.com>
 contract TokenRegistry is Ownable {
-
     event LogAddToken(
         address indexed token,
         string name,
@@ -49,9 +47,9 @@ contract TokenRegistry is Ownable {
     event LogTokenIpfsHashChange(address indexed token, bytes oldIpfsHash, bytes newIpfsHash);
     event LogTokenSwarmHashChange(address indexed token, bytes oldSwarmHash, bytes newSwarmHash);
 
-    mapping (address => TokenMetadata) public tokens;
-    mapping (string => address) tokenBySymbol;
-    mapping (string => address) tokenByName;
+    mapping(address => TokenMetadata) public tokens;
+    mapping(string => address) tokenBySymbol;
+    mapping(string => address) tokenByName;
 
     address[] public tokenAddresses;
 
@@ -74,12 +72,12 @@ contract TokenRegistry is Ownable {
         _;
     }
 
-    modifier nameDoesNotExist(string _name) {
-      require(tokenByName[_name] == address(0));
-      _;
+    modifier nameDoesNotExist(string memory _name) {
+        require(tokenByName[_name] == address(0));
+        _;
     }
 
-    modifier symbolDoesNotExist(string _symbol) {
+    modifier symbolDoesNotExist(string memory _symbol) {
         require(tokenBySymbol[_symbol] == address(0));
         _;
     }
@@ -88,7 +86,6 @@ contract TokenRegistry is Ownable {
         require(_address != address(0));
         _;
     }
-
 
     /// @dev Allows owner to add a new token to the registry.
     /// @param _token Address of new token.
@@ -99,11 +96,12 @@ contract TokenRegistry is Ownable {
     /// @param _swarmHash Swarm hash of token icon.
     function addToken(
         address _token,
-        string _name,
-        string _symbol,
+        string memory _name,
+        string memory _symbol,
         uint8 _decimals,
-        bytes _ipfsHash,
-        bytes _swarmHash)
+        bytes memory _ipfsHash,
+        bytes memory _swarmHash
+    )
         public
         onlyOwner
         tokenDoesNotExist(_token)
@@ -122,37 +120,19 @@ contract TokenRegistry is Ownable {
         tokenAddresses.push(_token);
         tokenBySymbol[_symbol] = _token;
         tokenByName[_name] = _token;
-        LogAddToken(
-            _token,
-            _name,
-            _symbol,
-            _decimals,
-            _ipfsHash,
-            _swarmHash
-        );
+        LogAddToken(_token, _name, _symbol, _decimals, _ipfsHash, _swarmHash);
     }
 
     /// @dev Allows owner to remove an existing token from the registry.
     /// @param _token Address of existing token.
-    function removeToken(address _token, uint _index)
-        public
-        onlyOwner
-        tokenExists(_token)
-    {
+    function removeToken(address _token, uint _index) public onlyOwner tokenExists(_token) {
         require(tokenAddresses[_index] == _token);
 
         tokenAddresses[_index] = tokenAddresses[tokenAddresses.length - 1];
         tokenAddresses.length -= 1;
 
         TokenMetadata storage token = tokens[_token];
-        LogRemoveToken(
-            token.token,
-            token.name,
-            token.symbol,
-            token.decimals,
-            token.ipfsHash,
-            token.swarmHash
-        );
+        LogRemoveToken(token.token, token.name, token.symbol, token.decimals, token.ipfsHash, token.swarmHash);
         delete tokenBySymbol[token.symbol];
         delete tokenByName[token.name];
         delete tokens[_token];
@@ -161,7 +141,7 @@ contract TokenRegistry is Ownable {
     /// @dev Allows owner to modify an existing token's name.
     /// @param _token Address of existing token.
     /// @param _name New name.
-    function setTokenName(address _token, string _name)
+    function setTokenName(address _token, string memory _name)
         public
         onlyOwner
         tokenExists(_token)
@@ -177,7 +157,7 @@ contract TokenRegistry is Ownable {
     /// @dev Allows owner to modify an existing token's symbol.
     /// @param _token Address of existing token.
     /// @param _symbol New symbol.
-    function setTokenSymbol(address _token, string _symbol)
+    function setTokenSymbol(address _token, string memory _symbol)
         public
         onlyOwner
         tokenExists(_token)
@@ -193,11 +173,7 @@ contract TokenRegistry is Ownable {
     /// @dev Allows owner to modify an existing token's IPFS hash.
     /// @param _token Address of existing token.
     /// @param _ipfsHash New IPFS hash.
-    function setTokenIpfsHash(address _token, bytes _ipfsHash)
-        public
-        onlyOwner
-        tokenExists(_token)
-    {
+    function setTokenIpfsHash(address _token, bytes memory _ipfsHash) public onlyOwner tokenExists(_token) {
         TokenMetadata storage token = tokens[_token];
         LogTokenIpfsHashChange(_token, token.ipfsHash, _ipfsHash);
         token.ipfsHash = _ipfsHash;
@@ -206,11 +182,7 @@ contract TokenRegistry is Ownable {
     /// @dev Allows owner to modify an existing token's Swarm hash.
     /// @param _token Address of existing token.
     /// @param _swarmHash New Swarm hash.
-    function setTokenSwarmHash(address _token, bytes _swarmHash)
-        public
-        onlyOwner
-        tokenExists(_token)
-    {
+    function setTokenSwarmHash(address _token, bytes memory _swarmHash) public onlyOwner tokenExists(_token) {
         TokenMetadata storage token = tokens[_token];
         LogTokenSwarmHashChange(_token, token.swarmHash, _swarmHash);
         token.swarmHash = _swarmHash;
@@ -223,14 +195,14 @@ contract TokenRegistry is Ownable {
     /// @dev Provides a registered token's address when given the token symbol.
     /// @param _symbol Symbol of registered token.
     /// @return Token's address.
-    function getTokenAddressBySymbol(string _symbol) constant returns (address) {
+    function getTokenAddressBySymbol(string memory _symbol) public view returns (address) {
         return tokenBySymbol[_symbol];
     }
 
     /// @dev Provides a registered token's address when given the token name.
     /// @param _name Name of registered token.
     /// @return Token's address.
-    function getTokenAddressByName(string _name) constant returns (address) {
+    function getTokenAddressByName(string memory _name) public view returns (address) {
         return tokenByName[_name];
     }
 
@@ -239,41 +211,34 @@ contract TokenRegistry is Ownable {
     /// @return Token metadata.
     function getTokenMetaData(address _token)
         public
-        constant
+        view
         returns (
-            address,  //tokenAddress
-            string,   //name
-            string,   //symbol
-            uint8,    //decimals
-            bytes,    //ipfsHash
-            bytes     //swarmHash
-        )
+        address, //tokenAddress
+        string memory, //name
+        string memory, //symbol
+        uint8, //decimals
+        bytes memory, //ipfsHash
+        bytes memory //swarmHash
+    )
     {
         TokenMetadata memory token = tokens[_token];
-        return (
-            token.token,
-            token.name,
-            token.symbol,
-            token.decimals,
-            token.ipfsHash,
-            token.swarmHash
-        );
+        return (token.token, token.name, token.symbol, token.decimals, token.ipfsHash, token.swarmHash);
     }
 
     /// @dev Provides a registered token's metadata, looked up by name.
     /// @param _name Name of registered token.
     /// @return Token metadata.
-    function getTokenByName(string _name)
+    function getTokenByName(string memory _name)
         public
-        constant
+        view
         returns (
-            address,  //tokenAddress
-            string,   //name
-            string,   //symbol
-            uint8,    //decimals
-            bytes,    //ipfsHash
-            bytes     //swarmHash
-        )
+        address, //tokenAddress
+        string memory, //name
+        string memory, //symbol
+        uint8, //decimals
+        bytes memory, //ipfsHash
+        bytes memory //swarmHash
+    )
     {
         address _token = tokenByName[_name];
         return getTokenMetaData(_token);
@@ -282,17 +247,17 @@ contract TokenRegistry is Ownable {
     /// @dev Provides a registered token's metadata, looked up by symbol.
     /// @param _symbol Symbol of registered token.
     /// @return Token metadata.
-    function getTokenBySymbol(string _symbol)
+    function getTokenBySymbol(string memory _symbol)
         public
-        constant
+        view
         returns (
-            address,  //tokenAddress
-            string,   //name
-            string,   //symbol
-            uint8,    //decimals
-            bytes,    //ipfsHash
-            bytes     //swarmHash
-        )
+        address, //tokenAddress
+        string memory, //name
+        string memory, //symbol
+        uint8, //decimals
+        bytes memory, //ipfsHash
+        bytes memory //swarmHash
+    )
     {
         address _token = tokenBySymbol[_symbol];
         return getTokenMetaData(_token);
@@ -300,11 +265,7 @@ contract TokenRegistry is Ownable {
 
     /// @dev Returns an array containing all token addresses.
     /// @return Array of token addresses.
-    function getTokenAddresses()
-        public
-        constant
-        returns (address[])
-    {
+    function getTokenAddresses() public view returns (address[] memory) {
         return tokenAddresses;
     }
 }
