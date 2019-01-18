@@ -40,7 +40,7 @@ contract FixedPriceOracle {
     }
 
     function hasReliablePrice(address token) public view returns (bool) {
-        return prices[token].denominator != address(0);
+        return prices[token].denominator != 0;
     }
 
     function getPrice(address token) public view returns (uint, uint) {

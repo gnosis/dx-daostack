@@ -1,5 +1,6 @@
 pragma solidity ^0.5.2;
 
+
 contract DutchXMock {
     event UpdateTokenApproval(address _token, bool _approved);
 

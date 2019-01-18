@@ -32,7 +32,7 @@ module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  const mgnTokenAddress = await getDXContractAddresses('TokenFRT')
+  const mgnTokenAddress = await getDXContractAddresses('TokenFRTProxy')
 
   // Deploy DxLockMgnForRep
   console.log('Deploying DxLockMgnForRep scheme')

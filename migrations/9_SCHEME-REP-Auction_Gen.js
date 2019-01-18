@@ -43,6 +43,11 @@ module.exports = async function (deployer) {
 
   console.log('Configure DxGenAuction4Rep')
 
+  const auctionPeriod = Math.floor(
+    (dateUtil.toEthereumTimestamp(initialDistributionEnd) - dateUtil.toEthereumTimestamp(initialDistributionStart))
+    / numberOfGenAuctions
+  )
+
   const walletAddress = dxAvatar.address
   console.log('  - Avatar address:', dxAvatar.address)
   console.log('  - Reputation reward:', reputationReward)
@@ -50,6 +55,7 @@ module.exports = async function (deployer) {
   console.log('  - Auction end time:', dateUtil.formatDateTime(initialDistributionEnd))
   console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemStart))
   console.log('  - Number of auctions:', numberOfGenAuctions)
+  console.log('  - Auction period (end - start)/number of auctions:', auctionPeriod)
   // QUESTION: is GEN token - staking token?
   console.log('  - Staking token address (GEN):', genToken.address)
   console.log('  - wallet address (DxAvatar.address): ', walletAddress)
@@ -58,7 +64,7 @@ module.exports = async function (deployer) {
     dxAvatar.address,
     reputationReward,
     dateUtil.toEthereumTimestamp(initialDistributionStart),
-    dateUtil.toEthereumTimestamp(initialDistributionEnd),
+    auctionPeriod,
     numberOfGenAuctions,
     dateUtil.toEthereumTimestamp(redeemStart),
     genToken.address,

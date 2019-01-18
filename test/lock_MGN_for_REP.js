@@ -2,6 +2,7 @@
 /* global artifacts, web3, contract, it, before, after, afterEach, assert */
 
 const MgnToken = artifacts.require('TokenFRT')
+const TokenFRTProxy = artifacts.require('TokenFRTProxy')
 const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
 const DxReputation = artifacts.require('DxReputation')
 const BN = require('bn.js')
@@ -24,7 +25,8 @@ contract('Locking MGN for REP', accounts => {
   before(async () => {
     snapshotId = await takeSnapshot();
     [master] = accounts
-    MGN = await MgnToken.deployed()
+    const FRTProxy = await TokenFRTProxy.deployed()
+    MGN = await MgnToken.at(FRTProxy.address)
     DxLock4Rep = await DxLockMgnForRep.deployed()
     DxRep = await DxReputation.deployed()
   })
@@ -207,10 +209,11 @@ async function mintTokensFor(Token, address, accounts, amount) {
     // owner not available in accounts, nothing we can do
     if (!accounts.includes(owner)) throw new Error(`
       Neither Token owner nor minter are among available addresses.
-      Unable to get tokens for sunsequent locking. Terminating.
+      Unable to get tokens for subsequent locking. Terminating.
     `)
 
     // switch to an available account as minter
+    console.log('switching minter to: ', owner);
     await Token.updateMinter(owner, { from: owner })
     minter = owner
   }
@@ -218,5 +221,6 @@ async function mintTokensFor(Token, address, accounts, amount) {
   await Token.mintTokens(address, amount, { from: minter })
 
   // switch minter back if needed
-  if (minter !== oldMinter) await Token.updateMinter(oldMinter, { from: owner })
+  console.log('switching minter back to: ', oldMinter);
+  if (+oldMinter && minter !== oldMinter) await Token.updateMinter(oldMinter, { from: owner })
 }

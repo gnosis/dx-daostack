@@ -1,6 +1,6 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
-const migrateDx = require('@gnosis.pm/dx-contracts/src/migrations-truffle-1.5')
+const migrateDx = require('@gnosis.pm/dx-contracts/src/migrations-truffle-5')
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
