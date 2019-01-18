@@ -30,10 +30,17 @@ module.exports = async function (deployer, network) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  // Deploy Price Oracle
-  // const fixedPriceOracle = await deployFixedPriceOracle(deployer, network)
-  // const priceOracleAddress = fixedPriceOracle.address
-  const priceOracleAddress = await getPriceOracleAddress()
+  let priceOracleAddress
+  if (process.env.USE_FIXED_PRICE_ORACLE === 'true') {
+    // Deploy Fixed Price Oracle
+    console.log('Using Fixed Price Oracle')
+    const fixedPriceOracle = await deployFixedPriceOracle(deployer, network)
+    priceOracleAddress = fixedPriceOracle.address
+  } else {
+    // Get price oracle address
+    console.log('Using Price Oracle')
+    priceOracleAddress = await getPriceOracleAddress()
+  }
 
   // Deploy DxLockWhitelisted4Rep scheme
   console.log('Deploy DxLockWhitelisted4Rep that inherits from LockingToken4Reputation') // TODO:
