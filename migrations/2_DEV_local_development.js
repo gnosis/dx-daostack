@@ -24,7 +24,13 @@ module.exports = async function (deployer, network, accounts) {
     })
 
     // Deploy DxPriceFeed
-    await deployPriceFeed(deployer)
+    if (process.env.USE_FIXED_PRICE_ORACLE !== 'true') {
+      console.log('Using the DutchX price oracle')
+      await deployPriceFeed(deployer)
+    } else {
+      console.log('Using the fixed price oracle')
+      // Deployed in migration 11
+    }
 
     // // Deploy 0x Token Registry
     // const TokenRegistry = artifacts.require('TokenRegistry')
