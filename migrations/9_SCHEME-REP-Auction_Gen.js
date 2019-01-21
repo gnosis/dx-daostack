@@ -48,9 +48,12 @@ module.exports = async function (deployer) {
     / numberOfGenAuctions
   )
 
+  const reputationRewardPerAuction = Math.floor(reputationReward / numberOfGenAuctions)
+
   const walletAddress = dxAvatar.address
   console.log('  - Avatar address:', dxAvatar.address)
   console.log('  - Reputation reward:', reputationReward)
+  console.log('  - Reputation reward per auction:', reputationRewardPerAuction)
   console.log('  - Auction start time:', dateUtil.formatDateTime(initialDistributionStart))
   console.log('  - Auction end time:', dateUtil.formatDateTime(initialDistributionEnd))
   console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemStart))
@@ -62,7 +65,7 @@ module.exports = async function (deployer) {
 
   await dxGenAuction4Rep.initialize(
     dxAvatar.address,
-    reputationReward,
+    reputationRewardPerAuction,
     dateUtil.toEthereumTimestamp(initialDistributionStart),
     auctionPeriod,
     numberOfGenAuctions,
