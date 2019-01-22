@@ -40,6 +40,6 @@ module.exports = web3 => ({
 function getReward (percentage, web3) {
   const val = Math.ceil((INITIAL_REP_DISTRIBUTION * percentage) / 100).toString()
   // (numbers >= 1e21).toString() result in strings in E-notation, which breaks toWei()
-  assert(!val.includes('e'), 'reputation reward shouldn\'t be in E-notation')
+  assert(!val.includes('e'), `reputation reward ${val} shouldn't be in E-notation`)
   return web3.utils.toWei(val)
 }
