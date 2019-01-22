@@ -23,7 +23,7 @@ const {
 
 const getDXContractAddresses = require('../src/helpers/getDXContractAddresses')(web3, artifacts)
 
-module.exports = async function (deployer) {
+module.exports = async function (deployer, network) {
   const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
   const DxAvatar = artifacts.require('DxAvatar')
   const DxController = artifacts.require('DxController')
@@ -32,7 +32,15 @@ module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
-  const mgnTokenAddress = await getDXContractAddresses('TokenFRTProxy')
+  let mgnTokenAddress
+  // TODO: Remove after test
+  if (network === 'rinkeby') {
+    const ExternalTokenLockerMock = artifacts.require('ExternalTokenLockerMock')
+    const externalTokenLockerMock = await deployer.deploy(ExternalTokenLockerMock)
+    mgnTokenAddress = externalTokenLockerMock.address
+  } else {
+    mgnTokenAddress = await getDXContractAddresses('TokenFRTProxy')
+  }
 
   // Deploy DxLockMgnForRep
   console.log('Deploying DxLockMgnForRep scheme')
@@ -55,7 +63,7 @@ module.exports = async function (deployer) {
   // console.log('  - Register start time: ' + dateUtil.formatDateTime(initialDistributionStart))
   // console.log('  - Register end time: ' + dateUtil.formatDateTime(initialDistributionEnd))
   console.log('  - Claim start time (24h period, actual locking): ' + dateUtil.formatDateTime(claimingMgnStart))
-  console.log('  - Claim end time (24h period, actual locking): ' + dateUtil.formatDateTime(claimingMgnEnd))  
+  console.log('  - Claim end time (24h period, actual locking): ' + dateUtil.formatDateTime(claimingMgnEnd))
   console.log('  - Redeem enable time: ' + dateUtil.formatDateTime(redeemStart))
 
   console.log('  - MGN address (external locking contract): ' + mgnTokenAddress)

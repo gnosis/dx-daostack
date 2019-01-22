@@ -35,7 +35,9 @@ module.exports = async function (deployer) {
   assert(initialDistributionEnd, `The parameter initialDistributionEnd was not defined`)
   assert(redeemStart, `The parameter redeemStart was not defined`)
   assert(numberOfGenAuctions, `The parameter numberOfGenAuctions was not defined`)
-  
+  console.log(reputationReward, numberOfGenAuctions)
+  // TODO: Review
+  // assert(reputationReward % numberOfGenAuctions === 0, 'reputationReward should be divisible by numberOfGenAuctions')
 
   console.log('Deploy DxGenAuction4Rep that inherits from Auction4Reputation')
   const dxGenAuction4Rep = await deployer.deploy(DxGenAuction4Rep)
@@ -51,6 +53,7 @@ module.exports = async function (deployer) {
   const walletAddress = dxAvatar.address
   console.log('  - Avatar address:', dxAvatar.address)
   console.log('  - Reputation reward:', reputationReward)
+  console.log('  - reputationReward / numberOfGenAuctions:', reputationReward/* / numberOfGenAuctions*/)
   console.log('  - Auction start time:', dateUtil.formatDateTime(initialDistributionStart))
   console.log('  - Auction end time:', dateUtil.formatDateTime(initialDistributionEnd))
   console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemStart))
@@ -60,9 +63,11 @@ module.exports = async function (deployer) {
   console.log('  - Staking token address (GEN):', genToken.address)
   console.log('  - wallet address (DxAvatar.address): ', walletAddress)
 
+
+
   await dxGenAuction4Rep.initialize(
     dxAvatar.address,
-    reputationReward,
+    reputationReward/* / numberOfGenAuctions*/,
     dateUtil.toEthereumTimestamp(initialDistributionStart),
     auctionPeriod,
     numberOfGenAuctions,

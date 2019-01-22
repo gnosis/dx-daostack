@@ -4,6 +4,7 @@
 
 const assert = require('assert')
 
+const dateUtil = require('../src/helpers/dateUtil')
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 const {
   governanceStart
@@ -29,20 +30,6 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
     'votersReputationLossRatio',
     'minimumDaoBounty',
     'daoBountyConst'
-    // 'preBoostedVoteRequiredPercentage',
-    // 'preBoostedVotePeriodLimit',
-    // 'boostedVotePeriodLimit',
-    // 'thresholdConstA',
-    // 'thresholdConstB',
-    // 'minimumStakingFee',
-    // 'quietEndingPeriod',
-    // 'proposingRepRewardConstA',
-    // 'proposingRepRewardConstB',
-    // 'stakerFeeRatioForVoters',
-    // 'votersReputationLossRatio',
-    // 'votersGainRepRatioFromLostRep',
-    // 'daoBountyConst',
-    // 'daoBountyLimit'
   ]
 
   const { voteOnBehalf } = votingConf
@@ -58,8 +45,8 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
     .map(parameterName => votingConf[parameterName])
 
   const activationTime = governanceStart
-  parameters.push(activationTime)
-  console.log(parameters)
+  parameters.push(dateUtil.toEthereumTimestamp(activationTime))
+  console.log(` - governanceStart: ${governanceStart}`)
 
   const txResult = await genesisProtocol.setParameters(parameters, voteOnBehalf)
   console.log('  - Transaction: ' + txResult.tx)

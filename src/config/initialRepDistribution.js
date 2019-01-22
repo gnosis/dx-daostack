@@ -12,18 +12,18 @@ TOTAL: 1M
 */
 
 const INITIAL_REP_DISTRIBUTION = 1e6
- 
+
 const WHITELISTED_TOKENS_PERCENTAGE = 30
 const ETH_PERCENTAGE = 8
 const CONTRIBUTORS_PERCENTAGE = 2
-const GEN_PERCENTAGE = 10
+const GEN_PERCENTAGE = 10 / 5 // TODO: Fix this
 const MGN_PERCENTAGE = 50
 
 const totalAssignedRep =
   WHITELISTED_TOKENS_PERCENTAGE +
   ETH_PERCENTAGE +
   CONTRIBUTORS_PERCENTAGE +
-  GEN_PERCENTAGE +
+  5 * GEN_PERCENTAGE +
   MGN_PERCENTAGE
 
 const assert = require('assert')
@@ -37,7 +37,7 @@ module.exports = web3 => ({
   mgnReward: getReward(MGN_PERCENTAGE, web3)
 })
 
-function getReward (percentage, web3) {
+function getReward(percentage, web3) {
   const val = Math.ceil((INITIAL_REP_DISTRIBUTION * percentage) / 100).toString()
   // (numbers >= 1e21).toString() result in strings in E-notation, which breaks toWei()
   assert(!val.includes('e'), `reputation reward ${val} shouldn't be in E-notation`)
