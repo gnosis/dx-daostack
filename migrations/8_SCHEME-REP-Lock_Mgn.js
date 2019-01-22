@@ -19,7 +19,7 @@ const {
 
 const {
   mgnReward
-} = require('../src/config/initalRepDistribution')
+} = require('../src/config/initialRepDistribution')(web3)
 
 const getDXContractAddresses = require('../src/helpers/getDXContractAddresses')(web3, artifacts)
 
