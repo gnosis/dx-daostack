@@ -12,7 +12,7 @@ const { registerScheme } = require('./helpers/schemeUtils')
 
 const {
   contributorsReward: reputationReward
-} = require('../src/config/initalRepDistribution')
+} = require('../src/config/initialRepDistribution')(web3)
 
 const {
   redeemStart

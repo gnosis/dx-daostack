@@ -17,7 +17,7 @@ const {
 
 const {
   whitelistedTokensReward
-} = require('../src/config/initalRepDistribution')
+} = require('../src/config/initialRepDistribution')(web3)
 
 const {
   initialDistributionStart,
