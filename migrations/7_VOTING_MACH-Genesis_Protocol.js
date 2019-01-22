@@ -5,6 +5,9 @@
 const assert = require('assert')
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
+const {
+  governanceStart
+} = require('../src/config/timePeriods')
 
 
 module.exports = async function (deployer) { // eslint-disable-line no-unused-vars
@@ -16,20 +19,30 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
   // Genesis Protocol params:
   //    https://github.com/daostack/infra/blob/master/contracts/VotingMachines/GenesisProtocol.sol#L27
   const parameterNames = [
-    'preBoostedVoteRequiredPercentage',
-    'preBoostedVotePeriodLimit',
+    'queuedVoteRequiredPercentage',
+    'queuedVotePeriodLimit',
     'boostedVotePeriodLimit',
-    'thresholdConstA',
-    'thresholdConstB',
-    'minimumStakingFee',
+    'preBoostedVotePeriodLimit',
+    'thresholdConst',
     'quietEndingPeriod',
-    'proposingRepRewardConstA',
-    'proposingRepRewardConstB',
-    'stakerFeeRatioForVoters',
+    'proposingRepReward',
     'votersReputationLossRatio',
-    'votersGainRepRatioFromLostRep',
-    'daoBountyConst',
-    'daoBountyLimit'
+    'minimumDaoBounty',
+    'daoBountyConst'
+    // 'preBoostedVoteRequiredPercentage',
+    // 'preBoostedVotePeriodLimit',
+    // 'boostedVotePeriodLimit',
+    // 'thresholdConstA',
+    // 'thresholdConstB',
+    // 'minimumStakingFee',
+    // 'quietEndingPeriod',
+    // 'proposingRepRewardConstA',
+    // 'proposingRepRewardConstB',
+    // 'stakerFeeRatioForVoters',
+    // 'votersReputationLossRatio',
+    // 'votersGainRepRatioFromLostRep',
+    // 'daoBountyConst',
+    // 'daoBountyLimit'
   ]
 
   const { voteOnBehalf } = votingConf
@@ -43,6 +56,10 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
 
   const parameters = parameterNames
     .map(parameterName => votingConf[parameterName])
+
+  const activationTime = governanceStart
+  parameters.push(activationTime)
+  console.log(parameters)
 
   const txResult = await genesisProtocol.setParameters(parameters, voteOnBehalf)
   console.log('  - Transaction: ' + txResult.tx)

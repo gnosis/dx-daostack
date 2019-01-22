@@ -12,10 +12,8 @@ module.exports = {
   numberOfGenAuctions: 5,
 
   // ETH Locking (in seconds)
-  maxLockingEthPeriod: 180 * SECONDS_PER_DAY ,
+  maxLockingEthPeriod: 180 * SECONDS_PER_DAY,
 
   // Whitelisted tokens Locking
   maxLockingWhitelistedTokensPeriod: 180 * SECONDS_PER_DAY
-
-  // dappConf card conf
 }
