@@ -21,7 +21,7 @@ const {
 
 const {
   ethReward
-} = require('../src/config/initalRepDistribution')
+} = require('../src/config/initalRepDistribution')(web3)
 
 module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()

@@ -23,7 +23,7 @@ const {
 
 const {
   genReward: reputationReward
-} = require('../src/config/initalRepDistribution')
+} = require('../src/config/initalRepDistribution')(web3)
 
 module.exports = async function (deployer) {
   // TODO: get address from config/networks/GenesisProtocol.stakingToken()
