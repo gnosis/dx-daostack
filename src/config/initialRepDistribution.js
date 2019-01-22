@@ -2,6 +2,10 @@
 * Initial REP distribution amounts
 */
 
+const {
+  numberOfGenAuctions
+} = require('./bootstrap')
+
 /*
 TOTAL: 1M
   Whitelisted tokens: 30%
@@ -16,14 +20,14 @@ const INITIAL_REP_DISTRIBUTION = 1e6
 const WHITELISTED_TOKENS_PERCENTAGE = 30
 const ETH_PERCENTAGE = 8
 const CONTRIBUTORS_PERCENTAGE = 2
-const GEN_PERCENTAGE = 10 / 5 // TODO: Fix this
+const GEN_PERCENTAGE_PER_AUCTION = 10 / numberOfGenAuctions
 const MGN_PERCENTAGE = 50
 
 const totalAssignedRep =
   WHITELISTED_TOKENS_PERCENTAGE +
   ETH_PERCENTAGE +
   CONTRIBUTORS_PERCENTAGE +
-  5 * GEN_PERCENTAGE +
+  numberOfGenAuctions * GEN_PERCENTAGE_PER_AUCTION +
   MGN_PERCENTAGE
 
 const assert = require('assert')
@@ -33,7 +37,7 @@ module.exports = web3 => ({
   whitelistedTokensReward: getReward(WHITELISTED_TOKENS_PERCENTAGE, web3),
   ethReward: getReward(ETH_PERCENTAGE, web3),
   contributorsReward: getReward(CONTRIBUTORS_PERCENTAGE, web3),
-  genReward: getReward(GEN_PERCENTAGE, web3),
+  genRewardPerAuction: getReward(GEN_PERCENTAGE_PER_AUCTION, web3),
   mgnReward: getReward(MGN_PERCENTAGE, web3)
 })
 
