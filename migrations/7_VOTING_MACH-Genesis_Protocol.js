@@ -48,6 +48,7 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
   parameters.push(dateUtil.toEthereumTimestamp(activationTime))
   console.log(` - governanceStart: ${governanceStart}`)
 
+  // Set the 3 GP parameters set
   const txResult = await genesisProtocol.setParameters(parameters, voteOnBehalf)
   console.log('  - Transaction: ' + txResult.tx)
   console.log('  - Gas used: ' + txResult.receipt.gasUsed)

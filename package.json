@@ -55,9 +55,10 @@
     "@gnosis.pm/owl-token": "^2.0.0-RC2",
     "@gnosis.pm/util-contracts": "^2.0.0-RC2",
     "debug": "^4.1.1",
-    "truffle-contract": "^4.0.0",
-    "truffle-hdwallet-provider": "^1.0.0",
     "prettier": "^1.15.3",
-    "prettier-plugin-solidity-refactor": "^1.0.0-alpha.14"
+    "prettier-plugin-solidity-refactor": "^1.0.0-alpha.14",
+    "scrypt": "^6.0.3",
+    "truffle-contract": "^4.0.0",
+    "truffle-hdwallet-provider": "^1.0.0"
   }
 }

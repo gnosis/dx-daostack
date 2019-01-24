@@ -34,7 +34,7 @@ module.exports = async function (deployer, network) {
 
   let mgnTokenAddress
   // TODO: Remove after test
-  if (network === 'rinkeby') {
+  if (process.env.USE_MOCK_MGN === 'true') {
     const ExternalTokenLockerMock = artifacts.require('ExternalTokenLockerMock')
     const externalTokenLockerMock = await deployer.deploy(ExternalTokenLockerMock)
     mgnTokenAddress = externalTokenLockerMock.address
