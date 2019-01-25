@@ -2,7 +2,7 @@
 /* eslint no-undef: "error" */
 
 const assert = require('assert')
-const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')({ artifacts, web3 })
+const genesisProtocolHelper = require('../src/helpers/genesisProtocolHelper')({ artifacts, web3 })
 
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
@@ -20,15 +20,15 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
   const upgradeScheme = await getDaostackContract('UpgradeScheme')
 
   const {
-    genesisProtocolParamsHash,
-    genesisProtocolAddress
-  } = await getGenesisProtocolData()
+    paramsHash: genesisProtocolParamsHash,
+    address: genesisProtocolAddress
+  } = await genesisProtocolHelper.getGenesisProtocolData('admin')
 
-  assert(genesisProtocolParamsHash, `The parameter genesisProtocolParamsHash was not defined`)
-  assert(genesisProtocolAddress, `The parameter genesisProtocolAddress was not defined`)
+  assert(genesisProtocolParamsHash, `The parameter paramsHash was not defined`)
+  assert(genesisProtocolAddress, `The parameter address was not defined`)
 
   console.log('Configure UpgradeScheme')
-  
+
   // Set parameters
   const paramsHash = await setParameters({
     scheme: upgradeScheme,
