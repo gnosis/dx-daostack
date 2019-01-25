@@ -87,10 +87,16 @@ contract('Execute updateAuctioneer proposal', (accounts) => {
 
   const RAND_ADDRESS = '0x0000000000000000000000000000000000000001'
 
-  addProposal(context, {
+  const proposalData = {
     method: 'updateAuctioneer',
     input: [RAND_ADDRESS]
-  })
+  }
+
+  tryToAddProposalBeforeTime(context, proposalData)
+
+  skipToActivationTime(context)
+
+  addProposal(context, proposalData)
 
   voteAndExecute(context)
 
@@ -107,10 +113,16 @@ contract('Execute updateThresholdNewTokenPair proposal', (accounts) => {
 
   const RAND_THRESHOLD = Math.floor(Math.random() * 2000 + 1000)
 
-  addProposal(context, {
+  const proposalData = {
     method: 'updateThresholdNewTokenPair',
     input: [RAND_THRESHOLD]
-  })
+  }
+
+  tryToAddProposalBeforeTime(context, proposalData)
+
+  skipToActivationTime(context)
+
+  addProposal(context, proposalData)
 
   voteAndExecute(context)
 
@@ -127,10 +139,16 @@ contract('Execute updateThresholdNewAuction proposal', (accounts) => {
 
   const RAND_THRESHOLD = Math.floor(Math.random() * 2000 + 1000)
 
-  addProposal(context, {
+  const proposalData = {
     method: 'updateThresholdNewAuction',
     input: [RAND_THRESHOLD]
-  })
+  }
+
+  tryToAddProposalBeforeTime(context, proposalData)
+
+  skipToActivationTime(context)
+
+  addProposal(context, proposalData)
 
   voteAndExecute(context)
 
@@ -147,10 +165,16 @@ contract('Execute updateMasterCopy proposal', (accounts) => {
 
   const RAND_ADDRESS = '0x0000000000000000000000000000000000000001'
 
-  addProposal(context, {
+  const proposalData = {
     method: 'startMasterCopyCountdown',
     input: [RAND_ADDRESS]
-  })
+  }
+
+  tryToAddProposalBeforeTime(context, proposalData)
+
+  skipToActivationTime(context)
+
+  addProposal(context, proposalData)
 
   voteAndExecute(context)
 
@@ -180,10 +204,16 @@ contract('Execute updateEthUSDOracle proposal', (accounts) => {
 
   const RAND_ADDRESS = '0x0000000000000000000000000000000000000001'
 
-  addProposal(context, {
+  const proposalData = {
     method: 'initiateEthUsdOracleUpdate',
     input: [RAND_ADDRESS]
-  })
+  }
+
+  tryToAddProposalBeforeTime(context, proposalData)
+
+  skipToActivationTime(context)
+
+  addProposal(context, proposalData)
 
   voteAndExecute(context)
 
@@ -210,10 +240,16 @@ contract('Execute updateApprovalOfToken proposal', (accounts) => {
 
   const RAND_ADDRESS = '0x0000000000000000000000000000000000000001'
 
-  addProposal(context, {
+  const proposalData = {
     method: 'updateApprovalOfToken',
     input: [[RAND_ADDRESS], true]
-  })
+  }
+
+  tryToAddProposalBeforeTime(context, proposalData)
+
+  skipToActivationTime(context)
+
+  addProposal(context, proposalData)
 
   voteAndExecute(context)
 
@@ -225,13 +261,24 @@ function skip30Days() {
     await increaseTimeAndMine(30 * 24 * 60 * 60)
   })
 }
+function skipToActivationTime(context) {
+  it('skips to activation time', async () => {
+    const {activationTime} = context
+    console.log('activationTime: ', activationTime);
+    const timestamp = await getTimestamp()
+    console.log('now: ', timestamp)
+
+    const advanceBy = activationTime.sub(new BN(timestamp - 1000))
+    // console.log('advanceBy: ', advanceBy.toString())
+    await increaseTimeAndMine(advanceBy.toNumber())
+  })
+}
 
 function setupBeforeAfter(accounts) {
   let snapshotId
   const context = {}
 
   before(async () => {
-    console.log('TIMESTAMP', await getTimestamp());
     snapshotId = await takeSnapshot();
     const [master] = accounts
     const FRTProxy = await TokenFRTProxy.deployed()
@@ -277,7 +324,7 @@ function setupBeforeAfter(accounts) {
 
 function checkSchemeParams(context) {
   it('scheme parameters are correct', async () => {
-    const { Controller, Avatar, GenericS, DX } = context.contracts
+    const { Controller, Avatar, GenericS, GenesisP, DX } = context.contracts
 
     const paramsHash = await Controller.getSchemeParameters(GenericS.address, Avatar.address)
     console.log('paramsHash: ', paramsHash);
@@ -286,7 +333,12 @@ function checkSchemeParams(context) {
     const parameters = await GenericS.parameters(paramsHash)
     // console.log('parameters: ', JSON.stringify(parameters, null, 2));
 
+    const genesisParams = await GenesisP.parameters(parameters.voteParams)
+    // console.log('genesisParams: ', JSON.stringify(genesisParams, null, 2));
+    // TODO: skip to activationTime
+
     assert.equal(DX.address, parameters.contractToCall, 'contractToCall should be DX address')
+    context.activationTime = new BN(genesisParams.activationTime)
   })
 }
 
@@ -314,6 +366,34 @@ function checkAvatarIsAuctioneer(context) {
   })
 }
 
+function tryToAddProposalBeforeTime(
+  context,
+  { method, input = [] }
+) {
+  it('can\'t add proposal before activationTime', async () => {
+    const { contracts: { GenericS, Avatar }, activationTime } = context
+    console.log('activationTime: ', activationTime.toString());
+
+    const now = await getTimestamp()
+    console.log('now: ', now);
+    assert(new BN(now).lt(activationTime), 'activationTime should still be in the future')
+
+    const methodSignature = DutchExchange.abi.find((f) => { return f.name === method })
+
+    assert.isObject(methodSignature, `${method} should be in the abi`)
+    const encoded = web3.eth.abi.encodeFunctionCall(methodSignature, input)
+
+    console.log(`making a proposal DX.${method}(${JSON.stringify(input.join(', '))})`);
+
+    try {
+      await GenericS.proposeCall(Avatar.address, encoded, 'description hash')
+      // should be unreachable
+      assert.fail('shouldn\'t add proposal before activationTime')
+    } catch (error) {
+      assert.include(error.message, 'not active yet', 'error message should contain string specified')
+    }
+  });
+}
 function addProposal(
   context,
   { method, input = [] }
@@ -326,7 +406,9 @@ function addProposal(
     assert.isObject(methodSignature, `${method} should be in the abi`)
     const encoded = web3.eth.abi.encodeFunctionCall(methodSignature, input)
 
-    const tx = await GenericS.proposeCall(Avatar.address, encoded)
+    console.log(`making a proposal DX.${method}(${JSON.stringify(input.join(', '))})`);
+
+    const tx = await GenericS.proposeCall(Avatar.address, encoded, 'description hash')
 
     // console.log('tx: ', JSON.stringify(tx, null, 2));
     const { args } = tx.logs.find((log) => { return log.event === 'NewCallProposal' })
@@ -364,7 +446,7 @@ function voteAndExecute(context) {
     assert.isTrue(isVotable, 'proposal should be votable')
 
     for (const acc of accounts) {
-      const tx = await GenesisP.vote(proposalId, 1, acc, { from: acc })
+      const tx = await GenesisP.vote(proposalId, 1, 0, acc, { from: acc })
       const events = tx.logs.map((log) => { return log.event })
 
       console.log(acc, 'voted on proposal', proposalId)
