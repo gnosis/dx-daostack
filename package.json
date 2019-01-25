@@ -23,7 +23,8 @@
     "get-0x-list": "truffle exec src/scripts/get-0x-list.js",
     "get-cryptocompare-tokens": "node src/scripts/get-cryptocompare-tokens",
     "get-token-prices": "node src/scripts/get-token-prices.js",
-    "update-price-oracle": "truffle exec src/scripts/update-price-oracle.js"
+    "update-price-oracle": "truffle exec src/scripts/update-price-oracle.js",
+    "prettier": "prettier --write --tab-width 4 --print-width 120 '**/*.sol'"
   },
   "license": "ISC",
   "devDependencies": {
@@ -38,22 +39,25 @@
     "eslint-plugin-standard": "^4.0.0",
     "fractional": "^1.0.0",
     "ganache-cli": "^6.2.5",
-    "got": "^9.5.0",
+    "got": "^9.6.0",
     "moment-timezone": "^0.5.23",
-    "solium": "^1.2.0",
-    "truffle": "^5.0.0",
+    "solium": "^1.2.2",
+    "truffle": "^5.0.2",
     "truffle-flattener": "^1.2.10",
     "yargs": "^12.0.5"
   },
   "dependencies": {
-    "@daostack/arc": "0.0.0-alpha.58",
-    "@daostack/arc.js": "0.0.0-alpha.105",
-    "@gnosis.pm/dx-contracts": "2.0.0-SNAPSHOT.5",
-    "@gnosis.pm/gno-token": "1.1.2",
-    "@gnosis.pm/owl-token": "1.2.3",
-    "@gnosis.pm/util-contracts": "1.1.1",
+    "@daostack/arc": "0.0.1-rc.6",
+    "@daostack/arc.js": "0.0.0-alpha.111",
+    "@gnosis.pm/dx-contracts": "^2.0.0-RC13",
+    "@gnosis.pm/dx-price-oracle": "^0.1.2",
+    "@gnosis.pm/gno-token": "^2.0.0-RC3",
+    "@gnosis.pm/owl-token": "^2.0.0-RC2",
+    "@gnosis.pm/util-contracts": "^2.0.0-RC2",
     "debug": "^4.1.1",
     "truffle-contract": "^4.0.0",
-    "truffle-hdwallet-provider": "^1.0.0"
+    "truffle-hdwallet-provider": "^1.0.0",
+    "prettier": "^1.15.3",
+    "prettier-plugin-solidity-refactor": "^1.0.0-alpha.14"
   }
 }

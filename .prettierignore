@@ -1,0 +1,6 @@
+.history
+docs
+scripts
+migrations
+node_modules
+build
