@@ -47,8 +47,8 @@
     "yargs": "^12.0.5"
   },
   "dependencies": {
-    "@daostack/arc": "0.0.1-rc.6",
-    "@daostack/arc.js": "0.0.0-alpha.111",
+    "@daostack/arc": "0.0.1-rc.8",
+    "@daostack/migration": "0.0.1-rc.8-v1",
     "@gnosis.pm/dx-contracts": "^2.0.0-RC13",
     "@gnosis.pm/dx-price-oracle": "^0.1.2",
     "@gnosis.pm/gno-token": "^2.0.0-RC3",

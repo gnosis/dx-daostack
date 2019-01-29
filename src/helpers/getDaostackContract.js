@@ -1,4 +1,4 @@
-const networksFile = '@daostack/arc.js/migration.json'
+const networksFile = '@daostack/migration/migration.json'
 const networksJSON = require(networksFile)
 // QUESTION: there are only kovan addresses,
 // should we deploy ourselves when on other networks (rikeby)?
