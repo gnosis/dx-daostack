@@ -31,7 +31,10 @@ module.exports = async function (deployer, network) {
   const dxController = await DxController.deployed()
 
   let priceOracleAddress
-  if (process.env.USE_FIXED_PRICE_ORACLE === 'true') {
+  if (
+    process.env.USE_FIXED_PRICE_ORACLE === 'true' ||
+    process.env.NODE_ENV === 'test' && network === 'development'
+  ) {
     // Deploy Fixed Price Oracle
     console.log('Using Fixed Price Oracle')
     const fixedPriceOracle = await deployFixedPriceOracle(deployer, network)
