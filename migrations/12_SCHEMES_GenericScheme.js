@@ -44,7 +44,8 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
       name: 'contractToCall',
       value: dutchXContractAddress
     }
-  ]})
+    ]
+  })
 
   await registerScheme({
     label: 'GenericScheme',

@@ -1,28 +1,33 @@
+const dateUtil = require('../helpers/dateUtil')
+const {
+  governanceStart
+} = require('../config/timePeriods')
+
+
+
 const parameterNames = [
-  'preBoostedVoteRequiredPercentage',
-  'preBoostedVotePeriodLimit',
+  'queuedVoteRequiredPercentage',
+  'queuedVotePeriodLimit',
   'boostedVotePeriodLimit',
-  'thresholdConstA',
-  'thresholdConstB',
-  'minimumStakingFee',
+  'preBoostedVotePeriodLimit',
+  'thresholdConst',
   'quietEndingPeriod',
-  'proposingRepRewardConstA',
-  'proposingRepRewardConstB',
-  'stakerFeeRatioForVoters',
+  'proposingRepReward',
   'votersReputationLossRatio',
-  'votersGainRepRatioFromLostRep',
-  'daoBountyConst',
-  'daoBountyLimit'
+  'minimumDaoBounty',
+  'daoBountyConst'
 ]
 
 const votingConf = require('../config/voting')
 const { voteOnBehalf } = votingConf
 
 const parameters = parameterNames.map(parameterName => votingConf[parameterName])
+const activationTime = governanceStart
+parameters.push(dateUtil.toEthereumTimestamp(activationTime))
 
 module.exports = ({ artifacts, web3 }) => {
   let genesisProtocolData
-  
+
   async function getGenesisProtocolData() {
     if (!genesisProtocolData) {
       const getDaostackContract = require('../helpers/getDaostackContract')(web3, artifacts)

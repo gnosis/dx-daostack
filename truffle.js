@@ -81,7 +81,7 @@ function truffleConfig ({
     },
     compilers: {
       solc: {
-        version: '0.4.25',
+        version: '0.5.2',
         docker: process.env.SOLC_USE_DOCKER === 'true' || false,
         settings: {
           optimizer: {
