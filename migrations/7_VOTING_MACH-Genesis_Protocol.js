@@ -1,5 +1,3 @@
-const assert = require('assert')
-
 const genesisProtocolHelper = require('../src/helpers/genesisProtocolHelper')({ artifacts, web3 })
 
 

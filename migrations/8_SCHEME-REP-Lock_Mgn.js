@@ -23,7 +23,7 @@ const {
 
 const getDXContractAddresses = require('../src/helpers/getDXContractAddresses')(web3, artifacts)
 
-module.exports = async function (deployer, network) {
+module.exports = async function (deployer) {
   const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
   const DxAvatar = artifacts.require('DxAvatar')
   const DxController = artifacts.require('DxController')
