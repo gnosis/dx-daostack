@@ -7,7 +7,9 @@ const DEFAULT_MNEMONIC = 'candy maple cake sugar pudding cream honey rich smooth
 
 // Load env vars
 const envPath = process.env.ENV_PATH
+console.log('envPath: ', envPath);
 require('dotenv').config(envPath && { path: envPath })
+console.log('Using env: ', process.env.USING_ENV);
 
 // Get the mnemonic
 const privateKey = process.env.PK
