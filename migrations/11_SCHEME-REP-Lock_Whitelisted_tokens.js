@@ -90,7 +90,7 @@ async function deployFixedPriceOracle(deployer, network) {
 
   if (
     network === 'rinkeby' ||
-    (network.startsWith('mainnet') && process.env.USE_FIXED_PRICE_ORACLE === true)
+    (network.startsWith('mainnet') && process.env.USE_FIXED_PRICE_ORACLE === 'true')
     ) {
     console.log('Deploy BasicTokenWhitelist for testing in', network)
     const basicTokenWhitelist = await deployer.deploy(BasicTokenWhitelist)
@@ -113,7 +113,7 @@ async function deployFixedPriceOracle(deployer, network) {
         GEN: '0x543ff227f64aa17ea132bf9886cab5db55dcaddf'
       }
     }
-    console.log('\nWhite list the tokens: ')
+    console.log('\nWhitelist the tokens: ')
     Object.keys(whitelistedTokens).forEach(tokenName => {
       console.log('  - %s: %s', tokenName, whitelistedTokens[tokenName])
     })
