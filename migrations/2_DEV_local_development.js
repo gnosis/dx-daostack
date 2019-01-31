@@ -44,6 +44,10 @@ module.exports = async function (deployer, network, accounts) {
 
     // Deploy GenesisProtocol
     await deployGenesisProtocol(deployer)
+  } else if (process.env.USE_MOCK_DX) {
+    console.log('Deploying Wallet as Mock DutchX');
+    const Wallet = artifacts.require('Wallet')
+    await deployer.deploy(Wallet)
   } else {
     console.log('Not in development, so nothing to do. Current network is %s', network)
   }
