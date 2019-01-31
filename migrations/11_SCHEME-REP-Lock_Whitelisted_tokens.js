@@ -88,18 +88,30 @@ module.exports = async function (deployer, network) {
 async function deployFixedPriceOracle(deployer, network) {
   let tokenWhitelistAddress, whiteListAddressMsg
 
-  if (network === 'rinkeby') {
-    console.log('Deploy BasicTokenWhitelist for testing in Rinkeby:')
+  if (
+    network === 'rinkeby' ||
+    (network.startsWith('mainnet') && process.env.USE_FIXED_PRICE_ORACLE === true)
+    ) {
+    console.log('Deploy BasicTokenWhitelist for testing in', network)
     const basicTokenWhitelist = await deployer.deploy(BasicTokenWhitelist)
     whiteListAddressMsg = 'Token White List Address (BasicTokenWhitelist, only for testing): ' + tokenWhitelistAddress
 
-    // Add some test tokens for Rinkeby    
-    const whitelistedTokens = {
-      WETH: '0xc778417e063141139fce010982780140aa0cd5ab',
-      RDN: '0x3615757011112560521536258c1e7325ae3b48ae',
-      OMG: '0x00df91984582e6e96288307e9c2f20b38c8fece9',
-      testGEN: '0xa1f34744c80e7a9019a5cd2bf697f13df00f9773',
-      GEN: '0x543ff227f64aa17ea132bf9886cab5db55dcaddf'
+    let whitelistedTokens
+    if (network === 'rinkeby') {
+      // Add some test tokens for Rinkeby    
+      whitelistedTokens = {
+        WETH: '0xc778417e063141139fce010982780140aa0cd5ab',
+        RDN: '0x3615757011112560521536258c1e7325ae3b48ae',
+        OMG: '0x00df91984582e6e96288307e9c2f20b38c8fece9',
+        testGEN: '0xa1f34744c80e7a9019a5cd2bf697f13df00f9773',
+        GEN: '0x543ff227f64aa17ea132bf9886cab5db55dcaddf'
+      }
+      // to allow for dry-runs on mainnet-fork
+    } else if (network.startsWith('mainnet')) {
+      whitelistedTokens = {
+        GNO: '0x6810e776880C02933D47DB1b9fc05908e5386b96',
+        GEN: '0x543ff227f64aa17ea132bf9886cab5db55dcaddf'
+      }
     }
     console.log('\nWhite list the tokens: ')
     Object.keys(whitelistedTokens).forEach(tokenName => {
