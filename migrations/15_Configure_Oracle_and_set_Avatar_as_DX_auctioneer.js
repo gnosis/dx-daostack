@@ -1,5 +1,5 @@
 
-/* global artifacts, web3 */
+/* global artifacts */
 /* eslint no-undef: "error" */
 
 module.exports = async function (deployer, network) { // eslint-disable-line no-unused-vars

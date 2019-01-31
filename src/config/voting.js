@@ -103,7 +103,7 @@ module.exports = {
     // The dxDao will stake negatively against every proposal
     // Minimun stake
     // TODO: Add formula here
-    minimumDaoBounty: getIntParam(process.env.MINIMUM_DAO_BOUNTY, '2.50000000000000000000'), //  2.5e20 == 250 * 1e18
+    minimumDaoBounty: getIntParam(process.env.MINIMUM_DAO_BOUNTY, '250000000000000000000'), //  2.5e20 == 250 * 1e18
     // Constant
     daoBountyConst: getIntParam(process.env.DAO_BOUNTY_CONST, 10),
 
