@@ -17,5 +17,8 @@ import "@daostack/infra/contracts/votingMachines/GenesisProtocol.sol";
 // Tokens
 import "../test/contracts/GenToken.sol";
 
+// Mock DutchX
+import "./mocks/Wallet.sol";
+
 /* solium-disable-next-line no-empty-blocks */
 contract LocalDevelopment {}
