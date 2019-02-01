@@ -622,8 +622,8 @@ Register ContributionReward scheme in the controller:
 network:  mainnet
 
 Setting price for tokens on FixedPriceOracle: 
-  - GNO: 0x6810e776880C02933D47DB1b9fc05908e5386b96 to 1/1
-  - GEN: 0x543ff227f64aa17ea132bf9886cab5db55dcaddf to 1/2
+  - GNO: 0x6810e776880C02933D47DB1b9fc05908e5386b96 to 103671/1000000
+  - GEN: 0x543ff227f64aa17ea132bf9886cab5db55dcaddf to 856/1000000
 Setting Avatar at address 0xC7796567b08Bc37b530026534f3e2ffff0A3a4d9 as Wallet's owner
 Wallet's owner is now: 0xC7796567b08Bc37b530026534f3e2ffff0A3a4d9
 

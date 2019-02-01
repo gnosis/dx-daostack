@@ -10,7 +10,7 @@ module.exports = async function (deployer, network) { // eslint-disable-line no-
 
     const PriceOracle = await FixedPriceOracle.deployed()
 
-    let whitelistedTokens
+    let whitelistedTokens, prices
     if (network === 'rinkeby') {
       // Add some test tokens for Rinkeby    
       whitelistedTokens = {
@@ -20,21 +20,34 @@ module.exports = async function (deployer, network) { // eslint-disable-line no-
         testGEN: '0xa1f34744c80e7a9019a5cd2bf697f13df00f9773',
         GEN: '0x543ff227f64aa17ea132bf9886cab5db55dcaddf'
       }
+      prices = {
+        WETH: [1, 1],
+        RDN: ['1776156964825253664', '937071603297071195287'],
+        OMG: ['29310216054162501108', '5076108712109793685943']
+      }
     } else if (network.startsWith('mainnet')) {
       whitelistedTokens = {
         GNO: '0x6810e776880C02933D47DB1b9fc05908e5386b96',
         GEN: '0x543ff227f64aa17ea132bf9886cab5db55dcaddf'
       }
+      prices = {
+        //     num     den
+        GNO: [ 103671, 1000000],
+        GEN: [ 856,    1000000]
+      }
     }
     console.log('\nSetting price for tokens on FixedPriceOracle: ')
     let tokens = [], nums = [], dens = []
-    Object.keys(whitelistedTokens).forEach((tokenName, i) => {
+    Object.keys(whitelistedTokens).forEach(tokenName => {
       const address = whitelistedTokens[tokenName]
-      console.log('  - %s: %s', tokenName, address, `to 1/${i+1}`)
+      if (!prices[tokenName]) return
+
+      const [num, den] = prices[tokenName]
+      console.log('  - %s: %s', tokenName, address, `to ${num}/${den}`)
 
       tokens.push(address)
-      nums.push(1)
-      dens.push(i + 1)
+      nums.push(num)
+      dens.push(den)
     })
 
     if (tokens.length > 0) {
@@ -42,16 +55,16 @@ module.exports = async function (deployer, network) { // eslint-disable-line no-
     }
   }
 
-  if (process.env.USE_MOCK_DX) {
-    const Wallet = artifacts.require('Wallet')
-    const WalletDeployed = await Wallet.deployed()
+  // if (process.env.USE_MOCK_DX) {
+  //   const Wallet = artifacts.require('Wallet')
+  //   const WalletDeployed = await Wallet.deployed()
 
-    const DxAvatar = artifacts.require('DxAvatar')
-    const dxAvatar = await DxAvatar.deployed()
+  //   const DxAvatar = artifacts.require('DxAvatar')
+  //   const dxAvatar = await DxAvatar.deployed()
 
-    console.log('Setting Avatar at address', dxAvatar.address, 'as Wallet\'s owner');
-    await WalletDeployed.transferOwnership(dxAvatar.address)
+  //   console.log('Setting Avatar at address', dxAvatar.address, 'as Wallet\'s owner');
+  //   await WalletDeployed.transferOwnership(dxAvatar.address)
 
-    console.log('Wallet\'s owner is now:', await WalletDeployed.owner());
-  }
+  //   console.log('Wallet\'s owner is now:', await WalletDeployed.owner());
+  // }
 }
