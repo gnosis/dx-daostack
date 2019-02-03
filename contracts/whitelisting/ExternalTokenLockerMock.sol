@@ -1,7 +1,7 @@
 pragma solidity ^0.5.2;
 
 
-contract ExternalTokenLockerMock {
+contract ExternalTokenLockerMockTest {
 
     // user => amount
     mapping (address => uint) public lockedTokenBalances;
