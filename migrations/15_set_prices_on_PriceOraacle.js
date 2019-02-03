@@ -3,8 +3,6 @@
 /* eslint no-undef: "error" */
 
 module.exports = async function (deployer, network) { // eslint-disable-line no-unused-vars
-  console.log('network: ', network);
-
   if (process.env.USE_FIXED_PRICE_ORACLE) {
     
     let whitelistedTokens, prices
@@ -64,18 +62,5 @@ module.exports = async function (deployer, network) { // eslint-disable-line no-
         ))
       }
     }
-  }
-
-  if (process.env.USE_MOCK_DX) {
-    const Wallet = artifacts.require('Wallet')
-    const WalletDeployed = await Wallet.deployed()
-
-    const DxAvatar = artifacts.require('DxAvatar')
-    const dxAvatar = await DxAvatar.deployed()
-
-    console.log('Setting Avatar at address', dxAvatar.address, 'as Wallet\'s owner');
-    await WalletDeployed.transferOwnership(dxAvatar.address)
-
-    console.log('Wallet\'s owner is now:', await WalletDeployed.owner());
   }
 }
