@@ -14,6 +14,9 @@ import "@daostack/arc/contracts/universalSchemes/ContributionReward.sol";
 import "@daostack/arc/contracts/universalSchemes/GenericScheme.sol";
 import "@daostack/infra/contracts/votingMachines/GenesisProtocol.sol";
 
+import "@daostack/arc/contracts/test/ExternalTokenLockerMock.sol";
+import "@daostack/arc/contracts/test/PriceOracleMock.sol";
+
 // Tokens
 import "../test/contracts/GenToken.sol";
 
