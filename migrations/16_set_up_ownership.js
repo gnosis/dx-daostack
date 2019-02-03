@@ -20,10 +20,10 @@ module.exports = async function (deployer, network) { // eslint-disable-line no-
 
   if (network.startsWith('mainnet')) {
     const ExternalTokenLockerMock = artifacts.require('ExternalTokenLockerMock')
-    const externalTokenLockerMock = ExternalTokenLockerMock.deployed()
+    const externalTokenLockerMock = await ExternalTokenLockerMock.deployed()
 
     const PriceOracleMock = artifacts.require('PriceOracleMock')
-    const priceOracleMock = PriceOracleMock.deployed()
+    const priceOracleMock = await PriceOracleMock.deployed()
 
     // give ownership of ExternalTokenLockerMock and PriceOracleMock to multisig
     console.log('Transferring ownership of ExternalTokenLockerMock to', MULTISIG_MAIN);
