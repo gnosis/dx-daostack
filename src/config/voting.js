@@ -61,7 +61,7 @@ module.exports = {
     // The dxDao will stake negatively against every proposal
     // Minimun stake
     // TODO: Add formula here
-    minimumDaoBounty: getIntParam(process.env.MINIMUM_DAO_BOUNTY, '500000000000000000000'), //  5e20 = 500 * 1e18
+    minimumDaoBounty: getIntParam(process.env.MINIMUM_DAO_BOUNTY, '250000000000000000000'), //  2.5e20 = 250 * 1e18
     // Constant
     daoBountyConst: getIntParam(process.env.DAO_BOUNTY_CONST, 10),
 
@@ -94,7 +94,7 @@ module.exports = {
     quietEndingPeriod: getIntParam(process.env.QUIET_ENDING_PERIOD, 2 * DAY_IN_SECONDS),  // 172800
 
     // Number of reputation for successful proposal
-    proposingRepReward: getIntParam(process.env.PROPOSING_REP_REWARD, '500000000000000000000'), // 5e20 == 500 * 1e18
+    proposingRepReward: getIntParam(process.env.PROPOSING_REP_REWARD, '1000000000000000000000'), // 1e21 == 1000 * 1e18
 
     // Percentage of reputation that a voter looses by voting wrong
     //  - Only affects regular queue + pre-boosted queue
@@ -145,7 +145,7 @@ module.exports = {
     // The dxDao will stake negatively against every proposal
     // Minimun stake
     // TODO: Add formula here
-    minimumDaoBounty: getIntParam(process.env.MINIMUM_DAO_BOUNTY, '1000000000000000000000'), //  1e21 == 1000 * 1e18
+    minimumDaoBounty: getIntParam(process.env.MINIMUM_DAO_BOUNTY, '500000000000000000000'), //  5e20 == 500 * 1e18
     // Constant
     daoBountyConst: getIntParam(process.env.DAO_BOUNTY_CONST, 10),
 
