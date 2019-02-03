@@ -1,15 +1,12 @@
 
-/* global artifacts */
+/* global artifacts, Promise */
 /* eslint no-undef: "error" */
 
 module.exports = async function (deployer, network) { // eslint-disable-line no-unused-vars
   console.log('network: ', network);
 
   if (process.env.USE_FIXED_PRICE_ORACLE) {
-    const FixedPriceOracle = artifacts.require('FixedPriceOracle')
-
-    const PriceOracle = await FixedPriceOracle.deployed()
-
+    
     let whitelistedTokens, prices
     if (network === 'rinkeby') {
       // Add some test tokens for Rinkeby    
@@ -41,17 +38,31 @@ module.exports = async function (deployer, network) { // eslint-disable-line no-
     Object.keys(whitelistedTokens).forEach(tokenName => {
       const address = whitelistedTokens[tokenName]
       if (!prices[tokenName]) return
-
+      
       const [num, den] = prices[tokenName]
       console.log('  - %s: %s', tokenName, address, `to ${num}/${den}`)
-
+      
       tokens.push(address)
       nums.push(num)
       dens.push(den)
     })
-
+    
     if (tokens.length > 0) {
-      await PriceOracle.setPrices(tokens, nums, dens)
+      if (network === 'rinkeby') {
+        const FixedPriceOracle = artifacts.require('FixedPriceOracle')
+    
+        const PriceOracle = await FixedPriceOracle.deployed()
+        await PriceOracle.setPrices(tokens, nums, dens)
+
+      } else if (network.startsWith('mainnet')) {
+        const ArcPriceOracle = artifacts.require('PriceOracleMock')
+      
+        const PriceOracle = await ArcPriceOracle.deployed()
+
+        await Promise.all(tokens.map(
+          (address, i) => PriceOracle.setTokenPrice(address, nums[i], dens[i])
+        ))
+      }
     }
   }
 
