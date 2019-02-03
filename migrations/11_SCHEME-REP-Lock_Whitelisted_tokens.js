@@ -86,12 +86,16 @@ module.exports = async function (deployer, network) {
 
 
 async function deployFixedPriceOracle(deployer, network) {
+  if (network.startsWith('mainnet') && process.env.USE_FIXED_PRICE_ORACLE === 'true') {
+    const ArcPriceOracle = artifacts.require('PriceOracleMock')
+    console.log('deploying PriceOracleMock from @daostack/arc');
+
+    return await deployer.deploy(ArcPriceOracle)
+  }
+
   let tokenWhitelistAddress, whiteListAddressMsg
 
-  if (
-    network === 'rinkeby' ||
-    (network.startsWith('mainnet') && process.env.USE_FIXED_PRICE_ORACLE === 'true')
-    ) {
+  if (network === 'rinkeby') {
     console.log('Deploy BasicTokenWhitelist for testing in', network)
     const basicTokenWhitelist = await deployer.deploy(BasicTokenWhitelist)
     whiteListAddressMsg = 'Token White List Address (BasicTokenWhitelist, only for testing): ' + tokenWhitelistAddress
