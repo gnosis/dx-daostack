@@ -14,7 +14,7 @@ Migrations dry-run (simulation)
 ===============================
 > Network name:    'mainnet-fork'
 > Network id:      1
-> Block gas limit: 8007840
+> Block gas limit: 8000029
 
 
 1.Initial-migration.js
@@ -181,19 +181,19 @@ Configuring Genesis Protocol voting machine for "contributionReward":
   - preBoostedVotePeriodLimit: 43200
   - thresholdConst: 1200
   - quietEndingPeriod: 21600
-  - proposingRepReward: 1000000000000000000000
+  - proposingRepReward: 500000000000000000000
   - votersReputationLossRatio: 4
-  - minimumDaoBounty: 250000000000000000000
+  - minimumDaoBounty: 125000000000000000000
   - daoBountyConst: 10
   - voteOnBehalf: 0x0000000000000000000000000000000000000000
  - activationTime: Sun Feb 10 2019 13:00:00 GMT+0300 (MSK)
   - Name: contributionReward
-  - Transaction: 0xb9155b421f88bf26d0511243b84c0042d0e6e9f46032baa13c4ce73f06c59d0e
+  - Transaction: 0xfa7c976397cd8e4e9d1d9593ef9aa123f4585da164e361269d13ede85297ecd9
   - Gas used: 78491
 
 Configured a new Genesis Protocol set of params:
   - Name: contributionReward
-  - Hash: 0x799ed01049e08115e3e0574be742064df3f2137db7632273f6652ed36b9e8004
+  - Hash: 0x1eaee2cc94bdb5b2ca95edb9014b8b4e54b0d9fb14413c807d863e3e47342506
 
 Configuring Genesis Protocol voting machine for "admin":
   - queuedVoteRequiredPercentage: 50
@@ -441,17 +441,17 @@ Configure ContributionReward
 
 Set scheme parameters for scheme: 0x082Ea4D85055dE18297be0F112240F8c6a6ae319
   - orgNativeTokenFee: 0
-  - voteApproveParams: 0x799ed01049e08115e3e0574be742064df3f2137db7632273f6652ed36b9e8004
+  - voteApproveParams: 0x1eaee2cc94bdb5b2ca95edb9014b8b4e54b0d9fb14413c807d863e3e47342506
   - intVote: 0x50932521953CA7a1fA11434891cc9D9b0183fBc5
 
 
 Register ContributionReward scheme in the controller:
   - Scheme address: 0x082Ea4D85055dE18297be0F112240F8c6a6ae319
-  - Param hash: 0xae92473ec0722df55aabc6223b27130db0bf2ff0238392b0a10c4afeda2969c2
+  - Param hash: 0x4b67291712e89865c575891f07d3e6dc9ba66cd01f70f559310d6da0e010abb0
   - Permissions: 0x00000001
   - Avatar address: 0x7cF65d43255EBF0BfCc20DF9286EC84002d4D4c0
   - Controller address: 0xcEcA923800E6B49b265ad563958CFA71BF09E8D6
-  - Transaction: 0x4eec9f169a5f40f073372beb38f6d5d1e4878cd346f18b827034c02dd45c0a25
+  - Transaction: 0xc36e494027ef6266d8b1214d3d17239efbf504bd65eafe9b82b2f29288280b75
   - Gas used: 41831
 
    -------------------------------------
