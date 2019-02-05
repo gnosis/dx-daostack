@@ -32,15 +32,15 @@ module.exports = {
 
     // The expiration period for proposal in normal queue
     // the time limit for a proposal to be in an absolute voting mode.
-    queuedVotePeriodLimit: getIntParam(process.env.QUEUED_VOTE_PERIOD_LIMIT, 90 * DAY_IN_SECONDS),
+    queuedVotePeriodLimit: getIntParam(process.env.QUEUED_VOTE_PERIOD_LIMIT, 90 * DAY_IN_SECONDS),  // 7776000
 
     // Time to resolve a boosted proposal
     //  the time limit for a proposal to be in an relative voting mode.
-    boostedVotePeriodLimit: getIntParam(process.env.BOOSTED_VOTE_PERIOD_LIMIT, 14 * DAY_IN_SECONDS),
+    boostedVotePeriodLimit: getIntParam(process.env.BOOSTED_VOTE_PERIOD_LIMIT, 14 * DAY_IN_SECONDS),  // 1209600
 
     // Time period to have the proposal stable in the pre-boosted queue
     //  the time limit for a proposal to be in an preparation
-    preBoostedVotePeriodLimit: getIntParam(process.env.PRE_BOOSTED_VOTE_PERIOD_LIMIT, 2 * DAY_IN_SECONDS),
+    preBoostedVotePeriodLimit: getIntParam(process.env.PRE_BOOSTED_VOTE_PERIOD_LIMIT, 2 * DAY_IN_SECONDS),  // 172800
 
 
     // Alpha: Constant used to get the confidence:
@@ -49,10 +49,10 @@ module.exports = {
     thresholdConst: getIntParam(process.env.THRESHOLD_CONST, 1300),
 
     // Period where the decisiion cannot be swiched from a Yes/No (or otherwise)
-    quietEndingPeriod: getIntParam(process.env.QUIET_ENDING_PERIOD, 4 * DAY_IN_SECONDS),
+    quietEndingPeriod: getIntParam(process.env.QUIET_ENDING_PERIOD, 4 * DAY_IN_SECONDS),  // 345600
 
     // Number of reputation for successful proposal
-    proposingRepReward: getIntParam(process.env.PROPOSING_REP_REWARD, '1000000000000000000000'), // 1000 * 1e18
+    proposingRepReward: getIntParam(process.env.PROPOSING_REP_REWARD, '1000000000000000000000'), // 1e21 = 1000 * 1e18
 
     // Percentage of reputation that a voter looses by voting wrong
     //  - Only affects regular queue + pre-boosted queue
@@ -61,7 +61,7 @@ module.exports = {
     // The dxDao will stake negatively against every proposal
     // Minimun stake
     // TODO: Add formula here
-    minimumDaoBounty: getIntParam(process.env.MINIMUM_DAO_BOUNTY, '500000000000000000000'), //  0.5 * 1e18
+    minimumDaoBounty: getIntParam(process.env.MINIMUM_DAO_BOUNTY, '500000000000000000000'), //  5e20 = 500 * 1e18
     // Constant
     daoBountyConst: getIntParam(process.env.DAO_BOUNTY_CONST, 10),
 
@@ -74,15 +74,15 @@ module.exports = {
 
     // The expiration period for proposal in normal queue
     // the time limit for a proposal to be in an absolute voting mode.
-    queuedVotePeriodLimit: getIntParam(process.env.QUEUED_VOTE_PERIOD_LIMIT, 45 * DAY_IN_SECONDS),
+    queuedVotePeriodLimit: getIntParam(process.env.QUEUED_VOTE_PERIOD_LIMIT, 45 * DAY_IN_SECONDS), // 3888000
 
     // Time to resolve a boosted proposal
     //  the time limit for a proposal to be in an relative voting mode.
-    boostedVotePeriodLimit: getIntParam(process.env.BOOSTED_VOTE_PERIOD_LIMIT, 7 * DAY_IN_SECONDS),
+    boostedVotePeriodLimit: getIntParam(process.env.BOOSTED_VOTE_PERIOD_LIMIT, 7 * DAY_IN_SECONDS),  // 604800
 
     // Time period to have the proposal stable in the pre-boosted queue
     //  the time limit for a proposal to be in an preparation
-    preBoostedVotePeriodLimit: getIntParam(process.env.PRE_BOOSTED_VOTE_PERIOD_LIMIT, 1 * DAY_IN_SECONDS),
+    preBoostedVotePeriodLimit: getIntParam(process.env.PRE_BOOSTED_VOTE_PERIOD_LIMIT, 1 * DAY_IN_SECONDS), // 86400
 
 
     // Alpha: Constant used to get the confidence:
@@ -91,10 +91,10 @@ module.exports = {
     thresholdConst: getIntParam(process.env.THRESHOLD_CONST, 1200),
 
     // Period where the decisiion cannot be swiched from a Yes/No (or otherwise)
-    quietEndingPeriod: getIntParam(process.env.QUIET_ENDING_PERIOD, 2 * DAY_IN_SECONDS),
+    quietEndingPeriod: getIntParam(process.env.QUIET_ENDING_PERIOD, 2 * DAY_IN_SECONDS),  // 172800
 
     // Number of reputation for successful proposal
-    proposingRepReward: getIntParam(process.env.PROPOSING_REP_REWARD, '500000000000000000000'), // 1000 * 1e18
+    proposingRepReward: getIntParam(process.env.PROPOSING_REP_REWARD, '500000000000000000000'), // 5e20 == 500 * 1e18
 
     // Percentage of reputation that a voter looses by voting wrong
     //  - Only affects regular queue + pre-boosted queue
@@ -103,7 +103,7 @@ module.exports = {
     // The dxDao will stake negatively against every proposal
     // Minimun stake
     // TODO: Add formula here
-    minimumDaoBounty: getIntParam(process.env.MINIMUM_DAO_BOUNTY, '500000000000000000000'), //  0.5 * 1e18
+    minimumDaoBounty: getIntParam(process.env.MINIMUM_DAO_BOUNTY, '250000000000000000000'), //  2.5e20 == 250 * 1e18
     // Constant
     daoBountyConst: getIntParam(process.env.DAO_BOUNTY_CONST, 10),
 
@@ -116,15 +116,15 @@ module.exports = {
 
     // The expiration period for proposal in normal queue
     // the time limit for a proposal to be in an absolute voting mode.
-    queuedVotePeriodLimit: getIntParam(process.env.QUEUED_VOTE_PERIOD_LIMIT, 90 * DAY_IN_SECONDS),
+    queuedVotePeriodLimit: getIntParam(process.env.QUEUED_VOTE_PERIOD_LIMIT, 90 * DAY_IN_SECONDS),  // 777600
 
     // Time to resolve a boosted proposal
     //  the time limit for a proposal to be in an relative voting mode.
-    boostedVotePeriodLimit: getIntParam(process.env.BOOSTED_VOTE_PERIOD_LIMIT, 14 * DAY_IN_SECONDS),
+    boostedVotePeriodLimit: getIntParam(process.env.BOOSTED_VOTE_PERIOD_LIMIT, 14 * DAY_IN_SECONDS),  // 1209600
 
     // Time period to have the proposal stable in the pre-boosted queue
     //  the time limit for a proposal to be in an preparation
-    preBoostedVotePeriodLimit: getIntParam(process.env.PRE_BOOSTED_VOTE_PERIOD_LIMIT, 2 * DAY_IN_SECONDS),
+    preBoostedVotePeriodLimit: getIntParam(process.env.PRE_BOOSTED_VOTE_PERIOD_LIMIT, 2 * DAY_IN_SECONDS),  // 172800
 
 
     // Alpha: Constant used to get the confidence:
@@ -133,10 +133,10 @@ module.exports = {
     thresholdConst: getIntParam(process.env.THRESHOLD_CONST, 1300),
 
     // Period where the decisiion cannot be swiched from a Yes/No (or otherwise)
-    quietEndingPeriod: getIntParam(process.env.QUIET_ENDING_PERIOD, 4 * DAY_IN_SECONDS),
+    quietEndingPeriod: getIntParam(process.env.QUIET_ENDING_PERIOD, 4 * DAY_IN_SECONDS),  // 345600
 
     // Number of reputation for successful proposal
-    proposingRepReward: getIntParam(process.env.PROPOSING_REP_REWARD, '2000000000000000000000'), // 1000 * 1e18
+    proposingRepReward: getIntParam(process.env.PROPOSING_REP_REWARD, '2000000000000000000000'), // 2e21 == 2000 * 1e18
 
     // Percentage of reputation that a voter looses by voting wrong
     //  - Only affects regular queue + pre-boosted queue
@@ -145,7 +145,7 @@ module.exports = {
     // The dxDao will stake negatively against every proposal
     // Minimun stake
     // TODO: Add formula here
-    minimumDaoBounty: getIntParam(process.env.MINIMUM_DAO_BOUNTY, '500000000000000000'), //  0.5 * 1e18
+    minimumDaoBounty: getIntParam(process.env.MINIMUM_DAO_BOUNTY, '1000000000000000000000'), //  1e21 == 1000 * 1e18
     // Constant
     daoBountyConst: getIntParam(process.env.DAO_BOUNTY_CONST, 10),
 
