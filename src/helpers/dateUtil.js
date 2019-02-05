@@ -1,6 +1,6 @@
 const moment = require('moment-timezone')
 
-const TIME_ZONE = process.env.TZ || 'Asia/Tel_Aviv'
+const TIME_ZONE = process.env.TIME_ZONE || 'Asia/Tel_Aviv'
 
 function parseIso8601Date (iso8601FormattedDate) {
   return new Date(Date.parse(iso8601FormattedDate))
