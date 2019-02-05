@@ -15,7 +15,7 @@
 
 const NOBODYS_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-const DAY_IN_SECONDS = 24
+const DAY_IN_SECONDS = 24 * 60 * 60
 
 function getIntParam(envValue, defaultValue) {
   if (envValue) {
