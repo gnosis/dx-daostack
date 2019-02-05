@@ -23,8 +23,8 @@ this [Forum](https://daotalk.org/c/dx-dao).
 # Bug Bounty
 * [Blog post](https://blog.gnosis.pm/test-dxdao-bug-bounties-live-939095b7dd8d)
 * [Bounty Github branch](https://github.com/gnosis/dx-daostack/tree/feature/bounty)
-  * [Deployment info](https://github.com/gnosis/dx-daostack/blob/feature/bounty/deployment-bounty-mainnet.txt): Deployment Info, Parameters, Contract Addresses, etc..
-  * [Config used](https://github.com/gnosis/dx-daostack/blob/feature/bounty/env_vars/bounty.31.01.2019.env)
+  * [Deployment info](https://github.com/gnosis/dx-daostack/blob/feature/bounty/deployment-bounty-mainnet.txt): Parameters, Contract Addresses, Transaction information, etc..
+  * [Config used](https://github.com/gnosis/dx-daostack/blob/feature/bounty/env_vars/bounty.31.01.2019.env): Overrides over the default config
 
 # Audit
 DAOStack's Smart contract Audit:
