@@ -1,7 +1,7 @@
 const SchemePermissions = require('./SchemePermissions')
 const assert = require('assert')
 
-async function registerScheme ({
+async function registerScheme({
   web3,
   label,
   schemeAddress,
@@ -39,7 +39,7 @@ async function registerScheme ({
   console.log()
 }
 
-async function setParameters ({
+async function setParameters({
   scheme,
   parameters
 }) {
@@ -47,8 +47,8 @@ async function setParameters ({
   assert(parameters, `The parameter parameters was not defined`)
   assert(Array.isArray(parameters), `The parameter should be an array`)
   assert(parameters.length > 0, `Parameters list should contain at least one parameter`)
-  
-  console.log('\nSet scheme parameters:')
+
+  console.log(`\nSet scheme parameters for scheme: ${scheme.address}`)
   parameters.forEach(({ name, value }) => {
     console.log(`  - ${name}: ${value}`)
     assert(value !== null, `The parameter ${name} is required`)
@@ -58,7 +58,7 @@ async function setParameters ({
   const paramList = parameters.map(parameter => parameter.value)
   await scheme.setParameters(...paramList)
   const paramsHash = await scheme.getParametersHash(...paramList)
-  
+
   return paramsHash
 }
 

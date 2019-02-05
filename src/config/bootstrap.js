@@ -19,11 +19,11 @@ module.exports = {
   // GEN Auctions
   //  - Get REP out of auctioning GEN
   // TODO: Decide
-  numberOfGenAuctions: getIntParam(process.env.NUMBERS_OF_GEN_AUCTIONS, 5),
+  numberOfGenAuctions: getIntParam(process.env.NUMBERS_OF_GEN_AUCTIONS, 10),
 
   // ETH Locking (in seconds)
-  maxLockingEthPeriod: getIntParam(process.env.MAX_LOCKING_PERIOD, 180 * SECONDS_PER_DAY),
+  maxLockingEthPeriod: getIntParam(process.env.MAX_LOCKING_PERIOD, 365 * SECONDS_PER_DAY),
 
   // Whitelisted tokens Locking
-  maxLockingWhitelistedTokensPeriod: getIntParam(process.env.MAX_LOCKING_PERIOD, 180 * SECONDS_PER_DAY)
+  maxLockingWhitelistedTokensPeriod: getIntParam(process.env.MAX_LOCKING_PERIOD, 365 * SECONDS_PER_DAY)
 }

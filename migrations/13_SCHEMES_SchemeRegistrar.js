@@ -1,7 +1,7 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
 const assert = require('assert')
-const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')({ artifacts, web3 })
+const genesisProtocolHelper = require('../src/helpers/genesisProtocolHelper')({ artifacts, web3 })
 
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
@@ -27,12 +27,12 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
   console.log('Configure SchemeRegistrar')
 
   const {
-    genesisProtocolParamsHash,
-    genesisProtocolAddress
-  } = await getGenesisProtocolData()
+    paramsHash: genesisProtocolParamsHash,
+    address: genesisProtocolAddress
+  } = await genesisProtocolHelper.getGenesisProtocolData('admin')
 
-  assert(genesisProtocolParamsHash, `The parameter genesisProtocolParamsHash was not defined`)
-  assert(genesisProtocolAddress, `The parameter genesisProtocolAddress was not defined`)
+  assert(genesisProtocolParamsHash, `The parameter paramsHash was not defined`)
+  assert(genesisProtocolAddress, `The parameter address was not defined`)
 
   // Set parameters
   const paramsHash = await setParameters({
@@ -47,8 +47,9 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
       name: 'intVoteAddress',
       value: genesisProtocolAddress
     }
-  ]})
-  
+    ]
+  })
+
   await registerScheme({
     label: 'SchemeRegistrar',
     schemeAddress: schemeRegistrar.address,
@@ -56,7 +57,6 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
     controller: dxController,
     permissions: REGISTERED | REGISTER_SCHEMES | ADD_REMOVE_GLOBAL_CONSTRAINTS |
       UPGRADE_CONTROLLER | CALL_DELEGATECALL,
-    
     paramsHash,
   })
 }

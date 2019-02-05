@@ -6,7 +6,7 @@
 // TODO: Confirm
 const TOKEN_NAME = 'dxDAO'
 const TOKEN_SYMBOL = 'DXD'
-const TOKENS_CAP = 1.5e6
+const TOKENS_CAP = 0 // No CAP
 const ORGANIZATION_NAME = 'dxDAO'
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
   foundersInitialRep: parseInt(process.env.FOUNDERS_INITIAL_REP || 200)
 }
 
-function getFounders () {
+function getFounders() {
   // Founders:
   //  - not mandatory, by default the deployer will be the sole founder
   //  - it can be specified by a list of comma separated addresses

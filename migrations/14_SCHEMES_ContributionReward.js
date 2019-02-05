@@ -2,7 +2,7 @@
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
 
-const { getGenesisProtocolData } = require('../src/helpers/genesisProtocolHelper')({ artifacts, web3 })
+const genesisProtocolHelper = require('../src/helpers/genesisProtocolHelper')({ artifacts, web3 })
 
 const DxAvatar = artifacts.require('DxAvatar')
 const DxController = artifacts.require('DxController')
@@ -22,9 +22,9 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
   console.log('Configure ContributionReward')
 
   const {
-    genesisProtocolParamsHash,
-    genesisProtocolAddress
-  } = await getGenesisProtocolData()
+    paramsHash: genesisProtocolParamsHash,
+    address: genesisProtocolAddress
+  } = await genesisProtocolHelper.getGenesisProtocolData('contributionReward')
 
   // Set parameters
   const paramsHash = await setParameters({
@@ -39,7 +39,8 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
       name: 'intVote',
       value: genesisProtocolAddress
     }
-  ]})
+    ]
+  })
 
   await registerScheme({
     label: 'ContributionReward',

@@ -493,13 +493,16 @@ function checkStateChanged(context, variable, expected, ...input) {
 
 async function ensureAvatarIsAuctioneer(accounts, { Avatar, DX }) {
   const avatar = await Avatar.address
+  console.log('\navatar: ', avatar);
   const auctioneer = await DX.auctioneer()
+  console.log('auctioneer: ', auctioneer);
 
   if (avatar === auctioneer) return
 
   if (accounts.includes(auctioneer)) {
-    console.log('Changing DX auctioneer to Controller address')
+    console.log('Changing DX auctioneer to Avatar address')
     await DX.updateAuctioneer(avatar, { from: auctioneer })
+    console.log('CHANGED', await DX.auctioneer());
     return
   }
 

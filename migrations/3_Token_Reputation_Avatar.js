@@ -12,17 +12,18 @@ module.exports = async (deployer) => { // eslint-disable-line no-unused-vars
   const { tokenName, tokenSymbol, tokenCap, organizationName } = daoConfig
   assert(tokenName, 'The token name is mandatory')
   assert(tokenSymbol, 'The token symbol is mandatory')
-  assert(tokenCap, 'The token cap is mandatory')
+  assert(tokenCap !== undefined, 'The token cap is mandatory')
   assert(organizationName, 'The organization name is mandatory')
 
+  const tokenCapDescription = tokenCap ? (tokenCap / 1e6) + 'M' : 'No CAP'
   console.log(`
 Deploying DutchX token:
   - Token name: ${tokenName} 
   - Token symbol: ${tokenSymbol} 
-  - Token cap: ${(tokenCap / 1e6) + 'M'} 
+  - Token cap: ${tokenCapDescription} 
 `)
   await deployer.deploy(DxToken, tokenName, tokenSymbol, tokenCap)
-  
+
   console.log('Deploying DutchX Reputation token')
   await deployer.deploy(DxReputation)
 
