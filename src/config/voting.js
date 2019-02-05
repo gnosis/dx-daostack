@@ -48,7 +48,7 @@ module.exports = {
     //     Nn: number of busted proposals   
     thresholdConst: getIntParam(process.env.THRESHOLD_CONST, 1300),
 
-    // Period where the decisiion cannot be swiched from a Yes/No (or otherwise)
+    // Period where the decision cannot be swiched from a Yes/No (or otherwise)
     quietEndingPeriod: getIntParam(process.env.QUIET_ENDING_PERIOD, 4 * DAY_IN_SECONDS),  // 345600
 
     // Number of reputation for successful proposal
@@ -90,7 +90,7 @@ module.exports = {
     //     Nn: number of busted proposals   
     thresholdConst: getIntParam(process.env.THRESHOLD_CONST, 1200),
 
-    // Period where the decisiion cannot be swiched from a Yes/No (or otherwise)
+    // Period where the decision cannot be swiched from a Yes/No (or otherwise)
     quietEndingPeriod: getIntParam(process.env.QUIET_ENDING_PERIOD, 2 * DAY_IN_SECONDS),  // 172800
 
     // Number of reputation for successful proposal
@@ -129,10 +129,10 @@ module.exports = {
 
     // Alpha: Constant used to get the confidence:
     //    (S+ / S-) > Alpha^Nb  
-    //     Nn: number of busted proposals   
+    //     Nn: number of boosted proposals   
     thresholdConst: getIntParam(process.env.THRESHOLD_CONST, 1300),
 
-    // Period where the decisiion cannot be swiched from a Yes/No (or otherwise)
+    // Period where the decision cannot be swiched from a Yes/No (or otherwise)
     quietEndingPeriod: getIntParam(process.env.QUIET_ENDING_PERIOD, 4 * DAY_IN_SECONDS),  // 345600
 
     // Number of reputation for successful proposal
