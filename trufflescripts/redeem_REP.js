@@ -2,8 +2,8 @@
 module.exports = async () => {
 
   // Same as claim_MGN, but
-  // look for Lock events in DxLockMgnForRep, DxLocEth4Rep, DxLockWhitelisted4Rep
-  // and Bid event in DxLockWhitelisted4Rep
+  // look for Lock events in DxLockMgnForRep, DxLockEth4Rep, DxLockWhitelisted4Rep
+  // and Bid event in DxGenAuction4Rep
   // contracts in ./networks-3rd-rinkeby-test.json should have those
   // then call Contract.redeem(account)
 }

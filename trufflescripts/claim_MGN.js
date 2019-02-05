@@ -7,6 +7,8 @@ module.exports = async () => {
 
   // 2 Get all Register events from the contract
   // Contract.Register().getData or something like that
+  // var res = await lock.getPastEvents('Register', {fromBlock:0})
+
   // test with this one, has events
   // https://rinkeby.etherscan.io/address/0xa248671eC41110D58e587120a5B9C24A66daBfc6#events
 
