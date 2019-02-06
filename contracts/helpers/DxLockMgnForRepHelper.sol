@@ -12,12 +12,12 @@ contract DxLockMgnForRepHelper {
     }
 
     /// @dev batch claiming
-    function claimAll(address[] memory beneficiaries) public returns(bytes32[] memory) {
+    function claimAll(address[] calldata beneficiaries) external returns(bytes32[] memory) {
         uint length = beneficiaries.length;
 
         bytes32[] memory lockingId = new bytes32[](length);
 
-        for (uint i; i < beneficiaries.length; ++i) {
+        for (uint i = 0; i < beneficiaries.length; i++) {
             lockingId[i] = dxLM4R.claim(beneficiaries[i]);
         }
 
