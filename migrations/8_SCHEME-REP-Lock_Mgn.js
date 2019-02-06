@@ -49,7 +49,7 @@ module.exports = async function (deployer) {
   const dxLockMgn = await deployer.deploy(DxLockMgnForRep)
   // Deploy DxLockMgnForRepHelper
   console.log('Deploying DxLockMgnForRepHelper helper')
-  console.log('  - Hlper that allows to batch claim all MGN')
+  console.log('  - Helper that allows to batch claim all MGN')
   await deployer.deploy(DxLockMgnForRepHelper, dxLockMgn.address)
 
   // Initialize DxLockMgnForRep
