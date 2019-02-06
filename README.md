@@ -4,22 +4,32 @@
   <img width="350px" src="http://dutchx.readthedocs.io/en/latest/_static/DutchX-logo_blue.svg" />
 </p>
 
+# dxDAO
+* **dxDAO Web**: https://dxdao.daostack.io
 
-# DutchX Dao (DaoStack)
-DAO (Decentralized Autonomous Organization) for managing the **DutchX**.
+The future of organizations is DAOs. The dxDAO is a next-generation DAO, designed
+ to facilitate global, open trade.
 
-The **Dutch Exchange (DutchX)** is a fully decentralized exchange, which
-allows **everyone** to add any trading token pair.
+The first dApp governed by the dxDAO will be the DutchX, an open trading 
+protocol for ERC20 tokens using the Dutch auction mechanism. 
+It determines a fair value for tokens, permits trading in low liquidity 
+environments with no third party risk, and mitigates harmful trading practices 
+like front-running
 
-It uses the [Dutch auction] principle, to prevent the problems that
-other exchanges are experiencing (such as front running) getting a
-fairer ecosystem for everyone to use.
+You can find all information and documentation about the DutchX 
+[here](https://dutchx.readthedocs.io/en/latest/), and join the discussion in 
+this [Forum](https://daotalk.org/c/dx-dao).
 
-There is no restriction besides the fact that tokens must be
-[ERC20](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md) compliant.
+# Bug Bounty
+* [Blog post](https://blog.gnosis.pm/test-dxdao-bug-bounties-live-939095b7dd8d)
+* [Bounty Github branch](https://github.com/gnosis/dx-daostack/tree/feature/bounty)
+  * [Deployment info](https://github.com/gnosis/dx-daostack/blob/feature/bounty/deployment-bounty-mainnet.txt): Parameters, Contract Addresses, Transaction information, etc..
+  * [Config used](https://github.com/gnosis/dx-daostack/blob/feature/bounty/env_vars/bounty.31.01.2019.env): Overrides over the default config
 
-# Documentation
-Checkout the [DutchX Documentation](http://dutchx.readthedocs.io/en/latest).
+# Audit
+DAOStack's Smart contract Audit:
+* [Blog post](https://medium.com/chainsecurity/https-medium-com-chainsecurity-daostack-audit-completed-10e370c4bc30)
+* [Full Report](https://github.com/ChainSecurity/audits/blob/master/ChainSecurity_DAOstack_v2.pdf)
 
 ## Run tests
 ```bash
