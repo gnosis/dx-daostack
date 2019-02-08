@@ -7,10 +7,9 @@ const ExternalTokenLockerMock = artifacts.require('ExternalTokenLockerMock')
 const TokenMGN = artifacts.require('TokenFRT')
 const TokenMGNProxy = artifacts.require('TokenFRTProxy')
 
-// artifacts and web3 are available globally
-module.exports = async () => {
-  // console.log('argv = ', argv)
-  // 1 Get DxLockMgnForRep contract
+// Why this script?
+
+// 1 Get DxLockMgnForRep contract
   // either the deployed one (if artifacts have network) 
   // or from a given networks-*.json file (-f flag?)
   // or provided as an execution --flag
@@ -34,7 +33,21 @@ module.exports = async () => {
   //     error: ?
   //   }
   // }    
+
+// artifacts and web3 are available globally
+module.exports = async () => {
   
+  /**
+   * How best to run this
+   * 
+   * Rinkeby:
+   * [use flag --known-events to use DxLockMgnForRep with registered users w/MGN balance]
+   * [use flag -f 'networks-david-test.json' for addresses]
+   * [use flag --from-block 0]
+   * 
+   * Complete: npx truffle exec trufflescripts/claim_MGN.js --network rinkeby -f 'networks-david-test.json' --known-events --from-block 0
+   */
+
   // address of DxLockMgnForRep contract with Register events
   const REGISTER_EVENTS = '0xa248671eC41110D58e587120a5B9C24A66daBfc6'
 
