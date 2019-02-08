@@ -1080,6 +1080,14 @@
       "transactionHash": "0xd79b7d82478a238f0b981ca2fe2cdddfeeadfbee2e2f3d2ebac94ee0056fda23"
     }
   },
+  "TokenFRT": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0x547127c6cb8b242bf5b5f38b97799a61477d951a",
+      "transactionHash": "0xfe763f9886018a6326a32cd81c951253bf8b840e1cc501de100e8f013ddaefe3"
+    }
+  },
   "TokenFRTProxy": {
     "1": {
       "events": {},
