@@ -9,7 +9,7 @@ const TokenFRTArtifact = artifacts.require('TokenFRT')
 module.exports = async () => {
     try {
         const network = await web3.eth.net.getId()
-        if (network < 100) throw 'Must be on local network'
+        if (network <= 1) throw 'Must be on local network or Rinkeby.'
         
         const externalTokenLockerMock = await ExternalTokenLockerMock.deployed()
         const dxLockMgnForRep = await DxLockMgnForRepArtifact.deployed()
@@ -17,6 +17,7 @@ module.exports = async () => {
 
         // Get Accts
         const accts = await web3.eth.getAccounts()
+		console.log('Script running for accounts: ', accts)
         
         // Loop through local accts and lock 100 MGN from each
         const LockReceipts = await Promise.all(accts.map(acct => externalTokenLockerMock.lock(toBN(100), { from: acct })))
@@ -27,7 +28,7 @@ module.exports = async () => {
         console.log('DxLockMgnForRep RegisterReceipts: ', RegisterReceipts)
         
         // show balances of mgn
-        const mgnBalances = await Promise.all(accts.map(acct => tokenMgn.lockedTokenBalances.call(acct)))
+        const mgnBalances = await Promise.all(accts.map(acct => tokenMgn.lockedTokenBalances(acct)))
 		console.log('MGN Locked Balances After', mapToString(mgnBalances))
     } catch (error) {
         console.error(error)
