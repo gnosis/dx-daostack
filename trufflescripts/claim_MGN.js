@@ -38,14 +38,15 @@ const TokenMGNProxy = artifacts.require('TokenFRTProxy')
 module.exports = async () => {
   
   /**
-   * How best to run this
+   * How best to run this for testing @ Rinkeby
    * 
    * Rinkeby:
-   * [use flag --known-events to use DxLockMgnForRep with registered users w/MGN balance]
-   * [use flag -f 'networks-david-test.json' for addresses]
+   * [use flag --mock-mgn to use mocked ExternalLocking contract allowing testing w/LockedMGNBalance
+   * [use flag -f 'networks-rinkeby-long-lock.json' for addresses]
    * [use flag --from-block 0]
    * 
-   * Complete: npx truffle exec trufflescripts/claim_MGN.js --network rinkeby -f 'networks-david-test.json' --known-events --from-block 0
+   * Complete [ DRY-RUN ]: npx truffle exec trufflescripts/claim_MGN.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0
+   * Complete [ REAL-RUN ]: npx truffle exec trufflescripts/claim_MGN.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0 --dry-run false
    */
 
   // address of DxLockMgnForRep contract with Register events
@@ -64,7 +65,7 @@ module.exports = async () => {
     })
     .option('dryRun', {
       type: 'boolean',
-      default: false,
+      default: true,
       describe: 'Run contract functions via [.call]'
     })
     .option('batchSize', {
@@ -112,7 +113,7 @@ module.exports = async () => {
     let dxLockMgnForRep
     let promisedDxLockMgnForRepHelper
     // let promisedTokenMGN
-    
+
     // Conditionally check which contract addresses to use
     if (f) {
       console.log(`
@@ -148,7 +149,7 @@ module.exports = async () => {
         promisedDxLockMgnForRepHelper = DxLockMgnForRepHelperArtifact.deployed()
 
         // Allow use of MockMGN contract, only on development
-        if (mockMGN && network === 'development') {
+        if (mockMGN && network !== 'mainnet') {
           console.log(`
       =====================================================================
 
@@ -252,21 +253,60 @@ module.exports = async () => {
       // console.log('Time jump NOT required. Skipping...')
     }
 
-    let bytesReturn = await Promise.all(beneficiariesWithBalance.map(({ address }) => dxLockMgnForRep.claim.call(address)))
-		console.log('TCL: bytesReturn', bytesReturn)
-
+    // get dxLockHelper
     const dxLockMgnForRepHelper = await promisedDxLockMgnForRepHelper
-    console.log('\nPreparing to claimAll call...')
-    const lockingIdsArray = (await dxLockMgnForRepHelper.claimAll.call(beneficiariesWithBalance.map(({ address }) => address))).map(val => toBN(val))
-    console.log('\nLocking IDs Array', JSON.stringify(lockingIdsArray, undefined, 2))
+    // Extract only addresses w/MGN locked balance into array
+    const beneficiariesWithBalanceAddressesOnly = beneficiariesWithBalance.map(({ address }) => address)
+
+    // Below is required as Solidity loop function claimAll inside DxLockMgnForRepHelper.claimAll is NOT reverting when looping and
+    // calling individual DxLockMgnForRep.claim method on passed in beneficiary addresses
+    // Lines 268 - 277 filter out bad responses and leave claimable addresses to batch
+    const individualClaimCallReturn = await Promise.all(beneficiariesWithBalanceAddressesOnly.map(beneAddr => dxLockMgnForRep.claim.call(beneAddr)))
+    console.log('DxLockMgnForRep.claim on each acct call result: ', individualClaimCallReturn)
+    console.log('Filtering out 0x08c379a000000000000000000000000000000000000000000000000000000000 values...')
     
-    // const claimAllReceipt = await dxLockMgnForRepHelper.claimAll(allBeneficiaries)
-		// console.log('ClaimAll Receipt', claimAllReceipt)
+    const accountsClaimable = individualClaimCallReturn.reduce((acc, item, index) => {
+      if (item === '0x08c379a000000000000000000000000000000000000000000000000000000000') return acc
+      
+      acc.push(beneficiariesWithBalanceAddressesOnly[index])
+      return acc
+    }, [])
+    console.log('Final Filtered Values', accountsClaimable)
+
+    if (!accountsClaimable.length) throw 'No final claimable addresses. Aborting.'
+
+    if (dryRun) {
+      console.warn(`
+      ============================================================================
+      
+      DRY-RUN ENABLED - Call values returned, no actual blockchain state affected. 
+      To actually change state, please run without [--dry-run false].
+
+      ============================================================================
+      `)
+
+      // TODO: fix this
+      // Workaround as failing bytes32[] call return doesn't properly throw and returns
+      // consistent 'overflow' error(seems to be Truffle5 + Ethers.js issue)
+      await dxLockMgnForRepHelper.claimAll.estimateGas(accountsClaimable)
+      console.log('\nPreparing claimAll call...')
+      const lockingIdsArray = await dxLockMgnForRepHelper.claimAll.call(accountsClaimable)
+      console.log('\nLocking IDs Array', JSON.stringify(lockingIdsArray, undefined, 2))
+    } else {
+      console.log('\nPreparing actual claimAll - this WILL affect blockchain state...')
+      const claimAllReceipts = await dxLockMgnForRepHelper.claimAll(accountsClaimable)
+      console.log('ClaimAll Receipt(s)', claimAllReceipts)
+    }
   } catch (error) {
     console.error(error)
-    // const ERROR_MESSAGE = 'File execution error, please see below.'
-    // handleError(error, ERROR_MESSAGE)
   } finally {
+    console.warn(`
+      ===========
+      
+      SCRIPT DONE
+
+      ===========
+    `)
     process.exit()
   }
 }
