@@ -1,4 +1,4 @@
-const { toBN } = require('./utils')(web3)
+const { toBN, mapToString } = require('./utils')(web3)
 
 const DxLockMgnForRepArtifact = artifacts.require('DxLockMgnForRep')
 const DxLockMgnForRepHelperArtifact = artifacts.require('DxLockMgnForRepHelper')
@@ -53,7 +53,6 @@ module.exports = async () => {
     const dxLockMgnForRep = await DxLockMgnForRepArtifact.deployed()
     const promisedDxLockMgnForRepHelper = DxLockMgnForRepHelperArtifact.deployed()
     const promisedTokenMGN = TokenMGN.deployed()
-
     /**
      * allPastRegisterEvents
      * @summary Promise for all past Register events fromBlock 0
@@ -61,7 +60,7 @@ module.exports = async () => {
      */
     const allPastRegisterEvents = await dxLockMgnForRep.getPastEvents('Register', { fromBlock: 0 })
     if (!allPastRegisterEvents.length) throw 'No registered users. Aborting.'
-
+    
     /**
      * allFromandBeneficiaries
      * @summary ARRAY with OBJECT values { from: '0x...', beneficiary: '0x...' }
@@ -72,16 +71,21 @@ module.exports = async () => {
     // Run checks to make sure claimAll will properly run
     const dxLockMgnForRepHelper = await promisedDxLockMgnForRepHelper
     const mgn = await promisedTokenMGN
-
+    
     // just show state
     if (showState) {
-      NOW = toBN((await web3.eth.getBlock()).timestamp)
+      const mgnBalances = await Promise.all(allBeneficiaries.map(beneAcct => mgn.lockedTokenBalances(beneAcct)))
+      console.log('Beneficiaries\' MGN Locked Balances', mapToString(mgnBalances))
+
+      NOW = toBN((await web3.eth.getBlock('latest')).timestamp)
       MAX_LOCKING_PERIOD = (await dxLockMgnForRep.maxLockingPeriod.call()).toString()
       LOCKING_END_TIME = (await dxLockMgnForRep.lockingEndTime.call()).toString()
       LOCKING_START_TIME = (await dxLockMgnForRep.lockingStartTime.call()).toString()
-
+      
       return console.log(`
         DxLockMgnForRep local state:
+
+        ALL_REGISTERED_BENEFICIARIES: ${JSON.stringify(allBeneficiaries, undefined, 2)}
 
         MAX_LOCKING_PERIOD: ${MAX_LOCKING_PERIOD}
 
