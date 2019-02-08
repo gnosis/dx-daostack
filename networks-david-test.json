@@ -715,7 +715,7 @@
         }
       },
       "links": {},
-      "address": "0x719cd4D6d3a1765F063f30B67Bd9E59E2504D4fa",
+      "address": "0xa248671eC41110D58e587120a5B9C24A66daBfc6",
       "transactionHash": "0x96ad2b45d0fd2b0fa910bbafeb09159c2de9cba705731a1684d046e4a2a4737a"
     }
   },
@@ -723,8 +723,8 @@
     "4": {
       "events": {},
       "links": {},
-      "address": "0xCb6082838bb8aef72B8f3Dde933444f93F82B8BA",
-      "transactionHash": "0x9516194906902bec21aaad5a69caa5dff2affe1ba75ccabfc4be9fe919947b30"
+      "address": "0x70fAb8969E10D7Ca4D71Ae220fC2A974D5670765",
+      "transactionHash": "0xaf66507c9e1b6abcc9e148be56556996e48c66237d34a1f871630e9979b12296"
     }
   },
   "DxLockWhitelisted4Rep": {

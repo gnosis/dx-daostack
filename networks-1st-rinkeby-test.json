@@ -1288,5 +1288,21 @@
       "address": "0x86DafE98D492345a8Eb7527257b5a29a3C1EFeAB",
       "transactionHash": "0xee31763384940d6e626e6ed25da985ffb975bb1a935611dbb60b307829d45989"
     }
-  }
+  },
+  "TokenFRTProxy": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0xb32a217d61397550c4c09a2b7a07e6fd224c2718",
+      "transactionHash": "0x019f72dfc831ab40afa5b1f7432d99335c596d59dfdb03037c1f606f1d116418"
+    }
+  },
+  "DxLockMgnForRepHelper": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0xCb6082838bb8aef72B8f3Dde933444f93F82B8BA",
+      "transactionHash": "0x9516194906902bec21aaad5a69caa5dff2affe1ba75ccabfc4be9fe919947b30"
+    }
+  },
 }
