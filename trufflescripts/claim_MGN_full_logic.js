@@ -1,7 +1,5 @@
 const { toBN } = require('./utils')(web3)
 
-const argv = require('yargs').argv
-
 const DxLockMgnForRepArtifact = artifacts.require('DxLockMgnForRep')
 const DxLockMgnForRepHelperArtifact = artifacts.require('DxLockMgnForRepHelper')
 const TokenMGN = artifacts.require('TokenFRT')
@@ -34,6 +32,15 @@ module.exports = async () => {
   //   }
   // }
 
+  const argv = require('yargs')
+    .option('showState', {
+      type: 'boolean',
+      default: false,
+    })
+    .argv
+
+  const { showState } = argv
+
   let PERIOD = toBN(1)
   let MAX_LOCKING_PERIOD
   let NOW
@@ -65,6 +72,26 @@ module.exports = async () => {
     // Run checks to make sure claimAll will properly run
     const dxLockMgnForRepHelper = await promisedDxLockMgnForRepHelper
     const mgn = await promisedTokenMGN
+
+    // just show state
+    if (showState) {
+      NOW = toBN((await web3.eth.getBlock()).timestamp)
+      MAX_LOCKING_PERIOD = (await dxLockMgnForRep.maxLockingPeriod.call()).toString()
+      LOCKING_END_TIME = (await dxLockMgnForRep.lockingEndTime.call()).toString()
+      LOCKING_START_TIME = (await dxLockMgnForRep.lockingStartTime.call()).toString()
+
+      return console.log(`
+        DxLockMgnForRep local state:
+
+        MAX_LOCKING_PERIOD: ${MAX_LOCKING_PERIOD}
+
+        NOW:                ${new Date(NOW * 1000)}                 in mm: ${NOW}
+        LOCKING_END_TIME:   ${new Date(LOCKING_END_TIME * 1000)}    in mm: ${LOCKING_END_TIME}
+        LOCKING_START_TIME: ${new Date(LOCKING_START_TIME * 1000)}  in mm: ${LOCKING_START_TIME}
+
+        AMOUNT NEEDED TO TIME JUMP:                                 in mm: [${LOCKING_START_TIME - NOW}] // in s: [${Math.ceil((LOCKING_START_TIME - NOW) / 1000)}]
+      `)
+    }
     
     const beneficiariesMgnBalances = await Promise.all(allBeneficiaries.map(beneficiary => mgn.balanceOf.call(beneficiary)))
 		console.log('Beneficiaries MGN Balances (in BN): ', beneficiariesMgnBalances)
