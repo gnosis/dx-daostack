@@ -120,7 +120,7 @@ contract TokenRegistry is Ownable {
         tokenAddresses.push(_token);
         tokenBySymbol[_symbol] = _token;
         tokenByName[_name] = _token;
-        LogAddToken(_token, _name, _symbol, _decimals, _ipfsHash, _swarmHash);
+        emit LogAddToken(_token, _name, _symbol, _decimals, _ipfsHash, _swarmHash);
     }
 
     /// @dev Allows owner to remove an existing token from the registry.
@@ -132,7 +132,7 @@ contract TokenRegistry is Ownable {
         tokenAddresses.length -= 1;
 
         TokenMetadata storage token = tokens[_token];
-        LogRemoveToken(token.token, token.name, token.symbol, token.decimals, token.ipfsHash, token.swarmHash);
+        emit LogRemoveToken(token.token, token.name, token.symbol, token.decimals, token.ipfsHash, token.swarmHash);
         delete tokenBySymbol[token.symbol];
         delete tokenByName[token.name];
         delete tokens[_token];
@@ -148,7 +148,7 @@ contract TokenRegistry is Ownable {
         nameDoesNotExist(_name)
     {
         TokenMetadata storage token = tokens[_token];
-        LogTokenNameChange(_token, token.name, _name);
+        emit LogTokenNameChange(_token, token.name, _name);
         delete tokenByName[token.name];
         tokenByName[_name] = _token;
         token.name = _name;
@@ -164,7 +164,7 @@ contract TokenRegistry is Ownable {
         symbolDoesNotExist(_symbol)
     {
         TokenMetadata storage token = tokens[_token];
-        LogTokenSymbolChange(_token, token.symbol, _symbol);
+        emit LogTokenSymbolChange(_token, token.symbol, _symbol);
         delete tokenBySymbol[token.symbol];
         tokenBySymbol[_symbol] = _token;
         token.symbol = _symbol;
@@ -175,7 +175,7 @@ contract TokenRegistry is Ownable {
     /// @param _ipfsHash New IPFS hash.
     function setTokenIpfsHash(address _token, bytes memory _ipfsHash) public onlyOwner tokenExists(_token) {
         TokenMetadata storage token = tokens[_token];
-        LogTokenIpfsHashChange(_token, token.ipfsHash, _ipfsHash);
+        emit LogTokenIpfsHashChange(_token, token.ipfsHash, _ipfsHash);
         token.ipfsHash = _ipfsHash;
     }
 
@@ -184,7 +184,7 @@ contract TokenRegistry is Ownable {
     /// @param _swarmHash New Swarm hash.
     function setTokenSwarmHash(address _token, bytes memory _swarmHash) public onlyOwner tokenExists(_token) {
         TokenMetadata storage token = tokens[_token];
-        LogTokenSwarmHashChange(_token, token.swarmHash, _swarmHash);
+        emit LogTokenSwarmHashChange(_token, token.swarmHash, _swarmHash);
         token.swarmHash = _swarmHash;
     }
 

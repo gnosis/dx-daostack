@@ -28,11 +28,10 @@ const CONTRACTS = [
   'FixedReputationAllocation',
   'LockingEth4Reputation',
   'LockingToken4Reputation',
-  'GenericScheme',
-  'WhitelistUsing0xList'
+  'GenericScheme'
 ];
 
-async function getDaoStackContracts ({
+async function getDaoStackContracts({
   contracts = CONTRACTS,
   provider,
   transactionDefaults,
@@ -41,15 +40,12 @@ async function getDaoStackContracts ({
   if (!contractInstances) {
     contractInstances = contracts.reduce((acc, contractName) => {
       let contractUrl = `${DAO_STACK_BUILD_CONTRACTS_DIR}/${contractName}`
-      if (contractName === 'WhitelistUsing0xList') {
-        contractUrl = `../../../../build/contracts/${contractName}`;
-      }
       // console.log(`Load contract: ${contractUrl}`)
       const contractJson = require(contractUrl)
       const truffleContract = contract(contractJson)
       truffleContract.setProvider(provider)
       truffleContract.defaults(transactionDefaults)
-      
+
       contractUrl = './node_modules/' + contractUrl + '.json'
       truffleContract.saveArtifact = async () => {
         if (truffleContract.address) {

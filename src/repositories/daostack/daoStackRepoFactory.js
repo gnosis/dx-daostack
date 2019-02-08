@@ -13,8 +13,7 @@ module.exports = async ({
     Avatar,
     DAOToken,
     Reputation,
-    ExternalLocking4Reputation,
-    WhitelistUsing0xList
+    ExternalLocking4Reputation
   } = await getDaoStackContracts({
     contracts,
     provider,
@@ -52,17 +51,12 @@ module.exports = async ({
     ExternalLocking4Reputation
   });
 
-  const createSchemeWhitelistUsing0xList = require('./schemes/createWhitelistUsing0xList')({
-    WhitelistUsing0xList
-  });
-
   // Repo API
   return {
     forgeOrganization,
     setSchemes,
 
     // Scheme creation
-    createSchemeExternalLocking4Reputation,
-    createSchemeWhitelistUsing0xList
+    createSchemeExternalLocking4Reputation
   };
 };
