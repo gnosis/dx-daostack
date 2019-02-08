@@ -12,7 +12,7 @@ contract DxLockMgnForRepHelper {
     }
 
     /// @dev batch claiming
-    function claimAll(address[] memory beneficiaries) public returns(bytes32[] memory) {
+    function claimAll(address[] calldata beneficiaries) external returns(bytes32[] memory) {
         uint length = beneficiaries.length;
 
         bytes32[] memory lockingIdsArray = new bytes32[](length);
