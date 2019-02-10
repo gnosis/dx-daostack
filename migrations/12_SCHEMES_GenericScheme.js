@@ -22,7 +22,7 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
   const {
     paramsHash: genesisProtocolParamsHash,
     address: genesisProtocolAddress
-  } = await genesisProtocolHelper.getGenesisProtocolData('dutchX')
+  } = await genesisProtocolHelper.setupAndGetGenesisProtocolData('dutchX')
 
   // DutchX address
   const dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')

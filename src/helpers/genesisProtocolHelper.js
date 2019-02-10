@@ -2,18 +2,16 @@ const assert = require('assert')
 const dateUtil = require('../helpers/dateUtil')
 const votingConfs = require('../config/voting')
 const {
-  governanceStart
+  governanceStart: activationTime
 } = require('../config/timePeriods')
 
 // Object caching the hash of the GP params
-let paramsHashes = null
+let paramsHashes = {}
 
 module.exports = ({ artifacts, web3 }) => {
   const getDaostackContract = require('../helpers/getDaostackContract')(web3, artifacts)
 
   async function setupGenesisProtocol() {
-    paramsHashes = {}
-
     // Configure Genesis Protocol voting machine
     const genesisProtocol = await getDaostackContract('GenesisProtocol')
     const genesisProtocolAddress = genesisProtocol.address
@@ -29,7 +27,6 @@ module.exports = ({ artifacts, web3 }) => {
     console.log()
 
     // Setup the Genesis Protocol setups
-    const activationTime = governanceStart
     await _setParameters({
       name: 'dutchX',
       votingConf: votingConfs.dutchX,
@@ -47,7 +44,29 @@ module.exports = ({ artifacts, web3 }) => {
     })
   }
 
-  async function getGenesisProtocolData(name) {
+  async function getParameterHash(name) {
+    const genesisProtocol = await getDaostackContract('GenesisProtocol')
+    const votingConf = votingConfs[name]
+    const voteOnBehalf = votingConf.voteOnBehalf
+
+    // Get params for Genesis Protocol config
+    const parameters = _getParmeterArray({
+      name,
+      votingConf,
+      activationTime
+    })
+
+    // Get hash
+    let paramsHash = paramsHashes[name]
+    if (!paramsHash) {
+      paramsHash = await genesisProtocol.getParametersHash(parameters, voteOnBehalf)
+      paramsHashes[name] = paramsHash
+    }
+
+    return paramsHash
+  }
+
+  async function setupAndGetGenesisProtocolData(name) {
     await _init()
     const genesisProtocol = await getDaostackContract('GenesisProtocol')
 
@@ -62,7 +81,7 @@ module.exports = ({ artifacts, web3 }) => {
   }
 
   async function _init() {
-    if (paramsHashes === null) {
+    if (Object.keys(paramsHashes).length === 0) {
       await setupGenesisProtocol()
     }
   }
@@ -125,7 +144,7 @@ module.exports = ({ artifacts, web3 }) => {
       'daoBountyConst'
     ]
 
-    console.log(`Configuring Genesis Protocol voting machine for "${name}":`)
+    console.log(`Getting Genesis Protocol voting machine for "${name}":`)
     GENESIS_PROTOCOL_PARAM_NAMES.concat('voteOnBehalf').forEach(parameterName => {
       const parameter = votingConf[parameterName]
       console.log(`  - ${parameterName}: ${parameter}`)
@@ -143,7 +162,8 @@ module.exports = ({ artifacts, web3 }) => {
 
   return {
     setupGenesisProtocol,
-    getGenesisProtocolData
+    setupAndGetGenesisProtocolData,
+    getParameterHash
   }
 }
 
