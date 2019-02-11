@@ -116,7 +116,7 @@ async function displayExpectedRep(data, contracts) {
     TKNreputationReward,
     TKNtotalScore,
     GENauctionReputationReward,
-    numberOfAuctions,
+    GENnumberOfAuctions,
   ] = (await Promise.all([
     DxLockMgnForRep.reputationReward(),
     DxLockMgnForRep.totalScore(),
@@ -128,28 +128,72 @@ async function displayExpectedRep(data, contracts) {
     DxGenAuction4Rep.numberOfAuctions(),
   ])).map(n => new BN(n.toString()))
 
-  const MGNtotalRep = MGNreputationReward
-  console.log('All REP earned from DxLockMgnForRep:', MGNtotalRep.div(decimals18).toString());
+  const MGNtotalPotentialRep = MGNreputationReward
+  console.log('All REP potentially earned from DxLockMgnForRep:', MGNtotalPotentialRep.div(decimals18).toString());
+  let MGNtotalDistributedRep
+  if (MGNtotalScore.eq(new BN(0))) {
+    console.log('None yet distributed')
+    MGNtotalDistributedRep = new BN(0)
+  } else {
+    console.log('All distributed');
+    MGNtotalDistributedRep = MGNtotalPotentialRep
+  }
 
-  const ETHtotalRep = ETHreputationReward
-  console.log('All REP earned from DxLockEth4Rep:', ETHtotalRep.div(decimals18).toString());
+  const ETHtotalPotentialRep = ETHreputationReward
+  console.log('All REP potentially earned from DxLockEth4Rep:', ETHtotalPotentialRep.div(decimals18).toString());
+  let ETHtotalDistributedRep
+  if (ETHtotalScore.eq(new BN(0))) {
+    console.log('None yet distributed')
+    ETHtotalDistributedRep = new BN(0)
+  } else {
+    console.log('All distributed');
+    ETHtotalDistributedRep = ETHtotalPotentialRep
+  }
 
-  const TKNtotalRep = TKNreputationReward
-  console.log('All REP earned from DxLockWhitelisted4Rep:', TKNtotalRep.div(decimals18).toString());
-  
-  const result = {}
-  
-  const GenTotalBidsPerAuction = await Promise.all(Array.from({ length: numberOfAuctions.toString() },
+  const TKNtotalPotentialRep = TKNreputationReward
+  console.log('All REP potentially earned from DxLockWhitelisted4Rep:', TKNtotalPotentialRep.div(decimals18).toString());
+  let TKNtotalDistributedRep
+  if (TKNtotalScore.eq(new BN(0))) {
+    console.log('None yet distributed')
+    TKNtotalDistributedRep = new BN(0)
+  } else {
+    console.log('All distributed');
+    TKNtotalDistributedRep = TKNtotalPotentialRep
+  }
+
+
+  const GenTotalBidsPerAuction = await Promise.all(Array.from({ length: GENnumberOfAuctions.toString() },
     (_, i) => DxGenAuction4Rep.auctions(i).then(n => new BN(n.toString())))
   )
+
+  const {GenAuctionIdsWithBids, GENtotalDistributedRep} = GenTotalBidsPerAuction.reduce(
+    (accum, bid, auctionId) => {
+      if (bid.gt(new BN(0))) {
+        accum.GENtotalDistributedRep = accum.GENtotalDistributedRep.add(bid)
+        accum.GenAuctionIdsWithBids.push(auctionId)
+      }
+      return accum
+    }, {GenAuctionIdsWithBids: [], GENtotalDistributedRep: new BN(0)}
+  )
   // console.log('GenTotalBidsPerAuction: ', GenTotalBidsPerAuction);
-  const GenAuctionsWithBidsN = GenTotalBidsPerAuction.filter(n => n.gt(new BN(0))).length
-  const GENtotalRep = GENauctionReputationReward.mul(new BN(GenAuctionsWithBidsN))
-  console.log('All REP earned from DxGenAuction4Rep:', GENtotalRep.div(decimals18).toString());
+  const GENtotalPotentialRep = GENauctionReputationReward.mul(GENnumberOfAuctions)
+  console.log('All REP potentially earned from DxGenAuction4Rep:', GENtotalPotentialRep.div(decimals18).toString(), 'over', GENnumberOfAuctions.toString(), 'auctions');
 
-  const totalREP = MGNtotalRep.add(ETHtotalRep).add(TKNtotalRep).add(GENtotalRep)
+  if (!GENtotalPotentialRep.eq(GENtotalDistributedRep)) {
+    console.log('Distributed only', GENtotalDistributedRep.toString(), 'from auctions:', GenAuctionIdsWithBids.map(i => i+1).join(', '));
+  }
 
-  console.log('Total REP over the 4 schemes:', totalREP.div(decimals18).toString())
+  const totalPotentialREP = MGNtotalPotentialRep.add(ETHtotalPotentialRep).add(TKNtotalPotentialRep).add(GENtotalPotentialRep)
+  const totalDistributedREP = MGNtotalDistributedRep.add(ETHtotalDistributedRep).add(TKNtotalDistributedRep).add(GENtotalDistributedRep)
+
+  console.log('Total potential REP over the 4 schemes:', totalPotentialREP.div(decimals18).toString())
+  if (!totalPotentialREP.eq(totalDistributedREP)) {
+    console.log('Distributed only', totalDistributedREP.div(decimals18).toString());
+  } else {
+    console.log('All distributed');
+  }
+
+  const result = {}
 
   const calcFunctions = {
     DxLockMgnForRep: function ({ total }) {
@@ -224,13 +268,15 @@ async function displayExpectedRep(data, contracts) {
       console.log('reputation from MGN: ', reputation.div(decimals18).toString(), 'REP');
 
       totalRepForAccount = totalRepForAccount.add(reputation)
-      const percent = reputation.mul(new BN(100)).div(MGNtotalRep) + '%'
+      const percentOfPotential = reputation.mul(new BN(100)).div(MGNtotalPotentialRep) + '%'
+      const percentOfDistributed = reputation.mul(new BN(100)).div(MGNtotalDistributedRep) + '%'
 
       result[account] = {
         ...result[account],
         MGN: {
           reputation,
-          percent
+          percentOfPotential,
+          percentOfDistributed,
         }
       }
     }
@@ -241,13 +287,15 @@ async function displayExpectedRep(data, contracts) {
       console.log('reputation from ETH: ', reputation.div(decimals18).toString(), 'REP');
 
       totalRepForAccount = totalRepForAccount.add(reputation)
-      const percent = reputation.mul(new BN(100)).div(ETHtotalRep) + '%'
+      const percentOfPotential = reputation.mul(new BN(100)).div(ETHtotalPotentialRep) + '%'
+      const percentOfDistributed = reputation.mul(new BN(100)).div(ETHtotalDistributedRep) + '%'
 
       result[account] = {
         ...result[account],
         ETH: {
           reputation,
-          percent,
+          percentOfPotential,
+          percentOfDistributed,
           totalScore,
           scorePerPeriod
         }
@@ -262,13 +310,15 @@ async function displayExpectedRep(data, contracts) {
       console.log(`reputation from Tokens ${symbols.join(', ')}: `, reputation.div(decimals18).toString(), 'REP');
 
       totalRepForAccount = totalRepForAccount.add(reputation)
-      const percent = reputation.mul(new BN(100)).div(TKNtotalRep) + '%'
+      const percentOfPotential = reputation.mul(new BN(100)).div(TKNtotalPotentialRep) + '%'
+      const percentOfDistributed = reputation.mul(new BN(100)).div(TKNtotalPotentialRep) + '%'
 
       result[account] = {
         ...result[account],
         Tokens: {
           reputation,
-          percent,
+          percentOfPotential,
+          percentOfDistributed,
           scorePerToken
         }
       }
@@ -280,13 +330,15 @@ async function displayExpectedRep(data, contracts) {
       console.log('reputation from GEN auction: ', reputation.div(decimals18).toString(), 'REP');
 
       totalRepForAccount = totalRepForAccount.add(reputation)
-      const percent = reputation.mul(new BN(100)).div(GENtotalRep) + '%'
+      const percentOfPotential = reputation.mul(new BN(100)).div(GENtotalPotentialRep) + '%'
+      const percentOfDistributed = reputation.mul(new BN(100)).div(GENtotalDistributedRep) + '%'
 
       result[account] = {
         ...result[account],
         GEN: {
           reputation,
-          percent,
+          percentOfPotential,
+          percentOfDistributed,
           repPerAuctionId
         }
       }
@@ -294,11 +346,19 @@ async function displayExpectedRep(data, contracts) {
 
     if (totalRepForAccount.gt(new BN(0))) {
       console.log('\nTotal REP for account: ', totalRepForAccount.div(decimals18).toString(), 'REP');
-      const percent = totalRepForAccount.mul(new BN(100)).div(totalREP) + '%'
-      console.log('\nPercent of total REP over all 4 schemes:', percent);
+      const percentOfPotential = totalRepForAccount.mul(new BN(100)).div(totalPotentialREP) + '%'
+      const percentOfDistributed = totalRepForAccount.mul(new BN(100)).div(totalDistributedREP) + '%'
+
+      if (percentOfPotential === percentOfDistributed) {
+        console.log('\nPercent of total REP over all 4 schemes:', percentOfDistributed);
+      } else {
+        console.log('\nPercent of total REP over all 4 schemes:', percentOfPotential, 'if all REP was distributed');
+        console.log('\nPercent of total REP over all 4 schemes:', percentOfDistributed, 'actual');
+      }
 
       result[account].reputation = totalRepForAccount
-      result[account].percent = percent
+      result[account].percentOfPotential = percentOfPotential
+      result[account].percentOfDistributed = percentOfDistributed
     }
   }
 
