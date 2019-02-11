@@ -140,7 +140,7 @@ async function displayExpectedRep(data, contracts) {
   }
 
   const ETHtotalPotentialRep = ETHreputationReward
-  console.log('All REP potentially earned from DxLockEth4Rep:', ETHtotalPotentialRep.div(decimals18).toString());
+  console.log('\nAll REP potentially earned from DxLockEth4Rep:', ETHtotalPotentialRep.div(decimals18).toString());
   let ETHtotalDistributedRep
   if (ETHtotalScore.eq(new BN(0))) {
     console.log('None yet distributed')
@@ -151,7 +151,7 @@ async function displayExpectedRep(data, contracts) {
   }
 
   const TKNtotalPotentialRep = TKNreputationReward
-  console.log('All REP potentially earned from DxLockWhitelisted4Rep:', TKNtotalPotentialRep.div(decimals18).toString());
+  console.log('\nAll REP potentially earned from DxLockWhitelisted4Rep:', TKNtotalPotentialRep.div(decimals18).toString());
   let TKNtotalDistributedRep
   if (TKNtotalScore.eq(new BN(0))) {
     console.log('None yet distributed')
@@ -177,16 +177,16 @@ async function displayExpectedRep(data, contracts) {
   )
   // console.log('GenTotalBidsPerAuction: ', GenTotalBidsPerAuction);
   const GENtotalPotentialRep = GENauctionReputationReward.mul(GENnumberOfAuctions)
-  console.log('All REP potentially earned from DxGenAuction4Rep:', GENtotalPotentialRep.div(decimals18).toString(), 'over', GENnumberOfAuctions.toString(), 'auctions');
+  console.log('\nAll REP potentially earned from DxGenAuction4Rep:', GENtotalPotentialRep.div(decimals18).toString(), 'over', GENnumberOfAuctions.toString(), 'auctions');
 
   if (!GENtotalPotentialRep.eq(GENtotalDistributedRep)) {
-    console.log('Distributed only', GENtotalDistributedRep.toString(), 'from auctions:', GenAuctionIdsWithBids.map(i => i+1).join(', '));
+    console.log('Distributed only', GENtotalDistributedRep.div(decimals18).toString(), 'from auctions:', GenAuctionIdsWithBids.map(i => i+1).join(', '));
   }
 
   const totalPotentialREP = MGNtotalPotentialRep.add(ETHtotalPotentialRep).add(TKNtotalPotentialRep).add(GENtotalPotentialRep)
   const totalDistributedREP = MGNtotalDistributedRep.add(ETHtotalDistributedRep).add(TKNtotalDistributedRep).add(GENtotalDistributedRep)
 
-  console.log('Total potential REP over the 4 schemes:', totalPotentialREP.div(decimals18).toString())
+  console.log('\nTotal potential REP over the 4 schemes:', totalPotentialREP.div(decimals18).toString())
   if (!totalPotentialREP.eq(totalDistributedREP)) {
     console.log('Distributed only', totalDistributedREP.div(decimals18).toString());
   } else {
@@ -783,7 +783,7 @@ async function getContracts({ mgn, eth, tkn, auc, n }) {
 const MAX_TRIES = 15
 function retryPromise(execPromise, tryN = 1) {
   if (tryN > MAX_TRIES) return Promise.reject('number of tries exceeded', MAX_TRIES, '\taborting')
-  console.log('try', tryN)
+  // console.log('try', tryN)
   return execPromise().catch(() => retryPromise(execPromise, tryN + 1))
 }
 
