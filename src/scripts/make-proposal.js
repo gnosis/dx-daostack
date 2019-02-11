@@ -1,4 +1,4 @@
-/* global artifacts, Promise, web3 */
+/* global artifacts, web3 */
 /* eslint no-undef: "error" */
 const assert = require('assert')
 
