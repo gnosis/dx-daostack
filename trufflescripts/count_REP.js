@@ -594,7 +594,7 @@ async function getTokenSymbol(address) {
   }
 
   const symbolHex = await web3.eth.call(request)
-  return address2symbol[address] = web3.utils.toUtf8(symbolHex).replace(/\s||\u0000/g, '')
+  return address2symbol[address] = web3.eth.abi.decodeParameter('string', symbolHex)
 }
 
 const address2decimals = {}
