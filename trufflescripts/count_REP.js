@@ -395,10 +395,11 @@ async function displayAccountsSubmissions(data, contracts) {
       console.log('\t------------------------------');
       console.log('\n\tLocked MGN for REP in DxLockMgnForRep at', DxLockMgnForRep.address);
 
-      const lockingIds = []
+      const lockingIds = [], amounts = []
       const lockedPerId = {}
       for (const { _amount, _lockingId } of MgnEvents) {
         lockingIds.push(_lockingId)
+        amounts.push(_amount)
         lockedPerId[_lockingId] = new BN(_amount)
       }
       const total = Object.values(lockedPerId).reduce((sum, am) => sum.add(am), new BN(0))
@@ -408,6 +409,7 @@ async function displayAccountsSubmissions(data, contracts) {
       result[account] = {
         DxLockMgnForRep: {
           lockingIds,
+          amounts,
           lockedPerId,
           total
         }
@@ -418,11 +420,16 @@ async function displayAccountsSubmissions(data, contracts) {
       console.log('\t------------------------------');
       console.log('\n\tLocked ETH for REP in DxLockEth4Rep at', DxLockEth4Rep.address);
 
+      const lockingIds = [], amounts = [], periods = []
       const totalPerPeriod = {}
       const lockingIdsPerPeriod = {}
       const lockedPerId = {}
       for (const { _amount, _period, _lockingId } of EthEvents) {
         const amount = new BN(_amount)
+
+        lockingIds.push(_lockingId)
+        amounts.push(_amount)
+        periods.push(_period)
 
         if (!totalPerPeriod[_period]) totalPerPeriod[_period] = new BN(0)
         if (!lockingIdsPerPeriod[_period]) lockingIdsPerPeriod[_period] = []
@@ -447,6 +454,9 @@ async function displayAccountsSubmissions(data, contracts) {
       result[account] = {
         ...result[account],
         DxLockEth4Rep: {
+          lockingIds,
+          amounts,
+          periods,
           totalPerPeriod,
           lockingIdsPerPeriod,
           lockedPerId,
@@ -477,8 +487,8 @@ async function displayAccountsSubmissions(data, contracts) {
         if (!accum[token]) accum[token] = {
           lockingIds: [],
           amounts: [],
-          totalPerPeriod: {},
           periods: [],
+          totalPerPeriod: {},
           total: new BN(0),
         }
 
