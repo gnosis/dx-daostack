@@ -25,7 +25,6 @@ const getDXContractAddresses = require('../src/helpers/getDXContractAddresses')(
 
 module.exports = async function (deployer) {
   const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
-  const DxLockMgnForRepHelper = artifacts.require('DxLockMgnForRepHelper')
   const DxAvatar = artifacts.require('DxAvatar')
   const DxController = artifacts.require('DxController')
 
@@ -46,11 +45,7 @@ module.exports = async function (deployer) {
   // Deploy DxLockMgnForRep
   console.log('Deploying DxLockMgnForRep scheme')
   console.log('  - Scheme that allows to get GEN by locking MGN')
-  const dxLockMgn = await deployer.deploy(DxLockMgnForRep)
-  // Deploy DxLockMgnForRepHelper
-  console.log('Deploying DxLockMgnForRepHelper helper')
-  console.log('  - Helper that allows to batch claim all MGN')
-  await deployer.deploy(DxLockMgnForRepHelper, dxLockMgn.address)
+  await deployer.deploy(DxLockMgnForRep)
 
   // Initialize DxLockMgnForRep
   const dxLockMgnForRep = await DxLockMgnForRep.deployed()
