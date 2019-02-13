@@ -10,33 +10,33 @@ const TokenMGNProxy = artifacts.require('TokenFRTProxy')
 // Why this script?
 
 // 1 Get DxLockMgnForRep contract
-  // either the deployed one (if artifacts have network) 
-  // or from a given networks-*.json file (-f flag?)
-  // or provided as an execution --flag
-  
-  // 2 Get all Register events from the contract
-  // Contract.Register().getData or something like that
-  // var res = await lock.getPastEvents('Register', {fromBlock:0})
-  
-  // test with this one, has events
-  // https://rinkeby.etherscan.io/address/0xa248671eC41110D58e587120a5B9C24A66daBfc6#events
-  
-  // 3 Get all accounts that registered
-  // call Contract.claim(account) for them
-  // that produces Lock events
-  
-  // 4 Would also be good to save log somewhere
-  // e.g
-  // {
-  //   <address>: {
-  //     Lock: {}
-  //     error: ?
-  //   }
-  // }    
+// either the deployed one (if artifacts have network) 
+// or from a given networks-*.json file (-f flag?)
+// or provided as an execution --flag
+
+// 2 Get all Register events from the contract
+// Contract.Register().getData or something like that
+// var res = await lock.getPastEvents('Register', {fromBlock:0})
+
+// test with this one, has events
+// https://rinkeby.etherscan.io/address/0xa248671eC41110D58e587120a5B9C24A66daBfc6#events
+
+// 3 Get all accounts that registered
+// call Contract.claim(account) for them
+// that produces Lock events
+
+// 4 Would also be good to save log somewhere
+// e.g
+// {
+//   <address>: {
+//     Lock: {}
+//     error: ?
+//   }
+// }    
 
 // artifacts and web3 are available globally
 const main = async () => {
-  
+
   /**
    * How best to run this for testing @ Rinkeby
    * 
@@ -45,8 +45,8 @@ const main = async () => {
    * [use flag -f 'networks-rinkeby-long-lock.json' for addresses]
    * [use flag --from-block 0]
    * 
-   * Complete [ DRY-RUN ]: npx truffle exec src/scripts/claim_MGN.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0
-   * Complete [ REAL-RUN ]: npx truffle exec src/scripts/claim_MGN.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0 --dry-run false
+   * Complete [ DRY-RUN ]: npx truffle exec src/scripts/claim_mgn.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0
+   * Complete [ REAL-RUN ]: npx truffle exec src/scripts/claim_mgn.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0 --dry-run false
    */
 
   // address of DxLockMgnForRep contract with Register events
@@ -91,8 +91,8 @@ const main = async () => {
     })
     .help('help')
     .argv
-  
-    if (!argv._[0]) return argv.showHelp()
+
+  if (!argv._[0]) return argv.showHelp()
 
   const { dryRun, network, f, batchSize, mockMGN, knownEvents, fromBlock } = argv
 
@@ -108,7 +108,7 @@ const main = async () => {
       Searching Events from block: ${fromBlock}
       ====================================================================
   `)
-  
+
   try {
     let dxLockMgnForRep
     let promisedDxDaoClaimRedeemHelper
@@ -144,7 +144,7 @@ const main = async () => {
         // Use current artifacts network addresses inside build/contracts
         // const dxLockMgnForRep = await DxLockMgnForRepArtifact.at('0xa248671eC41110D58e587120a5B9C24A66daBfc6')
         dxLockMgnForRep = (network === 'rinkeby' && knownEvents) ? await DxLockMgnForRepArtifact.at(REGISTER_EVENTS) : await DxLockMgnForRepArtifact.deployed()
-        
+
         // Start promise resolve for DxLockMgnForRepHelper
         promisedDxDaoClaimRedeemHelper = DxDaoClaimRedeemHelperArtifact.deployed()
 
@@ -169,7 +169,7 @@ const main = async () => {
         MGN Token initialisation errors encountered. 
         It is likely your contract artifacts don't have the correct injected networks.
         `)
-        
+
         handleError(error, ERROR_MESSAGE)
       }
     }
@@ -211,7 +211,7 @@ const main = async () => {
      * @type { string[] }
      */
     const allBeneficiariesFromEvents = allPastRegisterEvents.map(({ returnValues }) => returnValues._beneficiary)
-		// console.log('All Registered Beneficiaries Addresses', allBeneficiaries)
+    // console.log('All Registered Beneficiaries Addresses', allBeneficiaries)
 
     /* 
       VALIDATION - REMOVE UN-CLAIMABLE USER ADDRESSES
@@ -221,16 +221,16 @@ const main = async () => {
     const hasRegistered = await Promise.all(allBeneficiariesFromEvents.map(bene => dxLockMgnForRep.externalLockers.call(bene)))
     const allBeneficiaries = allBeneficiariesFromEvents.reduce((acc, bene, idx) => {
       if (hasRegistered[idx]) return acc
-      
+
       acc.push(bene)
-      return acc 
+      return acc
     }, [])
     if (!allBeneficiaries.length) throw 'Controlled THROW: No first time registered users available. Aborting.'
 
     // Get beneficiaries' MGN locked balance (since there's no point in claiming 0 balance MGN...)
     const mgn = await promisedTokenMGN
     const beneficiariesMgnBalances = await Promise.all(allBeneficiaries.map(beneficiary => mgn.lockedTokenBalances.call(beneficiary)))
-    
+
     /**
      * beneficiariesWithBalance
      * @summary Maps through beneficiaries to grab address and add MGN locked balance - filters out 0 balance
@@ -241,12 +241,12 @@ const main = async () => {
       .filter(({ balance }) => balance.gt(toBN(0)))
     console.log('\nBeneficiary Addresss + Balances Objects: \n', JSON.stringify(beneficiariesWithBalance.map(item => ({ ...item, balance: item.balance.toString() })), undefined, 2))
     if (!beneficiariesWithBalance.length) throw 'Controlled THROW: No registered users with any MGN balance. Aborting.'
-    
+
     // Development only, can be removed
     if (network === 'development') {
       // All time values below in denoted in SECONDS
       const { NOW, TIME_JUMP_REQUIRED } = await getDxLockMgnForRepState(dxLockMgnForRep)
-      
+
       if (TIME_JUMP_REQUIRED.gt(toBN(0))) {
         console.log(`
         A time change is required - fast-forwarding ganache blockchain time...
@@ -255,11 +255,11 @@ const main = async () => {
         
         TIME REQUIRED JUMPING FORWARD: ${toBN(TIME_JUMP_REQUIRED).toString()}
       `)
-  
-      //TODO: remove
-      await increaseTimeAndMine(TIME_JUMP_REQUIRED.toNumber())
-  
-      console.log(`
+
+        //TODO: remove
+        await increaseTimeAndMine(TIME_JUMP_REQUIRED.toNumber())
+
+        console.log(`
         Time jump successful...
         TIME AFTER = [in SECONDS] = ${toBN(await getTimestamp()).toString()}
         [FORMATTED: ${new Date(toBN(await getTimestamp()).toString() * 1000)}]
@@ -279,10 +279,10 @@ const main = async () => {
     const individualClaimCallReturn = await Promise.all(beneficiariesWithBalanceAddressesOnly.map(beneAddr => dxLockMgnForRep.claim.call(beneAddr)))
     console.log('DxLockMgnForRep.claim on each acct call result: ', individualClaimCallReturn)
     console.log('Filtering out 0x08c379a000000000000000000000000000000000000000000000000000000000 values...')
-    
+
     const accountsClaimable = individualClaimCallReturn.reduce((acc, item, index) => {
       if (item === '0x08c379a000000000000000000000000000000000000000000000000000000000') return acc
-      
+
       acc.push(beneficiariesWithBalanceAddressesOnly[index])
       return acc
     }, [])
@@ -299,7 +299,7 @@ const main = async () => {
 
       ============================================================================
       `)
-      
+
       // TODO: fix this
       // Workaround as failing bytes32[] call return doesn't properly throw and returns
       // consistent 'overflow' error(seems to be Truffle5 + Ethers.js issue)
@@ -344,7 +344,7 @@ async function getDxLockMgnForRepState(dxLockMgnContract) {
     dxLockMgnContract.lockingEndTime.call(),
     dxLockMgnContract.lockingStartTime.call()
   ])
-  
+
   const TIME_JUMP_REQUIRED = LOCKING_START_TIME.sub(toBN(NOW))
 
   return {

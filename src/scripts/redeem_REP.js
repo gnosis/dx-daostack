@@ -32,7 +32,7 @@ const { toBN } = require('./utils')(web3)
 /* 
   SUMMARY:
 
-  Same as claim_MGN, but
+  Same as claim_mgn, but
   look for Lock events in DxLockMgnForRep, DxLockEth4Rep, DxLockWhitelisted4Rep
   and Bid event in DxGenAuction4Rep
   contracts in ./networks-3rd-rinkeby-test.json should have those
@@ -46,42 +46,42 @@ const { toBN } = require('./utils')(web3)
    * [use flag -f 'networks-rinkeby-long-lock.json' for addresses]
    * [use flag --from-block 0]
    * 
-   * Complete [ DRY-RUN ]: npx truffle exec src/scripts/claim_MGN.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 0
-   * Complete [ REAL-RUN ]: npx truffle exec src/scripts/claim_MGN.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 750153 --dry-run false
+   * Complete [ DRY-RUN ]: npx truffle exec src/scripts/redeem_rep.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 0
+   * Complete [ REAL-RUN ]: npx truffle exec src/scripts/redeem_rep.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 750153 --dry-run false
    */
 
 const main = async () => {
 
   const argv = require('yargs')
-  .usage('Usage: MNEMONIC="evil cat kills man ... " npm run claimMGN -- -f [string] --network [name] --dry-run --batch-size [number]')
-  .option('f', {
-    type: 'string',
-    describe: 'Networks JSON file name'
-  })
-  .option('network', {
-    type: 'string',
-    default: 'development',
-    describe: 'Blockchain network to operate on'
-  })
-  .option('dryRun', {
-    type: 'boolean',
-    default: true,
-    describe: 'Run contract functions via [.call]'
-  })
-  .option('fromBlock', {
-    type: 'number',
-    default: 7185000,
-    describe: 'Set from which Block to check for events'
-  })
-  .help('help')
-  .argv
+    .usage('Usage: MNEMONIC="evil cat kills man ... " npm run claimMGN -- -f [string] --network [name] --dry-run --batch-size [number]')
+    .option('f', {
+      type: 'string',
+      describe: 'Networks JSON file name'
+    })
+    .option('network', {
+      type: 'string',
+      default: 'development',
+      describe: 'Blockchain network to operate on'
+    })
+    .option('dryRun', {
+      type: 'boolean',
+      default: true,
+      describe: 'Run contract functions via [.call]'
+    })
+    .option('fromBlock', {
+      type: 'number',
+      default: 7185000,
+      describe: 'Set from which Block to check for events'
+    })
+    .help('help')
+    .argv
 
   if (!argv._[0]) return argv.showHelp()
 
   const { dryRun, network, f, batchSize, fromBlock } = argv
 
   console.log(`
-    claim_MGN.js data:
+    claim_mgn.js data:
 
     Dry run: ${dryRun}
     Network: ${network}
@@ -133,7 +133,7 @@ const main = async () => {
         DxDaoClaimRedeemHelperArtifact.deployed(),
       ]))
     }
-    
+
     if (fromBlock === 0 || fromBlock < 7185000) {
       console.warn(`
       =================================================================================================================
@@ -153,16 +153,16 @@ const main = async () => {
       dxLWR.getPastEvents('Lock', { fromBlock }),
       dxGAR.getPastEvents('Bid', { fromBlock })
     ])
-    
+
     // Cache necessary addresses from events
-    const dxLER_Lock_Lockers  = await removeZeroScoreAddresses(dxLER_Lock_Events.map(event => event.returnValues._locker), dxLER), 
-          dxLMR_Lock_Lockers  = await removeZeroScoreAddresses(dxLMR_Lock_Events.map(event => event.returnValues._locker), dxLMR), 
-          dxLWR_Lock_Lockers  = await removeZeroScoreAddresses(dxLWR_Lock_Events.map(event => event.returnValues._locker), dxLWR), 
-          [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = await removeZeroBidsAddresses(dxGAR_Bid_Events.map(
-            event => event.returnValues._bidder), 
-            dxGAR_Bid_Events.map(event => event.returnValues._auctionId),
-            dxGAR
-            )
+    const dxLER_Lock_Lockers = await removeZeroScoreAddresses(dxLER_Lock_Events.map(event => event.returnValues._locker), dxLER),
+      dxLMR_Lock_Lockers = await removeZeroScoreAddresses(dxLMR_Lock_Events.map(event => event.returnValues._locker), dxLMR),
+      dxLWR_Lock_Lockers = await removeZeroScoreAddresses(dxLWR_Lock_Events.map(event => event.returnValues._locker), dxLWR),
+      [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = await removeZeroBidsAddresses(dxGAR_Bid_Events.map(
+        event => event.returnValues._bidder),
+        dxGAR_Bid_Events.map(event => event.returnValues._auctionId),
+        dxGAR
+      )
 
     // Throw if all addresses empty or non-redeemable
     if (!dxLER_Lock_Lockers.length && !dxLMR_Lock_Lockers.length && !dxLWR_Lock_Lockers.length && !dxGAR_Bid_Bidders.length) throw 'No workable data - all event address array empty. Aborting.'
@@ -182,22 +182,22 @@ const main = async () => {
         dxHelper.redeemAll.call(dxLMR_Lock_Lockers, 1),
         dxHelper.redeemAll.call(dxLWR_Lock_Lockers, 2),
       ])
-      
+
       console.log('dxLER_Lockers redeemAll Response = ', dxLER_Res)
       console.log('dxLMR_Lockers redeemAll Response = ', dxLMR_Res)
       console.log('dxLWR_Lockers redeemAll Response = ', dxLWR_Res)
       // dxGAR - redeemAllGAR
       const dxGAR_Res = await dxHelper.redeemAllGAR.call(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs)
-			console.log('dxGAR_Lockers redeemAllGAR Response = ', dxGAR_Res)
+      console.log('dxGAR_Lockers redeemAllGAR Response = ', dxGAR_Res)
     } else {
       console.log('Checking respective dxLXR contracts and redeeming if length . . .')
-      const dxLER_Receipt =  dxLER_Lock_Lockers.length && await dxHelper.redeemAll(dxLER_Lock_Lockers, 0)
+      const dxLER_Receipt = dxLER_Lock_Lockers.length && await dxHelper.redeemAll(dxLER_Lock_Lockers, 0)
       const dxLMR_Receipt = dxLMR_Lock_Lockers.length && await dxHelper.redeemAll(dxLMR_Lock_Lockers, 1)
       const dxLWR_Receipt = dxLWR_Lock_Lockers.length && await dxHelper.redeemAll(dxLWR_Lock_Lockers, 2)
-      
+
       // dxGAR - redeemAllGAR
       const dxGAR_Receipt = dxGAR_Bid_Bidders.length && await dxHelper.redeemAllGAR(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs)
-      
+
       dxLER_Receipt ? console.log('dxLER_Lockers redeemAll receipt = ', dxLER_Receipt) : console.log('No lockers to redeem for dxLER')
       dxLMR_Receipt ? console.log('dxLMR_Lockers redeemAll receipt = ', dxLMR_Receipt) : console.log('No lockers to redeem for dxLMR')
       dxLWR_Receipt ? console.log('dxLWR_Lockers redeemAll receipt = ', dxLWR_Receipt) : console.log('No lockers to redeem for dxLWR')
@@ -213,21 +213,21 @@ async function removeZeroScoreAddresses(arr, contract) {
   const reducedArr = arr.reduce((acc, bene, idx) => {
     // REMOVE bene if they have 0 score
     if (hasScore[idx].lte(toBN(0))) return acc
-    
+
     acc.push(bene)
-    return acc 
+    return acc
   }, [])
   return reducedArr
 }
 
-async function removeZeroBidsAddresses (bidders, auctionIds, contract) {
+async function removeZeroBidsAddresses(bidders, auctionIds, contract) {
   const hasBidAmount = await Promise.all(auctionIds.map((id, idx) => contract.getBid.call(bidders[idx], id)))
   const reducedArr = bidders.reduce((acc, bene, idx) => {
     // REMOVE bene if they have 0 score
     if (hasBidAmount[idx].lte(toBN(0))) return acc
-    
+
     acc.push({ bene, id: auctionIds[idx] })
-    return acc 
+    return acc
   }, [])
   return [reducedArr.map(({ bene }) => bene), reducedArr.map(({ id }) => id)]
 }
