@@ -1,5 +1,5 @@
 /**
- * truffle exec trufflescripts/count_REP.js
+ * truffle exec src/scripts/count_REP.js
  * to get REP locking nad accumulated REP data for
  * @flags:
  * -a <address>,<address>       for addresses
@@ -14,16 +14,16 @@
 
 /**
  * examples:
- * $ npx truffle exec trufflescripts/count_REP.js --network mainnet -a 0x123,0x456 -n ./networks.json
+ * $ npx truffle exec src/scripts/count_REP.js --network mainnet -a 0x123,0x456 -n ./networks.json
  * calculates reputation for the two provided accounts
  * for contracts on mainnet at addresses from ./networks.json
  * 
- * $ npx truffle exec trufflescripts/count_REP.js --network rinkeby -o ./out.json
+ * $ npx truffle exec src/scripts/count_REP.js --network rinkeby -o ./out.json
  * calculates reputation for all accounts for which there were Lcok/Bid events
  * for contracts on mainnet at addresses from artifacts in ./build/contracts
  * and outputs formatted data to ./out.json
  * 
- * $ npx truffle exec trufflescripts/count_REP.js --network rinkeby --mgn 0x1234
+ * $ npx truffle exec src/scripts/count_REP.js --network rinkeby --mgn 0x1234
  * calculates reputation for all accounts for which there were Lcok/Bid events
  * for contracts on mainnet at addresses from artifacts in ./build/contracts
  * except for DxLockMgnForRep whose address is provided in --mgn flag

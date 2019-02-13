@@ -45,8 +45,8 @@ const main = async () => {
    * [use flag -f 'networks-rinkeby-long-lock.json' for addresses]
    * [use flag --from-block 0]
    * 
-   * Complete [ DRY-RUN ]: npx truffle exec trufflescripts/claim_MGN.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0
-   * Complete [ REAL-RUN ]: npx truffle exec trufflescripts/claim_MGN.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0 --dry-run false
+   * Complete [ DRY-RUN ]: npx truffle exec src/scripts/claim_MGN.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0
+   * Complete [ REAL-RUN ]: npx truffle exec src/scripts/claim_MGN.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0 --dry-run false
    */
 
   // address of DxLockMgnForRep contract with Register events
