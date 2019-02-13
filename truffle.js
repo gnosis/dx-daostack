@@ -1,7 +1,5 @@
 const assert = require('assert')
 const HDWalletProvider = require('truffle-hdwallet-provider')
-const GAS_PRICE_GWEI = process.env.GAS_PRICE_GWEI || 10
-const GAS_LIMIT = 6.5e6
 
 const DEFAULT_MNEMONIC = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
 
@@ -11,6 +9,9 @@ console.log('envPath: ', envPath);
 require('dotenv').config(envPath && { path: envPath })
 console.log('Using env: ', process.env.USING_ENV);
 
+const GAS_PRICE_GWEI = process.env.GAS_PRICE_GWEI || 10
+const GAS_LIMIT = 6.5e6
+
 // Get the mnemonic
 const privateKey = process.env.PK
 let mnemonic = process.env.MNEMONIC
@@ -18,7 +19,7 @@ if (!privateKey && !mnemonic) {
   mnemonic = DEFAULT_MNEMONIC
 }
 
-function truffleConfig ({
+function truffleConfig({
   mnemonic = DEFAULT_MNEMONIC,
   privateKey,
   gasPriceGWei = GAS_PRICE_GWEI,
@@ -37,16 +38,16 @@ function truffleConfig ({
   console.log('Using default mnemonic: %s', mnemonic === DEFAULT_MNEMONIC);
   const gasPrice = gasPriceGWei * 1e9;
 
-  let _getProvider  
+  let _getProvider
   if (privateKey) {
     console.log('Using private key')
     _getProvider = url => {
       return () => {
-        return new HDWalletProvider([ privateKey ], url)
+        return new HDWalletProvider([privateKey], url)
       }
     }
   } else {
-    console.log(mnemonic === DEFAULT_MNEMONIC ? 'Using default mnemonic' : 'Using custom mnemonic')    
+    console.log(mnemonic === DEFAULT_MNEMONIC ? 'Using default mnemonic' : 'Using custom mnemonic')
     _getProvider = url => {
       return () => {
         return new HDWalletProvider(mnemonic, url)
