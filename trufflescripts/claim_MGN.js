@@ -2,7 +2,7 @@ const { toBN } = require('./utils')(web3)
 const { increaseTimeAndMine, getTimestamp } = require('../src/helpers/web3helpers')(web3)
 
 const DxLockMgnForRepArtifact = artifacts.require('DxLockMgnForRep')
-const DxLockMgnForRepHelperArtifact = artifacts.require('DxLockMgnForRepHelper')
+const DxDaoClaimRedeemHelperArtifact = artifacts.require('DxDaoClaimRedeemHelper')
 const ExternalTokenLockerMock = artifacts.require('ExternalTokenLockerMock')
 const TokenMGN = artifacts.require('TokenFRT')
 const TokenMGNProxy = artifacts.require('TokenFRTProxy')
@@ -35,7 +35,7 @@ const TokenMGNProxy = artifacts.require('TokenFRTProxy')
   // }    
 
 // artifacts and web3 are available globally
-module.exports = async () => {
+const main = async () => {
   
   /**
    * How best to run this for testing @ Rinkeby
@@ -111,7 +111,7 @@ module.exports = async () => {
   
   try {
     let dxLockMgnForRep
-    let promisedDxLockMgnForRepHelper
+    let promisedDxDaoClaimRedeemHelper
     // let promisedTokenMGN
 
     // Conditionally check which contract addresses to use
@@ -130,7 +130,7 @@ module.exports = async () => {
       const netID = await web3.eth.net.getId()
       try {
         dxLockMgnForRep = await DxLockMgnForRepArtifact.at(contractNetworksMap['DxLockMgnForRep'][netID].address)
-        promisedDxLockMgnForRepHelper = DxLockMgnForRepHelperArtifact.at(contractNetworksMap['DxLockMgnForRepHelper'][netID].address)
+        promisedDxDaoClaimRedeemHelper = DxDaoClaimRedeemHelperArtifact.at(contractNetworksMap['DxLockMgnForRepHelper'][netID].address)
         promisedTokenMGN = TokenMGN.at(contractNetworksMap['TokenFRTProxy'][netID].address)
       } catch (error) {
         const ERROR_MESSAGE = `
@@ -146,7 +146,7 @@ module.exports = async () => {
         dxLockMgnForRep = (network === 'rinkeby' && knownEvents) ? await DxLockMgnForRepArtifact.at(REGISTER_EVENTS) : await DxLockMgnForRepArtifact.deployed()
         
         // Start promise resolve for DxLockMgnForRepHelper
-        promisedDxLockMgnForRepHelper = DxLockMgnForRepHelperArtifact.deployed()
+        promisedDxDaoClaimRedeemHelper = DxDaoClaimRedeemHelperArtifact.deployed()
 
         // Allow use of MockMGN contract, only on development
         if (mockMGN && network !== 'mainnet') {
@@ -186,11 +186,6 @@ module.exports = async () => {
       dxLockMgnForRep = await DxLockMgnForRepArtifact.at(REGISTER_EVENTS)
     }
 
-    /**
-     * allPastRegisterEvents
-     * @summary Promise for all past Register events fromBlock flag or 7185000
-     * @type { [] } - Array of Event objects
-     */
     if (fromBlock === 0 || fromBlock < 7185000) {
       console.warn(`
       =================================================================================================================
@@ -201,8 +196,14 @@ module.exports = async () => {
       =================================================================================================================
       `)
     }
+
+    /**
+     * allPastRegisterEvents
+     * @summary Promise for all past Register events fromBlock flag or 7185000
+     * @type { [] } - Array of Event objects
+     */
     const allPastRegisterEvents = await dxLockMgnForRep.getPastEvents('Register', { fromBlock })
-    if (!allPastRegisterEvents.length) throw 'No registered users. Aborting.'
+    if (!allPastRegisterEvents.length) throw 'No registered users. Aborting. Did you forget [--from-block 0]?'
 
     /**
      * allFromandBeneficiaries
@@ -254,7 +255,7 @@ module.exports = async () => {
     }
 
     // get dxLockHelper
-    const dxLockMgnForRepHelper = await promisedDxLockMgnForRepHelper
+    const dxDaoClaimRedeemHelper = await promisedDxDaoClaimRedeemHelper
     // Extract only addresses w/MGN locked balance into array
     const beneficiariesWithBalanceAddressesOnly = beneficiariesWithBalance.map(({ address }) => address)
 
@@ -288,13 +289,15 @@ module.exports = async () => {
       // TODO: fix this
       // Workaround as failing bytes32[] call return doesn't properly throw and returns
       // consistent 'overflow' error(seems to be Truffle5 + Ethers.js issue)
-      await dxLockMgnForRepHelper.claimAll.estimateGas(accountsClaimable)
+      // 1 = dxLMR
+      await dxDaoClaimRedeemHelper.claimAll.estimateGas(accountsClaimable, 1)
       console.log('\nPreparing claimAll call...')
-      const lockingIdsArray = await dxLockMgnForRepHelper.claimAll.call(accountsClaimable)
+      // 1 = dxLMR
+      const lockingIdsArray = await dxDaoClaimRedeemHelper.claimAll.call(accountsClaimable, 1)
       console.log('\nLocking IDs Array', JSON.stringify(lockingIdsArray, undefined, 2))
     } else {
       console.log('\nPreparing actual claimAll - this WILL affect blockchain state...')
-      const claimAllReceipts = await dxLockMgnForRepHelper.claimAll(accountsClaimable)
+      const claimAllReceipts = await dxDaoClaimRedeemHelper.claimAll(accountsClaimable, 1)
       console.log('ClaimAll Receipt(s)', claimAllReceipts)
     }
   } catch (error) {
@@ -307,7 +310,6 @@ module.exports = async () => {
 
       ===========
     `)
-    process.exit()
   }
 }
 /** 
@@ -352,3 +354,5 @@ function handleError(error, message) {
 
   `
 }
+
+module.exports = cb => main().then(() => cb(), cb)
