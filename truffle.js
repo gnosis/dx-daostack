@@ -32,7 +32,7 @@ if (parsed) {
   console.log('Overrided config using ENV vars: ')
   for (key in parsed) {
     if (SECRET_ENV_VARS.includes(key)) {
-      console.log('  %s: %s', key, `<secret-${key.toLower}>`)
+      console.log('  %s: %s', key, `<SECRET-${key}>`)
     }
     console.log('  %s: %s', key, parsed[key])
   }
