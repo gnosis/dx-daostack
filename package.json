@@ -25,7 +25,7 @@
     "get-cryptocompare-tokens": "node src/scripts/get-cryptocompare-tokens",
     "get-token-prices": "node src/scripts/get-token-prices.js",
     "make-proposal": "truffle exec src/scripts/make-proposal.js",
-    "claim_mgn": "truffle exec src/scripts/claim_mgn.js",
+    "claim_mgn": "truffle exec src/scripts/claim_mgn_2.js",
     "redeem_rep": "truffle exec src/scripts/redeem_rep.js",
     "count_rep": "truffle exec src/scripts/count_rep.js",
     "update-price-oracle": "truffle exec src/scripts/update-price-oracle.js",
