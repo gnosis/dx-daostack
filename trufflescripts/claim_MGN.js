@@ -203,7 +203,7 @@ const main = async () => {
      * @type { [] } - Array of Event objects
      */
     const allPastRegisterEvents = await dxLockMgnForRep.getPastEvents('Register', { fromBlock })
-    if (!allPastRegisterEvents.length) throw 'No registered users. Aborting. Did you forget [--from-block 0]?'
+    if (!allPastRegisterEvents.length) throw 'Controlled THROW: No registered users. Aborting. Did you forget [--from-block 0]?'
 
     /**
      * allFromandBeneficiaries
@@ -225,7 +225,7 @@ const main = async () => {
       acc.push(bene)
       return acc 
     }, [])
-    if (!allBeneficiaries.length) throw new Error('No first time registered users available. Aborting.')
+    if (!allBeneficiaries.length) throw 'Controlled THROW: No first time registered users available. Aborting.'
 
     // Get beneficiaries' MGN locked balance (since there's no point in claiming 0 balance MGN...)
     const mgn = await promisedTokenMGN
@@ -240,7 +240,7 @@ const main = async () => {
       .map((bene, i) => ({ address: bene, balance: beneficiariesMgnBalances[i] }))
       .filter(({ balance }) => balance.gt(toBN(0)))
     console.log('\nBeneficiary Addresss + Balances Objects: \n', JSON.stringify(beneficiariesWithBalance.map(item => ({ ...item, balance: item.balance.toString() })), undefined, 2))
-    if (!beneficiariesWithBalance.length) throw 'No registered users with any MGN balance. Aborting.'
+    if (!beneficiariesWithBalance.length) throw 'Controlled THROW: No registered users with any MGN balance. Aborting.'
     
     // Development only, can be removed
     if (network === 'development') {
@@ -288,7 +288,7 @@ const main = async () => {
     }, [])
     console.log('Final Filtered Values', accountsClaimable)
 
-    if (!accountsClaimable.length) throw 'No final claimable addresses. Aborting.'
+    if (!accountsClaimable.length) throw 'Controlled THROW: No final claimable addresses. Aborting.'
 
     if (dryRun) {
       console.warn(`
@@ -316,7 +316,6 @@ const main = async () => {
     }
   } catch (error) {
     console.error(error)
-    handleError(error, 'An error occured - please see below for error details.')
   } finally {
     console.warn(`
       ===========
