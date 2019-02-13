@@ -51,7 +51,7 @@
     "@daostack/arc": "0.0.1-rc.8",
     "@daostack/migration": "0.0.1-rc.8-v3",
     "@gnosis.pm/dx-contracts": "^2.0.0",
-    "@gnosis.pm/dx-price-oracle": "0.1.5",
+    "@gnosis.pm/dx-price-oracle": "0.2.0",
     "@gnosis.pm/gno-token": "^2.0.0",
     "@gnosis.pm/owl-token": "^2.0.0",
     "@gnosis.pm/util-contracts": "^2.0.0",
