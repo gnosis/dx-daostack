@@ -2,26 +2,24 @@
 
 const dateUtil = require('../helpers/dateUtil')
 
-// Initial distribution (Feb 18 - Mar 20, at noon):
+// Initial distribution:
 //   - Start of the locking for REP period
 let INITIAL_DISTRIBUTION_START = '2019-02-18 12:00'
-let INITIAL_DISTRIBUTION_END = '2019-03-20 12:00'
+let INITIAL_DISTRIBUTION_END = '2019-03-04 12:00'
 
-// Claiming period for REP for Locked MGN (Mar 20, at noon)
-//    - 24h period, starts at noon, on the 20th
-//    - The MGN cannot be claimed until the 21th (all other can start being claimed on the 20th)
-let CLAIMING_MGN_START = '2019-03-19 12:00'
-let CLAIMING_MGN_END = '2019-03-20 12:00'
+// Claiming period MGN:
+//    - 24h period for claiming MGN
+let CLAIMING_MGN_START = '2019-03-03 12:00:01'
+let CLAIMING_MGN_END = '2019-03-04 12:00'
 
-// Redeem period (Mar 20):
+// Redeem period (aka freeze period):
 //   - Users can redeem the REP
-//   - This period continues indefinetely
-//   - All claimings but MGN are active on this date (MGN needs to wait the 24h window)
-let REDEEM_START = '2019-03-20 12:00'
+//   - They will be able to claim, also after this period
+//   - No proposals can be sent during this period
+let REDEEM_START = '2019-03-04 12:00'
 
-// Governance period start (Apr 4):
-let GOVERNANCE_START = '2019-04-04 12:00'
-
+// Governance period start
+let GOVERNANCE_START = '2019-03-06 12:00'
 
 // Defaults for testing
 if (process.env.NODE_ENV === 'test') {

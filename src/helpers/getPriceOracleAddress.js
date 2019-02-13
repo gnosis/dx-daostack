@@ -27,8 +27,6 @@ async function _getAddressForLocalGanache({ contractName, artifacts }) {
 }
 
 async function _getAddressFromNpmPackages({ contractName, networkId }) {
-  console.log('_getAddressFromNpmPackages ', { contractName, networkId })
-
   const Contract = dxPriceOracleNetworks[contractName]
   if (!Contract) {
     throw new Error(`No ${contractName} in ${networksFile}`)
