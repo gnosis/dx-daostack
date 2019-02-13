@@ -5,6 +5,8 @@ const DxLockWhitelisted4RepArtifact = artifacts.require('DxLockWhitelisted4Rep')
 const DxGenAuction4RepArtifact = artifacts.require('DxGenAuction4Rep')
 const DxDaoClaimRedeemHelperArtifact = artifacts.require('DxDaoClaimRedeemHelper')
 
+const { toBN, mapToString } = require('./utils')(web3)
+
 // To help console testing - sets contracts + prints vars + saves events for respective Events into dxLMR_Lock_Events etc
 
 // const dxLMRAddress = await DxLockMgnForRep.address, dxLMR = await DxLockMgnForRep.at('0x6099974d7Ed074110db69C515EC748893df43f13'), dxLER = await DxLockEth4Rep.at('0x311814CAfb902C72e87aAbC2978751B7314646e6'), dxLWR = await DxLockWhitelisted4Rep.at('0x1f05d55Cf3FA74eA658D87E48c60C5199Bad4caF'), dxGAR = await DxGenAuction4Rep.at('0x2B19c60d6934E2f20515a8aECCaC4a5c58221BD4'), getPastEvents = async (contract, eventName = 'Lock', fromBlock = 0) => contract['getPastEvents'](eventName, { fromBlock }), dxLER_Lock_Events = await getPastEvents(dxLER, 'Lock', 0), dxLMR_Lock_Events = await getPastEvents(dxLMR, 'Lock', 0), dxLWR_Lock_Events = await getPastEvents(dxLWR, 'Lock', 0), dxGAR_Bid_Events = await getPastEvents(dxGAR, 'Bid', 0), dxLMR_Lock_Beneficiaries = dxLMR_Lock_Events.map(event => event.returnValues._locker), dxLER_Lock_Beneficiaries = dxLER_Lock_Events.map(event => event.returnValues._locker), dxLWR_Lock_Beneficiaries = dxLWR_Lock_Events.map(event => event.returnValues._locker), dxGAR_Bid_Bidders = dxGAR_Bid_Events.map(event => event.returnValues._bidder), dxGAR_Bid_AuctionIDs = dxGAR_Bid_Events.map(event => event.returnValues._auctionId), await dxLMR.lockingStartTime().then(bn => bn.toString() * 1000).then(timeString => console.log('LOCK START TIME', new Date(timeString))), await dxLMR.lockingEndTime().then(bn => bn.toString() * 1000).then(timeString => console.log('LOCK END TIME', new Date(timeString))), await dxLMR.redeemEnableTime().then(bn => bn.toString() * 1000).then(timeString => console.log('REDEEM ENABLE TIME', new Date(timeString)))
@@ -144,19 +146,22 @@ const main = async () => {
     // 1. Check all Lock events for dxLockMGNForRep, dxLockETHForRep, and dxLockWhitelistForRep
     //TODO: should this be 1 array? Does it matter if it's split?
     const [dxLMR_Lock_Events, dxLER_Lock_Events, dxLWR_Lock_Events, dxGAR_Bid_Events] = await Promise.all([
-      dxLMR.getPastEvents('Lock', { fromBlock: 0 }),
-      dxLER.getPastEvents('Lock', { fromBlock: 0 }),
-      dxLWR.getPastEvents('Lock', { fromBlock: 0 }),
-      dxGAR.getPastEvents('Bid', { fromBlock: 0 })
+      dxLMR.getPastEvents('Lock', { fromBlock }),
+      dxLER.getPastEvents('Lock', { fromBlock }),
+      dxLWR.getPastEvents('Lock', { fromBlock }),
+      dxGAR.getPastEvents('Bid', { fromBlock })
     ])
     
     // Cache necessary addresses from events
-    const dxLER_Lock_Lockers  = dxLER_Lock_Events.map(event => event.returnValues._locker), 
-          dxLMR_Lock_Lockers  = dxLMR_Lock_Events.map(event => event.returnValues._locker), 
-          dxLWR_Lock_Lockers  = dxLWR_Lock_Events.map(event => event.returnValues._locker), 
-          dxGAR_Bid_Bidders   = dxGAR_Bid_Events.map(event => event.returnValues._bidder), 
-          dxGAR_Bid_AuctionIDs = dxGAR_Bid_Events.map(event => event.returnValues._auctionId)
-
+    const dxLER_Lock_Lockers  = await removeZeroScoreAddresses(dxLER_Lock_Events.map(event => event.returnValues._locker), dxLER), 
+          dxLMR_Lock_Lockers  = await removeZeroScoreAddresses(dxLMR_Lock_Events.map(event => event.returnValues._locker), dxLMR), 
+          dxLWR_Lock_Lockers  = await removeZeroScoreAddresses(dxLWR_Lock_Events.map(event => event.returnValues._locker), dxLWR), 
+          [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = await removeZeroBidsAddresses(dxGAR_Bid_Events.map(
+            event => event.returnValues._bidder), 
+            dxGAR_Bid_Events.map(event => event.returnValues._auctionId),
+            dxGAR
+            )
+            
     // ?. Dry Run - call redeem on all contracts
     if (dryRun) {
       /* 
@@ -196,6 +201,30 @@ const main = async () => {
   } catch (error) {
     console.error(error)
   }
+}
+
+async function removeZeroScoreAddresses(arr, contract) {
+  const hasScore = await Promise.all(arr.map(bene => contract['scores'].call(bene)))
+  const reducedArr = arr.reduce((acc, bene, idx) => {
+    // REMOVE bene if they have 0 score
+    if (!hasScore[idx]) return acc
+    
+    acc.push(bene)
+    return acc 
+  }, [])
+  return reducedArr
+}
+
+async function removeZeroBidsAddresses (bidders, auctionIds, contract) {
+  const hasBidAmount = await Promise.all(auctionIds.map((id, idx) => contract.getBid.call(bidders[idx], id)))
+  const reducedArr = bidders.reduce((acc, bene, idx) => {
+    // REMOVE bene if they have 0 score
+    if (hasBidAmount[idx] <= 0) return acc
+    
+    acc.push({ bene, id: auctionIds[idx] })
+    return acc 
+  }, [])
+  return [reducedArr.map(({ bene }) => bene), reducedArr.map(({ id }) => id)]
 }
 
 module.exports = cb => main().then(() => cb(), cb)
