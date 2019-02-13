@@ -1,5 +1,5 @@
-// Time period
-
+// Time periods
+//    NOTE: All dates are expressed in Tel Aviv time zone
 const dateUtil = require('../helpers/dateUtil')
 
 // Initial distribution:
@@ -24,23 +24,23 @@ let GOVERNANCE_START = '2019-03-06 12:00'
 // Defaults for testing
 if (process.env.NODE_ENV === 'test') {
   const now = new Date()
-  // LOCKING: Starts in one month from now, last 30 days
+  // Intitial distribution
   INITIAL_DISTRIBUTION_START = dateUtil.add(now, 1, 'month')
   INITIAL_DISTRIBUTION_END = dateUtil.add(INITIAL_DISTRIBUTION_START, 30, 'days')
 
-  // CLAIMING MGN: Right after the initial distribution, last 24h
+  // Claiming of MGN
   CLAIMING_MGN_START = dateUtil.add(INITIAL_DISTRIBUTION_END, 1, 'second')
   CLAIMING_MGN_END = dateUtil.add(CLAIMING_MGN_START, 24, 'hours')
 
-  // REDEEM: Right after the claiming of MGN
+  // Redeem reputation
   REDEEM_START = dateUtil.add(CLAIMING_MGN_END, 1, 'second')
 
-  // GOVERNANCE: 14 days after redeem the period starts
+  // Start governance
   GOVERNANCE_START = dateUtil.add(REDEEM_START, 14, 'days')
 }
 
 module.exports = {
-  // Initial distribution
+  // Intitial distribution
   initialDistributionStart: dateUtil.parse(
     process.env.INITIAL_DISTRIBUTION_START || INITIAL_DISTRIBUTION_START
   ),
@@ -48,7 +48,7 @@ module.exports = {
     process.env.INITIAL_DISTRIBUTION_END || INITIAL_DISTRIBUTION_END
   ),
 
-  // 24h claiming MGN window
+  // Claiming of MGN
   claimingMgnStart: dateUtil.parse(
     process.env.CLAIMING_MGN_START || CLAIMING_MGN_START
   ),
@@ -56,12 +56,12 @@ module.exports = {
     process.env.CLAIMING_MGN_END || CLAIMING_MGN_END
   ),
 
-  // Redeem period
+  // Redeem reputation
   redeemStart: dateUtil.parse(
     process.env.REDEEM_START || REDEEM_START
   ),
 
-  // Governance
+  // Start governance
   governanceStart: dateUtil.parse(
     process.env.GOVERNANCE_START || GOVERNANCE_START
   )

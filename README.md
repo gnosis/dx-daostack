@@ -31,6 +31,19 @@ DAOStack's Smart contract Audit:
 * [Blog post](https://medium.com/chainsecurity/https-medium-com-chainsecurity-daostack-audit-completed-10e370c4bc30)
 * [Full Report](https://github.com/ChainSecurity/audits/blob/master/ChainSecurity_DAOstack_v2.pdf)
 
+## Install dependencies
+Useful, for example for working with the console in any deployed network
+```bash
+# Install dependencies
+npm run install
+
+# Restore the network info in the compiled contracts
+npm run restore
+
+# Check the networks :) 
+npm run networks
+```
+
 ## Run tests
 ```bash
 # Install dependencies
