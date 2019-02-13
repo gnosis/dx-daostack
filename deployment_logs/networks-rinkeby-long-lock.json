@@ -1056,7 +1056,7 @@
       "transactionHash": "0xdecef090e247be7b960cfb62f6b0f6a67586a062215a9ea5047e68e90c3f1f51"
     }
   },
-  "ExternalTokenLockerMock": {
+  "MgnBasicMock": {
     "4": {
       "events": {},
       "links": {},

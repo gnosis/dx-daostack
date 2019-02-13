@@ -56,7 +56,7 @@ const {
   takeSnapshot,
   revertSnapshot,
   getTimestamp
-} = require('../src/helpers/web3helpers')(web3)
+} = require('../helpers/web3helpers')(web3)
 
 const LOCK_AMOUNT = 2001
 const YES_VOTE = new BN(1)
@@ -263,7 +263,7 @@ function skip30Days() {
 }
 function skipToActivationTime(context) {
   it('skips to activation time', async () => {
-    const {activationTime} = context
+    const { activationTime } = context
     console.log('activationTime: ', activationTime);
     const timestamp = await getTimestamp()
     console.log('now: ', timestamp)

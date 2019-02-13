@@ -12,7 +12,7 @@ const {
   takeSnapshot,
   revertSnapshot,
   getTimestamp
-} = require('../src/helpers/web3helpers')(web3)
+} = require('../helpers/web3helpers')(web3)
 
 const LOCK_AMOUNT = 20
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'

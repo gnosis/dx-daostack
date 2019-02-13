@@ -1,9 +1,9 @@
 const { toBN } = require('./utils')(web3)
-const { increaseTimeAndMine, getTimestamp } = require('../src/helpers/web3helpers')(web3)
+const { increaseTimeAndMine, getTimestamp } = require('../helpers/web3helpers')(web3)
 
 const DxLockMgnForRepArtifact = artifacts.require('DxLockMgnForRep')
 const DxDaoClaimRedeemHelperArtifact = artifacts.require('DxDaoClaimRedeemHelper')
-const ExternalTokenLockerMock = artifacts.require('ExternalTokenLockerMock')
+const MgnBasicMock = artifacts.require('MgnBasicMock')
 const TokenMGN = artifacts.require('TokenFRT')
 const TokenMGNProxy = artifacts.require('TokenFRTProxy')
 
@@ -45,8 +45,10 @@ const main = async () => {
    * [use flag -f 'networks-rinkeby-long-lock.json' for addresses]
    * [use flag --from-block 0]
    * 
-   * Complete [ DRY-RUN ]: npx truffle exec src/scripts/claim_mgn.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0
-   * Complete [ REAL-RUN ]: npx truffle exec src/scripts/claim_mgn.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0 --dry-run false
+   * Complete [ DRY-RUN ]: 
+   *    yarn claim_mgn --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0
+   * Complete [ REAL-RUN ]: 
+   *    yarn claim_mgn --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0 --dry-run false
    */
 
   // address of DxLockMgnForRep contract with Register events
@@ -153,11 +155,11 @@ const main = async () => {
           console.log(`
       =====================================================================
 
-      Using ExternalTokenLockerMock.address as MGN [MOCK MGN FLAG DETECTED]
+      Using MgnBasicMock.address as MGN [MOCK MGN FLAG DETECTED]
 
       =====================================================================
           `)
-          const eTLM = await ExternalTokenLockerMock.deployed()
+          const eTLM = await MgnBasicMock.deployed()
           promisedTokenMGN = TokenMGN.at(eTLM.address)
         } else {
           // else use the regular method of TokenFRTProxy address
