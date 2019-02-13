@@ -210,10 +210,24 @@ const main = async () => {
      * @summary Array with OBJECT items { from: '0x...', beneficiary: '0x...' }
      * @type { string[] }
      */
-    const allBeneficiaries = allPastRegisterEvents.map(({ returnValues }) => returnValues._beneficiary)
+    const allBeneficiariesFromEvents = allPastRegisterEvents.map(({ returnValues }) => returnValues._beneficiary)
 		// console.log('All Registered Beneficiaries Addresses', allBeneficiaries)
 
-    // Run checks to make sure claimAll will properly run
+    /* 
+      VALIDATION - REMOVE UN-CLAIMABLE USER ADDRESSES
+    */
+
+    // Make sure that beneficiaries inside allBeneficiaries have NOT already claimed  
+    const hasRegistered = await Promise.all(allBeneficiariesFromEvents.map(bene => dxLockMgnForRep.externalLockers.call(bene)))
+    const allBeneficiaries = allBeneficiariesFromEvents.reduce((acc, bene, idx) => {
+      if (hasRegistered[idx]) return acc
+      
+      acc.push(bene)
+      return acc 
+    }, [])
+    if (!allBeneficiaries.length) throw new Error('No first time registered users available. Aborting.')
+
+    // Get beneficiaries' MGN locked balance (since there's no point in claiming 0 balance MGN...)
     const mgn = await promisedTokenMGN
     const beneficiariesMgnBalances = await Promise.all(allBeneficiaries.map(beneficiary => mgn.lockedTokenBalances.call(beneficiary)))
     
@@ -285,7 +299,7 @@ const main = async () => {
 
       ============================================================================
       `)
-
+      
       // TODO: fix this
       // Workaround as failing bytes32[] call return doesn't properly throw and returns
       // consistent 'overflow' error(seems to be Truffle5 + Ethers.js issue)
@@ -302,6 +316,7 @@ const main = async () => {
     }
   } catch (error) {
     console.error(error)
+    handleError(error, 'An error occured - please see below for error details.')
   } finally {
     console.warn(`
       ===========
