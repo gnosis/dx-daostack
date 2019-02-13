@@ -27,164 +27,6 @@
     }
   },
   "DxAvatar": {
-    "1": {
-      "events": {
-        "0x4e0273c2f549d9b5661a7f99d596db7cdb61840fe47fca018a26b27b2377dd34": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_contract",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_params",
-              "type": "bytes"
-            },
-            {
-              "indexed": false,
-              "name": "_success",
-              "type": "bool"
-            }
-          ],
-          "name": "GenericCall",
-          "type": "event",
-          "signature": "0x4e0273c2f549d9b5661a7f99d596db7cdb61840fe47fca018a26b27b2377dd34"
-        },
-        "0x22fca66666089f39bc900dd6605b489df4aae6260cc8ea8257594cfb8c84926c": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "name": "_amountInWei",
-              "type": "uint256"
-            },
-            {
-              "indexed": true,
-              "name": "_to",
-              "type": "address"
-            }
-          ],
-          "name": "SendEther",
-          "type": "event",
-          "signature": "0x22fca66666089f39bc900dd6605b489df4aae6260cc8ea8257594cfb8c84926c"
-        },
-        "0x49dc2a60d2599a7b6932d78fb694c30dfc596fe4e0282b5d0fd184b52472c04d": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_externalToken",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "_to",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_value",
-              "type": "uint256"
-            }
-          ],
-          "name": "ExternalTokenTransfer",
-          "type": "event",
-          "signature": "0x49dc2a60d2599a7b6932d78fb694c30dfc596fe4e0282b5d0fd184b52472c04d"
-        },
-        "0x179c15de44aa7ab84896301974328eb40b5b40fe01cfe0fee2924ea712c3e843": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_externalToken",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_from",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_to",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_value",
-              "type": "uint256"
-            }
-          ],
-          "name": "ExternalTokenTransferFrom",
-          "type": "event",
-          "signature": "0x179c15de44aa7ab84896301974328eb40b5b40fe01cfe0fee2924ea712c3e843"
-        },
-        "0x3a48a4d6253b30fd10e57a347c1f9bcb0604946481fae0b2fdad6e74f2a9cbb3": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_externalToken",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_spender",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_value",
-              "type": "uint256"
-            }
-          ],
-          "name": "ExternalTokenApproval",
-          "type": "event",
-          "signature": "0x3a48a4d6253b30fd10e57a347c1f9bcb0604946481fae0b2fdad6e74f2a9cbb3"
-        },
-        "0xf32a9f77675fd5917534c7746608fd3e309eac68fbdcbf5925e24ca97a704396": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_sender",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_value",
-              "type": "uint256"
-            }
-          ],
-          "name": "ReceiveEther",
-          "type": "event",
-          "signature": "0xf32a9f77675fd5917534c7746608fd3e309eac68fbdcbf5925e24ca97a704396"
-        },
-        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "previousOwner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "newOwner",
-              "type": "address"
-            }
-          ],
-          "name": "OwnershipTransferred",
-          "type": "event",
-          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
-        }
-      },
-      "links": {},
-      "address": "0x7cF7BAc65e2a867A6b657De891B05cAEbd3586fb",
-      "transactionHash": "0xfcb88ea771e9a1c9752fecb29f067b7fcdb0e6a4ea6ed3ee4f8bd0606be8ddd9"
-    },
     "4": {
       "events": {
         "0x60cb6ac4ce80ddf7e096689e155fdb7a4e5354b2fc7bd67157bde32a1ce44cb6": {
@@ -417,192 +259,11 @@
         }
       },
       "links": {},
-<<<<<<< HEAD
-      "address": "0xD69DA178BCD6888D3B713cecce75df3712E8d73A",
-      "transactionHash": "0x99aa82dcbbfa1a877a05e217b1ddeaffd09124b8a67e1ef5c7fca3134ff3d254"
-=======
       "address": "0xA0b7e97fAc27423D9F87f3Bc823D977E47AA664b",
       "transactionHash": "0x832fc7685c9c0de8460af95ea3c76f7c7973e2b83eb868d76776b504c5f6de4b"
->>>>>>> origin/feature/scripts
     }
   },
   "DxController": {
-    "1": {
-      "events": {
-        "0x837f2931e3df0592458212be4e470025f197feb7a8e39deb5b7f1f1d42e6f262": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_sender",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "_to",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "MintReputation",
-          "type": "event",
-          "signature": "0x837f2931e3df0592458212be4e470025f197feb7a8e39deb5b7f1f1d42e6f262"
-        },
-        "0x186d8887e1b22f9d9b16849c36baa748950d09d9c9b67a4a6ea140eaad00c21c": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_sender",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "_from",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "BurnReputation",
-          "type": "event",
-          "signature": "0x186d8887e1b22f9d9b16849c36baa748950d09d9c9b67a4a6ea140eaad00c21c"
-        },
-        "0x21f9c9a1a1f9a311a50f15fec5c1faa9e21fc9edf964f0fdecba5bd490484c5e": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_sender",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "_beneficiary",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "MintTokens",
-          "type": "event",
-          "signature": "0x21f9c9a1a1f9a311a50f15fec5c1faa9e21fc9edf964f0fdecba5bd490484c5e"
-        },
-        "0x546816e99403df442acb68ef69562682a50762c20a3fb6b472f7af9923736cfc": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_sender",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "_scheme",
-              "type": "address"
-            }
-          ],
-          "name": "RegisterScheme",
-          "type": "event",
-          "signature": "0x546816e99403df442acb68ef69562682a50762c20a3fb6b472f7af9923736cfc"
-        },
-        "0x10bb2cf04cb8b902a8e736d494f1a51003be6d4b16ef6fb95ce62c38445023bf": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_sender",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "_scheme",
-              "type": "address"
-            }
-          ],
-          "name": "UnregisterScheme",
-          "type": "event",
-          "signature": "0x10bb2cf04cb8b902a8e736d494f1a51003be6d4b16ef6fb95ce62c38445023bf"
-        },
-        "0xdb7cbacf8df312d794506c0cc9af07f64d29ca075796ea2e950a3832cc9a63dd": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_oldController",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_newController",
-              "type": "address"
-            }
-          ],
-          "name": "UpgradeController",
-          "type": "event",
-          "signature": "0xdb7cbacf8df312d794506c0cc9af07f64d29ca075796ea2e950a3832cc9a63dd"
-        },
-        "0x78800d7333b8d0174a0845569e3913b7ce4a3c03ca444dd9904172fc14f2fdad": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_globalConstraint",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_params",
-              "type": "bytes32"
-            },
-            {
-              "indexed": false,
-              "name": "_when",
-              "type": "uint8"
-            }
-          ],
-          "name": "AddGlobalConstraint",
-          "type": "event",
-          "signature": "0x78800d7333b8d0174a0845569e3913b7ce4a3c03ca444dd9904172fc14f2fdad"
-        },
-        "0xcdf1a50ea6b7de555bd409f8a4a53ea43c6dc6b4caa961889da9e005f21bbaa9": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_globalConstraint",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_index",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "name": "_isPre",
-              "type": "bool"
-            }
-          ],
-          "name": "RemoveGlobalConstraint",
-          "type": "event",
-          "signature": "0xcdf1a50ea6b7de555bd409f8a4a53ea43c6dc6b4caa961889da9e005f21bbaa9"
-        }
-      },
-      "links": {},
-      "address": "0xbD6E7a1963fEE6E9eee6bfD67E0b4419aa0a3BAF",
-      "transactionHash": "0xedd18a330c5db7415c54b8a01081471b3d14d946d16a789f2ebf025f19e3c73f"
-    },
     "4": {
       "events": {
         "0x837f2931e3df0592458212be4e470025f197feb7a8e39deb5b7f1f1d42e6f262": {
@@ -776,22 +437,11 @@
         }
       },
       "links": {},
-<<<<<<< HEAD
-      "address": "0xAEC10E0B8b9EbC6046099D4c061EDD18c2513054",
-      "transactionHash": "0x4a48362d6b9373bd5e8fcbbc8488fa1f53797a247da4c558f648675bb2cebf52"
-=======
       "address": "0x48c829ed59135Bfb69a165e9B2D040AeF2bCb03f",
       "transactionHash": "0xa9b00a35602fd0450df836bb472ce4601628fad5f882fb8da662ae762dd7ef7b"
->>>>>>> origin/feature/scripts
     }
   },
   "DxGenAuction4Rep": {
-    "1": {
-      "events": {},
-      "links": {},
-      "address": "0x7Bd5bF3B35e242bA2fA0532d5121ec5cAB6ef631",
-      "transactionHash": "0xa6ad1d3c18591dd0c307b1ce7832ae42dac2f3de4d13b9f072d29358dbd8d5d2"
-    },
     "4": {
       "events": {
         "0x19421268847f42dd61705778018ddfc43bcdce8517e7a630acb12f122c709481": {
@@ -860,22 +510,11 @@
         }
       },
       "links": {},
-<<<<<<< HEAD
-      "address": "0x9863d6b97BAc84Bfb59F7AbCf40eeAc0A421f239",
-      "transactionHash": "0xc247c2e80127d9386ced7b57eff7ca7c55046635a5d15389facc8d35ef372da9"
-=======
       "address": "0xCE16ad3BaFbED9C6B33d320D5Cd5eE13212b4130",
       "transactionHash": "0xa8d7b4f633d4ea2cb6ff987272bca5f2b9a0937c7f3a7854af015122afb9ddfb"
->>>>>>> origin/feature/scripts
     }
   },
   "DxLockEth4Rep": {
-    "1": {
-      "events": {},
-      "links": {},
-      "address": "0x07C6A3dAb72E0090508e289D1e2611B817Df45B2",
-      "transactionHash": "0xa822b73c66fb337ef6a221b1835f46b81f6752faf69e8ac70a4316a73820d104"
-    },
     "4": {
       "events": {
         "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
@@ -967,22 +606,11 @@
         }
       },
       "links": {},
-<<<<<<< HEAD
-      "address": "0x55d9Ca5FC8C7FC7Ee76a6e357fA33ec2cB529E48",
-      "transactionHash": "0x8e747cad27ebebe6b6428aaa678ea39aaff165a267f728255dd9758cdb878c33"
-=======
       "address": "0xb2A4184f3B1e84c4E027CAB021e67CdFD313EF12",
       "transactionHash": "0x91471e69ad9c24d748e16ee3299f7f82302aad89e538058af89652a7aba3ff0e"
->>>>>>> origin/feature/scripts
     }
   },
   "DxLockMgnForRep": {
-    "1": {
-      "events": {},
-      "links": {},
-      "address": "0xed555f6b668C8C178700aB9a378e983D8131A4E8",
-      "transactionHash": "0x5570464e10ee3e41e320ab24917a59392d2ee9e9d62063294dded779e57a5340"
-    },
     "4": {
       "events": {
         "0xeeda149c76076b34d4b9d8896c2f7efc0d33d1c7b53ea3c5db490d64613f603a": {
@@ -1087,10 +715,6 @@
         }
       },
       "links": {},
-<<<<<<< HEAD
-      "address": "0x8ED09F8650DB4013A49646116cB47D3C2ef740B6",
-      "transactionHash": "0x313776a7f1bde0bf3fd653329b5e37212f19d91d6305e0fecb823d27365d2ff7"
-=======
       "address": "0xeA73f5B98a60D31bc50457527B6b7C9F4f201Bf7",
       "transactionHash": "0xc7a245e6de9b03b8daeea13e7700da8a58deb9934ee5d94b0222db08d26ffab6"
     }
@@ -1101,16 +725,9 @@
       "links": {},
       "address": "0xFb2C25328F67245E077c84DBa9fDb08fdB05979e",
       "transactionHash": "0xb5c896048bc13d4f94361ad861b5998f558ec96a46d7a8525ce4c6ba80072121"
->>>>>>> origin/feature/scripts
     }
   },
   "DxLockWhitelisted4Rep": {
-    "1": {
-      "events": {},
-      "links": {},
-      "address": "0xC41C7315E5da4AA94c745174aF421c7ac75cdcB8",
-      "transactionHash": "0x5cdd39eaefbdd3c44885ee18b0c5f7c2a8d08040c25cb8bac423cc2ad45776a1"
-    },
     "4": {
       "events": {
         "0x09ae2accb7909b2605e5e74e2584c7f5aa396bc6ab76290633ae3819ff650e9f": {
@@ -1230,77 +847,11 @@
         }
       },
       "links": {},
-<<<<<<< HEAD
-      "address": "0xBCc966cb654da7618e9035AbA0EA1bE90Bd1124d",
-      "transactionHash": "0x55b7a05c8edb70a5f749e028cc4921b8b551fe48de64786e0327141582a76c50"
-=======
       "address": "0x05Ab8e4223471A1949A6AEa7b246aC0B0adfA548",
       "transactionHash": "0xe15520c2fe3b801bc96bc47321d7cb280a9a27a73701af5c998df852e72d9f1e"
->>>>>>> origin/feature/scripts
     }
   },
   "DxReputation": {
-    "1": {
-      "events": {
-        "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_to",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "Mint",
-          "type": "event",
-          "signature": "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885"
-        },
-        "0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "_from",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "_amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "Burn",
-          "type": "event",
-          "signature": "0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5"
-        },
-        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "previousOwner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "newOwner",
-              "type": "address"
-            }
-          ],
-          "name": "OwnershipTransferred",
-          "type": "event",
-          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
-        }
-      },
-      "links": {},
-      "address": "0xE3E5D7aF8309311885336F65835e2ECd1255b0AC",
-      "transactionHash": "0x5f9f35a268b7b94f6c2a11e2893085e4efc82ae3f4f4690354557955ac374065"
-    },
     "4": {
       "events": {
         "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885": {
@@ -1372,87 +923,11 @@
         }
       },
       "links": {},
-<<<<<<< HEAD
-      "address": "0x32E2F8B1f25C80CEe84A68Ae829Bff421d98A721",
-      "transactionHash": "0x92799c391a0c4c6bbe84ed4379b501815429ed908238f61bc325ece608a50049"
-=======
       "address": "0x6871f88B25C44870727fa46288923D3f58D47E8d",
       "transactionHash": "0x7b50f2583478d9b122b14bffd2e65c3cfd9d9f6c3c176ce5ef37f087a422a1fc"
->>>>>>> origin/feature/scripts
     }
   },
   "DxToken": {
-    "1": {
-      "events": {
-        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "previousOwner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "newOwner",
-              "type": "address"
-            }
-          ],
-          "name": "OwnershipTransferred",
-          "type": "event",
-          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
-        },
-        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "Transfer",
-          "type": "event",
-          "signature": "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
-        },
-        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "name": "spender",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "Approval",
-          "type": "event",
-          "signature": "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925"
-        }
-      },
-      "links": {},
-      "address": "0xd318302007b543727392a3824B54d23d8708A96C",
-      "transactionHash": "0x68786e75dd841a3f9498ba39e6ffff76ffb36402d653146be3f8d25ff8ea0303"
-    },
     "4": {
       "events": {
         "0xcc16f5dbb4873280815c1ee09dbd06736cffcc184412cf7a71a0fdb75d397ca5": {
@@ -1577,13 +1052,8 @@
         }
       },
       "links": {},
-<<<<<<< HEAD
-      "address": "0xF4C09e1c95cB28E3E3397A1Bc09ce7E2d3e83C11",
-      "transactionHash": "0x7745f928c3f12fbe3ac293601a3e5f35f69e4bc751a61cd6584136dca48c63c0"
-=======
       "address": "0xdb94AB7504C38fFF34eC705bf83BFb4f51b8DF7c",
       "transactionHash": "0xdecef090e247be7b960cfb62f6b0f6a67586a062215a9ea5047e68e90c3f1f51"
->>>>>>> origin/feature/scripts
     }
   },
   "ExternalTokenLockerMock": {
@@ -1603,21 +1073,19 @@
     }
   },
   "Migrations": {
-    "1": {
-      "events": {},
-      "links": {},
-      "address": "0x874bEc9eF89A94095552cA560B23fABA02b81eF3",
-      "transactionHash": "0x1603afcceb76acc5c31981b2b8a3c4a7e310b32b5bee7c1292e9425999cf20e7"
-    },
     "4": {
       "events": {},
       "links": {},
-<<<<<<< HEAD
-      "address": "0xfB514A2805a92eC843Fb3AAB08D680D5319a91A3",
-      "transactionHash": "0xd8796e97c754da3f0e5bd4d7e6c678328b9c29ea6de14a693f02ef668e114602"
-=======
       "address": "0x5E58944687BD52708898751Aa2ef3e69b37F49cc",
       "transactionHash": "0xd79b7d82478a238f0b981ca2fe2cdddfeeadfbee2e2f3d2ebac94ee0056fda23"
+    }
+  },
+  "TokenFRT": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0x547127c6cb8b242bf5b5f38b97799a61477d951a",
+      "transactionHash": "0xfe763f9886018a6326a32cd81c951253bf8b840e1cc501de100e8f013ddaefe3"
     }
   },
   "TokenFRTProxy": {
@@ -1632,7 +1100,6 @@
       "links": {},
       "address": "0xb32a217d61397550c4c09a2b7a07e6fd224c2718",
       "transactionHash": "0x019f72dfc831ab40afa5b1f7432d99335c596d59dfdb03037c1f606f1d116418"
->>>>>>> origin/feature/scripts
     }
   }
 }

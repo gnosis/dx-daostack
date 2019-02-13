@@ -20,6 +20,7 @@
     "networks": "truffle networks",
     "lint": "eslint .",
     "solium": "solium --dir ./contracts/",
+    "local-give-register-mgn": "USE_MOCK_MGN=true npx truffle migrate --reset && truffle exec trufflescripts/local/give_and_register_MGN_local.js",
     "get-0x-list": "truffle exec src/scripts/get-0x-list.js",
     "get-cryptocompare-tokens": "node src/scripts/get-cryptocompare-tokens",
     "get-token-prices": "node src/scripts/get-token-prices.js",
