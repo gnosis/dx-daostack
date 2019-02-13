@@ -417,8 +417,8 @@
         }
       },
       "links": {},
-      "address": "0xcAD490d05a4c5498Cd4540a5A68227D08244B5bB",
-      "transactionHash": "0x4f807499e550830b3ae24ee04abb1e5dae4225ffd539ac6cd07f54d430c01701"
+      "address": "0xfA75fe2409143555c54327a3C8dD93c9954663CD",
+      "transactionHash": "0x46b4fa270ed523f17ba483b4ff1ed2b16bd6f15570063bbb6e84fc77b569cf8b"
     }
   },
   "DxController": {
@@ -771,16 +771,16 @@
         }
       },
       "links": {},
-      "address": "0xAbd182a12F68eB2F0081Cf991FcD416f23820159",
-      "transactionHash": "0x565f7f1d8d8d7410a4596bd9ccd8c759cffad102bcf397148ddac0b85d2a3889"
+      "address": "0xA75d1092BE246CEDE3f3ee8C3221e54368A7D022",
+      "transactionHash": "0xd43bc58ff7c5b991b627c3f046d60d1242c13ef975e662f9479647db0faf4eed"
     }
   },
   "DxDaoClaimRedeemHelper": {
     "4": {
       "events": {},
       "links": {},
-      "address": "0x0AFEF32F61610E527118F79866e216e54Aba918c",
-      "transactionHash": "0x7650dcc0d6c931cf7a09515b5c5ff032ea733f95a0e30626a8819ced77c530f1"
+      "address": "0x15F6b9588Adf45FaEd79559996Ff000dA6d686b7",
+      "transactionHash": "0x473ab4ded689691fa6f9ef8f6ca2c2e0cf43e56f36288ff8930fdda291efb433"
     }
   },
   "DxGenAuction4Rep": {
@@ -923,8 +923,8 @@
         }
       },
       "links": {},
-      "address": "0x41A0BC38fEa272f6dB04779B9Fffbc366A9190fa",
-      "transactionHash": "0x1c981cb6669ca5a1af6633f2175736bed0ea72e9b50c6221262f8c150cfd8912"
+      "address": "0xEEFd11ecF762b44e175361bbD3183E909D21B48D",
+      "transactionHash": "0x3c17b16c66fb384655a763e9ed22ca197fdc97f72d637ec2663ec87741d3e3b8"
     }
   },
   "DxLockEth4Rep": {
@@ -1113,8 +1113,8 @@
         }
       },
       "links": {},
-      "address": "0xED35c642563821B9DaFFD123A8dF2f125cEE0c81",
-      "transactionHash": "0xdc0245bd86598812663d1f57607e8b894d6aee4da5cf0144786535b466c84d70"
+      "address": "0x58d9a178b86a89eBF97038545D6B384bADD716D8",
+      "transactionHash": "0x8d8a5a128485a8e6ef94f097c081ffb60ff5ff998aed79410d08031611863ab3"
     }
   },
   "DxLockMgnForRep": {
@@ -1329,8 +1329,8 @@
         }
       },
       "links": {},
-      "address": "0x9E3fd7Ec0bD74FA3Ca0c322Daa1C10706989AD03",
-      "transactionHash": "0xa593d632443ef39a9a209fa9cbe4501c13ce162b96c2a9b1e4fc5ac241fd7427"
+      "address": "0x09aa71DD68267FbA3326d123E6F87B0DA4b06ac3",
+      "transactionHash": "0x889947a75daf2b33dfcaa5d33608c58118d9047b5d3a967ef78ab42ff0a1998b"
     }
   },
   "DxLockWhitelisted4Rep": {
@@ -1575,8 +1575,8 @@
         }
       },
       "links": {},
-      "address": "0xAc072476b33E1C3e7dA75865E17e79F41E15965C",
-      "transactionHash": "0x605e0af5d5ac4fb7b92a1c34c449bb0507694a4813233c7afc6f238219fe7c82"
+      "address": "0x4317BB0934eA2d8e9c5A615Dc4Cd4743168Af825",
+      "transactionHash": "0xb2f6fe7da74abe1da8cdd44c8655763b9a2eeadf9d4981b504078b60819d4635"
     }
   },
   "DxReputation": {
@@ -1712,8 +1712,8 @@
         }
       },
       "links": {},
-      "address": "0x9618C3f37B651F8b3fF5c1f8346fc3d4b6088BCd",
-      "transactionHash": "0xb5f50e36cdbd5348c8977b304565f58848665645b52456d5732d3140554b0069"
+      "address": "0x7ca9b8D01195cCf3d507B940dDEEe6bc31e3e8AA",
+      "transactionHash": "0x4c999e884205366685a9ecf7f0c1795c3f7ffc8750801a1f4cc628b5de49b6c6"
     }
   },
   "DxToken": {
@@ -1912,16 +1912,16 @@
         }
       },
       "links": {},
-      "address": "0x36a14b96A529982324B542DAf46EA26c6864FaC8",
-      "transactionHash": "0xaa3d736d0e25329c4120092ad2f7eccb4eeb127da01acc281d093163afb358a1"
+      "address": "0x6642A0197DB8086339eD1e40B8242D3C040Bcb9e",
+      "transactionHash": "0xc8d88367c50ac82595efca0f700b0d7db3ef1b0c213e4bb2749f7b1653e3d4e4"
     }
   },
   "ExternalTokenLockerMock": {
     "4": {
       "events": {},
       "links": {},
-      "address": "0xD7e271e4f77054a9F2148427AB4A38bd2E48Bd13",
-      "transactionHash": "0x7c35dec556b429297a4af34fb31e9327e8334422f5136a6067ad2ebaa18d3a58"
+      "address": "0xe1ac714f427Cd7476E358d82e688942750eF4724",
+      "transactionHash": "0x90cbb8f9dd296012a5140e2eca0243b217990f08303fc7845f5cf05c3b3e4884"
     }
   },
   "FixedPriceOracle": {
@@ -1942,8 +1942,8 @@
     "4": {
       "events": {},
       "links": {},
-      "address": "0x6A81B92b3E4D3f4910d3fDA7FEA1f1895EAF863b",
-      "transactionHash": "0xea22f2976d295494cbb84f4c021a2ccb186495590b4a47863bd60e92dd0ff1e7"
+      "address": "0x696F10A554A5cd786aD55cB2b8CDf713673c78e3",
+      "transactionHash": "0x0a6a9cf76492e55ffcad25e487b1de04bce6403045f09532ee9845491925c2e5"
     }
   }
 }
