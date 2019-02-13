@@ -4,13 +4,51 @@ const GAS_PRICE_GWEI = process.env.GAS_PRICE_GWEI || 10
 const GAS_LIMIT = 6.5e6
 
 const DEFAULT_MNEMONIC = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
+const SECRET_ENV_VARS = ['PK', 'MNEMNONIC', 'CRYPTO_COMPARE_API_KEY']
 
 // Load env vars
 const envPath = process.env.ENV_PATH
-console.log('envPath: ', envPath);
-require('dotenv').config(envPath && { path: envPath })
-console.log('Using env: ', process.env.USING_ENV);
+const { error, parsed } = require('dotenv').config(envPath && { path: envPath })
+if (envPath && error) {
+  console.error('Error configuring ENV vars')
+  throw error
+}
 
+if (envPath) {
+  console.log(`
+  ==========================================
+    Overriding defaults with ENV file: ${envPath}
+  ==========================================
+`)
+} else {
+  console.log(`
+  ==========================================
+    Not using any ENV file: Using defaults
+  ==========================================
+`)
+}
+
+if (parsed) {
+  console.log('Overrided config using ENV vars: ')
+  for (key in parsed) {
+    if (SECRET_ENV_VARS.includes(key)) {
+      console.log('  %s: %s', key, `<SECRET-${key}>`)
+    }
+    console.log('  %s: %s', key, parsed[key])
+  }
+} else {
+  console.log('No ENV vars were detected')
+  if (envPath) {
+    throw new Error('No ENV var was detected in the file: ' + envPath)
+  }
+}
+
+
+console.log(`
+  ==========================================
+    Truffle config
+  ==========================================
+`)
 // Get the mnemonic
 const privateKey = process.env.PK
 let mnemonic = process.env.MNEMONIC
@@ -18,7 +56,7 @@ if (!privateKey && !mnemonic) {
   mnemonic = DEFAULT_MNEMONIC
 }
 
-function truffleConfig ({
+function truffleConfig({
   mnemonic = DEFAULT_MNEMONIC,
   privateKey,
   gasPriceGWei = GAS_PRICE_GWEI,
@@ -37,16 +75,16 @@ function truffleConfig ({
   console.log('Using default mnemonic: %s', mnemonic === DEFAULT_MNEMONIC);
   const gasPrice = gasPriceGWei * 1e9;
 
-  let _getProvider  
+  let _getProvider
   if (privateKey) {
     console.log('Using private key')
     _getProvider = url => {
       return () => {
-        return new HDWalletProvider([ privateKey ], url)
+        return new HDWalletProvider([privateKey], url)
       }
     }
   } else {
-    console.log(mnemonic === DEFAULT_MNEMONIC ? 'Using default mnemonic' : 'Using custom mnemonic')    
+    console.log(mnemonic === DEFAULT_MNEMONIC ? 'Using default mnemonic' : 'Using custom mnemonic')
     _getProvider = url => {
       return () => {
         return new HDWalletProvider(mnemonic, url)
