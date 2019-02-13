@@ -1,0 +1,546 @@
+yarn run v1.12.3
+$ truffle migrate --network rinkeby --reset
+
+  ==========================================
+    Overriding defaults with ENV file: ./env_vars/2019-02-13__rinkeby_test.conf
+  ==========================================
+
+Overrided config using ENV vars: 
+  GAS_PRICE_GWEI: 10
+  TOKEN_NAME: dxDaoDemo
+  ORGANIZATION_NAME: dxDaoDemo
+  INITIAL_DISTRIBUTION_START: 2019-02-18 12:00
+  INITIAL_DISTRIBUTION_END: 2019-03-04 12:00
+  CLAIMING_MGN_START: 2019-03-03 12:00:01
+  CLAIMING_MGN_END: 2019-03-04 12:00
+  REDEEM_START: 2019-03-04 12:00
+  GOVERNANCE_START: 2019-03-06 12:00
+  NUMBERS_OF_GEN_AUCTIONS: 10
+  MAX_LOCKING_PERIOD: 2592000
+  PRICE_ORACLE_IMPL: WhitelistPriceOracle
+  USE_MOCK_MGN: true
+
+  ==========================================
+    Truffle config
+  ==========================================
+
+Using gas limit: 6500 K
+Using gas price: 10 Gwei
+Optimizer enabled: true
+Using default mnemonic: true
+Using private key
+Compiling ./contracts/LocalDevelopment.sol...
+Writing artifacts to ./build/contracts
+
+⚠️  Important ⚠️
+If you're using an HDWalletProvider, it must be Web3 1.0 enabled or your migration will hang.
+
+
+Starting migrations...
+======================
+> Network name:    'rinkeby'
+> Network id:      4
+> Block gas limit: 7310158
+
+
+1.Initial-migration.js
+======================
+
+   Replacing 'Migrations'
+   ----------------------
+   > transaction hash:    0x342871690fb79f47ba4d44ac869d5a33df8df21e0245a5bb0c6aa0e3886a6872
+   > Blocks: 2            Seconds: 24
+   > contract address:    0x92940051069524EFcC6eEA3fb34eebe16874143C
+   > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
+   > balance:             23.531389323820975501
+   > gas used:            221171
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00221171 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.00221171 ETH
+
+
+2_DEV_local_development.js
+==========================
+Not in development, so nothing to do. Current network is rinkeby
+
+   > Saving migration to chain.
+   -------------------------------------
+   > Total cost:                   0 ETH
+
+
+3_Token_Reputation_Avatar.js
+============================
+
+Deploying DutchX token:
+  - Token name: dxDaoDemo 
+  - Token symbol: DXD 
+  - Token cap: No CAP 
+
+
+   Replacing 'DxToken'
+   -------------------
+   > transaction hash:    0xf2d0d02ef2a5049792b0a2a63a7c3584e405ba72f4ee5a1ba7280b397d11a09b
+   > Blocks: 1            Seconds: 12
+   > contract address:    0x02bE181B040d9179B239ee5Ef6fcEea85c706B77
+   > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
+   > balance:             23.520755273820975501
+   > gas used:            994547
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00994547 ETH
+
+Deploying DutchX Reputation token
+
+   Replacing 'DxReputation'
+   ------------------------
+   > transaction hash:    0x476b2ea846b8d201c4a5eb280c867ff219aa882c5771b87ed4469d2b7255c586
+   > Blocks: 0            Seconds: 8
+   > contract address:    0x5a074e4a24DfcF7c184d0e09A7Bf0770bB713C53
+   > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
+   > balance:             23.513972553820975501
+   > gas used:            678272
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00678272 ETH
+
+
+Deploying DutchX avatar:
+  - Organization name: dxDaoDemo
+  - Token address: 0x02bE181B040d9179B239ee5Ef6fcEea85c706B77
+  - Reputation address: 0x5a074e4a24DfcF7c184d0e09A7Bf0770bB713C53
+
+
+   Replacing 'DxAvatar'
+   --------------------
+   > transaction hash:    0xed1904a89986eacb7d1524f566fadbdc3f1e6f0f37139fcf769ef78c5c4be8b4
+   > Blocks: 0            Seconds: 8
+   > contract address:    0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+   > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
+   > balance:             23.501564643820975501
+   > gas used:            1240791
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.01240791 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:           0.0291361 ETH
+
+
+4_Mint_Rep_and_Tokens_for_Founders.js
+=====================================
+The DAO doesn't have founders with initial Tokens and REP.
+
+   > Saving migration to chain.
+   -------------------------------------
+   > Total cost:                   0 ETH
+
+
+5_Controller.js
+===============
+Deploying DutchX Dao Controller:
+  - Avatar: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+
+   Replacing 'DxController'
+   ------------------------
+   > transaction hash:    0xfc38c0e4556c0e69678c0b66d1bcf13fdbd09f7970eefb454b1ecb7d4f26ea75
+   > Blocks: 0            Seconds: 8
+   > contract address:    0xB263B5dC6642A2e881a599BCAf333A59Aa0F6417
+   > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
+   > balance:             23.459501123820975501
+   > gas used:            4152494
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.04152494 ETH
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.04152494 ETH
+
+
+6_Transfer_ownership_to_Controller.js
+=====================================
+Transfer ownership of the Avatar to the Controller:
+  - Avatar address: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+  - Controller address: 0xB263B5dC6642A2e881a599BCAf333A59Aa0F6417
+  - Transaction: 0xb3bfbced957190f2dffab67ef93c860e9627f3998ae8cf594edbdfc34b974dac
+  - Gas used: 30638
+
+Transfer ownership of the Token to the Controller:
+  - Token address: 0x02bE181B040d9179B239ee5Ef6fcEea85c706B77
+  - Controller address: 0xB263B5dC6642A2e881a599BCAf333A59Aa0F6417
+  - Transaction: 0x975c976b2e8f3daf1b163eb5b777dfaed65049bf2bf3908a0ba8818f567bfbc2
+  - Gas used: 30638
+
+Transfer ownership of the Reputation to the Controller:
+  - Reputation address: 0x5a074e4a24DfcF7c184d0e09A7Bf0770bB713C53
+  - Controller address: 0xB263B5dC6642A2e881a599BCAf333A59Aa0F6417
+  - Transaction: 0xba63337c68f4d27c1cd1fe1728bbeff3da05c4d90696468132551f2dd42c011b
+  - Gas used: 30638
+
+
+   > Saving migration to chain.
+   -------------------------------------
+   > Total cost:                   0 ETH
+
+
+7_VOTING_MACH-Genesis_Protocol.js
+=================================
+Configure Genesis Protocol Params:
+  - Address: 0xE5B15D460E46fC63E10c30F196f350BCdDE5Cdfd
+
+Configuring Genesis Protocol voting machine for "dutchX":
+  - queuedVoteRequiredPercentage: 50
+  - queuedVotePeriodLimit: 7776000
+  - boostedVotePeriodLimit: 1209600
+  - preBoostedVotePeriodLimit: 172800
+  - thresholdConst: 1300
+  - quietEndingPeriod: 345600
+  - proposingRepReward: 1000000000000000000000
+  - votersReputationLossRatio: 4
+  - minimumDaoBounty: 500000000000000000000
+  - daoBountyConst: 10
+  - voteOnBehalf: 0x0000000000000000000000000000000000000000
+ - activationTime: Wed Mar 06 2019 11:00:00 GMT+0100 (Central European Standard Time)
+  - Name: dutchX
+  - Transaction: 0x3b359b11151816c70fd3e91f6e71f273a6f19552a29cfed9fbc6e9ef8bdcb61a
+  - Gas used: 268627
+
+Configured a new Genesis Protocol set of params:
+  - Name: dutchX
+  - Hash: 0x9535deebbf1bee9beeb9a26aaf4649c93d781808f7604357a285cb71b78ddd51
+
+Configuring Genesis Protocol voting machine for "contributionReward":
+  - queuedVoteRequiredPercentage: 50
+  - queuedVotePeriodLimit: 3888000
+  - boostedVotePeriodLimit: 604800
+  - preBoostedVotePeriodLimit: 86400
+  - thresholdConst: 1200
+  - quietEndingPeriod: 172800
+  - proposingRepReward: 500000000000000000000
+  - votersReputationLossRatio: 4
+  - minimumDaoBounty: 500000000000000000000
+  - daoBountyConst: 10
+  - voteOnBehalf: 0x0000000000000000000000000000000000000000
+ - activationTime: Wed Mar 06 2019 11:00:00 GMT+0100 (Central European Standard Time)
+  - Name: contributionReward
+  - Transaction: 0xaa9904157f2a48e3ea580b310c47870f86a4e4a39851d29c475cc0a16c42c7a5
+  - Gas used: 268819
+
+Configured a new Genesis Protocol set of params:
+  - Name: contributionReward
+  - Hash: 0x2e153d664a2fa799c518fcf7cf0d15ed379c86850c2baca2987e8aa4657da762
+
+Configuring Genesis Protocol voting machine for "admin":
+  - queuedVoteRequiredPercentage: 50
+  - queuedVotePeriodLimit: 7776000
+  - boostedVotePeriodLimit: 1209600
+  - preBoostedVotePeriodLimit: 172800
+  - thresholdConst: 1300
+  - quietEndingPeriod: 345600
+  - proposingRepReward: 2000000000000000000000
+  - votersReputationLossRatio: 4
+  - minimumDaoBounty: 500000000000000000
+  - daoBountyConst: 10
+  - voteOnBehalf: 0x0000000000000000000000000000000000000000
+ - activationTime: Wed Mar 06 2019 11:00:00 GMT+0100 (Central European Standard Time)
+  - Name: admin
+  - Transaction: 0xc3d7c15ceb04be0a7c6f866b543e27345529ff30fb97973cb2f2765892293580
+  - Gas used: 268563
+
+Configured a new Genesis Protocol set of params:
+  - Name: admin
+  - Hash: 0x3746337ad450fc2317c930ec99cf2fcbbe16a7a13da2b23687a6580e2685b985
+
+
+   > Saving migration to chain.
+   -------------------------------------
+   > Total cost:                   0 ETH
+
+
+8_SCHEME-REP-Lock_Mgn.js
+========================
+
+   Deploying 'ExternalTokenLockerMock'
+   -----------------------------------
+   > transaction hash:    0x01a7a8ac188ffe33f059c6d863291739f80b880f3fcb4eeb6bb31d8bade0bd09
+   > Blocks: 0            Seconds: 8
+   > contract address:    0xe10321aaA652C8E6def225aa34eB3E7210f8Ca17
+   > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
+   > balance:             23.448499333820975501
+   > gas used:            121469
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00121469 ETH
+
+Deploying DxLockMgnForRep scheme
+  - Scheme that allows to get GEN by locking MGN
+
+   Replacing 'DxLockMgnForRep'
+   ---------------------------
+   > transaction hash:    0x750a9e15d9424b77c8d3f9690d8606ad3a1b494562977e4d8e5a822ed9d49a70
+   > Blocks: 0            Seconds: 8
+   > contract address:    0x7e39d4b137cA620F98cd7311B2223C38A328E6CF
+   > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
+   > balance:             23.432577653820975501
+   > gas used:            1592168
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.01592168 ETH
+
+Configure DxLockMgnForRep scheme:
+  - Avatar address: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+  - Register period: Register period: Currently any time, but only makes sense before the claiming period ends 04/03/2019 12:00
+  - Claim start time (24h period, actual locking): 03/03/2019 12:00
+  - Claim end time (24h period, actual locking): 04/03/2019 12:00
+  - Redeem enable time: 04/03/2019 12:00
+  - MGN address (external locking contract): 0xe10321aaA652C8E6def225aa34eB3E7210f8Ca17
+  - Get balance function signature: lockedTokenBalances(address)
+  - Transaction: 0xc1a0137ff0785b9e1bbfa5b2f2be377b096d9e51ce62f05f08a57ad3bdb1cbae
+  - Gas used: 210832
+(*) Dates use Asia/Tel_Aviv time zone
+
+
+Register DxLockMgnForRep scheme in the controller:
+  - Scheme address: 0x7e39d4b137cA620F98cd7311B2223C38A328E6CF
+  - Param hash: 0x30
+  - Permissions: 0x00000001
+  - Avatar address: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+  - Controller address: 0xB263B5dC6642A2e881a599BCAf333A59Aa0F6417
+  - Transaction: 0xa6bac5eaf3f5710e8410e5ead7d99c86fb78e22b2a7cffd7699d60d65a7b3616
+  - Gas used: 69847
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.01713637 ETH
+
+
+9_SCHEME-REP-Auction_Gen.js
+===========================
+Deploy DxGenAuction4Rep that inherits from Auction4Reputation
+
+   Replacing 'DxGenAuction4Rep'
+   ----------------------------
+   > transaction hash:    0x011c9d98a3ff22c056f16276b243817142db27d511d0a98b04c096ffa4581e1e
+   > Blocks: 0            Seconds: 8
+   > contract address:    0x592e03229eBbDB5Ab3E13022Be2A272d3Fa48d30
+   > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
+   > balance:             23.416434263820975501
+   > gas used:            1306731
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.01306731 ETH
+
+  - Scheme for conducting ERC20 Tokens auctions for reputation
+Configure DxGenAuction4Rep
+  - Avatar address: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+  - Total reputation per auction: 10000000000000000000000
+  - Auction start time: 18/02/2019 12:00
+  - Auction end time: 04/03/2019 12:00
+  - Redeem enable time: 04/03/2019 12:00
+  - Number of auctions: 10
+  - Auction period (end - start)/number of auctions: 120960
+  - Staking token address (GEN): 0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf
+  - wallet address (DxAvatar.address):  0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+
+Register DxGenAuction4Rep scheme in the controller:
+  - Scheme address: 0x592e03229eBbDB5Ab3E13022Be2A272d3Fa48d30
+  - Param hash: 0x30
+  - Permissions: 0x00000001
+  - Avatar address: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+  - Controller address: 0xB263B5dC6642A2e881a599BCAf333A59Aa0F6417
+  - Transaction: 0xd6936782b6eba6de8dc0d965fc358792db0e0d63f00370e2f4dc396df8075398
+  - Gas used: 69847
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.01306731 ETH
+
+
+10_SCHEME-REP-Lock_Eth.js
+=========================
+Deploy DxLockEth4Rep that inherits from LockingEth4Reputation
+
+   Replacing 'DxLockEth4Rep'
+   -------------------------
+   > transaction hash:    0x562b9f3882082d9238b77aaa1e6b64d8cf08853e1eec68254bbd492d79c8178d
+   > Blocks: 0            Seconds: 8
+   > contract address:    0xBf570a12d977B60925bd05f566d704667eA94435
+   > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
+   > balance:             23.400480233820975501
+   > gas used:            1268792
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.01268792 ETH
+
+Configure DxLockEth4Rep
+  - Avatar address: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+  - Reputation reward: 80000000000000000000000
+  - Locking start time: 18/02/2019 12:00
+  - Locking end time: 04/03/2019 12:00
+  - Redeem enable time: 04/03/2019 12:00
+  - max locking period: 2592000
+
+Register DxLockEth4Rep scheme in the controller:
+  - Scheme address: 0xBf570a12d977B60925bd05f566d704667eA94435
+  - Param hash: 0x30
+  - Permissions: 0x00000001
+  - Avatar address: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+  - Controller address: 0xB263B5dC6642A2e881a599BCAf333A59Aa0F6417
+  - Transaction: 0xacb62f0b77b876653eef149fcca3a6bf9582c0f08a09b030ac73378e9782e3ec
+  - Gas used: 69847
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.01268792 ETH
+
+
+11_SCHEME-REP-Lock_Whitelisted_tokens.js
+========================================
+Using Price Oracle: WhitelistPriceOracle
+Deploy DxLockWhitelisted4Rep that inherits from LockingToken4Reputation
+
+   Replacing 'DxLockWhitelisted4Rep'
+   ---------------------------------
+   > transaction hash:    0xe51c94aae7448455786edd80e458100b69e8316d6e1500a20c850dabb16c6845
+   > Blocks: 0            Seconds: 8
+   > contract address:    0xd154E94C441F4a0A2103532Dc0394E8C07Da02D8
+   > account:             0xf85D1a0E1b71e72013Db51139f285C6d5356B712
+   > balance:             23.381420623820975501
+   > gas used:            1642931
+   > gas price:           10 gwei
+   > value sent:          0 ETH
+   > total cost:          0.01642931 ETH
+
+Configure DxLockWhitelisted4Rep
+  - Avatar address: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+  - Reputation reward: 300000000000000000000000
+  - Locking start time: 18/02/2019 12:00
+  - Locking end time: 04/03/2019 12:00
+  - Redeem enable time: 04/03/2019 12:00
+  - max locking period: 2592000
+  - Price Oracle Implementation: WhitelistPriceOracle
+  - Price Oracle address: 0x281e1bfaE838bc3f799e3bbFBC9f10dDdc53Ad41
+
+Register DxLockWhitelisted4Rep scheme in the controller:
+  - Scheme address: 0xd154E94C441F4a0A2103532Dc0394E8C07Da02D8
+  - Param hash: 0x30
+  - Permissions: 0x00000001
+  - Avatar address: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+  - Controller address: 0xB263B5dC6642A2e881a599BCAf333A59Aa0F6417
+  - Transaction: 0xaa7617f42d205407ccc6ddec4a8317fefc1aadf2fe5fac80181f87041a5b92db
+  - Gas used: 69847
+
+
+   > Saving migration to chain.
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:          0.01642931 ETH
+
+
+12_SCHEMES_GenericScheme.js
+===========================
+Configure GenericScheme
+
+Set scheme parameters for scheme: 0xa5f7AfF8Ac1c5d698De026e01F79E5f05b4DA900
+  - voteParams: 0x9535deebbf1bee9beeb9a26aaf4649c93d781808f7604357a285cb71b78ddd51
+  - intVote: 0xE5B15D460E46fC63E10c30F196f350BCdDE5Cdfd
+  - contractToCall: 0xaaeb2035ff394fdb2c879190f95e7676f1a9444b
+
+
+Register GenericScheme scheme in the controller:
+  - Scheme address: 0xa5f7AfF8Ac1c5d698De026e01F79E5f05b4DA900
+  - Param hash: 0x53bc63c98cea3f3cf0f9e66feaa82a61514347fc8d3532cfc45735048d07d206
+  - Permissions: 0x00000010
+  - Avatar address: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+  - Controller address: 0xB263B5dC6642A2e881a599BCAf333A59Aa0F6417
+  - Transaction: 0x7e231bdcac76c1dc0947fae1d9d401987bf3aba4eeb044ccb451161c6845a6fb
+  - Gas used: 71767
+
+
+   > Saving migration to chain.
+   -------------------------------------
+   > Total cost:                   0 ETH
+
+
+13_SCHEMES_SchemeRegistrar.js
+=============================
+Configure SchemeRegistrar
+
+Set scheme parameters for scheme: 0x58a6C125e86b2880F887c316fa6d8187eDE3B8b7
+  - voteRegisterParams: 0x3746337ad450fc2317c930ec99cf2fcbbe16a7a13da2b23687a6580e2685b985
+  - voteRemoveParams: 0x3746337ad450fc2317c930ec99cf2fcbbe16a7a13da2b23687a6580e2685b985
+  - intVoteAddress: 0xE5B15D460E46fC63E10c30F196f350BCdDE5Cdfd
+
+
+Register SchemeRegistrar scheme in the controller:
+  - Scheme address: 0x58a6C125e86b2880F887c316fa6d8187eDE3B8b7
+  - Param hash: 0x53ba88dc7b6d837f8df3876b9b9ba4984d0a660ecc209ae98dd0c63593b01e31
+  - Permissions: 0x0000001f
+  - Avatar address: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+  - Controller address: 0xB263B5dC6642A2e881a599BCAf333A59Aa0F6417
+  - Transaction: 0xd8555a60344c6200e5974ea439f9163cdd0fff2bbd1fac1668013c21afb04c62
+  - Gas used: 71831
+
+
+   > Saving migration to chain.
+   -------------------------------------
+   > Total cost:                   0 ETH
+
+
+14_SCHEMES_ContributionReward.js
+================================
+Configure ContributionReward
+
+Set scheme parameters for scheme: 0x51cf0EbD2049e93c0E31bDf79b571f137C15de11
+  - orgNativeTokenFee: 0
+  - voteApproveParams: 0x2e153d664a2fa799c518fcf7cf0d15ed379c86850c2baca2987e8aa4657da762
+  - intVote: 0xE5B15D460E46fC63E10c30F196f350BCdDE5Cdfd
+
+
+Register ContributionReward scheme in the controller:
+  - Scheme address: 0x51cf0EbD2049e93c0E31bDf79b571f137C15de11
+  - Param hash: 0x9f499fabdc2f67b8a4b219b74ed159b708574df46e43c197de69a86318057459
+  - Permissions: 0x00000001
+  - Avatar address: 0x72EB999b2598f270Fdfd0D126A94a0A3C178816E
+  - Controller address: 0xB263B5dC6642A2e881a599BCAf333A59Aa0F6417
+  - Transaction: 0x7fe9a4266303e0470e4b68cde5a6058e5044c588571f2124498428ece9a9270c
+  - Gas used: 71831
+
+
+   > Saving migration to chain.
+   -------------------------------------
+   > Total cost:                   0 ETH
+
+
+17_Unregister_Avatar_as_scheme.js
+=================================
+Unregister the deployer as a controller scheme
+
+   > Saving migration to chain.
+   -------------------------------------
+   > Total cost:                   0 ETH
+
+
+Summary
+=======
+> Total deployments:   10
+> Final cost:          0.13219366 ETH
+
+Done in 784.27s.
