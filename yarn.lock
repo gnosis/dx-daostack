@@ -142,22 +142,22 @@
     "@gnosis.pm/owl-token" "^2.0.0"
     "@gnosis.pm/util-contracts" "^2.0.0"
 
-"@gnosis.pm/dx-price-oracle@0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@gnosis.pm/dx-price-oracle/-/dx-price-oracle-0.1.5.tgz#52234b38f7f20513b1c940c62d6ccbc8ef540835"
-  integrity sha512-P0RTKMwazEQNwevWK9Z5GD0qhVc4DYkVq2R0Hmf3L0KIZJcCLcyqnn+gNJWvuWswvkI9wFCxyqdJoAfwVGF4Ag==
+"@gnosis.pm/dx-price-oracle@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/dx-price-oracle/-/dx-price-oracle-0.2.0.tgz#942e58ed8ec6783562f55cd00948bf73345c384c"
+  integrity sha512-vcmSX2H9J1jcw5J3Ejm9V9eqFh/CXeBeM5ZdKWzrkRK89RMq2tdc9CAHpSUHiDnhHC7Orl3tHSe/dFJap6jpxg==
   dependencies:
     truffle "^5.0.2"
     truffle-hdwallet-provider "^1.0.2"
 
-"@gnosis.pm/gno-token@^2.0.0", "@gnosis.pm/gno-token@^2.0.0-RC4":
+"@gnosis.pm/gno-token@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@gnosis.pm/gno-token/-/gno-token-2.0.0.tgz#f9662d3897735ec6fc0e4814233e6613afded5c6"
   integrity sha512-qFPlhUtKjgCeS4XgJVqOVs+7KZY/MEo0JwQEaXBNqQIO5HMsU32VnF5bcIOnFZ5wWxW7UCnGx8ZYlPR4x6Z+Ww==
   dependencies:
     "@gnosis.pm/util-contracts" "2.0.0"
 
-"@gnosis.pm/owl-token@^2.0.0", "@gnosis.pm/owl-token@^2.0.0-RC3":
+"@gnosis.pm/owl-token@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@gnosis.pm/owl-token/-/owl-token-2.0.0.tgz#a1dac90a902c5a6dad238d3332d9ffff03aabaa2"
   integrity sha512-XuAE0/NUVR7uZacz5zHhgsspB2QlAe71dUlVcZWPPp5GDLOdA+c6UwDZUggufxZmLm8TM7VoDcAh/lc4BfOxeg==
@@ -179,7 +179,7 @@
     ora "^3.0.0"
     web3 "^1.0.0-beta.35"
 
-"@gnosis.pm/util-contracts@2.0.0", "@gnosis.pm/util-contracts@^2.0.0", "@gnosis.pm/util-contracts@^2.0.0-RC5":
+"@gnosis.pm/util-contracts@2.0.0", "@gnosis.pm/util-contracts@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@gnosis.pm/util-contracts/-/util-contracts-2.0.0.tgz#562b14a2d6cb4a59189476dd0f6aaeba5f65abe2"
   integrity sha512-vRgTV36d4ZFdcetKcNbnAtSDrP3OSWEj8YmG3RHK4DBMulPX2asRh8VnopTrZnZQ8enZIDbT1pT7buW+UJqd4g==

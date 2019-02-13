@@ -24,12 +24,16 @@ module.exports = async function (deployer, network, accounts) {
     })
 
     // Deploy DxPriceFeed
-    if (process.env.USE_FIXED_PRICE_ORACLE !== 'true') {
-      console.log('Using the DutchX price oracle')
-      await deployPriceFeed(deployer)
+    const priceOracleImpl = process.env.PRICE_ORACLE_IMPL
+    if (priceOracleImpl && priceOracleImpl === 'FixedPriceOracle') {
+      console.log("Using the fixed price oracle: It'll be deployed in migration 11")
     } else {
-      console.log('Using the fixed price oracle')
-      // Deployed in migration 11
+      console.log('Using a DutchX price oracle: ' + priceOracleImpl)
+      await deployPriceFeed({
+        deployer,
+        priceOracleImpl,
+        account: accounts[0]
+      })
     }
 
     // // Deploy 0x Token Registry
@@ -49,18 +53,33 @@ module.exports = async function (deployer, network, accounts) {
   }
 }
 
-async function deployPriceFeed(deployer) {
-  const DutchXPriceOracle = artifacts.require('DutchXPriceOracle')
+async function deployPriceFeed({
+  deployer,
+  priceOracleImpl = 'DutchXPriceOracle',
+  account
+}) {
   const DutchExchangeProxy = artifacts.require('DutchExchangeProxy')
   const EtherToken = artifacts.require('EtherToken')
 
   const dxAddress = DutchExchangeProxy.address
   const wethAddress = EtherToken.address
 
-  console.log('Deploy price feed:')
-  console.log('  dxAddress: ' + dxAddress)
-  console.log('  wethAddress: ' + wethAddress)
-  await deployer.deploy(DutchXPriceOracle, dxAddress, wethAddress)
+  if (priceOracleImpl === 'DutchXPriceOracle') {
+    const DutchXPriceOracle = artifacts.require('DutchXPriceOracle')
+    console.log('Deploy DutchXPriceOracle (price oracle):')
+    console.log('  dxAddress: ' + dxAddress)
+    console.log('  wethAddress: ' + wethAddress)
+    await deployer.deploy(DutchXPriceOracle, dxAddress, wethAddress)
+  } else if (priceOracleImpl === 'WhitelistPriceOracle') {
+    const WhitelistPriceOracle = artifacts.require('WhitelistPriceOracle')
+    console.log('Deploy WhitelistPriceOracle (price oracle with custom Whitelist):')
+    console.log('  dxAddress: ' + dxAddress)
+    console.log('  wethAddress: ' + wethAddress)
+    console.log('  auctioneer: ' + account)
+    await deployer.deploy(WhitelistPriceOracle, dxAddress, wethAddress, account)
+  } else {
+    throw new Error('Unknown implementation for the PriceOracle: ' + priceOracleImpl)
+  }
 }
 
 async function deployGen(deployer) {
