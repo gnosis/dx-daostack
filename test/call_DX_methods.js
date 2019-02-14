@@ -56,7 +56,7 @@ const {
   takeSnapshot,
   revertSnapshot,
   getTimestamp
-} = require('../helpers/web3helpers')(web3)
+} = require('../src/helpers/web3helpers')(web3)
 
 const LOCK_AMOUNT = 2001
 const YES_VOTE = new BN(1)

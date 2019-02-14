@@ -14,7 +14,7 @@ const {
   takeSnapshot,
   revertSnapshot,
   getTimestamp
-} = require('../helpers/web3helpers')(web3)
+} = require('../src/helpers/web3helpers')(web3)
 
 const LOCK_AMOUNT = web3.utils.toWei('20')
 const TOTAL_AMOUNT = web3.utils.toWei('10000000')

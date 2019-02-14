@@ -12,7 +12,7 @@ const {
   takeSnapshot,
   revertSnapshot,
   getTimestamp
-} = require('../helpers/web3helpers')(web3)
+} = require('../src/helpers/web3helpers')(web3)
 
 const BID_AMOUNT_1_MASTER = web3.utils.toWei('20')
 const BID_AMOUNT_2_MASTER = web3.utils.toWei('15')
