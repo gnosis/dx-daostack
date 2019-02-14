@@ -107,6 +107,16 @@
     openzeppelin-solidity "2.1.1"
     solhint "^1.5.0"
 
+"@daostack/arc@0.0.1-rc.9.1":
+  version "0.0.1-rc.9.1"
+  resolved "https://registry.yarnpkg.com/@daostack/arc/-/arc-0.0.1-rc.9.1.tgz#f9240939a02c23c49235bcc3d31cf49fd9c5a14a"
+  integrity sha512-XWaP6eE4n5W8wtVoEdwsjEMtBeoUEQdrblif77qfrvtRIRLvPjZXGEdt8t/wJf2x0bWCwicxY30BYh5K4s+4nQ==
+  dependencies:
+    "@daostack/infra" "0.0.1-rc.9"
+    ethereumjs-abi "^0.6.5"
+    openzeppelin-solidity "2.1.1"
+    solhint "^1.5.0"
+
 "@daostack/infra@0.0.1-rc.9":
   version "0.0.1-rc.9"
   resolved "https://registry.yarnpkg.com/@daostack/infra/-/infra-0.0.1-rc.9.tgz#f3a311d9db8926fff6f5dcef70c60f67256cceb3"
@@ -723,6 +733,11 @@ bcrypt-pbkdf@^1.0.0:
   integrity sha1-pDAdOJtqQ/m2f/PKEaP2Y342Dp4=
   dependencies:
     tweetnacl "^0.14.3"
+
+bignumber.js@^2.0.7:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-2.4.0.tgz#838a992da9f9d737e0f4b2db0be62bb09dd0c5e8"
+  integrity sha1-g4qZLan51zfg9LLbC+YrsJ3Qxeg=
 
 bignumber.js@^7.2.1:
   version "7.2.1"
@@ -3819,6 +3834,11 @@ nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
+
+node-fetch@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.3.0.tgz#1a1d940bbfb916a1d3e0219f037e89e71f8c5fa5"
+  integrity sha512-MOd8pV3fxENbryESLgVIeaGKrdl+uaYhCSSVkjeOb/31/njTpcis5aWfdqgNlHIrKOLRbMnfPINPOML2CIFeXA==
 
 node-pre-gyp@^0.10.0:
   version "0.10.3"
