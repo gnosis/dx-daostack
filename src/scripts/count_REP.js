@@ -47,7 +47,7 @@ const decimals18 = new BN(1e18)
 const Day_IN_SEC = new BN(24 * 60 * 60)
 
 
-const cwd = path.resolve(__dirname, '../')
+const cwd = path.resolve(__dirname, '../../')
 let accounts = argv.a ? argv.a.toLowerCase().split(',') : []
 if (argv.i) {
   const inputFile = fs.readFileSync(path.resolve(cwd, argv.i), 'utf8')

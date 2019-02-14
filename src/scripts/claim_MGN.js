@@ -132,8 +132,8 @@ const main = async () => {
       const netID = await web3.eth.net.getId()
       try {
         dxLockMgnForRep = await DxLockMgnForRepArtifact.at(contractNetworksMap['DxLockMgnForRep'][netID].address)
-        promisedDxDaoClaimRedeemHelper = DxDaoClaimRedeemHelperArtifact.at(contractNetworksMap['DxLockMgnForRepHelper'][netID].address)
-        promisedTokenMGN = TokenMGN.at(contractNetworksMap['TokenFRTProxy'][netID].address)
+        promisedDxDaoClaimRedeemHelper = DxDaoClaimRedeemHelperArtifact.at(contractNetworksMap['DxDaoClaimRedeemHelper'][netID].address)
+        promisedTokenMGN = TokenMGN.at(await dxLockMgnForRep.externalLockingContract())
       } catch (error) {
         const ERROR_MESSAGE = `
         No relevant netID addresses found. Stopping. 
@@ -147,7 +147,7 @@ const main = async () => {
         // const dxLockMgnForRep = await DxLockMgnForRepArtifact.at('0xa248671eC41110D58e587120a5B9C24A66daBfc6')
         dxLockMgnForRep = (network === 'rinkeby' && knownEvents) ? await DxLockMgnForRepArtifact.at(REGISTER_EVENTS) : await DxLockMgnForRepArtifact.deployed()
 
-        // Start promise resolve for DxLockMgnForRepHelper
+        // Start promise resolve for DxDaoClaimRedeemHelper
         promisedDxDaoClaimRedeemHelper = DxDaoClaimRedeemHelperArtifact.deployed()
 
         // Allow use of MockMGN contract, only on development
@@ -275,7 +275,7 @@ const main = async () => {
     // Extract only addresses w/MGN locked balance into array
     const beneficiariesWithBalanceAddressesOnly = beneficiariesWithBalance.map(({ address }) => address)
 
-    // Below is required as Solidity loop function claimAll inside DxLockMgnForRepHelper.claimAll is NOT reverting when looping and
+    // Below is required as Solidity loop function claimAll inside DxDaoClaimRedeemHelper.claimAll is NOT reverting when looping and
     // calling individual DxLockMgnForRep.claim method on passed in beneficiary addresses
     // Lines 268 - 277 filter out bad responses and leave claimable addresses to batch
     const individualClaimCallReturn = await Promise.all(beneficiariesWithBalanceAddressesOnly.map(beneAddr => dxLockMgnForRep.claim.call(beneAddr)))

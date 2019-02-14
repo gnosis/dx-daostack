@@ -168,15 +168,15 @@ const main = async () => {
     // Workaround as failing bytes32[] call return doesn't properly throw and returns
     // consistent 'overflow' error(seems to be Truffle5 + Ethers.js issue)
     // 1 = dxLMR
-    await claimRedeemHelper.claimAll.estimateGas(accountsClaimable, 1)
+    await claimRedeemHelper.claimAll.estimateGas(accountsToClaim, 1)
     console.log('\nPreparing claimAll call...')
     // 1 = dxLMR
-    const lockingIdsArray = await claimRedeemHelper.claimAll.call(accountsClaimable, 1)
+    const lockingIdsArray = await claimRedeemHelper.claimAll.call(accountsToClaim, 1)
     console.log('\nLocking IDs Array', JSON.stringify(lockingIdsArray, undefined, 2))
   } else {
     // TODO: batchSize
     console.log('\nPreparing actual claimAll - this WILL affect blockchain state...')
-    const claimAllReceipts = await claimRedeemHelper.claimAll(accountsClaimable, 1)
+    const claimAllReceipts = await claimRedeemHelper.claimAll(accountsToClaim, 1)
     console.log('ClaimAll Receipt(s)', claimAllReceipts)
   }
 
