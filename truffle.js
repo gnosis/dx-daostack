@@ -31,8 +31,9 @@ if (parsed) {
   for (key in parsed) {
     if (SECRET_ENV_VARS.includes(key)) {
       console.log('  %s: %s', key, `<SECRET-${key}>`)
+    } else {
+      console.log('  %s: %s', key, parsed[key])
     }
-    console.log('  %s: %s', key, parsed[key])
   }
 } else {
   console.log('No ENV vars were detected')
