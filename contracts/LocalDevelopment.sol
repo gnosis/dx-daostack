@@ -5,6 +5,8 @@ import "@gnosis.pm/dx-contracts/contracts/DxDevDependencies.sol";
 
 // Price oracle
 import "@gnosis.pm/dx-price-oracle/contracts/DutchXPriceOracle.sol";
+// Remove WhitelistPriceOracle after the 18Feb deployement
+import "@gnosis.pm/dx-price-oracle/contracts/WhitelistPriceOracle.sol";
 
 // Universal Schemes
 import "@daostack/arc/contracts/universalSchemes/SchemeRegistrar.sol";

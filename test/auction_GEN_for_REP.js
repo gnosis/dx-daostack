@@ -36,7 +36,7 @@ contract('Locking Token for REP', accounts => {
 
     const bidToken = await Auction4Rep.token()
     assert.equal(bidToken, GEN.address, 'bid token should be GEN')
-    
+
     const wallet = await Auction4Rep.wallet()
     assert.equal(wallet, Avatar.address, 'wallet should be Avatar address')
 
@@ -152,12 +152,12 @@ contract('Locking Token for REP', accounts => {
   })
 
   it('bidding at around the same time results in the same auction Id', async () => {
-    await GEN.approve(Auction4Rep.address, TOTAL_AMOUNT, {from: another})
+    await GEN.approve(Auction4Rep.address, TOTAL_AMOUNT, { from: another })
 
     const balanceBefore = await GEN.balanceOf(another)
     console.log('balanceBefore: ', balanceBefore.toString());
 
-    const tx = await Auction4Rep.bid(BID_AMOUNT_1_ANOTHER, {from:another})
+    const tx = await Auction4Rep.bid(BID_AMOUNT_1_ANOTHER, { from: another })
 
     const BidEvent = tx.logs.find(log => log.event === 'Bid')
 
@@ -168,7 +168,7 @@ contract('Locking Token for REP', accounts => {
     assert(_amount.eq(new BN(BID_AMOUNT_1_ANOTHER)), 'Bid amount should be BID_AMOUNT')
 
     assert(AuctionID.eq(_auctionId), 'auction id should be the same withing one auction period')
-    
+
 
     const balanceAfter = await GEN.balanceOf(another)
     console.log('balanceAfter: ', balanceAfter.toString());
@@ -208,19 +208,19 @@ contract('Locking Token for REP', accounts => {
 
   it('bidding at different auctionPeriod results in different auctionId', async () => {
 
-    const tx1 = await Auction4Rep.bid(BID_AMOUNT_2_MASTER, {from:master})
-    const tx2 = await Auction4Rep.bid(BID_AMOUNT_2_ANOTHER, {from:another})
+    const tx1 = await Auction4Rep.bid(BID_AMOUNT_2_MASTER, { from: master })
+    const tx2 = await Auction4Rep.bid(BID_AMOUNT_2_ANOTHER, { from: another })
 
     const BidEvent1 = tx1.logs.find(log => log.event === 'Bid')
     const BidEvent2 = tx2.logs.find(log => log.event === 'Bid')
 
     const { _auctionId: aId1 } = BidEvent1.args
     const { _auctionId: aId2 } = BidEvent2.args
-    
+
     assert(aId1.eq(aId2), 'auction id should be the same withing one auction period')
     assert(!AuctionID.eq(aId1), 'auction id should be different from the last auction period')
 
-    NextAuctionID =  aId1
+    NextAuctionID = aId1
   })
 
   it('can\'t transfer tokens to wallet before auctionsEndTime', async () => {
@@ -283,7 +283,7 @@ contract('Locking Token for REP', accounts => {
     console.log('walletBalanceBefore: ', walletBalanceBefore.toString());
 
     assert(walletBalanceBefore.eq(new BN(0)), 'wallet doesn\'t have GEN')
-    
+
     await Auction4Rep.transferToWallet()
 
     const auctionBalanceAfter = await GEN.balanceOf(Auction4Rep.address)
@@ -299,7 +299,7 @@ contract('Locking Token for REP', accounts => {
 
   it('can\'t bid after auctionsEndTime', async () => {
     try {
-      await Auction4Rep.bid(BID_AMOUNT_1_MASTER,)
+      await Auction4Rep.bid(BID_AMOUNT_1_MASTER)
       // should be unreachable
       assert.fail('shouldn\'t bid after auctionsEndTime')
     } catch (error) {
@@ -369,11 +369,11 @@ contract('Locking Token for REP', accounts => {
     const repBefore = await DxRep.balanceOf(account)
 
     const expectedREP = await calcExpectedRep(account, auctionId)
-    
+
     const tx = await Auction4Rep.redeem(account, auctionId)
     const RedeemEvent = tx.logs.find(log => log.event === 'Redeem')
 
-    const {_auctionId, _beneficiary, _amount} = RedeemEvent.args
+    const { _auctionId, _beneficiary, _amount } = RedeemEvent.args
     assert(auctionId.eq(_auctionId), 'auction Id should be the one redeemed for')
     assert.equal(account, _beneficiary, 'account should be the one redeemed for')
     assert(expectedREP.eq(_amount), 'amount should be the expected one')

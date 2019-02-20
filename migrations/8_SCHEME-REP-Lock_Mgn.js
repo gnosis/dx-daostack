@@ -32,14 +32,16 @@ module.exports = async function (deployer) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
+  const mgnImpl = process.env.MGN_IMPL || 'TokenFRTProxy'
   let mgnTokenAddress
-  // TODO: Remove after test
-  if (process.env.USE_MOCK_MGN === 'true') {
-    const ExternalTokenLockerMock = artifacts.require('ExternalTokenLockerMock')
-    const externalTokenLockerMock = await deployer.deploy(ExternalTokenLockerMock)
-    mgnTokenAddress = externalTokenLockerMock.address
-  } else {
+  if (mgnImpl === 'TokenFRTProxy') {
+    console.log('Use DutchX real MGN')
     mgnTokenAddress = await getDXContractAddresses('TokenFRTProxy')
+  } else {
+    console.log('Use MGN implentation: ', mgnImpl)
+    const MgnContract = artifacts.require(mgnImpl)
+    const mgnContract = await deployer.deploy(MgnContract)
+    mgnTokenAddress = mgnContract.address
   }
 
   // Deploy DxLockMgnForRep
@@ -66,6 +68,7 @@ module.exports = async function (deployer) {
   console.log('  - Claim end time (24h period, actual locking): ' + dateUtil.formatDateTime(claimingMgnEnd))
   console.log('  - Redeem enable time: ' + dateUtil.formatDateTime(redeemStart))
 
+  console.log('  - MGN implementation: ' + mgnImpl)
   console.log('  - MGN address (external locking contract): ' + mgnTokenAddress)
   console.log('  - Get balance function signature: ' + getLockedMgnSignature)
 

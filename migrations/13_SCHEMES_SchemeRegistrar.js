@@ -29,7 +29,7 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
   const {
     paramsHash: genesisProtocolParamsHash,
     address: genesisProtocolAddress
-  } = await genesisProtocolHelper.getGenesisProtocolData('admin')
+  } = await genesisProtocolHelper.setupAndGetGenesisProtocolData('admin')
 
   assert(genesisProtocolParamsHash, `The parameter paramsHash was not defined`)
   assert(genesisProtocolAddress, `The parameter address was not defined`)

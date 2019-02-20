@@ -24,7 +24,7 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
   const {
     paramsHash: genesisProtocolParamsHash,
     address: genesisProtocolAddress
-  } = await genesisProtocolHelper.getGenesisProtocolData('contributionReward')
+  } = await genesisProtocolHelper.setupAndGetGenesisProtocolData('contributionReward')
 
   // Set parameters
   const paramsHash = await setParameters({

@@ -1,3 +1,4 @@
+
 /* global artifacts, web3 */
 /* eslint no-undef: "error" */
 const assert = require('assert')
@@ -30,9 +31,10 @@ module.exports = async function (deployer, network) {
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
 
+  const priceOracleImpl = process.env.PRICE_ORACLE_IMPL || 'DutchXPriceOracle'
   let priceOracleAddress
   if (
-    process.env.USE_FIXED_PRICE_ORACLE === 'true' ||
+    priceOracleImpl === 'FixedPriceOracle' ||
     process.env.NODE_ENV === 'test' && network === 'development'
   ) {
     // Deploy Fixed Price Oracle
@@ -41,8 +43,8 @@ module.exports = async function (deployer, network) {
     priceOracleAddress = fixedPriceOracle.address
   } else {
     // Get price oracle address
-    console.log('Using Price Oracle')
-    priceOracleAddress = await getPriceOracleAddress()
+    console.log('Using Price Oracle: ' + priceOracleImpl)
+    priceOracleAddress = await getPriceOracleAddress(priceOracleImpl)
   }
 
   // Deploy DxLockWhitelisted4Rep scheme
@@ -63,6 +65,7 @@ module.exports = async function (deployer, network) {
   console.log('  - Locking end time:', dateUtil.formatDateTime(initialDistributionEnd))
   console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemStart))
   console.log('  - max locking period:', maxLockingWhitelistedTokensPeriod)
+  console.log('  - Price Oracle Implementation:', priceOracleImpl)
   console.log('  - Price Oracle address:', priceOracleAddress)
 
   await dxLockWhitelisted4Rep.initialize(

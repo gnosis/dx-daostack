@@ -1,7 +1,5 @@
 const assert = require('assert')
 const HDWalletProvider = require('truffle-hdwallet-provider')
-const GAS_PRICE_GWEI = process.env.GAS_PRICE_GWEI || 10
-const GAS_LIMIT = 6.5e6
 
 const DEFAULT_MNEMONIC = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
 const SECRET_ENV_VARS = ['PK', 'MNEMNONIC', 'CRYPTO_COMPARE_API_KEY']
@@ -33,8 +31,9 @@ if (parsed) {
   for (key in parsed) {
     if (SECRET_ENV_VARS.includes(key)) {
       console.log('  %s: %s', key, `<SECRET-${key}>`)
+    } else {
+      console.log('  %s: %s', key, parsed[key])
     }
-    console.log('  %s: %s', key, parsed[key])
   }
 } else {
   console.log('No ENV vars were detected')
@@ -49,6 +48,9 @@ console.log(`
     Truffle config
   ==========================================
 `)
+const GAS_PRICE_GWEI = process.env.GAS_PRICE_GWEI || 10
+const GAS_LIMIT = 6.5e6
+
 // Get the mnemonic
 const privateKey = process.env.PK
 let mnemonic = process.env.MNEMONIC
