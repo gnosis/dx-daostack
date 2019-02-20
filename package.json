@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "@daostack/arc": "0.0.1-rc.9.1",
-    "@daostack/migration": "0.0.1-rc.9-v1",
+    "@daostack/migration": "0.0.1-rc.9-v2",
     "@gnosis.pm/dx-contracts": "^2.0.0",
     "@gnosis.pm/dx-price-oracle": "0.2.0",
     "@gnosis.pm/gno-token": "^2.0.0",

@@ -97,16 +97,6 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@daostack/arc@0.0.1-rc.9":
-  version "0.0.1-rc.9"
-  resolved "https://registry.yarnpkg.com/@daostack/arc/-/arc-0.0.1-rc.9.tgz#8dab9544245303ed51615b8312d5f37ce64206d3"
-  integrity sha512-7TAJ4bV1d2s0b7wboZdfO3YLGJcAwgMY8fxWCTFZRm6Ulyic+4KW96ovLhizRTHKpdtPTmgltyR7q1u+O0VSmg==
-  dependencies:
-    "@daostack/infra" "0.0.1-rc.9"
-    ethereumjs-abi "^0.6.5"
-    openzeppelin-solidity "2.1.1"
-    solhint "^1.5.0"
-
 "@daostack/arc@0.0.1-rc.9.1":
   version "0.0.1-rc.9.1"
   resolved "https://registry.yarnpkg.com/@daostack/arc/-/arc-0.0.1-rc.9.1.tgz#f9240939a02c23c49235bcc3d31cf49fd9c5a14a"
@@ -125,12 +115,12 @@
     ethereumjs-abi "^0.6.5"
     openzeppelin-solidity "2.1.1"
 
-"@daostack/migration@0.0.1-rc.9-v1":
-  version "0.0.1-rc.9-v1"
-  resolved "https://registry.yarnpkg.com/@daostack/migration/-/migration-0.0.1-rc.9-v1.tgz#d180104124b871ecc91e5422f00f2c97523bb490"
-  integrity sha512-EooKCyp1r6t7DyMkdb4ciRmW4ZorIw1S1s8x81twDURRZs8sN2luVyXavoYFeJlR76v28w8HxoYrE8PxSlBy6w==
+"@daostack/migration@0.0.1-rc.9-v2":
+  version "0.0.1-rc.9-v2"
+  resolved "https://registry.yarnpkg.com/@daostack/migration/-/migration-0.0.1-rc.9-v2.tgz#cd6018e1e554224f3c0f8cdf774ec610587bc39d"
+  integrity sha512-K6DQIBQXjVLnoyv8Xg4SXY1ay+R4CvGr4Elr+Qt7ht6BjhhRPh2reZ1zvpTmJdKFt2O+jmBSlc0s0dxXphjAsA==
   dependencies:
-    "@daostack/arc" "0.0.1-rc.9"
+    "@daostack/arc" "0.0.1-rc.9.1"
     ethereumjs-wallet "^0.6.3"
     ganache-cli "^6.2.5"
     hdwallet-accounts "0.0.1"
