@@ -20,7 +20,7 @@ const BID_AMOUNT_1_ANOTHER = web3.utils.toWei('30')
 const BID_AMOUNT_2_ANOTHER = web3.utils.toWei('35')
 const TOTAL_AMOUNT = web3.utils.toWei('10000000')
 
-contract('Locking Token for REP', accounts => {
+contract('Bidding GEN for REP', accounts => {
   let Auction4Rep, DxRep, GEN
   let master, another
   let snapshotId
@@ -64,7 +64,7 @@ contract('Locking Token for REP', accounts => {
 
   it('can\'t bid 0 amount', async () => {
     try {
-      await Auction4Rep.bid(0)
+      await Auction4Rep.bid(0, 0)
       // should be unreachable
       assert.fail('shouldn\'t allow bidding 0')
     } catch (error) {
@@ -79,7 +79,7 @@ contract('Locking Token for REP', accounts => {
     assert(auctionsStartTime.gt(new BN(now)), 'auctionsStartTime should be in the future')
 
     try {
-      await Auction4Rep.bid(BID_AMOUNT_1_MASTER)
+      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, 0)
       // should be unreachable
       assert.fail('shouldn\'t bid before auctionsStartTime')
     } catch (error) {
@@ -105,21 +105,33 @@ contract('Locking Token for REP', accounts => {
 
   it('can\'t bid token without approval (allowance)', async () => {
     try {
-      await Auction4Rep.bid(BID_AMOUNT_1_MASTER)
+      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, 0)
       // should be unreachable
       assert.fail('shouldn\'t transfer unapproved token')
     } catch (error) {
       assert.include(error.message, 'revert', 'error message should contain string specified')
+    } finally {
+      await GEN.approve(Auction4Rep.address, TOTAL_AMOUNT)
+    }
+  })
+
+  it('can\'t bid in a non-active auction', async () => {
+    try {
+      // right after auctionsStartTime, it's auctionId 0
+      // any other id will fail
+      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, 1)
+      // should be unreachable
+      assert.fail('shouldn\'t bid in a non-active auction')
+    } catch (error) {
+      assert.include(error.message, 'auction is not active', 'error message should contain string specified')
     }
   })
 
   it('can bid GEN after all', async () => {
-    await GEN.approve(Auction4Rep.address, TOTAL_AMOUNT)
-
     const balanceBefore = await GEN.balanceOf(master)
     console.log('balanceBefore: ', balanceBefore.toString());
 
-    const tx = await Auction4Rep.bid(BID_AMOUNT_1_MASTER)
+    const tx = await Auction4Rep.bid(BID_AMOUNT_1_MASTER, 0)
 
     const BidEvent = tx.logs.find(log => log.event === 'Bid')
 
@@ -131,6 +143,7 @@ contract('Locking Token for REP', accounts => {
 
     AuctionID = _auctionId
     console.log('AuctionID: ', AuctionID.toString());
+
     const balanceAfter = await GEN.balanceOf(master)
     console.log('balanceAfter: ', balanceAfter.toString());
 
@@ -149,6 +162,8 @@ contract('Locking Token for REP', accounts => {
     const totalBid = await Auction4Rep.auctions(AuctionID)
     console.log('totalBid: ', totalBid.toString());
     assert(totalBid.eq(bid), 'bid should equal totalBid for the first bid ever')
+
+    assert(AuctionID.isZero(), 'first auction should have id 0')
   })
 
   it('bidding at around the same time results in the same auction Id', async () => {
@@ -157,7 +172,7 @@ contract('Locking Token for REP', accounts => {
     const balanceBefore = await GEN.balanceOf(another)
     console.log('balanceBefore: ', balanceBefore.toString());
 
-    const tx = await Auction4Rep.bid(BID_AMOUNT_1_ANOTHER, { from: another })
+    const tx = await Auction4Rep.bid(BID_AMOUNT_1_ANOTHER, AuctionID, { from: another })
 
     const BidEvent = tx.logs.find(log => log.event === 'Bid')
 
@@ -206,10 +221,23 @@ contract('Locking Token for REP', accounts => {
     assert(nextAuctionIdAt.lt(new BN(timestamp2)), 'nextAuctionIdAt should be in the past')
   })
 
-  it('bidding at different auctionPeriod results in different auctionId', async () => {
+  it('can\'t bid in a past auction', async () => {
+    try {
+      // should be in another auction after time skip
+      // old id will fail
+      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, AuctionID)
+      // should be unreachable
+      assert.fail('shouldn\'t bid in a non-active auction')
+    } catch (error) {
+      assert.include(error.message, 'auction is not active', 'error message should contain string specified')
+    }
+  })
 
-    const tx1 = await Auction4Rep.bid(BID_AMOUNT_2_MASTER, { from: master })
-    const tx2 = await Auction4Rep.bid(BID_AMOUNT_2_ANOTHER, { from: another })
+  it('bidding at different auctionPeriod results in different auctionId', async () => {
+    const nextId = AuctionID.add(new BN(1))
+
+    const tx1 = await Auction4Rep.bid(BID_AMOUNT_2_MASTER, nextId, { from: master })
+    const tx2 = await Auction4Rep.bid(BID_AMOUNT_2_ANOTHER, nextId, { from: another })
 
     const BidEvent1 = tx1.logs.find(log => log.event === 'Bid')
     const BidEvent2 = tx2.logs.find(log => log.event === 'Bid')
@@ -298,8 +326,11 @@ contract('Locking Token for REP', accounts => {
   })
 
   it('can\'t bid after auctionsEndTime', async () => {
+    const numberOfAuctions = await Auction4Rep.numberOfAuctions()
+    // if any auction were to still be running, it would be the last one
+    const lastAuctionId = numberOfAuctions.sub(new BN(1))
     try {
-      await Auction4Rep.bid(BID_AMOUNT_1_MASTER)
+      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, lastAuctionId)
       // should be unreachable
       assert.fail('shouldn\'t bid after auctionsEndTime')
     } catch (error) {
