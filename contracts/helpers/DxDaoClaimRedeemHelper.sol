@@ -1,4 +1,4 @@
-pragma solidity ^0.5.2;
+pragma solidity ^0.5.4;
 
 import "../schemes/bootstrap/DxLockEth4Rep.sol";
 import "../schemes/bootstrap/DxLockMgnForRep.sol";
