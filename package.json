@@ -55,7 +55,7 @@
     "yargs": "^12.0.5"
   },
   "dependencies": {
-    "@daostack/arc": "0.0.1-rc.9.1",
+    "@daostack/arc": "0.0.1-rc.11",
     "@daostack/migration": "0.0.1-rc.9-v2",
     "@gnosis.pm/dx-contracts": "^2.0.0",
     "@gnosis.pm/dx-price-oracle": "0.2.0",

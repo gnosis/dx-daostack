@@ -1,4 +1,4 @@
-pragma solidity ^0.5.2;
+pragma solidity ^0.5.4;
 
 // DutchX dependencies
 import "@gnosis.pm/dx-contracts/contracts/DxDevDependencies.sol";

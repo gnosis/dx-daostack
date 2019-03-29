@@ -1,5 +1,5 @@
 // web3 and artifacts available globalls
-const { toBN, mapToString } = require('../utils')(web3)
+const { toBN, mapToString, getTimestamp } = require('../utils')(web3)
 
 // const MgnBasicMock = artifacts.require('MgnBasicMock')
 const DxGenAuction4Rep = artifacts.require('DxGenAuction4Rep')
@@ -30,8 +30,17 @@ module.exports = async () => {
     const balances = await Promise.all(accts.map(acct => genToken.balanceOf(acct)))
     console.log('TCL: GEN Balances: ', mapToString(balances))
 
+    const now = await getTimestamp()
+    const auctionsStartTime = await dxGenAuction4Rep.auctionsStartTime()
+    const auctionPeriod = await dxGenAuction4Rep.auctionPeriod()
+
+    // auctionId = (now - auctionsStartTime) / auctionPeriod
+    const currentAuctionId = toBN(now).sub(auctionsStartTime).div(auctionPeriod)
+
     // Loop through local accts and lock 100 MGN from each
-    const BidReceipts = await Promise.all(accts.map(acct => dxGenAuction4Rep.bid(web3.utils.toWei(toBN(100)), { from: acct })))
+    const BidReceipts = await Promise.all(
+      accts.map(acct => dxGenAuction4Rep.bid(web3.utils.toWei(toBN(100)), currentAuctionId, { from: acct }))
+    )
     console.log('dxGenAuction4Rep BidReceipts: ', BidReceipts)
   } catch (error) {
     console.error(error)
