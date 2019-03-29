@@ -25,7 +25,15 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
   } = await genesisProtocolHelper.setupAndGetGenesisProtocolData('dutchX')
 
   // DutchX address
-  const dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
+  let dutchXContractAddress
+  if (process.env.USE_MOCK_DX) {
+    console.log('Using Wallet.sol in place of DutchExchange');
+    const Wallet = artifacts.require('Wallet')
+    const WalletDeployed = await Wallet.deployed()
+    dutchXContractAddress = WalletDeployed.address
+  } else {
+    dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
+  }
 
   assert(genesisProtocolParamsHash, `The parameter paramsHash was not defined`)
   assert(genesisProtocolAddress, `The parameter address was not defined`)
