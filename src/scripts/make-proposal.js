@@ -16,6 +16,9 @@ const getDaostackContract = require('../helpers/getDaostackContract')(web3, arti
 const DxAvatar = artifacts.require('DxAvatar')
 const path = require('path')
 
+// when proposal is executed it can also send ETH (like {value} in transaction) to the underlyiung contract
+const ETH_TO_SEND_WITH_CALL = 0
+
 // Usage example:
 //  yarn make-proposal -h
 //  yarn make-proposal --network rinkeby --dry-run
@@ -108,10 +111,10 @@ async function main() {
     console.log('    - abi encoded call: %s', abiEncodedCall)
 
     if (dryRun) {
-      genericScheme.proposeCall.call(avatarAddress, abiEncodedCall, description || '')
+      genericScheme.proposeCall.call(avatarAddress, abiEncodedCall, ETH_TO_SEND_WITH_CALL, description || '')
       console.log('    - Dry run Success!')
     } else {
-      const makeProposalResult = await genericScheme.proposeCall(avatarAddress, abiEncodedCall, description || '')
+      const makeProposalResult = await genericScheme.proposeCall(avatarAddress, abiEncodedCall, ETH_TO_SEND_WITH_CALL, description || '')
       console.log('    - Success! The proposal was made. Transaction: %s', makeProposalResult.tx)
     }
   }

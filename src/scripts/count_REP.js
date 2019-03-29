@@ -1,5 +1,5 @@
 /**
- * truffle exec src/scripts/count_rep.js
+ * truffle exec src/scripts/count_REP.js
  * to get REP locking nad accumulated REP data for
  * @flags:
  * -a <address>,<address>       for addresses
@@ -14,18 +14,18 @@
 
 /**
  * examples:
- * $ npx truffle exec src/scripts/count_rep.js --network mainnet -a 0x123,0x456 -n ./networks.json
+ * $ npx truffle exec src/scripts/count_REP.js --network mainnet -a 0x123,0x456 -n ./networks.json
  * calculates reputation for the two provided accounts
  * for contracts on mainnet at addresses from ./networks.json
  * 
- * $ npx truffle exec src/scripts/count_rep.js --network rinkeby -o ./out.json
- * calculates reputation for all accounts for which there were Lcok/Bid events
+ * $ npx truffle exec src/scripts/count_REP.js --network rinkeby -o ./out.json
+ * calculates reputation for all accounts for which there were Lock/Bid events
  * for contracts on mainnet at addresses from artifacts in ./build/contracts
  * and outputs formatted data to ./out.json
  * 
- * $ npx truffle exec src/scripts/count_rep.js --network rinkeby --mgn 0x1234
- * calculates reputation for all accounts for which there were Lcok/Bid events
- * for contracts on mainnet at addresses from artifacts in ./build/contracts
+ * $ npx truffle exec src/scripts/count_REP.js --network rinkeby --mgn 0x1234
+ * calculates reputation for all accounts for which there were Lock/Bid events
+ * for contracts on rinkeby at addresses from artifacts in ./build/contracts
  * except for DxLockMgnForRep whose address is provided in --mgn flag
  * 
  */
@@ -58,7 +58,7 @@ if (argv.i) {
 
 
 const main = async () => {
-  console.log('Getting contracts');
+  console.group('Getting contracts');
   const contracts = await getContracts(argv)
   const {
     DxLockMgnForRep,
@@ -71,6 +71,8 @@ const main = async () => {
   console.log('DxLockEth4Rep: ', DxLockEth4Rep.address);
   console.log('DxLockWhitelisted4Rep: ', DxLockWhitelisted4Rep.address);
   console.log('DxGenAuction4Rep: ', DxGenAuction4Rep.address);
+
+  console.groupEnd()
 
   // get Lock/Bid events
   const [LockBidEvents, participatingAccounts] = await getLockedBid(accounts, contracts)
@@ -99,7 +101,8 @@ function writeToFile(file, data) {
 }
 
 async function displayExpectedRep(data, contracts) {
-  console.log('Expected Reputation:\n');
+  console.log('\n============================================\n');
+  console.group('Expected Reputation:\n');
   // console.log('data: ', JSON.stringify(data, null, 2));
   const {
     DxLockMgnForRep,
@@ -169,7 +172,7 @@ async function displayExpectedRep(data, contracts) {
   const { GenAuctionIdsWithBids, GENtotalDistributedRep } = GenTotalBidsPerAuction.reduce(
     (accum, bid, auctionId) => {
       if (bid.gt(new BN(0))) {
-        accum.GENtotalDistributedRep = accum.GENtotalDistributedRep.add(bid)
+        accum.GENtotalDistributedRep = accum.GENtotalDistributedRep.add(GENauctionReputationReward)
         accum.GenAuctionIdsWithBids.push(auctionId)
       }
       return accum
@@ -362,8 +365,9 @@ async function displayExpectedRep(data, contracts) {
     }
   }
 
-  return result
+  console.groupEnd()
 
+  return result
 }
 
 async function displayAccountsSubmissions(data, contracts) {
@@ -377,7 +381,7 @@ async function displayAccountsSubmissions(data, contracts) {
   const result = {}
   const accounts = Object.keys(data)
   console.log(`\nParticipating accounts:\n\t${accounts.join(',\n\t')}`);
-  console.log('\n\nSubmissions data');
+  console.group('\n\nSubmissions data');
 
   for (const account of accounts) {
     console.log('============================================');
@@ -580,6 +584,8 @@ async function displayAccountsSubmissions(data, contracts) {
 
   }
 
+  console.groupEnd()
+
   return result
 }
 
@@ -678,6 +684,7 @@ async function getLockedBid(accounts, contracts) {
     DxGenAuction4Rep
   } = contracts
 
+  console.group('\nFetching events from contracts\n')
 
   console.log('Fetching Lock events from DxLockMgnForRep');
   const MgnLocks = await retryPromise(() => DxLockMgnForRep.getPastEvents('Lock', LockOptions))
@@ -730,6 +737,8 @@ async function getLockedBid(accounts, contracts) {
   }, {})
 
   // console.log('eventsPerAddress: ', JSON.stringify(eventsPerAddress, null, 2));
+
+  console.groupEnd()
 
   return [eventsPerAddress, participatingAccounts]
 }
