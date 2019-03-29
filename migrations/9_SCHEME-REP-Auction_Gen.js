@@ -54,7 +54,7 @@ module.exports = async function (deployer) {
   console.log('  - Auction end time:', dateUtil.formatDateTime(initialDistributionEnd))
   console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemStart))
   console.log('  - Number of auctions:', numberOfGenAuctions)
-  console.log('  - Auction period (end - start)/number of auctions:', auctionPeriod)
+  console.log('  - Auction period (end - start)/number of auctions:', auctionPeriod, 'sec')
   // QUESTION: is GEN token - staking token?
   console.log('  - Staking token address (GEN):', genToken.address)
   console.log('  - wallet address (DxAvatar.address): ', walletAddress)

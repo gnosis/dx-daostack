@@ -30,9 +30,6 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
   const paramsHash = await setParameters({
     scheme: contributionReward,
     parameters: [{
-      name: 'orgNativeTokenFee',
-      value: contributionRewardSubmissionFee
-    }, {
       name: 'voteApproveParams',
       value: genesisProtocolParamsHash
     }, {
