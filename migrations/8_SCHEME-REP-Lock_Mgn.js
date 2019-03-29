@@ -42,6 +42,13 @@ module.exports = async function (deployer) {
     const MgnContract = artifacts.require(mgnImpl)
     const mgnContract = await deployer.deploy(MgnContract)
     mgnTokenAddress = mgnContract.address
+
+    if (mgnImpl === 'MgnOwnableMock' && process.env.MGN_IMPL_OWNER) {
+      console.log('Transferring MgnOwnableMock ownership to', process.env.MGN_IMPL_OWNER);
+
+      await mgnContract.transferOwnership(process.env.MGN_IMPL_OWNER)
+    }
+    console.log();
   }
 
   // Deploy DxLockMgnForRep
