@@ -23,8 +23,8 @@
 
 // // basically every method with onlyAuctioneer modifier
 
-// // 2
-// call GenericScheme.proposeCall(Avatar _avatar, bytes _callData) -> proposalId
+// // 2, value - is ETH to transfer with the call to the actual contract
+// call GenericScheme.proposeCall(Avatar _avatar, bytes _callData, uint256 _value, string memory _descriptionHash) -> proposalId
 
 // which calls GenesisProtocol.propose(uint _numOfChoices, bytes32 _paramsHash,address _proposer,address _organization)
 
@@ -386,7 +386,7 @@ function tryToAddProposalBeforeTime(
     console.log(`making a proposal DX.${method}(${JSON.stringify(input.join(', '))})`);
 
     try {
-      await GenericS.proposeCall(Avatar.address, encoded, 'description hash')
+      await GenericS.proposeCall(Avatar.address, encoded, 0, 'description hash')
       // should be unreachable
       assert.fail('shouldn\'t add proposal before activationTime')
     } catch (error) {
@@ -408,7 +408,7 @@ function addProposal(
 
     console.log(`making a proposal DX.${method}(${JSON.stringify(input.join(', '))})`);
 
-    const tx = await GenericS.proposeCall(Avatar.address, encoded, 'description hash')
+    const tx = await GenericS.proposeCall(Avatar.address, encoded, 0, 'description hash')
 
     // console.log('tx: ', JSON.stringify(tx, null, 2));
     const { args } = tx.logs.find((log) => { return log.event === 'NewCallProposal' })
@@ -454,7 +454,11 @@ function voteAndExecute(context) {
       // but we don't, (ノ°Д°）ノ︵ ┻━┻
       console.log('events: ', tx.logs.map((log) => { return log.event }).join(', '));
 
-      if (events.includes('ExecuteProposal')) {
+      if (
+        events.includes('ExecuteProposal') &&
+        events.includes('GPExecuteProposal') &&
+        events.includes('StateChange')
+      ) {
         // console.log('tx: ', JSON.stringify(tx.logs, null, 2));
         break
       }
