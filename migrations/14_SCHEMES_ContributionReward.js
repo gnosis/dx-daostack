@@ -11,8 +11,6 @@ const { registerScheme, setParameters } = require('./helpers/schemeUtils')
 
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
-const { contributionRewardSubmissionFee } = require('../src/config/schemes')
-
 module.exports = async function (deployer) { // eslint-disable-line no-unused-vars
   const dxAvatar = await DxAvatar.deployed()
   const dxController = await DxController.deployed()
