@@ -179,11 +179,52 @@
           "name": "OwnershipTransferred",
           "type": "event",
           "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        },
+        "0x534b52c783549f909f9e743120524d0b7154058e4a54cdc895c2c0b587a1c7e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_contract",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_data",
+              "type": "bytes"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_success",
+              "type": "bool"
+            }
+          ],
+          "name": "GenericCall",
+          "type": "event",
+          "signature": "0x534b52c783549f909f9e743120524d0b7154058e4a54cdc895c2c0b587a1c7e0"
+        },
+        "0xf9deba4938ba20070ec5a45ddf59bccba49cf83124215228ec1232182ef0ba2b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_metaData",
+              "type": "string"
+            }
+          ],
+          "name": "MetaData",
+          "type": "event",
+          "signature": "0xf9deba4938ba20070ec5a45ddf59bccba49cf83124215228ec1232182ef0ba2b"
         }
       },
       "links": {},
-      "address": "0xBdb281FF81C51dB8787B8504604B993e777F32Ce",
-      "transactionHash": "0x6ce9d3e6596e15e9fafcdf135edb8f9dbfcc1b3132ca5415d4ac2416adf77aae"
+      "address": "0xc64F8D57963227CAF7eefbAdf25ad0fB547fA8f7",
+      "transactionHash": "0x7fb9b7f1d956b0b54014fe904a86e23b6e138a44dbe705b3f7f288782e577793"
     },
     "4": {
       "events": {
@@ -636,8 +677,8 @@
         }
       },
       "links": {},
-      "address": "0x33b0D6ec882421d06b20DD55bA1D4fEFDb39570A",
-      "transactionHash": "0xc951be1a03b5f795d186a97666ba32a3781678de59bcfaef7b48223a2944aa0b"
+      "address": "0x9bB7d4E344e10BDC0E8A9A60353dC5ADFD02F54B",
+      "transactionHash": "0x8ec9dccf5de7989dfc9d2af46073f27d38d23dfc78f878c6c98777628123fe66"
     },
     "4": {
       "events": {
@@ -820,8 +861,8 @@
     "1": {
       "events": {},
       "links": {},
-      "address": "0xBA87014695D66720Fe7e6b98D3fCa2f594e67916",
-      "transactionHash": "0xb317222b1318f154abe387a735633443fbd8824b940add713cc8fd680ed2f829"
+      "address": "0xAB7A967a731b97fA1D7F9453e407A55074727C25",
+      "transactionHash": "0x12616b09968accd9add6a507f9fabdebfec9b000d472977d14bd2c1498d7c515"
     },
     "4": {
       "events": {},
@@ -899,8 +940,8 @@
         }
       },
       "links": {},
-      "address": "0xeCdBCDc7bae3500be24e171Fc2BCeB4f6b3430Bb",
-      "transactionHash": "0x793e5374c6b4974615022ec594b40e14d12c990a766e15fe05ddef330f7fabbd"
+      "address": "0x56A396a798EC1F6d8EE13bc71c457383109fCa56",
+      "transactionHash": "0xd45c2d2e67295ffa38add21ca2fd789cf0cb91d49a7aecb05e41c12dd075adb1"
     },
     "4": {
       "events": {
@@ -1066,8 +1107,8 @@
         }
       },
       "links": {},
-      "address": "0xE398293fD9737C9B49323A09D228741F0e36CE50",
-      "transactionHash": "0x3dd5faa8a29d5e436a04258e5d201f0f8737f6a2f5d20f8dace4fc96785b71c4"
+      "address": "0x71914741dbE98934BE0a5001a90F1FC1da743e06",
+      "transactionHash": "0x40df98773bda168c277a050d1e16e57ea9afdd119ade4e05f9c901e698188b59"
     },
     "4": {
       "events": {
@@ -1269,8 +1310,8 @@
         }
       },
       "links": {},
-      "address": "0x880b8C7C37ed531e43576B7660dcb58D7ee74c29",
-      "transactionHash": "0xa2e0aa296de8ac3cec85e21b6f0959accb90825b6c06a3cf7c7ee82828ee9264"
+      "address": "0x9858FAEcbAB7677c21A44d4dF7c8d7e60a524567",
+      "transactionHash": "0x650f9d018d1194a1bca9e7ad3287117144a3d098ca89ffafae23aa244ff1a0d7"
     },
     "4": {
       "events": {
@@ -1500,8 +1541,8 @@
         }
       },
       "links": {},
-      "address": "0xe6Cb332DA8407cB9A1A295e3b4cec912daD2B273",
-      "transactionHash": "0xb60de4b2caa5f8ffb0d1f4b62d3bbfe20f0ceb2dfd21d636b8387e926c45e9b7"
+      "address": "0xE9cAa3a16C7496Ef83246C7ED36206eC51e98D43",
+      "transactionHash": "0xf3a10b262f19ea403aecbe0dfbcaf535241a5f944768d9cdff59cf5e4a1e8344"
     },
     "4": {
       "events": {
@@ -1685,8 +1726,8 @@
         }
       },
       "links": {},
-      "address": "0x47E57A7B3c17A65e3b7D66Eec1577Baca018CDe6",
-      "transactionHash": "0x5375f9b845ef704aba4d4fc6dc81423f3c555f885014709e40edae89dd9397bb"
+      "address": "0xddE385B83fD95e7A6cEA6D1511F9eB577808cE15",
+      "transactionHash": "0xb3656e48f986e9c6020207df831a2868008353ab2dddb10a0e69bbe2513dbeb3"
     },
     "4": {
       "events": {
@@ -1832,8 +1873,8 @@
         }
       },
       "links": {},
-      "address": "0xFA2D6Cd0410F9656612fD837692D6A4921946F1b",
-      "transactionHash": "0xc435a90d1f1b9fa1d26ca447ea7322440c774a2d277978265cd6729e2f6a1b3e"
+      "address": "0x93198d742dA2A3AE77A3e49bc92adcd2f13B9863",
+      "transactionHash": "0xd85724a39da0cae0c9acd4b90a282d08d386d3b97dcd8d3bafd939caef8b858d"
     },
     "4": {
       "events": {
@@ -1981,10 +2022,29 @@
   },
   "MgnOwnableMock": {
     "1": {
-      "events": {},
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
       "links": {},
-      "address": "0xf0ee78D1E783599ce23D821C8A7847Fc13AcD06D",
-      "transactionHash": "0x94f8284cbc1f0964a38220a214548d88e74426e862e8446687ed19decab51de8"
+      "address": "0x189f0C70f1AE262Cab04d0AB7ED8b6176AF8a6D2",
+      "transactionHash": "0xa5c7d244dfee106129edc12e07471c2432c7ba35d5c36c2348e7ec41a6afad95"
     },
     "4": {
       "events": {
@@ -2016,8 +2076,8 @@
     "1": {
       "events": {},
       "links": {},
-      "address": "0x34360A6bAC317D01E600Aee52452967B753D3250",
-      "transactionHash": "0x6895f8735aa4bfcef714be45f0466481b2b99fb57c8b88567c608e12832a5c56"
+      "address": "0xD03efe12F2131F670CEb965F370097F3438379f4",
+      "transactionHash": "0xecd1736ec9460ab27047cb138782258f6d9127c3911da6d050fef15964c17f02"
     },
     "4": {
       "events": {},
@@ -2027,6 +2087,67 @@
     }
   },
   "Wallet": {
+    "1": {
+      "events": {
+        "0xf32a9f77675fd5917534c7746608fd3e309eac68fbdcbf5925e24ca97a704396": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_sender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "ReceiveEther",
+          "type": "event",
+          "signature": "0xf32a9f77675fd5917534c7746608fd3e309eac68fbdcbf5925e24ca97a704396"
+        },
+        "0x357b676c439b9e49b4410f8eb8680bee4223724802d8e3fd422e1756f87b475f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_sender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Pay",
+          "type": "event",
+          "signature": "0x357b676c439b9e49b4410f8eb8680bee4223724802d8e3fd422e1756f87b475f"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0x25e081D9cE03fDe7BD7AB7FFa6D04C3f4ce53906",
+      "transactionHash": "0x6ca3edf8fbb16e7f384cc3e10cab6afa487ff31074a9e43d04f3ddb295ae6289"
+    },
     "4": {
       "events": {
         "0xf32a9f77675fd5917534c7746608fd3e309eac68fbdcbf5925e24ca97a704396": {
