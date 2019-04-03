@@ -74,7 +74,7 @@ function truffleConfig({
   console.log(`Using gas limit: ${gas / 1000} K`);
   console.log(`Using gas price: ${gasPriceGWei} Gwei`);
   console.log(`Optimizer enabled: ${optimizedEnabled}`);
-  console.log('Using default mnemonic: %s', mnemonic === DEFAULT_MNEMONIC);
+
   const gasPrice = gasPriceGWei * 1e9;
 
   let _getProvider
