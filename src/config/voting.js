@@ -44,8 +44,8 @@ module.exports = {
 
 
     // Alpha: Constant used to get the confidence:
-    //    (S+ / S-) > Alpha^Nb  
-    //     Nn: number of busted proposals   
+    //    (S+ / S-) > Alpha^N
+    //     N: number of busted proposals   
     thresholdConst: getIntParam(process.env.THRESHOLD_CONST, 1300),
 
     // Period where the decision cannot be swiched from a Yes/No (or otherwise)

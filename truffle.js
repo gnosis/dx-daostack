@@ -64,9 +64,9 @@ function truffleConfig({
   gasPriceGWei = GAS_PRICE_GWEI,
   gas = GAS_LIMIT,
   optimizedEnabled = true,
-  urlRinkeby = 'https://rinkeby.infura.io/',
-  urlKovan = 'https://kovan.infura.io/',
-  urlMainnet = 'https://mainnet.infura.io',
+  urlRinkeby = 'https://rinkeby.infura.io/v3/9408f47dedf04716a03ef994182cf150',
+  urlKovan = 'https://kovan.infura.io/v3/9408f47dedf04716a03ef994182cf150',
+  urlMainnet = 'https://mainnet.infura.io/v3/9408f47dedf04716a03ef994182cf150',
   urlDevelopment = 'localhost',
   portDevelopment = 8545
 } = {}) {
@@ -74,7 +74,7 @@ function truffleConfig({
   console.log(`Using gas limit: ${gas / 1000} K`);
   console.log(`Using gas price: ${gasPriceGWei} Gwei`);
   console.log(`Optimizer enabled: ${optimizedEnabled}`);
-  console.log('Using default mnemonic: %s', mnemonic === DEFAULT_MNEMONIC);
+
   const gasPrice = gasPriceGWei * 1e9;
 
   let _getProvider

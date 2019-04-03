@@ -3,6 +3,9 @@ pragma solidity ^0.5.4;
 // DutchX dependencies
 import "@gnosis.pm/dx-contracts/contracts/DxDevDependencies.sol";
 
+// Wallet as DX mock
+import "@daostack/arc/contracts/test/Wallet.sol";
+
 // Price oracle
 import "@gnosis.pm/dx-price-oracle/contracts/DutchXPriceOracle.sol";
 // Remove WhitelistPriceOracle after the 18Feb deployement
