@@ -499,8 +499,8 @@
         }
       },
       "links": {},
-      "address": "0x51dd1aFF1299A17cbAcC0d5b52EAD4D1c38FaE5f",
-      "transactionHash": "0xa8636a4c2bd4ce42469ec51e036e9a49a6b6691c7234f7fa7f0fd39f30c6ff80"
+      "address": "0x61a9F7b6a68684b9707CCfa8e823bEAC2c38e51B",
+      "transactionHash": "0xda30bc0fa36ef68d4607f6d07ee4db18482fd530837fe8ccfcd8924ad26a9b59"
     }
   },
   "DxController": {
@@ -853,8 +853,8 @@
         }
       },
       "links": {},
-      "address": "0x07b9B4AD63662C04af04f404695d22902FeCC408",
-      "transactionHash": "0x218146d0e13eef1a58f6ca4b5b3be4b7a3d22bd794f32e7b276929827b04b521"
+      "address": "0x9B95Fd371828b193FB4AB70437D01AA76473DAE9",
+      "transactionHash": "0x2ca89ab8c543e7f0234014e2acec73d2df7ef18c34ec223ede23c56002348a07"
     }
   },
   "DxDaoClaimRedeemHelper": {
@@ -867,8 +867,8 @@
     "4": {
       "events": {},
       "links": {},
-      "address": "0x6AA1179d3FC683b5405256Bd845b15e8eA8e01c5",
-      "transactionHash": "0x589a6af62516e62701a4c4cbc0c67e4a0aab6ed7ae89ba74d6866478edd966de"
+      "address": "0x9C6C7C50c47f9d576dB166eE1407AFeA487F8123",
+      "transactionHash": "0xe68b145d6092dbc98058e2c8978ce19923472ab236a08c5117053e094910821d"
     }
   },
   "DxGenAuction4Rep": {
@@ -1011,8 +1011,8 @@
         }
       },
       "links": {},
-      "address": "0x7d6Bf4Dd9cdA0A3836cB402Ab287d42535c95120",
-      "transactionHash": "0x27cc05ec18df257cf013a76d0d50bb1ba8887cb1831e989a520422ab69803a13"
+      "address": "0x4eCcC9B46c239399Ba7DAD89A407eD32D1B8FE81",
+      "transactionHash": "0xe377c78fa161a88c992e0e1645f6401d336d16575de884e5b12e9add1c557a2d"
     }
   },
   "DxLockEth4Rep": {
@@ -1201,8 +1201,8 @@
         }
       },
       "links": {},
-      "address": "0x329eCa1F24A278FaF7cFE6e77b9A1E64DaF11D65",
-      "transactionHash": "0x1d2452794a8dcf7e7deab7c0cae7fbffd94a6316a33428f84da131a8de49f24d"
+      "address": "0x8D00b71d701fB1C86d970372E75c574e2420E2e0",
+      "transactionHash": "0x09102dbd9b471694446247a858ed239cc38c21c8808c8a4216e3b91612cc3156"
     }
   },
   "DxLockMgnForRep": {
@@ -1417,8 +1417,8 @@
         }
       },
       "links": {},
-      "address": "0xBa1Ec4A3f7840C924f1918bf18ee5827d158e9E2",
-      "transactionHash": "0x15e87ddb50d3eaf12d0e236cf3cf6e98ffed49a196501ef9a576087536cf3e19"
+      "address": "0xe237b1FaA6e644C81374DDB083De216926c5B1E6",
+      "transactionHash": "0x93e712ec79acf67cd63140f73ea02f5abedf34c1afec69288680291453010e6a"
     }
   },
   "DxLockWhitelisted4Rep": {
@@ -1663,8 +1663,8 @@
         }
       },
       "links": {},
-      "address": "0xFC47FE5749963D2FBb950275be8882F93b8b5564",
-      "transactionHash": "0x933f81c889ac935ee0e4f01b906e42673438303482f47c1e31837c2562cd192b"
+      "address": "0xC25c7a97835FbD4bD4AE2020f4Ea507177D1C8B8",
+      "transactionHash": "0x406419df4b0b57ee445c8dc3bebc3bc53a5f7ea7f884fbb71ffbda3ed3da6e66"
     }
   },
   "DxReputation": {
@@ -1800,8 +1800,8 @@
         }
       },
       "links": {},
-      "address": "0x3446C614f95dE5d44Fd275c84bDb2026c9594A45",
-      "transactionHash": "0x223c7fa9bfa60174579205eebdb28b10262528f7100cdb109f79c30492e6d7de"
+      "address": "0x37886B7A825b57CfC0575C5A7ae69C3cB64EA465",
+      "transactionHash": "0xb69e1912251cb17378ae7bfa79d96bd5cec7b73da342db8d9f0f1b4db6f59b80"
     }
   },
   "DxToken": {
@@ -2000,8 +2000,8 @@
         }
       },
       "links": {},
-      "address": "0x781615e46B2Beb73906a79C84bc5956a2e465B77",
-      "transactionHash": "0xe77229baaaceffd0d9a435c07ea62bbe87e2907151fd2235f8b2b924c953a0db"
+      "address": "0xD32B7c8795B6bB60Ca3B7Ea6d89e0C7FC7EaCe8e",
+      "transactionHash": "0x2482c7b530057037fbd6a9c90a7342450154a0e9fea97a40244c13afd3af879b"
     }
   },
   "FixedPriceOracle": {
@@ -2082,8 +2082,8 @@
     "4": {
       "events": {},
       "links": {},
-      "address": "0x805c8fC67e66be6d3F159408e0d47f855b805E0d",
-      "transactionHash": "0x1ec053155c043821d0182730a1ea480853451a92ca8a0961927203b55c944ad7"
+      "address": "0x65a5ceA71760d7b9f74cFBaBcb03Eb9A6c3b52c8",
+      "transactionHash": "0x8baa97e9b85567fcb8bc6067a3e5fffbd13fe4510dc0f7ab7b9bb552aeb15b5e"
     }
   },
   "Wallet": {

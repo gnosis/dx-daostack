@@ -1,4 +1,4 @@
-const { toBN } = require('./utils')(web3)
+const { toBN, getTimestamp } = require('./utils')(web3)
 const ZERO = toBN(0)
 
 const DxLockMgnForRepArtifact = artifacts.require('DxLockMgnForRep')
@@ -138,6 +138,18 @@ const main = async () => {
   if (!unclaimedAccountsWithBalance.length) {
     console.log("\nAll the accounts are unclaimable, because they don't have MGN balance. Nothing to do")
     return
+  }
+
+  const timing = await checkTiming(dxLockMgnForRep)
+  console.log('timing: ', timing);
+  if (timing.error) {
+    const { period, now, error } = timing
+    throw new Error(`
+    Claiming can be done only during claiming period.
+    Claiming period: ${period};
+    Now: ${now};
+    ${error}
+    `)
   }
 
   // Extract only addresses w/MGN locked balance into array
@@ -282,6 +294,33 @@ async function filterAccountsFix({
   console.log('-------------------------\n')
 
   return accountsClaimable
+}
+
+async function checkTiming(dxLockMgnForRep) {
+  const [start, end, now] = await Promise.all([
+    dxLockMgnForRep.lockingStartTime.call(),
+    dxLockMgnForRep.lockingEndTime.call(),
+    getTimestamp()
+  ])
+
+  const period = `${new Date(start * 1000).toUTCString()} -- ${new Date(end * 1000).toUTCString()}`
+  const nowUTC = new Date(now * 1000).toUTCString()
+
+  const res = {
+    period,
+    now: nowUTC,
+    error: null
+  }
+
+  const nowBN = toBN(now)
+
+  if (end.lte(nowBN)) {
+    res.error = 'Too late'
+  } else if (start.gt(nowBN)) {
+    res.error = 'Too early'
+  }
+
+  return res
 }
 
 module.exports = cb => main().then(() => cb(), cb)
