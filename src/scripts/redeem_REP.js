@@ -171,13 +171,12 @@ const main = async () => {
 
     // Throw if all addresses empty or non-redeemable
     if (!dxLER_Lock_Lockers.length && !dxLMR_Lock_Lockers.length && !dxLWR_Lock_Lockers.length && !dxGAR_Bid_Bidders.length) throw 'No workable data - all event address array empty. Aborting.'
-    
 
     dxLER_Lock_Lockers = removeDuplicates(dxLER_Lock_Lockers);
     dxLMR_Lock_Lockers = removeDuplicates(dxLMR_Lock_Lockers);
     dxLWR_Lock_Lockers = removeDuplicates(dxLWR_Lock_Lockers);
     [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = removePairedDuplicates(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs);
-
+  
     // console.log('dxLER_Lock_Lockers: ', dxLER_Lock_Lockers);
     // console.log('dxLMR_Lock_Lockers: ', dxLMR_Lock_Lockers);
     // console.log('dxLWR_Lock_Lockers: ', dxLWR_Lock_Lockers);
@@ -290,7 +289,7 @@ function removeDuplicates(arr) {
 
 function removePairedDuplicates(arr1, arr2) {
   const filled = {}
-  
+
   const arr1Filtered = [], arr2Filtered = []
 
   for (let i = 0, len = arr1.length; i < len; ++i) {
