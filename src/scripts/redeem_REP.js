@@ -220,12 +220,31 @@ const main = async () => {
       console.log('dxGAR_Lockers redeemAllGAR Response = ', arrayBNtoNum(dxGAR_Res))
     } else {
       console.log('Checking respective dxLXR contracts and redeeming if length . . .')
-      const dxLER_Receipt = dxLER_Lock_Lockers.length && await dxHelper.redeemAll(dxLER_Lock_Lockers, 0)
-      const dxLMR_Receipt = dxLMR_Lock_Lockers.length && await dxHelper.redeemAll(dxLMR_Lock_Lockers, 1)
-      const dxLWR_Receipt = dxLWR_Lock_Lockers.length && await dxHelper.redeemAll(dxLWR_Lock_Lockers, 2)
+      let dxLER_Receipt, dxLMR_Receipt, dxLWR_Receipt, dxGAR_Receipt
+      if (dxLER_Lock_Lockers.length) {
+        const gas =  await dxHelper.redeemAll.estimateGas(dxLER_Lock_Lockers, 0)
+        // console.log('gas: ', gas);
+        dxLER_Receipt = dxLER_Lock_Lockers.length && await dxHelper.redeemAll(dxLER_Lock_Lockers, 0, {gas})
+      }
 
-      // dxGAR - redeemAllGAR
-      const dxGAR_Receipt = dxGAR_Bid_Bidders.length && await dxHelper.redeemAllGAR(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs)
+      if (dxLMR_Lock_Lockers.length) {
+        const gas = await dxHelper.redeemAll.estimateGas(dxLMR_Lock_Lockers, 1)
+        // console.log('dxLMRgas: ', gas);
+        dxLMR_Receipt = dxLMR_Lock_Lockers.length && await dxHelper.redeemAll(dxLMR_Lock_Lockers, 1, {gas})
+      }
+
+      if (dxLWR_Lock_Lockers.length) {
+        const gas = await dxHelper.redeemAll.estimateGas(dxLWR_Lock_Lockers, 2)
+        // console.log('dxLWRgas: ', gas);
+        dxLWR_Receipt = dxLWR_Lock_Lockers.length && await dxHelper.redeemAll(dxLWR_Lock_Lockers, 2, {gas})
+      }
+
+      // // dxGAR - redeemAllGAR
+      if (dxGAR_Bid_Bidders.length) {
+        const gas = await dxGAR_Bid_Bidders.length && await dxHelper.redeemAllGAR.estimateGas(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs)
+        // console.log('dxGARgas: ', gas);
+        dxGAR_Receipt = dxGAR_Bid_Bidders.length && await dxHelper.redeemAllGAR(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs, {gas})
+      }
 
       dxLER_Receipt ? console.log('dxLER_Lockers redeemAll receipt = ', dxLER_Receipt) : console.log('No lockers to redeem for dxLER')
       dxLMR_Receipt ? console.log('dxLMR_Lockers redeemAll receipt = ', dxLMR_Receipt) : console.log('No lockers to redeem for dxLMR')
@@ -235,6 +254,10 @@ const main = async () => {
   } catch (error) {
     console.error(error)
   }
+}
+
+function arrayBNtoNum (arr) {
+  return arr.map(bn => bn.toString())
 }
 
 async function removeZeroScoreAddresses(arr, contract) {
