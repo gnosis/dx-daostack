@@ -81,7 +81,7 @@ const main = async () => {
   const { dryRun, network, f, batchSize, fromBlock } = argv
 
   console.log(`
-    claim_mgn.js data:
+    redeem_REP.js data:
 
     Dry run: ${dryRun}
     Network: ${network}
@@ -155,7 +155,7 @@ const main = async () => {
     ])
 
     // Cache necessary addresses from events
-    const dxLER_Lock_Lockers = await removeZeroScoreAddresses(dxLER_Lock_Events.map(event => event.returnValues._locker), dxLER),
+    let dxLER_Lock_Lockers = await removeZeroScoreAddresses(dxLER_Lock_Events.map(event => event.returnValues._locker), dxLER),
       dxLMR_Lock_Lockers = await removeZeroScoreAddresses(dxLMR_Lock_Events.map(event => event.returnValues._locker), dxLMR),
       dxLWR_Lock_Lockers = await removeZeroScoreAddresses(dxLWR_Lock_Events.map(event => event.returnValues._locker), dxLWR),
       [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = await removeZeroBidsAddresses(dxGAR_Bid_Events.map(
@@ -166,6 +166,21 @@ const main = async () => {
 
     // Throw if all addresses empty or non-redeemable
     if (!dxLER_Lock_Lockers.length && !dxLMR_Lock_Lockers.length && !dxLWR_Lock_Lockers.length && !dxGAR_Bid_Bidders.length) throw 'No workable data - all event address array empty. Aborting.'
+    console.log('dxLER_Lock_Lockers: ', dxLER_Lock_Lockers);
+    console.log('dxLMR_Lock_Lockers: ', dxLMR_Lock_Lockers);
+    console.log('dxLWR_Lock_Lockers: ', dxLWR_Lock_Lockers);
+    console.log('dxGAR_Bid_Bidders: ', dxGAR_Bid_Bidders);
+    console.log('dxGAR_Bid_AuctionIDs: ', dxGAR_Bid_AuctionIDs);
+    
+    dxLER_Lock_Lockers = removeDuplicates(dxLER_Lock_Lockers);
+    dxLMR_Lock_Lockers = removeDuplicates(dxLMR_Lock_Lockers);
+    dxLWR_Lock_Lockers = removeDuplicates(dxLWR_Lock_Lockers);
+    [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = removePairedDuplicates(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs);
+    console.log('dxLER_Lock_Lockers: ', dxLER_Lock_Lockers);
+    console.log('dxLMR_Lock_Lockers: ', dxLMR_Lock_Lockers);
+    console.log('dxLWR_Lock_Lockers: ', dxLWR_Lock_Lockers);
+    console.log('dxGAR_Bid_Bidders: ', dxGAR_Bid_Bidders);
+    console.log('dxGAR_Bid_AuctionIDs: ', dxGAR_Bid_AuctionIDs);
 
     // ?. Dry Run - call redeem on all contracts
     if (dryRun) {
@@ -178,9 +193,9 @@ const main = async () => {
         3 = DxGenAuction4Rep (not used)
       */
       const [dxLER_Res, dxLMR_Res, dxLWR_Res] = await Promise.all([
-        dxHelper.redeemAll.call(dxLER_Lock_Lockers, 0),
-        dxHelper.redeemAll.call(dxLMR_Lock_Lockers, 1),
-        dxHelper.redeemAll.call(dxLWR_Lock_Lockers, 2),
+        dxHelper.redeemAll.call(dxLER_Lock_Lockers, '0'),
+        // dxHelper.redeemAll.call(dxLMR_Lock_Lockers, 1),
+        // dxHelper.redeemAll.call(dxLWR_Lock_Lockers, 2),
       ])
 
       console.log('dxLER_Lockers redeemAll Response = ', dxLER_Res)
@@ -230,6 +245,30 @@ async function removeZeroBidsAddresses(bidders, auctionIds, contract) {
     return acc
   }, [])
   return [reducedArr.map(({ bene }) => bene), reducedArr.map(({ id }) => id)]
+}
+
+function removeDuplicates(arr) {
+  return Array.from(new Set(arr))
+}
+
+function removePairedDuplicates(arr1, arr2) {
+  const filled = {}
+  
+  const arr1Filtered = [], arr2Filtered = []
+
+  for (let i = 0, len = arr1.length; i < len; ++i) {
+    const arr1Value = arr1[i]
+    const arr2Value = arr2[i]
+
+    if (!filled[arr1Value]) filled[arr1Value] = new Set
+    if (filled[arr1Value].has(arr2Value)) continue
+
+    filled[arr1Value].add(arr2Value)
+    arr1Filtered.push(arr1Value)
+    arr2Filtered.push(arr2Value)
+  }
+
+  return [arr1Filtered, arr2Filtered]
 }
 
 module.exports = cb => main().then(() => cb(), cb)
