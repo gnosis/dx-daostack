@@ -133,6 +133,11 @@ const main = async () => {
         DxDaoClaimRedeemHelperArtifact.deployed(),
       ]))
     }
+    console.log('DxLockMgnForRep: ', dxLMR.address);
+    console.log('DxLockEth4Rep: ', dxLER.address);
+    console.log('DxLockWhitelisted4Rep: ', dxLWR.address);
+    console.log('DxGenAuction4Rep: ', dxGAR.address);
+    console.log('DxDaoClaimRedeemHelper: ', dxHelper.address);
 
     if (fromBlock === 0 || fromBlock < 7185000) {
       console.warn(`
@@ -166,21 +171,18 @@ const main = async () => {
 
     // Throw if all addresses empty or non-redeemable
     if (!dxLER_Lock_Lockers.length && !dxLMR_Lock_Lockers.length && !dxLWR_Lock_Lockers.length && !dxGAR_Bid_Bidders.length) throw 'No workable data - all event address array empty. Aborting.'
-    console.log('dxLER_Lock_Lockers: ', dxLER_Lock_Lockers);
-    console.log('dxLMR_Lock_Lockers: ', dxLMR_Lock_Lockers);
-    console.log('dxLWR_Lock_Lockers: ', dxLWR_Lock_Lockers);
-    console.log('dxGAR_Bid_Bidders: ', dxGAR_Bid_Bidders);
-    console.log('dxGAR_Bid_AuctionIDs: ', dxGAR_Bid_AuctionIDs);
     
+
     dxLER_Lock_Lockers = removeDuplicates(dxLER_Lock_Lockers);
     dxLMR_Lock_Lockers = removeDuplicates(dxLMR_Lock_Lockers);
     dxLWR_Lock_Lockers = removeDuplicates(dxLWR_Lock_Lockers);
     [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = removePairedDuplicates(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs);
-    console.log('dxLER_Lock_Lockers: ', dxLER_Lock_Lockers);
-    console.log('dxLMR_Lock_Lockers: ', dxLMR_Lock_Lockers);
-    console.log('dxLWR_Lock_Lockers: ', dxLWR_Lock_Lockers);
-    console.log('dxGAR_Bid_Bidders: ', dxGAR_Bid_Bidders);
-    console.log('dxGAR_Bid_AuctionIDs: ', dxGAR_Bid_AuctionIDs);
+
+    // console.log('dxLER_Lock_Lockers: ', dxLER_Lock_Lockers);
+    // console.log('dxLMR_Lock_Lockers: ', dxLMR_Lock_Lockers);
+    // console.log('dxLWR_Lock_Lockers: ', dxLWR_Lock_Lockers);
+    // console.log('dxGAR_Bid_Bidders: ', dxGAR_Bid_Bidders);
+    // console.log('dxGAR_Bid_AuctionIDs: ', dxGAR_Bid_AuctionIDs);
 
     const timing = await checkTiming(dxLMR)
     if (timing.error) {
@@ -203,18 +205,19 @@ const main = async () => {
         2 = DxLockWhitelisted
         3 = DxGenAuction4Rep (not used)
       */
+
       const [dxLER_Res, dxLMR_Res, dxLWR_Res] = await Promise.all([
-        dxHelper.redeemAll.call(dxLER_Lock_Lockers, '0'),
-        // dxHelper.redeemAll.call(dxLMR_Lock_Lockers, 1),
-        // dxHelper.redeemAll.call(dxLWR_Lock_Lockers, 2),
+        dxHelper.redeemAll.call(dxLER_Lock_Lockers, 0),
+        dxHelper.redeemAll.call(dxLMR_Lock_Lockers, 1),
+        dxHelper.redeemAll.call(dxLWR_Lock_Lockers, 2),
       ])
 
-      console.log('dxLER_Lockers redeemAll Response = ', dxLER_Res)
-      console.log('dxLMR_Lockers redeemAll Response = ', dxLMR_Res)
-      console.log('dxLWR_Lockers redeemAll Response = ', dxLWR_Res)
+      console.log('dxLER_Lockers redeemAll Response = ', arrayBNtoNum(dxLER_Res))
+      console.log('dxLMR_Lockers redeemAll Response = ', arrayBNtoNum(dxLMR_Res))
+      console.log('dxLWR_Lockers redeemAll Response = ', arrayBNtoNum(dxLWR_Res))
       // dxGAR - redeemAllGAR
       const dxGAR_Res = await dxHelper.redeemAllGAR.call(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs)
-      console.log('dxGAR_Lockers redeemAllGAR Response = ', dxGAR_Res)
+      console.log('dxGAR_Lockers redeemAllGAR Response = ', arrayBNtoNum(dxGAR_Res))
     } else {
       console.log('Checking respective dxLXR contracts and redeeming if length . . .')
       const dxLER_Receipt = dxLER_Lock_Lockers.length && await dxHelper.redeemAll(dxLER_Lock_Lockers, 0)
