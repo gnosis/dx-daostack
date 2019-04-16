@@ -5,7 +5,7 @@ const DxLockWhitelisted4RepArtifact = artifacts.require('DxLockWhitelisted4Rep')
 const DxGenAuction4RepArtifact = artifacts.require('DxGenAuction4Rep')
 const DxDaoClaimRedeemHelperArtifact = artifacts.require('DxDaoClaimRedeemHelper')
 
-const { toBN } = require('./utils')(web3)
+const { toBN, getTimestamp } = require('./utils')(web3)
 
 /* ================================================================================================================================
  * To help console testing - sets contracts + prints vars + saves events for respective Events into dxLMR_Lock_Events etc:
@@ -182,6 +182,17 @@ const main = async () => {
     console.log('dxGAR_Bid_Bidders: ', dxGAR_Bid_Bidders);
     console.log('dxGAR_Bid_AuctionIDs: ', dxGAR_Bid_AuctionIDs);
 
+    const timing = await checkTiming(dxLMR)
+    if (timing.error) {
+      const { redeemStart, now, error } = timing
+      throw new Error(`
+      Redeeming can be done only after redeemEnableTime.
+      redeemEnableTime: ${redeemStart};
+      Now: ${now};
+      ${error}
+      `)
+    }
+
     // ?. Dry Run - call redeem on all contracts
     if (dryRun) {
       /* 
@@ -269,6 +280,30 @@ function removePairedDuplicates(arr1, arr2) {
   }
 
   return [arr1Filtered, arr2Filtered]
+}
+
+async function checkTiming(redeemableCtr) {
+  const [redeemStart, now] = await Promise.all([
+    redeemableCtr.redeemEnableTime.call(),
+    getTimestamp()
+  ])
+
+  const redeemStartUTC = new Date(redeemStart * 1000).toUTCString()
+  const nowUTC = new Date(now * 1000).toUTCString()
+
+  const res = {
+    redeemStart: redeemStartUTC,
+    now: nowUTC,
+    error: null
+  }
+
+  const nowBN = toBN(now)
+
+  if (redeemStart.gt(nowBN)) {
+    res.error = 'Too early'
+  }
+
+  return res
 }
 
 module.exports = cb => main().then(() => cb(), cb)
