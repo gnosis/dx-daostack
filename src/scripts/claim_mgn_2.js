@@ -43,6 +43,16 @@ const main = async () => {
       default: 0,
       describe: 'Set from which Block to check for events'
     })
+    .option('lock-address', {
+      type: 'string',
+      alias: 'l',
+      describe: 'Address for DxLockMgnForRep'
+    })
+    .option('helper-address', {
+      type: 'string',
+      alias: 'h',
+      describe: 'Address for DxDaoClaimRedeemHelper'
+    })
     .help('help')
     .argv
 
@@ -73,9 +83,9 @@ const main = async () => {
   }
 
   // Get contracts and main data
-  const dxLockMgnForRep = await DxLockMgnForRepArtifact.deployed()
+  const dxLockMgnForRep = await (argv.l ? DxLockMgnForRepArtifact.at(argv.l) : DxLockMgnForRepArtifact.deployed())
   const mgnAddress = await dxLockMgnForRep.externalLockingContract.call()
-  const claimRedeemHelper = await DxDaoClaimRedeemHelperArtifact.deployed()
+  const claimRedeemHelper = await (argv.h ? DxDaoClaimRedeemHelperArtifact.at(argv.h) : DxDaoClaimRedeemHelperArtifact.deployed())
   const mgn = await TokenMGN.at(mgnAddress)
   // TODO: Get dates from dxLockMgnForRep contract
 
@@ -141,7 +151,6 @@ const main = async () => {
   }
 
   const timing = await checkTiming(dxLockMgnForRep)
-  console.log('timing: ', timing);
   if (timing.error) {
     const { period, now, error } = timing
     throw new Error(`
