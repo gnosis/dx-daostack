@@ -6,6 +6,7 @@ const DxGenAuction4RepArtifact = artifacts.require('DxGenAuction4Rep')
 const DxDaoClaimRedeemHelperArtifact = artifacts.require('DxDaoClaimRedeemHelper')
 
 const { toBN, getTimestamp } = require('./utils')(web3)
+const batchExecute = require('./utils/batch')
 
 /* ================================================================================================================================
  * To help console testing - sets contracts + prints vars + saves events for respective Events into dxLMR_Lock_Events etc:
@@ -46,8 +47,8 @@ const { toBN, getTimestamp } = require('./utils')(web3)
    * [use flag -f 'networks-rinkeby-long-lock.json' for addresses]
    * [use flag --from-block 0]
    * 
-   * Complete [ DRY-RUN ]: npx truffle exec src/scripts/redeem_rep.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 0
-   * Complete [ REAL-RUN ]: npx truffle exec src/scripts/redeem_rep.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 750153 --dry-run false
+   * Complete [ DRY-RUN ]: npx truffle exec src/scripts/redeem_REP.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 0
+   * Complete [ REAL-RUN ]: npx truffle exec src/scripts/redeem_REP.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 750153 --dry-run false
    */
 
 const main = async () => {
@@ -62,6 +63,11 @@ const main = async () => {
       type: 'string',
       default: 'development',
       describe: 'Blockchain network to operate on'
+    })
+    .option('batchSize', {
+      type: 'string',
+      default: 50,
+      describe: 'Set batch size'
     })
     .option('dryRun', {
       type: 'boolean',
@@ -133,11 +139,6 @@ const main = async () => {
         DxDaoClaimRedeemHelperArtifact.deployed(),
       ]))
     }
-    console.log('DxLockMgnForRep: ', dxLMR.address);
-    console.log('DxLockEth4Rep: ', dxLER.address);
-    console.log('DxLockWhitelisted4Rep: ', dxLWR.address);
-    console.log('DxGenAuction4Rep: ', dxGAR.address);
-    console.log('DxDaoClaimRedeemHelper: ', dxHelper.address);
 
     if (fromBlock === 0 || fromBlock < 7185000) {
       console.warn(`
@@ -176,7 +177,7 @@ const main = async () => {
     dxLMR_Lock_Lockers = removeDuplicates(dxLMR_Lock_Lockers);
     dxLWR_Lock_Lockers = removeDuplicates(dxLWR_Lock_Lockers);
     [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = removePairedDuplicates(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs);
-  
+
     // console.log('dxLER_Lock_Lockers: ', dxLER_Lock_Lockers);
     // console.log('dxLMR_Lock_Lockers: ', dxLMR_Lock_Lockers);
     // console.log('dxLWR_Lock_Lockers: ', dxLWR_Lock_Lockers);
@@ -194,6 +195,19 @@ const main = async () => {
       `)
     }
 
+    const redeemAllInBatches = (accountsToRedeem, mapIdx, call = true, txOptions) => Promise.all(batchExecute(
+      accountsSlice => (call ? dxHelper.redeemAll.call : dxHelper.redeemAll)(accountsSlice, mapIdx, txOptions),
+      batchSize,
+      accountsToRedeem
+    ))
+
+    const redeemAllGARInBatches = (accountsToRedeem, auctionIDs, call = true, txOptions) => Promise.all(batchExecute(
+      (accountsSlice, auctionIDsSlice) => (call ? dxHelper.redeemAllGAR.call : dxHelper.redeemAllGAR)(accountsSlice, auctionIDsSlice, txOptions),
+      batchSize,
+      accountsToRedeem,
+      auctionIDs,
+    ))
+
     // ?. Dry Run - call redeem on all contracts
     if (dryRun) {
       /* 
@@ -205,57 +219,58 @@ const main = async () => {
         3 = DxGenAuction4Rep (not used)
       */
 
+
       const [dxLER_Res, dxLMR_Res, dxLWR_Res] = await Promise.all([
-        dxHelper.redeemAll.call(dxLER_Lock_Lockers, 0),
-        dxHelper.redeemAll.call(dxLMR_Lock_Lockers, 1),
-        dxHelper.redeemAll.call(dxLWR_Lock_Lockers, 2),
+        redeemAllInBatches(dxLER_Lock_Lockers, 0),
+        redeemAllInBatches(dxLMR_Lock_Lockers, 1),
+        redeemAllInBatches(dxLWR_Lock_Lockers, 2),
       ])
 
-      console.log('dxLER_Lockers redeemAll Response = ', arrayBNtoNum(dxLER_Res))
-      console.log('dxLMR_Lockers redeemAll Response = ', arrayBNtoNum(dxLMR_Res))
-      console.log('dxLWR_Lockers redeemAll Response = ', arrayBNtoNum(dxLWR_Res))
+      console.log('dxLER_Lockers redeemAll Responses = ', dxLER_Res.map(arrayBNtoNum))
+      console.log('dxLMR_Lockers redeemAll Responses = ', dxLMR_Res.map(arrayBNtoNum))
+      console.log('dxLWR_Lockers redeemAll Responses = ', dxLWR_Res.map(arrayBNtoNum))
       // dxGAR - redeemAllGAR
-      const dxGAR_Res = await dxHelper.redeemAllGAR.call(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs)
-      console.log('dxGAR_Lockers redeemAllGAR Response = ', arrayBNtoNum(dxGAR_Res))
+      const dxGAR_Res = await redeemAllGARInBatches(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs)
+      console.log('dxGAR_Lockers redeemAllGAR Responses = ', dxGAR_Res.map(arrayBNtoNum))
     } else {
       console.log('Checking respective dxLXR contracts and redeeming if length . . .')
-      let dxLER_Receipt, dxLMR_Receipt, dxLWR_Receipt, dxGAR_Receipt
+      let dxLER_Receipts, dxLMR_Receipts, dxLWR_Receipts, dxGAR_Receipts
       if (dxLER_Lock_Lockers.length) {
-        const gas =  await dxHelper.redeemAll.estimateGas(dxLER_Lock_Lockers, 0)
+        const gas = await dxHelper.redeemAll.estimateGas(dxLER_Lock_Lockers.slice(0, batchSize), 0)
         // console.log('gas: ', gas);
-        dxLER_Receipt = dxLER_Lock_Lockers.length && await dxHelper.redeemAll(dxLER_Lock_Lockers, 0, {gas})
+        dxLER_Receipts = await redeemAllInBatches(dxLER_Lock_Lockers, 0, false, { gas })
       }
 
       if (dxLMR_Lock_Lockers.length) {
-        const gas = await dxHelper.redeemAll.estimateGas(dxLMR_Lock_Lockers, 1)
+        const gas = await dxHelper.redeemAll.estimateGas(dxLMR_Lock_Lockers.slice(0, batchSize), 1)
         // console.log('dxLMRgas: ', gas);
-        dxLMR_Receipt = dxLMR_Lock_Lockers.length && await dxHelper.redeemAll(dxLMR_Lock_Lockers, 1, {gas})
+        dxLMR_Receipts = await redeemAllInBatches(dxLMR_Lock_Lockers, 1, false, { gas })
       }
 
       if (dxLWR_Lock_Lockers.length) {
-        const gas = await dxHelper.redeemAll.estimateGas(dxLWR_Lock_Lockers, 2)
+        const gas = await dxHelper.redeemAll.estimateGas(dxLWR_Lock_Lockers.slice(0, batchSize), 2)
         // console.log('dxLWRgas: ', gas);
-        dxLWR_Receipt = dxLWR_Lock_Lockers.length && await dxHelper.redeemAll(dxLWR_Lock_Lockers, 2, {gas})
+        dxLWR_Receipts = await redeemAllInBatches(dxLWR_Lock_Lockers, 2, false, { gas })
       }
 
       // // dxGAR - redeemAllGAR
       if (dxGAR_Bid_Bidders.length) {
-        const gas = await dxGAR_Bid_Bidders.length && await dxHelper.redeemAllGAR.estimateGas(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs)
+        const gas = await dxHelper.redeemAllGAR.estimateGas(dxGAR_Bid_Bidders.slice(0, batchSize), dxGAR_Bid_AuctionIDs.slice(0, batchSize))
         // console.log('dxGARgas: ', gas);
-        dxGAR_Receipt = dxGAR_Bid_Bidders.length && await dxHelper.redeemAllGAR(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs, {gas})
+        dxGAR_Receipts = await redeemAllGARInBatches(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs, false, { gas })
       }
 
-      dxLER_Receipt ? console.log('dxLER_Lockers redeemAll receipt = ', dxLER_Receipt) : console.log('No lockers to redeem for dxLER')
-      dxLMR_Receipt ? console.log('dxLMR_Lockers redeemAll receipt = ', dxLMR_Receipt) : console.log('No lockers to redeem for dxLMR')
-      dxLWR_Receipt ? console.log('dxLWR_Lockers redeemAll receipt = ', dxLWR_Receipt) : console.log('No lockers to redeem for dxLWR')
-      dxGAR_Receipt ? console.log('dxGAR_Bidders redeemAllGAR receipt = ', dxGAR_Receipt) : console.log('No Bidders to redeem for dxGAR')
+      dxLER_Receipts ? console.log('dxLER_Lockers redeemAll receipts = ', dxLER_Receipts) : console.log('No lockers to redeem for dxLER')
+      dxLMR_Receipts ? console.log('dxLMR_Lockers redeemAll receipts = ', dxLMR_Receipts) : console.log('No lockers to redeem for dxLMR')
+      dxLWR_Receipts ? console.log('dxLWR_Lockers redeemAll receipts = ', dxLWR_Receipts) : console.log('No lockers to redeem for dxLWR')
+      dxGAR_Receipts ? console.log('dxGAR_Bidders redeemAllGAR receipts = ', dxGAR_Receipts) : console.log('No Bidders to redeem for dxGAR')
     }
   } catch (error) {
     console.error(error)
   }
 }
 
-function arrayBNtoNum (arr) {
+function arrayBNtoNum(arr) {
   return arr.map(bn => bn.toString())
 }
 
