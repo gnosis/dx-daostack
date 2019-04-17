@@ -11,6 +11,7 @@ const ADDRESS_0 = '0x0000000000000000000000000000000000000000'
 //    ENV_PATH=env_vars/19-02-07__mainnet_test.conf yarn make-proposal -f ./test/resources/proposals/test-proposals.js --network mainnet --dry-run
 
 const DutchExchange = artifacts.require('DutchExchange')
+const Wallet = artifacts.require('Wallet')
 // const ERC20 = artifacts.require('ERC20')
 
 const genesisProtocolHelper = require('../helpers/genesisProtocolHelper')({ artifacts, web3 })
@@ -158,6 +159,13 @@ async function main() {
         break;
       case 'CONTRIBUTION-REWARD':
         contributionRewardData = getContributionRewardData(proposal)
+        break;
+
+      case 'MOCK-WALLET-SEND-ALL-ETHER':
+        genericSchemeData = {
+          abiEncodedCall: sendAllEtherUsingMockWallet(proposal),
+          description
+        }
         break;
       default:
         throw new Error('Unknown proposal type: ' + type)
@@ -357,6 +365,17 @@ function updateApprovedTokensEncoded(proposal) {
   )
 }
 
+function sendAllEtherUsingMockWallet(proposal) {
+  const { toAddress } = proposal
+  assert(toAddress, '"toAddress" is required for sending Ether with the Mock Wallet')
+
+  console.log('    - Send all Ether to %s using mock wallet', toAddress)
+  const abi = getWalletFunctionAbi('pay')
+  return web3.eth.abi.encodeFunctionCall(
+    abi, [toAddress]
+  )
+}
+
 // function sendTokensEncoded(proposal) {
 //   const { tokenAddress, toAddress, amount } = proposal
 //   assert(tokenAddress, '"tokenAddress" is required for sending tokens')
@@ -373,6 +392,12 @@ function updateApprovedTokensEncoded(proposal) {
 
 function getDxFunctionAbi(name) {
   const abi = getAbi('DutchX', DutchExchange, name)
+
+  return abi
+}
+
+function getWalletFunctionAbi(name) {
+  const abi = getAbi('Wallet', Wallet, name)
 
   return abi
 }

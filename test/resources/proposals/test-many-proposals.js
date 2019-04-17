@@ -82,5 +82,12 @@ module.exports = [
     periodLength: 0,
     numberOfPeriod: 1,
     beneficiary: '0x3d1df1a816577a62db61281f673c4f43ae063490'
+  },
+
+  // Generic Scheme: Send Ether using the Wallet
+  {
+    type: 'MOCK-WALLET-SEND-ALL-ETHER',
+    toAddress: '0x3d1df1a816577a62db61281f673c4f43ae063490',
+    description: 'Simple test :)'
   }
 ]
