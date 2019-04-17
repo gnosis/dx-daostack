@@ -5,7 +5,7 @@ const DxLockWhitelisted4RepArtifact = artifacts.require('DxLockWhitelisted4Rep')
 const DxGenAuction4RepArtifact = artifacts.require('DxGenAuction4Rep')
 const DxDaoClaimRedeemHelperArtifact = artifacts.require('DxDaoClaimRedeemHelper')
 
-const { toBN } = require('./utils')(web3)
+const { toBN, getTimestamp } = require('./utils')(web3)
 
 /* ================================================================================================================================
  * To help console testing - sets contracts + prints vars + saves events for respective Events into dxLMR_Lock_Events etc:
@@ -81,7 +81,7 @@ const main = async () => {
   const { dryRun, network, f, batchSize, fromBlock } = argv
 
   console.log(`
-    claim_mgn.js data:
+    redeem_REP.js data:
 
     Dry run: ${dryRun}
     Network: ${network}
@@ -133,6 +133,11 @@ const main = async () => {
         DxDaoClaimRedeemHelperArtifact.deployed(),
       ]))
     }
+    console.log('DxLockMgnForRep: ', dxLMR.address);
+    console.log('DxLockEth4Rep: ', dxLER.address);
+    console.log('DxLockWhitelisted4Rep: ', dxLWR.address);
+    console.log('DxGenAuction4Rep: ', dxGAR.address);
+    console.log('DxDaoClaimRedeemHelper: ', dxHelper.address);
 
     if (fromBlock === 0 || fromBlock < 7185000) {
       console.warn(`
@@ -155,7 +160,7 @@ const main = async () => {
     ])
 
     // Cache necessary addresses from events
-    const dxLER_Lock_Lockers = await removeZeroScoreAddresses(dxLER_Lock_Events.map(event => event.returnValues._locker), dxLER),
+    let dxLER_Lock_Lockers = await removeZeroScoreAddresses(dxLER_Lock_Events.map(event => event.returnValues._locker), dxLER),
       dxLMR_Lock_Lockers = await removeZeroScoreAddresses(dxLMR_Lock_Events.map(event => event.returnValues._locker), dxLMR),
       dxLWR_Lock_Lockers = await removeZeroScoreAddresses(dxLWR_Lock_Events.map(event => event.returnValues._locker), dxLWR),
       [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = await removeZeroBidsAddresses(dxGAR_Bid_Events.map(
@@ -167,6 +172,28 @@ const main = async () => {
     // Throw if all addresses empty or non-redeemable
     if (!dxLER_Lock_Lockers.length && !dxLMR_Lock_Lockers.length && !dxLWR_Lock_Lockers.length && !dxGAR_Bid_Bidders.length) throw 'No workable data - all event address array empty. Aborting.'
 
+    dxLER_Lock_Lockers = removeDuplicates(dxLER_Lock_Lockers);
+    dxLMR_Lock_Lockers = removeDuplicates(dxLMR_Lock_Lockers);
+    dxLWR_Lock_Lockers = removeDuplicates(dxLWR_Lock_Lockers);
+    [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = removePairedDuplicates(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs);
+  
+    // console.log('dxLER_Lock_Lockers: ', dxLER_Lock_Lockers);
+    // console.log('dxLMR_Lock_Lockers: ', dxLMR_Lock_Lockers);
+    // console.log('dxLWR_Lock_Lockers: ', dxLWR_Lock_Lockers);
+    // console.log('dxGAR_Bid_Bidders: ', dxGAR_Bid_Bidders);
+    // console.log('dxGAR_Bid_AuctionIDs: ', dxGAR_Bid_AuctionIDs);
+
+    const timing = await checkTiming(dxLMR)
+    if (timing.error) {
+      const { redeemStart, now, error } = timing
+      throw new Error(`
+      Redeeming can be done only after redeemEnableTime.
+      redeemEnableTime: ${redeemStart};
+      Now: ${now};
+      ${error}
+      `)
+    }
+
     // ?. Dry Run - call redeem on all contracts
     if (dryRun) {
       /* 
@@ -177,26 +204,46 @@ const main = async () => {
         2 = DxLockWhitelisted
         3 = DxGenAuction4Rep (not used)
       */
+
       const [dxLER_Res, dxLMR_Res, dxLWR_Res] = await Promise.all([
         dxHelper.redeemAll.call(dxLER_Lock_Lockers, 0),
         dxHelper.redeemAll.call(dxLMR_Lock_Lockers, 1),
         dxHelper.redeemAll.call(dxLWR_Lock_Lockers, 2),
       ])
 
-      console.log('dxLER_Lockers redeemAll Response = ', dxLER_Res)
-      console.log('dxLMR_Lockers redeemAll Response = ', dxLMR_Res)
-      console.log('dxLWR_Lockers redeemAll Response = ', dxLWR_Res)
+      console.log('dxLER_Lockers redeemAll Response = ', arrayBNtoNum(dxLER_Res))
+      console.log('dxLMR_Lockers redeemAll Response = ', arrayBNtoNum(dxLMR_Res))
+      console.log('dxLWR_Lockers redeemAll Response = ', arrayBNtoNum(dxLWR_Res))
       // dxGAR - redeemAllGAR
       const dxGAR_Res = await dxHelper.redeemAllGAR.call(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs)
-      console.log('dxGAR_Lockers redeemAllGAR Response = ', dxGAR_Res)
+      console.log('dxGAR_Lockers redeemAllGAR Response = ', arrayBNtoNum(dxGAR_Res))
     } else {
       console.log('Checking respective dxLXR contracts and redeeming if length . . .')
-      const dxLER_Receipt = dxLER_Lock_Lockers.length && await dxHelper.redeemAll(dxLER_Lock_Lockers, 0)
-      const dxLMR_Receipt = dxLMR_Lock_Lockers.length && await dxHelper.redeemAll(dxLMR_Lock_Lockers, 1)
-      const dxLWR_Receipt = dxLWR_Lock_Lockers.length && await dxHelper.redeemAll(dxLWR_Lock_Lockers, 2)
+      let dxLER_Receipt, dxLMR_Receipt, dxLWR_Receipt, dxGAR_Receipt
+      if (dxLER_Lock_Lockers.length) {
+        const gas =  await dxHelper.redeemAll.estimateGas(dxLER_Lock_Lockers, 0)
+        // console.log('gas: ', gas);
+        dxLER_Receipt = dxLER_Lock_Lockers.length && await dxHelper.redeemAll(dxLER_Lock_Lockers, 0, {gas})
+      }
 
-      // dxGAR - redeemAllGAR
-      const dxGAR_Receipt = dxGAR_Bid_Bidders.length && await dxHelper.redeemAllGAR(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs)
+      if (dxLMR_Lock_Lockers.length) {
+        const gas = await dxHelper.redeemAll.estimateGas(dxLMR_Lock_Lockers, 1)
+        // console.log('dxLMRgas: ', gas);
+        dxLMR_Receipt = dxLMR_Lock_Lockers.length && await dxHelper.redeemAll(dxLMR_Lock_Lockers, 1, {gas})
+      }
+
+      if (dxLWR_Lock_Lockers.length) {
+        const gas = await dxHelper.redeemAll.estimateGas(dxLWR_Lock_Lockers, 2)
+        // console.log('dxLWRgas: ', gas);
+        dxLWR_Receipt = dxLWR_Lock_Lockers.length && await dxHelper.redeemAll(dxLWR_Lock_Lockers, 2, {gas})
+      }
+
+      // // dxGAR - redeemAllGAR
+      if (dxGAR_Bid_Bidders.length) {
+        const gas = await dxGAR_Bid_Bidders.length && await dxHelper.redeemAllGAR.estimateGas(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs)
+        // console.log('dxGARgas: ', gas);
+        dxGAR_Receipt = dxGAR_Bid_Bidders.length && await dxHelper.redeemAllGAR(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs, {gas})
+      }
 
       dxLER_Receipt ? console.log('dxLER_Lockers redeemAll receipt = ', dxLER_Receipt) : console.log('No lockers to redeem for dxLER')
       dxLMR_Receipt ? console.log('dxLMR_Lockers redeemAll receipt = ', dxLMR_Receipt) : console.log('No lockers to redeem for dxLMR')
@@ -206,6 +253,10 @@ const main = async () => {
   } catch (error) {
     console.error(error)
   }
+}
+
+function arrayBNtoNum (arr) {
+  return arr.map(bn => bn.toString())
 }
 
 async function removeZeroScoreAddresses(arr, contract) {
@@ -230,6 +281,54 @@ async function removeZeroBidsAddresses(bidders, auctionIds, contract) {
     return acc
   }, [])
   return [reducedArr.map(({ bene }) => bene), reducedArr.map(({ id }) => id)]
+}
+
+function removeDuplicates(arr) {
+  return Array.from(new Set(arr))
+}
+
+function removePairedDuplicates(arr1, arr2) {
+  const filled = {}
+
+  const arr1Filtered = [], arr2Filtered = []
+
+  for (let i = 0, len = arr1.length; i < len; ++i) {
+    const arr1Value = arr1[i]
+    const arr2Value = arr2[i]
+
+    if (!filled[arr1Value]) filled[arr1Value] = new Set
+    if (filled[arr1Value].has(arr2Value)) continue
+
+    filled[arr1Value].add(arr2Value)
+    arr1Filtered.push(arr1Value)
+    arr2Filtered.push(arr2Value)
+  }
+
+  return [arr1Filtered, arr2Filtered]
+}
+
+async function checkTiming(redeemableCtr) {
+  const [redeemStart, now] = await Promise.all([
+    redeemableCtr.redeemEnableTime.call(),
+    getTimestamp()
+  ])
+
+  const redeemStartUTC = new Date(redeemStart * 1000).toUTCString()
+  const nowUTC = new Date(now * 1000).toUTCString()
+
+  const res = {
+    redeemStart: redeemStartUTC,
+    now: nowUTC,
+    error: null
+  }
+
+  const nowBN = toBN(now)
+
+  if (redeemStart.gt(nowBN)) {
+    res.error = 'Too early'
+  }
+
+  return res
 }
 
 module.exports = cb => main().then(() => cb(), cb)
