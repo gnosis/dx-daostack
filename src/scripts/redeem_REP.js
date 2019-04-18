@@ -195,18 +195,18 @@ const main = async () => {
       `)
     }
 
-    const redeemAllInBatches = (accountsToRedeem, mapIdx, call = true, txOptions) => Promise.all(batchExecute(
+    const redeemAllInBatches = (accountsToRedeem, mapIdx, call = true, txOptions) => batchExecute(
       accountsSlice => (call ? dxHelper.redeemAll.call : dxHelper.redeemAll)(accountsSlice, mapIdx, txOptions),
-      batchSize,
+      {batchSize},
       accountsToRedeem
-    ))
+    )
 
-    const redeemAllGARInBatches = (accountsToRedeem, auctionIDs, call = true, txOptions) => Promise.all(batchExecute(
+    const redeemAllGARInBatches = (accountsToRedeem, auctionIDs, call = true, txOptions) => batchExecute(
       (accountsSlice, auctionIDsSlice) => (call ? dxHelper.redeemAllGAR.call : dxHelper.redeemAllGAR)(accountsSlice, auctionIDsSlice, txOptions),
-      batchSize,
+      {batchSize},
       accountsToRedeem,
       auctionIDs,
-    ))
+    )
 
     // ?. Dry Run - call redeem on all contracts
     if (dryRun) {
