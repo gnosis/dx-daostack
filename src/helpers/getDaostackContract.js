@@ -6,7 +6,7 @@ const networksJSON = require(networksFile)
 const genTokenNetworks = require('../config/genTokenAddress')
 
 const Id2Network = {
-  1: 'main',
+  1: 'mainnet',
   2: 'morden',
   3: 'ropsten',
   4: 'rinkeby',
