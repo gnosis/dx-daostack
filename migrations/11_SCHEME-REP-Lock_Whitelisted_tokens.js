@@ -14,7 +14,8 @@ const dateUtil = require('../src/helpers/dateUtil')
 const { registerScheme } = require('./helpers/schemeUtils')
 
 const {
-  maxLockingWhitelistedTokensPeriod
+  maxLockingWhitelistedTokensPeriod,
+  agreementHash
 } = require('../src/config/bootstrap')
 
 const {
@@ -58,6 +59,7 @@ module.exports = async function (deployer, network) {
 
   assert(redeemStart, `The parameter redeemStart was not defined`)
   assert(maxLockingWhitelistedTokensPeriod, `The parameter maxLockingWhitelistedTokensPeriod was not defined`)
+  assert(agreementHash, `The parameter agreementHash was not defined`)
 
   console.log('  - Avatar address:', dxAvatar.address)
   console.log('  - Reputation reward:', whitelistedTokensReward)
@@ -67,6 +69,7 @@ module.exports = async function (deployer, network) {
   console.log('  - max locking period:', maxLockingWhitelistedTokensPeriod)
   console.log('  - Price Oracle Implementation:', priceOracleImpl)
   console.log('  - Price Oracle address:', priceOracleAddress)
+  console.log('  - Agreement IPFS hash:', agreementHash)
 
   await dxLockWhitelisted4Rep.initialize(
     dxAvatar.address,
@@ -75,7 +78,8 @@ module.exports = async function (deployer, network) {
     dateUtil.toEthereumTimestamp(initialDistributionEnd),
     dateUtil.toEthereumTimestamp(redeemStart),
     maxLockingWhitelistedTokensPeriod,
-    priceOracleAddress
+    priceOracleAddress,
+    agreementHash
   )
 
   await registerScheme({

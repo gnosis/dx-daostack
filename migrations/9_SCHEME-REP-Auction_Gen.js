@@ -12,7 +12,8 @@ const { registerScheme } = require('./helpers/schemeUtils')
 const getDaostackContract = require('../src/helpers/getDaostackContract')(web3, artifacts)
 
 const {
-  numberOfGenAuctions
+  numberOfGenAuctions,
+  agreementHash
 } = require('../src/config/bootstrap')
 
 const {
@@ -35,6 +36,7 @@ module.exports = async function (deployer) {
   assert(initialDistributionEnd, `The parameter initialDistributionEnd was not defined`)
   assert(redeemStart, `The parameter redeemStart was not defined`)
   assert(numberOfGenAuctions, `The parameter numberOfGenAuctions was not defined`)
+  assert(agreementHash, `The parameter agreementHash was not defined`)
 
   console.log('Deploy DxGenAuction4Rep that inherits from Auction4Reputation')
   const dxGenAuction4Rep = await deployer.deploy(DxGenAuction4Rep)
@@ -58,6 +60,7 @@ module.exports = async function (deployer) {
   // QUESTION: is GEN token - staking token?
   console.log('  - Staking token address (GEN):', genToken.address)
   console.log('  - wallet address (DxAvatar.address): ', walletAddress)
+  console.log('  - Agreement IPFS hash:', agreementHash)
 
 
 
@@ -69,7 +72,8 @@ module.exports = async function (deployer) {
     numberOfGenAuctions,
     dateUtil.toEthereumTimestamp(redeemStart),
     genToken.address,
-    walletAddress
+    walletAddress,
+    agreementHash
   )
 
   await registerScheme({

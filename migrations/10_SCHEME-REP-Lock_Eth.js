@@ -10,7 +10,8 @@ const dateUtil = require('../src/helpers/dateUtil')
 const { registerScheme } = require('./helpers/schemeUtils')
 
 const {
-  maxLockingEthPeriod
+  maxLockingEthPeriod,
+  agreementHash
 } = require('../src/config/bootstrap')
 
 const {
@@ -33,6 +34,7 @@ module.exports = async function (deployer) {
   assert(initialDistributionStart, `The parameter initialDistributionStart was not defined`)
   assert(initialDistributionEnd, `The parameter initialDistributionEnd was not defined`)
   assert(maxLockingEthPeriod, `The parameter maxLockingEthPeriod was not defined`)
+  assert(agreementHash, `The parameter agreementHash was not defined`)
 
   console.log('Configure DxLockEth4Rep')
 
@@ -42,6 +44,7 @@ module.exports = async function (deployer) {
   console.log('  - Locking end time:', dateUtil.formatDateTime(initialDistributionEnd))
   console.log('  - Redeem enable time:', dateUtil.formatDateTime(redeemStart))
   console.log('  - max locking period:', maxLockingEthPeriod)
+  console.log('  - Agreement IPFS hash:', agreementHash)
 
   await dxLockEth4Rep.initialize(
     dxAvatar.address,
@@ -49,7 +52,8 @@ module.exports = async function (deployer) {
     dateUtil.toEthereumTimestamp(initialDistributionStart),
     dateUtil.toEthereumTimestamp(initialDistributionEnd),
     dateUtil.toEthereumTimestamp(redeemStart),
-    maxLockingEthPeriod
+    maxLockingEthPeriod,
+    agreementHash
   )
 
   await registerScheme({
