@@ -25,5 +25,8 @@ module.exports = {
   maxLockingEthPeriod: getIntParam(process.env.MAX_LOCKING_PERIOD, 30 * SECONDS_PER_DAY),
 
   // Whitelisted tokens Locking
-  maxLockingWhitelistedTokensPeriod: getIntParam(process.env.MAX_LOCKING_PERIOD, 30 * SECONDS_PER_DAY)
+  maxLockingWhitelistedTokensPeriod: getIntParam(process.env.MAX_LOCKING_PERIOD, 30 * SECONDS_PER_DAY),
+
+  // IPFS hash for user agreement
+  agreementHash: process.env.AGREEMENT_HASH || '0x0'
 }
