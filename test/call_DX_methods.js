@@ -546,7 +546,8 @@ async function ensureRep(accounts, { MGN, DxLock4Rep, DxRep }) {
     /*const locked =*/ await DxLock4Rep.externalLockers(acc)
     // console.log(acc, 'locked:', locked);
   })
-  await callForAll(accounts, (acc) => { return DxLock4Rep.claim(ZERO_ADDRESS, { from: acc }) })
+  const agreementHash = await DxLock4Rep.getAgreementHash()
+  await callForAll(accounts, (acc) => { return DxLock4Rep.claim(ZERO_ADDRESS, agreementHash, { from: acc }) })
 
   const redeemEnableTime = await DxLock4Rep.redeemEnableTime()
   const timestamp2 = await getTimestamp()
