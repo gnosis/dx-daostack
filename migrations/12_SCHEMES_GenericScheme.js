@@ -27,10 +27,15 @@ module.exports = async function (deployer) { // eslint-disable-line no-unused-va
   // DutchX address
   let dutchXContractAddress
   if (process.env.USE_MOCK_DX) {
-    console.log('Using Wallet.sol in place of DutchExchange');
-    const Wallet = artifacts.require('Wallet')
-    const WalletDeployed = await Wallet.deployed()
-    dutchXContractAddress = WalletDeployed.address
+    if (web3.utils.isAddress(process.env.USE_MOCK_DX)) {
+      dutchXContractAddress = process.env.USE_MOCK_DX
+      console.log(`DutchExchange address provided directly: ${dutchXContractAddress}`);
+    } else {
+      console.log('Using Wallet.sol in place of DutchExchange');
+      const Wallet = artifacts.require('Wallet')
+      const WalletDeployed = await Wallet.deployed()
+      dutchXContractAddress = WalletDeployed.address
+    }
   } else {
     dutchXContractAddress = await getDXContractAddress('DutchExchangeProxy')
   }
