@@ -37,9 +37,11 @@ module.exports = async () => {
     // auctionId = (now - auctionsStartTime) / auctionPeriod
     const currentAuctionId = toBN(now).sub(auctionsStartTime).div(auctionPeriod)
 
+    const agreementHash = await dxGenAuction4Rep.getAgreementHash()
+
     // Loop through local accts and lock 100 MGN from each
     const BidReceipts = await Promise.all(
-      accts.map(acct => dxGenAuction4Rep.bid(web3.utils.toWei(toBN(100)), currentAuctionId, { from: acct }))
+      accts.map(acct => dxGenAuction4Rep.bid(web3.utils.toWei(toBN(100)), currentAuctionId, agreementHash, { from: acct }))
     )
     console.log('dxGenAuction4Rep BidReceipts: ', BidReceipts)
   } catch (error) {

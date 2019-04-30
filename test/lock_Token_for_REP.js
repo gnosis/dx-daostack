@@ -26,6 +26,7 @@ contract('Locking Token for REP', accounts => {
   let DxLock4Rep, DxRep, Token, Whitelist, PriceOracle
   let master
   let snapshotId, lockID
+  let AGREEMENT_HASH
 
   before(async () => {
     snapshotId = await takeSnapshot();
@@ -33,11 +34,14 @@ contract('Locking Token for REP', accounts => {
     DxLock4Rep = await DxLockWhitelisted4Rep.deployed()
     DxRep = await DxReputation.deployed()
     Token = await TestToken.new('Test Token', 'TST', TOTAL_AMOUNT)
-    console.log('Token: ', Token.address);
+    console.log('Token: ', Token.address, AGREEMENT_HASH);
 
     const DXProxy = await DutchExchangeProxy.deployed()
     Whitelist = await TokenWhitelist.at(DXProxy.address)
     PriceOracle = await FixedPriceOracle.deployed()
+
+    AGREEMENT_HASH = await DxLock4Rep.getAgreementHash()
+    console.log('Current AGREEMENT_HASH: ', AGREEMENT_HASH);
   })
 
   afterEach(() => {
@@ -48,7 +52,7 @@ contract('Locking Token for REP', accounts => {
 
   it('can\'t lock not whitelisted token', async () => {
     try {
-      await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address)
+      await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t lock not whitelisted token')
     } catch (error) {
@@ -60,7 +64,7 @@ contract('Locking Token for REP', accounts => {
     await Whitelist.updateApprovalOfToken([Token.address], true)
 
     try {
-      await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address)
+      await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t lock 0/X priced token')
     } catch (error) {
@@ -72,7 +76,7 @@ contract('Locking Token for REP', accounts => {
     await PriceOracle.setPrice(Token.address, 1, 0)
 
     try {
-      await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address)
+      await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t lock X/0 priced token')
     } catch (error) {
@@ -84,7 +88,7 @@ contract('Locking Token for REP', accounts => {
     await PriceOracle.setPrice(Token.address, NUM, DEN)
 
     try {
-      await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address)
+      await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t transfer unapproved token')
     } catch (error) {
@@ -96,7 +100,7 @@ contract('Locking Token for REP', accounts => {
     await Token.approve(DxLock4Rep.address, TOTAL_AMOUNT)
 
     try {
-      await DxLock4Rep.lock(0, LOCK_PERIOD, Token.address)
+      await DxLock4Rep.lock(0, LOCK_PERIOD, Token.address, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t lock when zero amount')
     } catch (error) {
@@ -107,7 +111,7 @@ contract('Locking Token for REP', accounts => {
   it('can\'t lock for longer than maxLockingPeriod', async () => {
     const maxLockingPeriod = await DxLock4Rep.maxLockingPeriod()
     try {
-      await DxLock4Rep.lock(LOCK_AMOUNT, maxLockingPeriod.add(new BN(1)), Token.address)
+      await DxLock4Rep.lock(LOCK_AMOUNT, maxLockingPeriod.add(new BN(1)), Token.address, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t lock for longer than maxLockingPeriod')
     } catch (error) {
@@ -117,7 +121,7 @@ contract('Locking Token for REP', accounts => {
 
   it('can\'t lock for locking period of 0', async () => {
     try {
-      await DxLock4Rep.lock(LOCK_AMOUNT, 0, Token.address)
+      await DxLock4Rep.lock(LOCK_AMOUNT, 0, Token.address, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t lock for locking period of 0')
     } catch (error) {
@@ -133,7 +137,7 @@ contract('Locking Token for REP', accounts => {
     assert(lockingStartTime.gt(new BN(now)), 'lockingStartTime should be in the future')
 
     try {
-      await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address)
+      await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t lock before lockingStartTime')
     } catch (error) {
@@ -158,7 +162,7 @@ contract('Locking Token for REP', accounts => {
   })
 
   it('can\'t release if nothing was locked', async () => {
-    const testLockID = await DxLock4Rep.lock.call(LOCK_AMOUNT, LOCK_PERIOD, Token.address)
+    const testLockID = await DxLock4Rep.lock.call(LOCK_AMOUNT, LOCK_PERIOD, Token.address, AGREEMENT_HASH)
 
     try {
       await DxLock4Rep.release(master, testLockID)
@@ -173,7 +177,7 @@ contract('Locking Token for REP', accounts => {
     const balanceBefore = await Token.balanceOf(master)
     console.log('balanceBefore: ', balanceBefore.toString());
 
-    const tx = await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address)
+    const tx = await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address, AGREEMENT_HASH)
 
     const LockEvent = tx.logs.find(log => log.event === 'Lock')
 
@@ -340,7 +344,7 @@ contract('Locking Token for REP', accounts => {
 
   it('can\'t lock after lockingEndTime', async () => {
     try {
-      await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address)
+      await DxLock4Rep.lock(LOCK_AMOUNT, LOCK_PERIOD, Token.address, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t lock after lockingEndTime')
     } catch (error) {

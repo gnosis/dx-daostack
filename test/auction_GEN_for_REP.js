@@ -25,6 +25,7 @@ contract('Bidding GEN for REP', accounts => {
   let master, another
   let snapshotId
   let AuctionID, NextAuctionID
+  let AGREEMENT_HASH
 
   before(async () => {
     snapshotId = await takeSnapshot();
@@ -54,6 +55,9 @@ contract('Bidding GEN for REP', accounts => {
     anotherBalance = await GEN.balanceOf(another)
     console.log('anotherBalance: ', anotherBalance.toString());
     assert(masterBalance.gt(new BN(0)), 'another account has GEN > 0')
+
+    AGREEMENT_HASH = await Auction4Rep.getAgreementHash()
+    console.log('Current AGREEMENT_HASH: ', AGREEMENT_HASH);
   })
 
   afterEach(() => {
@@ -64,7 +68,7 @@ contract('Bidding GEN for REP', accounts => {
 
   it('can\'t bid 0 amount', async () => {
     try {
-      await Auction4Rep.bid(0, 0)
+      await Auction4Rep.bid(0, 0, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t allow bidding 0')
     } catch (error) {
@@ -79,7 +83,7 @@ contract('Bidding GEN for REP', accounts => {
     assert(auctionsStartTime.gt(new BN(now)), 'auctionsStartTime should be in the future')
 
     try {
-      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, 0)
+      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, 0, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t bid before auctionsStartTime')
     } catch (error) {
@@ -105,7 +109,7 @@ contract('Bidding GEN for REP', accounts => {
 
   it('can\'t bid token without approval (allowance)', async () => {
     try {
-      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, 0)
+      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, 0, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t transfer unapproved token')
     } catch (error) {
@@ -119,7 +123,7 @@ contract('Bidding GEN for REP', accounts => {
     try {
       // right after auctionsStartTime, it's auctionId 0
       // any other id will fail
-      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, 1)
+      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, 1, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t bid in a non-active auction')
     } catch (error) {
@@ -131,7 +135,7 @@ contract('Bidding GEN for REP', accounts => {
     const balanceBefore = await GEN.balanceOf(master)
     console.log('balanceBefore: ', balanceBefore.toString());
 
-    const tx = await Auction4Rep.bid(BID_AMOUNT_1_MASTER, 0)
+    const tx = await Auction4Rep.bid(BID_AMOUNT_1_MASTER, 0, AGREEMENT_HASH)
 
     const BidEvent = tx.logs.find(log => log.event === 'Bid')
 
@@ -172,7 +176,7 @@ contract('Bidding GEN for REP', accounts => {
     const balanceBefore = await GEN.balanceOf(another)
     console.log('balanceBefore: ', balanceBefore.toString());
 
-    const tx = await Auction4Rep.bid(BID_AMOUNT_1_ANOTHER, AuctionID, { from: another })
+    const tx = await Auction4Rep.bid(BID_AMOUNT_1_ANOTHER, AuctionID, AGREEMENT_HASH, { from: another })
 
     const BidEvent = tx.logs.find(log => log.event === 'Bid')
 
@@ -225,7 +229,7 @@ contract('Bidding GEN for REP', accounts => {
     try {
       // should be in another auction after time skip
       // old id will fail
-      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, AuctionID)
+      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, AuctionID, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t bid in a non-active auction')
     } catch (error) {
@@ -236,8 +240,8 @@ contract('Bidding GEN for REP', accounts => {
   it('bidding at different auctionPeriod results in different auctionId', async () => {
     const nextId = AuctionID.add(new BN(1))
 
-    const tx1 = await Auction4Rep.bid(BID_AMOUNT_2_MASTER, nextId, { from: master })
-    const tx2 = await Auction4Rep.bid(BID_AMOUNT_2_ANOTHER, nextId, { from: another })
+    const tx1 = await Auction4Rep.bid(BID_AMOUNT_2_MASTER, nextId, AGREEMENT_HASH, { from: master })
+    const tx2 = await Auction4Rep.bid(BID_AMOUNT_2_ANOTHER, nextId, AGREEMENT_HASH, { from: another })
 
     const BidEvent1 = tx1.logs.find(log => log.event === 'Bid')
     const BidEvent2 = tx2.logs.find(log => log.event === 'Bid')
@@ -330,7 +334,7 @@ contract('Bidding GEN for REP', accounts => {
     // if any auction were to still be running, it would be the last one
     const lastAuctionId = numberOfAuctions.sub(new BN(1))
     try {
-      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, lastAuctionId)
+      await Auction4Rep.bid(BID_AMOUNT_1_MASTER, lastAuctionId, AGREEMENT_HASH)
       // should be unreachable
       assert.fail('shouldn\'t bid after auctionsEndTime')
     } catch (error) {

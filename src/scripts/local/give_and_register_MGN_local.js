@@ -23,8 +23,10 @@ module.exports = async () => {
     const LockReceipts = await Promise.all(accts.map(acct => mgnBasicMock.lock(toBN(100), { from: acct })))
     console.log('MgnBasicMock LockReceipts: ', LockReceipts)
 
+    const agreementHash = await dxLockMgnForRep.getAgreementHash()
+
     // Loop through local accts and register accts
-    const RegisterReceipts = await Promise.all(accts.map(acct => dxLockMgnForRep.register({ from: acct })))
+    const RegisterReceipts = await Promise.all(accts.map(acct => dxLockMgnForRep.register(agreementHash, { from: acct })))
     console.log('DxLockMgnForRep RegisterReceipts: ', RegisterReceipts)
 
     // show balances of mgn

@@ -5,7 +5,8 @@ const dateUtil = require('../src/helpers/dateUtil')
 const { registerScheme } = require('./helpers/schemeUtils')
 
 const {
-  getLockedMgnSignature
+  getLockedMgnSignature,
+  agreementHash
 } = require('../src/config/bootstrap')
 
 // TODO: Once we use the latest contracts, we should use all this dates.
@@ -66,6 +67,7 @@ module.exports = async function (deployer) {
   assert(claimingMgnEnd, `The parameter claimingMgnEnd was not defined`)
   assert(redeemStart, `The parameter redeemStart was not defined`)
   assert(getLockedMgnSignature, `The parameter getBalanceFuncSignature was not defined`)
+  assert(agreementHash, `The parameter agreementHash was not defined`)
 
   console.log('  - Avatar address: ' + dxAvatar.address)
   console.log('  - Register period: Register period: Currently any time, but only makes sense before the claiming period ends ' + dateUtil.formatDateTime(claimingMgnEnd))
@@ -78,6 +80,7 @@ module.exports = async function (deployer) {
   console.log('  - MGN implementation: ' + mgnImpl)
   console.log('  - MGN address (external locking contract): ' + mgnTokenAddress)
   console.log('  - Get balance function signature: ' + getLockedMgnSignature)
+  console.log('  - Agreement IPFS hash:', agreementHash)
 
   let txResult = await dxLockMgnForRep.initialize(
     dxAvatar.address,
@@ -89,7 +92,8 @@ module.exports = async function (deployer) {
     // Redeem period    
     dateUtil.toEthereumTimestamp(redeemStart),
     mgnTokenAddress,
-    getLockedMgnSignature
+    getLockedMgnSignature,
+    agreementHash
   )
 
   console.log('  - Transaction: ' + txResult.tx)

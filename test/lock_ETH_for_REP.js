@@ -19,12 +19,15 @@ contract('Locking ETH for REP', accounts => {
   let DxLock4Rep, DxRep
   let master
   let snapshotId
+  let AGREEMENT_HASH
 
   before(async () => {
     snapshotId = await takeSnapshot();
     [master] = accounts
     DxLock4Rep = await DxLockEth4Rep.deployed()
     DxRep = await DxReputation.deployed()
+    AGREEMENT_HASH = await DxLock4Rep.getAgreementHash()
+    console.log('Current AGREEMENT_HASH: ', AGREEMENT_HASH);
   })
 
   afterEach(() => {
@@ -35,7 +38,7 @@ contract('Locking ETH for REP', accounts => {
 
   it('can\'t lock zero amount', async () => {
     try {
-      await DxLock4Rep.lock(LOCK_PERIOD, { from: master, value: 0 })
+      await DxLock4Rep.lock(LOCK_PERIOD, AGREEMENT_HASH, { from: master, value: 0 })
       // should be unreachable
       assert.fail('shouldn\'t lock when zero ETH')
     } catch (error) {
@@ -46,7 +49,7 @@ contract('Locking ETH for REP', accounts => {
   it('can\'t lock for longer than maxLockingPeriod', async () => {
     const maxLockingPeriod = await DxLock4Rep.maxLockingPeriod()
     try {
-      await DxLock4Rep.lock(maxLockingPeriod.add(new BN(1)), { from: master, value: LOCK_AMOUNT })
+      await DxLock4Rep.lock(maxLockingPeriod.add(new BN(1)), AGREEMENT_HASH, { from: master, value: LOCK_AMOUNT })
       // should be unreachable
       assert.fail('shouldn\'t lock for longer than maxLockingPeriod')
     } catch (error) {
@@ -56,7 +59,7 @@ contract('Locking ETH for REP', accounts => {
 
   it('can\'t lock for locking period of 0', async () => {
     try {
-      await DxLock4Rep.lock(0, { from: master, value: LOCK_AMOUNT })
+      await DxLock4Rep.lock(0, AGREEMENT_HASH, { from: master, value: LOCK_AMOUNT })
       // should be unreachable
       assert.fail('shouldn\'t lock for locking period of 0')
     } catch (error) {
@@ -72,7 +75,7 @@ contract('Locking ETH for REP', accounts => {
     assert(lockingStartTime.gt(new BN(now)), 'lockingStartTime should be in the future')
 
     try {
-      await DxLock4Rep.lock(LOCK_PERIOD, { from: master, value: LOCK_AMOUNT })
+      await DxLock4Rep.lock(LOCK_PERIOD, AGREEMENT_HASH, { from: master, value: LOCK_AMOUNT })
       // should be unreachable
       assert.fail('shouldn\'t lock before lockingStartTime')
     } catch (error) {
@@ -97,7 +100,7 @@ contract('Locking ETH for REP', accounts => {
   })
 
   it('can\'t release if nothing was locked', async () => {
-    const testLockID = await DxLock4Rep.lock.call(LOCK_PERIOD, { from: master, value: LOCK_AMOUNT })
+    const testLockID = await DxLock4Rep.lock.call(LOCK_PERIOD, AGREEMENT_HASH, { from: master, value: LOCK_AMOUNT })
 
     try {
       await DxLock4Rep.release(master, testLockID)
@@ -114,7 +117,7 @@ contract('Locking ETH for REP', accounts => {
     const balanceBefore = await web3.eth.getBalance(master)
     console.log('balanceBefore: ', balanceBefore);
 
-    const tx = await DxLock4Rep.lock(LOCK_PERIOD, { from: master, value: LOCK_AMOUNT })
+    const tx = await DxLock4Rep.lock(LOCK_PERIOD, AGREEMENT_HASH, { from: master, value: LOCK_AMOUNT })
     // console.log('tx: ', JSON.stringify(tx, null, 2));
 
     const LockEvent = tx.logs.find(log => log.event === 'Lock')
@@ -284,7 +287,7 @@ contract('Locking ETH for REP', accounts => {
 
   it('can\'t lock after lockingEndTime', async () => {
     try {
-      await DxLock4Rep.lock(LOCK_PERIOD, { from: master, value: LOCK_AMOUNT })
+      await DxLock4Rep.lock(LOCK_PERIOD, AGREEMENT_HASH, { from: master, value: LOCK_AMOUNT })
       // should be unreachable
       assert.fail('shouldn\'t lock after lockingEndTime')
     } catch (error) {
