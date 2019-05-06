@@ -1,3 +1,5 @@
+const bs58 = require('bs58')
+
 // Bootstrap schemes config
 const SECONDS_PER_DAY = 24 * 60 * 60
 
@@ -28,5 +30,7 @@ module.exports = {
   maxLockingWhitelistedTokensPeriod: getIntParam(process.env.MAX_LOCKING_PERIOD, 30 * SECONDS_PER_DAY),
 
   // IPFS hash for user agreement
-  agreementHash: process.env.AGREEMENT_HASH || '0x0'
+  agreementHash: process.env.AGREEMENT_HASH ?
+    '0x' + bs58.decode(process.env.AGREEMENT_HASH).slice(2).toString('hex')
+    : '0x0'
 }
