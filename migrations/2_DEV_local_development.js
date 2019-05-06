@@ -49,7 +49,7 @@ module.exports = async function (deployer, network, accounts) {
     // Deploy GenesisProtocol
     await deployGenesisProtocol(deployer)
     
-  } else if (process.env.USE_MOCK_DX) {
+  } else if (process.env.USE_MOCK_DX && !web3.utils.isAddress(process.env.USE_MOCK_DX)) {
     console.log('Deploying Wallet as Mock DutchX');
     const Wallet = artifacts.require('Wallet')
     await deployer.deploy(Wallet)
