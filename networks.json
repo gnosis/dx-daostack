@@ -708,6 +708,12 @@
     }
   },
   "DxDaoClaimRedeemHelper": {
+    "1": {
+      "events": {},
+      "links": {},
+      "address": "0x0A2Dffd95930af74d7EfE56B3e9Bc3a908B3B683",
+      "transactionHash": "0x1063744b1d4821405d56a652baee6bc772bfbb663380bb4c44cbd155dc468fb2"
+    },
     "4": {
       "events": {},
       "links": {},
@@ -730,6 +736,12 @@
     }
   },
   "DxLockEth4Rep": {
+    "1": {
+      "events": {},
+      "links": {},
+      "address": "0x27ab21626d6c887f4E197ee7759acB360B1f75A5",
+      "transactionHash": "0x3d5b0522c631f378cb0dac7bbc5f16c417c2d9d48572d515cc9963d7c1b7fd78"
+    },
     "4": {
       "events": {},
       "links": {},
@@ -752,6 +764,12 @@
     }
   },
   "DxLockWhitelisted4Rep": {
+    "1": {
+      "events": {},
+      "links": {},
+      "address": "0x0781e9284eDf0EBa1Cc3e5E7742475a6192fcac1",
+      "transactionHash": "0x59b5cdeeabf47341920e6ee7535c9006d1bcaf4ae030a5aa81165bdfdde1f690"
+    },
     "4": {
       "events": {},
       "links": {},
