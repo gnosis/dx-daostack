@@ -180,9 +180,9 @@ async function run(options) {
 
   const tokens = await getWhitelistedTokens(priceOracleImpl, networkId)
 
-  
+
   console.log(`\nValid Whitelisted Tokens: \n\t${tokens.map(t => t.symbol + ' at ' + t.address).join('\n\t') || 'None'}\n`)
-  
+
   let gen = tokens.find(t => t.symbol === 'GEN')
   if (!gen) {
     const genAddress = require('../config/genTokenAddress')[networkId]
@@ -384,7 +384,7 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
     case 'Register for future MGN claiming':
       {
         console.log(`Registering ${accs.length} on DxLockMgnForRep`);
-        AGREEMENT_HASH = AGREEMENT_HASH || await dxGenAuction4Rep.getAgreementHash()
+        AGREEMENT_HASH = AGREEMENT_HASH || await DxGenAuction.getAgreementHash()
         try {
           await Promise.all(accs.map(acc => DxLockMgn.register(AGREEMENT_HASH, { from: acc })))
         } catch (error) {
@@ -459,7 +459,7 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
 
           console.log(`${accs.length} accounts locking ${answ.amount} ETH in DxLockEth`);
 
-          AGREEMENT_HASH = AGREEMENT_HASH || await dxGenAuction4Rep.getAgreementHash()
+          AGREEMENT_HASH = AGREEMENT_HASH || await DxGenAuction.getAgreementHash()
 
           await Promise.all(accs.map(acc => DxLockEth.lock(period, AGREEMENT_HASH, { from: acc, value })))
         })
@@ -469,7 +469,7 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
       {
         await loopTillSuccess(async () => {
 
-          AGREEMENT_HASH = AGREEMENT_HASH || await dxGenAuction4Rep.getAgreementHash()
+          AGREEMENT_HASH = AGREEMENT_HASH || await DxGenAuction.getAgreementHash()
 
           console.log(`${accs.length} accounts claiming locked MGN in DxLockMgn`);
           await Promise.all(accs.map(acc => DxLockMgn.claim(ZERO_ADDRESS, AGREEMENT_HASH, { from: acc })))
@@ -561,7 +561,7 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
 
           console.log(`${accs.length} accounts bidding ${answ.amount} GEN in auction #${auctionId} in DxLockWhitelisted`);
 
-          AGREEMENT_HASH = AGREEMENT_HASH || await dxGenAuction4Rep.getAgreementHash()
+          AGREEMENT_HASH = AGREEMENT_HASH || await DxGenAuction.getAgreementHash()
 
           await Promise.all(accs.map(acc => DxGenAuction.bid(web3.utils.toWei(answ.amount, 'ether'), auctionId, AGREEMENT_HASH, { from: acc })))
         })
@@ -606,7 +606,7 @@ async function deployTransferValue(networkId) {
     message: 'Deploy helper contract for funding accounts with ETH and Tokens'
   })
 
-  if (!answ.deploy)return null
+  if (!answ.deploy) return null
 
   console.log('Deploying TransferValue helper contract');
 
@@ -749,7 +749,7 @@ async function wrapToken(address) {
     return Token
 
   } catch (error) {
-    console.log('error: ',address, error.message);
+    console.log('error: ', address, error.message);
 
   }
 }
