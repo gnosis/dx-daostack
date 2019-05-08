@@ -18,12 +18,7 @@ contract TransferValue {
       notZero(accounts.length)
       returns(bool)
     {
-        // if (amount == 0)
-        //   return false;
         uint arrayLength = accounts.length;
-
-        // if (arrayLength == 0)
-        //   return false;
 
         uint amountPerAccount = msg.value / arrayLength;
 
