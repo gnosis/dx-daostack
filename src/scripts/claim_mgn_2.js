@@ -190,25 +190,39 @@ const main = async () => {
     // Workaround as failing bytes32[] call return doesn't properly throw and returns
     // consistent 'overflow' error(seems to be Truffle5 + Ethers.js issue)
     // 1 = dxLMR
+    let bN = 0
     await batchExecute(
-      accountsSlice => claimRedeemHelper.claimAll.estimateGas(accountsSlice, 1),
-      {batchSize},
+      accountsSlice => {
+        console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToClaim.length}`)
+        bN += accountsSlice.length - 1
+        return claimRedeemHelper.claimAll.estimateGas(accountsSlice, 1)
+      },
+      { batchSize },
       accountsToClaim
     )
     console.log('\nPreparing claimAll call...')
     // 1 = dxLMR
+    bN = 0
     const lockingIdsArray = await batchExecute(
-      accountsSlice => claimRedeemHelper.claimAll.call(accountsSlice, 1),
-      {batchSize},
+      accountsSlice => {
+        console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToClaim.length}`)
+        bN += accountsSlice.length - 1
+        return claimRedeemHelper.claimAll.call(accountsSlice, 1)
+      },
+      { batchSize },
       accountsToClaim
     )
     console.log('\nLocking IDs Array', JSON.stringify(lockingIdsArray, undefined, 2))
   } else {
-    // TODO: batchSize
     console.log('\nPreparing actual claimAll - this WILL affect blockchain state...')
+    let bN = 0
     const claimAllReceipts = await batchExecute(
-      accountsSlice => claimRedeemHelper.claimAll(accountsSlice, 1),
-      {batchSize},
+      accountsSlice => {
+        console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToClaim.length}`)
+        bN += accountsSlice.length - 1
+        return claimRedeemHelper.claimAll(accountsSlice, 1)
+      },
+      { batchSize },
       accountsToClaim
     )
     console.log('ClaimAll Receipt(s)', claimAllReceipts)

@@ -326,7 +326,7 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
           console.log('No account has MGN');
           break;
         }
-        printNestedKV(acc2bals, 'Accounts MGN balances')
+        printNestedKV(acc2bals, `${Object.keys(acc2bals).length} accounts with MGN balances`)
       }
       break;
     case 'Print account addresses':

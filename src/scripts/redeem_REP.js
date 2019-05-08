@@ -195,18 +195,32 @@ const main = async () => {
       `)
     }
 
-    const redeemAllInBatches = (accountsToRedeem, mapIdx, call = true, txOptions) => batchExecute(
-      accountsSlice => (call ? dxHelper.redeemAll.call : dxHelper.redeemAll)(accountsSlice, mapIdx, txOptions),
-      {batchSize},
-      accountsToRedeem
-    )
+    const redeemAllInBatches = (accountsToRedeem, mapIdx, call = true, txOptions) => {
+      let bN = 0
+      return batchExecute(
+        accountsSlice => {
+          console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToClaim.length}`)
+          bN += accountsSlice.length - 1
+          return (call ? dxHelper.redeemAll.call : dxHelper.redeemAll)(accountsSlice, mapIdx, txOptions)
+        },
+        { batchSize },
+        accountsToRedeem
+      )
+    }
 
-    const redeemAllGARInBatches = (accountsToRedeem, auctionIDs, call = true, txOptions) => batchExecute(
-      (accountsSlice, auctionIDsSlice) => (call ? dxHelper.redeemAllGAR.call : dxHelper.redeemAllGAR)(accountsSlice, auctionIDsSlice, txOptions),
-      {batchSize},
-      accountsToRedeem,
-      auctionIDs,
-    )
+    const redeemAllGARInBatches = (accountsToRedeem, auctionIDs, call = true, txOptions) => {
+      let bN = 0
+      return batchExecute(
+        (accountsSlice, auctionIDsSlice) => {
+          console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToClaim.length}`)
+          bN += accountsSlice.length - 1
+          return (call ? dxHelper.redeemAllGAR.call : dxHelper.redeemAllGAR)(accountsSlice, auctionIDsSlice, txOptions)
+        },
+        { batchSize },
+        accountsToRedeem,
+        auctionIDs,
+      )
+    }
 
     // ?. Dry Run - call redeem on all contracts
     if (dryRun) {
