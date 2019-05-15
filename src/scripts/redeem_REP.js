@@ -1,4 +1,5 @@
-// artifacts and web3 are available globally
+/* global artifacts, web3 */
+
 const DxLockMgnForRepArtifact = artifacts.require('DxLockMgnForRep')
 const DxLockEth4RepArtifact = artifacts.require('DxLockEth4Rep')
 const DxLockWhitelisted4RepArtifact = artifacts.require('DxLockWhitelisted4Rep')

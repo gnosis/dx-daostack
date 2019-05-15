@@ -1,3 +1,5 @@
+/* global artifacts, web3 */
+
 const { toBN, getTimestamp } = require('./utils')(web3)
 const batchExecute = require('./utils/batch')
 const ZERO = toBN(0)

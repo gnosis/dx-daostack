@@ -1,3 +1,5 @@
+/* global artifacts, web3 */
+
 /**
  * truffle exec src/scripts/count_REP.js
  * to get REP locking nad accumulated REP data for
@@ -718,7 +720,7 @@ async function getLockedBid(accounts, contracts) {
   }
 
 
-  MgnEvents = gatherEventsPerAddress(MgnLocks),
+  const MgnEvents = gatherEventsPerAddress(MgnLocks),
     EthEvents = gatherEventsPerAddress(EthLocks),
     TknEvents = gatherEventsPerAddress(TknLocks),
     GenEvents = gatherEventsPerAddress(GenBids)

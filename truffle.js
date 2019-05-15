@@ -28,7 +28,7 @@ if (envPath) {
 
 if (parsed) {
   console.log('Overrided config using ENV vars: ')
-  for (key in parsed) {
+  for (const key in parsed) {
     if (SECRET_ENV_VARS.includes(key)) {
       console.log('  %s: %s', key, `<SECRET-${key}>`)
     } else {
