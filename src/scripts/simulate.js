@@ -150,7 +150,7 @@ async function run(options) {
     mgn = mgnMock
   } else {
     const mgnTokenAddress = await getDXContractAddresses('TokenFRTProxy')
-    mgn = await artifacts.require(mgnImpl).at(mgnTokenAddress)
+    mgn = await artifacts.require('TokenFRT').at(mgnTokenAddress)
   }
 
   mgn.name = 'Magnolia Token'
@@ -208,6 +208,9 @@ async function run(options) {
   console.log(`GEN Token at ${gen && gen.address}`);
 
   console.log(`MGN implementation -- ${mgnImpl} at ${mgn.address}`);
+
+  if (mgn) tokens.push(mgn)
+
 
   let isMgnOwner = false
   let MGNownerless = false
