@@ -1,3 +1,5 @@
+/* global artifacts, web3 */
+
 const { toBN, mapToString } = require('./utils')(web3)
 
 const DxLockMgnForRepArtifact = artifacts.require('DxLockMgnForRep')

@@ -1,5 +1,5 @@
 
-/* global artifacts */
+/* global artifacts, web3 */
 
 module.exports = async function (deployer) { // eslint-disable-line no-unused-vars
   if (process.env.USE_MOCK_DX && !web3.utils.isAddress(process.env.USE_MOCK_DX)) {

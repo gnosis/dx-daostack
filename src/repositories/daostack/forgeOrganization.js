@@ -1,3 +1,5 @@
+/* global web3 */
+
 const assert = require('assert');
 const constants = require('./util/constants');
 
