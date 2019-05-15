@@ -551,13 +551,7 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
       break;
     case 'Bid GEN':
       {
-        const [auctionsStartTime, auctionPeriod, now] = (await Promise.all([
-          DxGenAuction.auctionsStartTime.call(),
-          DxGenAuction.auctionPeriod.call(),
-          getTimestamp()
-        ])).map(n => +n.toString())
-
-        auctionId = Math.floor((now - auctionsStartTime) / auctionPeriod);
+        const auctionId = await getCurrentAuctionId(DxGenAuction);
         await loopTillSuccess(async () => {
           const allowance = gen && (await gen.allowance(accs[0], DxGenAuction.address)).toString() / 1e18
 
@@ -643,6 +637,16 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
 
   // continue?
   return true
+}
+
+async function getCurrentAuctionId(DxGenAuction) {
+  const [auctionsStartTime, auctionPeriod, now] = (await Promise.all([
+    DxGenAuction.auctionsStartTime.call(),
+    DxGenAuction.auctionPeriod.call(),
+    getTimestamp()
+  ])).map(n => +n.toString())
+
+  return Math.floor((now - auctionsStartTime) / auctionPeriod);
 }
 
 async function deployTransferValue(networkId) {
@@ -924,6 +928,11 @@ async function getTimesStr({
   else if (now >= auctionRedeem) auctionPeriod = 'REDEEMING'
   else auctionPeriod = '?'
 
+  let auctionId
+  if (auctionPeriod === 'ONGOING') {
+    auctionId = await getCurrentAuctionId(DxGenAuction);
+  }
+
   return `
   Now: ${now.toUTCString()}
   -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -932,7 +941,7 @@ async function getTimesStr({
   lock end: ${mgnEnd.toUTCString()}\t | lock end: ${ethEnd.toUTCString()}\t | lock end: ${tokenEnd.toUTCString()}\t | auctions end: ${auctionEnd.toUTCString()}
   redeem: ${mgnRedeem.toUTCString()}\t\t | redeem: ${ethRedeem.toUTCString()}\t | redeem: ${tokenRedeem.toUTCString()}\t | redeem: ${auctionRedeem.toUTCString()}
   -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  period: ${mgnPeriod}\t\t\t\t | period: ${ethPeriod}\t\t\t\t | period: ${tokenPeriod}\t\t\t\t | period: ${auctionPeriod}
+  period: ${mgnPeriod}\t\t\t\t | period: ${ethPeriod}\t\t\t\t | period: ${tokenPeriod}\t\t\t\t | period: ${auctionPeriod}   ${auctionId !== undefined ? `auctionId: ${auctionId}` : ''}
   `
 }
 
