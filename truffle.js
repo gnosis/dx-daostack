@@ -58,6 +58,8 @@ if (!privateKey && !mnemonic) {
   mnemonic = DEFAULT_MNEMONIC
 }
 
+const isDryRun = process.argv.includes('--dry-run') || undefined
+
 function truffleConfig({
   mnemonic = DEFAULT_MNEMONIC,
   privateKey,
@@ -99,6 +101,7 @@ function truffleConfig({
       development: {
         host: urlDevelopment,
         port: portDevelopment,
+        provider: isDryRun && _getProvider(`http://${urlDevelopment}:${portDevelopment}`),
         gas,
         gasPrice,
         network_id: '*'
