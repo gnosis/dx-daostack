@@ -517,11 +517,11 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
           }, {
             name: 'period',
             type: 'number',
-            message: 'Period to lock for, in sceonds',
+            message: 'Period to lock for, in seconds',
           }, {
             name: 'amount',
             type: 'number',
-            message: 'Amount to lock, in ETH'
+            message: ({symbol}) => `Amount to lock, in ${symbol}`
           }])
 
           if (answ.period === 0 || answ.amount === 0) return;
@@ -530,8 +530,8 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
 
           const wei = answ.amount * (10 ** token.decimals)
 
-          const allowance = (await token.allowance(accs[0], DxLockWhitelisted.address)).toString() / (10 ** t.decimals)
-          if (amount < allowance.toString()) {
+          const allowance = (await token.allowance(accs[0], DxLockWhitelisted.address)).toString() / (10 ** token.decimals)
+          if (answ.amount < allowance.toString()) {
             const answ = await inquirer.prompt({
               name: 'allowance',
               type: 'number',
