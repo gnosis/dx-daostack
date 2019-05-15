@@ -450,9 +450,9 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
           if (tvalue) {
             const wei = answ.amount * (10 ** token.decimals)
 
-            await token.approve(tvalue.address, answ.amount, { from: master })
+            await token.approve(tvalue.address, String(wei), { from: master })
 
-            await tvalue.transferToken(token.address, accs, wei, {
+            await tvalue.transferToken(token.address, accs, String(wei), {
               from: master,
             })
             return;
@@ -480,13 +480,11 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
 
           if (answ.period === 0 || answ.amount === 0) return;
 
-          const value = web3.utils.toWei(answ.amount, 'ether')
+          const value = web3.utils.toWei(String(answ.amount), 'ether')
 
           console.log(`${accs.length} accounts locking ${answ.amount} ETH in DxLockEth`);
 
-          AGREEMENT_HASH = AGREEMENT_HASH || await DxGenAuction.getAgreementHash()
-
-          await Promise.all(accs.map(acc => DxLockEth.lock(period, AGREEMENT_HASH, { from: acc, value })))
+          await Promise.all(accs.map(acc => DxLockEth.lock(answ.period, AGREEMENT_HASH, { from: acc, value })))
         })
       }
       break;
@@ -540,14 +538,14 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
             console.log('answ.allowance: ', answ.allowance);
             // first approve allowance
             if (answ.allowance) {
-              console.log('Approving DxLockWhitelisted to handle GEN token transfers');
-              await Promise.all(accs.map(acc => gen.approve(DxLockWhitelisted.address, answ.allowance * (10 ** t.decimals), { from: acc })))
+              console.log('Approving DxLockWhitelisted to handle Token transfers');
+              await Promise.all(accs.map(acc => token.approve(DxLockWhitelisted.address, String(answ.allowance * (10 ** token.decimals)), { from: acc })))
             }
           }
 
           console.log(`${accs.length} accounts locking ${answ.amount} ${answ.symbol} in DxLockWhitelisted`);
 
-          await Promise.all(accs.map(acc => DxLockWhitelisted.lock(wei, answ.period, token.address, { from: acc })))
+          await Promise.all(accs.map(acc => DxLockWhitelisted.lock(String(wei), answ.period, token.address, AGREEMENT_HASH, { from: acc })))
         })
       }
       break;
