@@ -35,7 +35,7 @@ const main = async () => {
       describe: 'Run contract functions via [.call]'
     })
     .option('batchSize', {
-      type: 'string',
+      type: 'number',
       default: 50,
       describe: 'Set batch size'
     })
@@ -194,7 +194,7 @@ const main = async () => {
     await batchExecute(
       accountsSlice => {
         console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToClaim.length}`)
-        bN += accountsSlice.length - 1
+        bN += accountsSlice.length
         return claimRedeemHelper.claimAll.estimateGas(accountsSlice, 1)
       },
       { batchSize },
@@ -206,7 +206,7 @@ const main = async () => {
     const lockingIdsArray = await batchExecute(
       accountsSlice => {
         console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToClaim.length}`)
-        bN += accountsSlice.length - 1
+        bN += accountsSlice.length
         return claimRedeemHelper.claimAll.call(accountsSlice, 1)
       },
       { batchSize },
@@ -219,7 +219,7 @@ const main = async () => {
     const claimAllReceipts = await batchExecute(
       accountsSlice => {
         console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToClaim.length}`)
-        bN += accountsSlice.length - 1
+        bN += accountsSlice.length
         return claimRedeemHelper.claimAll(accountsSlice, 1)
       },
       { batchSize },

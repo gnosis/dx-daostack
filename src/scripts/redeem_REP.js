@@ -65,7 +65,7 @@ const main = async () => {
       describe: 'Blockchain network to operate on'
     })
     .option('batchSize', {
-      type: 'string',
+      type: 'number',
       default: 50,
       describe: 'Set batch size'
     })
@@ -199,8 +199,8 @@ const main = async () => {
       let bN = 0
       return batchExecute(
         accountsSlice => {
-          console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToClaim.length}`)
-          bN += accountsSlice.length - 1
+          console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToRedeem.length}`)
+          bN += accountsSlice.length
           return (call ? dxHelper.redeemAll.call : dxHelper.redeemAll)(accountsSlice, mapIdx, txOptions)
         },
         { batchSize },
@@ -212,8 +212,8 @@ const main = async () => {
       let bN = 0
       return batchExecute(
         (accountsSlice, auctionIDsSlice) => {
-          console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToClaim.length}`)
-          bN += accountsSlice.length - 1
+          console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToRedeem.length}`)
+          bN += accountsSlice.length
           return (call ? dxHelper.redeemAllGAR.call : dxHelper.redeemAllGAR)(accountsSlice, auctionIDsSlice, txOptions)
         },
         { batchSize },
