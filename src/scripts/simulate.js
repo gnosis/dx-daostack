@@ -23,6 +23,7 @@ const TokenOWLProxy = artifacts.require('TokenOWLProxy')
 
 const getPriceOracleAddress = require('../helpers/getPriceOracleAddress.js')(web3, artifacts)
 const getDXContractAddresses = require('../helpers/getDXContractAddresses.js')(web3, artifacts)
+const batchExecute = require('./utils/batch')
 
 const { getTimestamp, increaseTimeAndMine, takeSnapshot, revertSnapshot } = require('../helpers/web3helpers')(web3)
 
@@ -67,6 +68,16 @@ function parseArgv() {
       type: 'number',
       describe:
         'how many accounts to create'
+    })
+    .option('batchSize', {
+      type: 'number',
+      default: 100,
+      describe: 'Set batch size'
+    })
+    .option('maxConcurrent', {
+      type: 'number',
+      default: 1,
+      describe: 'Set number of concurrent batches'
     })
     .option('from-block', {
       type: 'number',
@@ -138,7 +149,7 @@ async function run(options) {
   // console.log('options: ', options);
 
   const wa3 = createWeb3(options)
-  const { network, /*fromBlock,*/ useHelper } = options
+  const { network, /*fromBlock,*/ useHelper, batchSize, maxConcurrent } = options
 
   const isDev = network === 'development'
   const networkId = await web3.eth.net.getId()
@@ -292,7 +303,7 @@ async function run(options) {
     await updateHeader()
     answ = await inquire(answ.action)
     // console.log('answ: ', answ);
-    cont = await act(answ.action, { web3, wa3, accs, master, contracts, tokens, mgn, tvalue, gen })
+    cont = await act(answ.action, { web3, wa3, accs, master, contracts, tokens, mgn, tvalue, gen, batchSize, maxConcurrent })
   } while (cont)
 
 }
@@ -300,7 +311,7 @@ async function run(options) {
 let AGREEMENT_HASH
 
 const snapshots = {}
-async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tvalue, gen }) {
+async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tvalue, gen, batchSize, maxConcurrent }) {
   if (action === 'Refresh time') return true
 
   const {
@@ -382,10 +393,16 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
           console.log(`Sending ${perAcc} ETH to each account`);
 
           if (tvalue) {
-            await tvalue.transferETH(accs, {
-              from: master,
-              value: web3.utils.toWei(String(answ.amount), 'ether')
-            })
+            await batchExecute(accsSlice => {
+              return tvalue.transferETH(accsSlice, {
+                from: master,
+                value: web3.utils.toWei(String(answ.amount/99), 'ether')
+              })
+            }, {batchSize, maxConcurrent, log: true}, accs)
+            // await tvalue.transferETH(accs, {
+            //   from: master,
+            //   value: web3.utils.toWei(String(answ.amount), 'ether')
+            // })
             return;
           }
 
@@ -411,7 +428,12 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
 
           const perAcc = answ.amount / accs.length
           console.log(`Locking ${perAcc} MGN for each account`);
-          await mgn.lockMultiple(web3.utils.toWei(String(perAcc), 'ether'), accs)
+          
+          const wei = web3.utils.toWei(String(perAcc), 'ether')
+          await batchExecute(accsSlice => {
+            return mgn.lockMultiple(wei, accsSlice)
+          }, {batchSize, maxConcurrent, log: true}, accs)
+          // await mgn.lockMultiple(web3.utils.toWei(String(perAcc), 'ether'), accs)
           // await Promise.all(accs.map(acc => mgn.lock(web3.utils.toWei(String(perAcc), 'ether'), acc, { from: master })))
         })
       }
@@ -490,9 +512,12 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
 
             await token.approve(tvalue.address, String(wei), { from: master })
 
-            await tvalue.transferToken(token.address, accs, String(wei), {
-              from: master,
-            })
+            // TODO: batch
+            await batchExecute(accsSlice => {
+              return tvalue.transferToken(token.address, accsSlice, String(wei), {
+                from: master,
+              })
+            }, {batchSize, maxConcurrent, log: true}, accs)
             return;
           }
 
