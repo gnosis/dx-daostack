@@ -16,7 +16,7 @@ const TransferValue = artifacts.require('TransferValue')
 const getPriceOracleAddress = require('../helpers/getPriceOracleAddress.js')(web3, artifacts)
 const getDXContractAddresses = require('../helpers/getDXContractAddresses.js')(web3, artifacts)
 
-const { getTimestamp, increaseTimeAndMine } = require('../helpers/web3helpers')(web3)
+const { getTimestamp, increaseTimeAndMine, takeSnapshot, revertSnapshot } = require('../helpers/web3helpers')(web3)
 
 
 const DEFAULT_MNEMONIC = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
@@ -241,6 +241,20 @@ async function run(options) {
     'Quit'
   ]
 
+  if (isDev) {
+    const devChoices = [
+      'Increase Time',
+      'Take a Snapshot',
+      {
+        name: 'Revert a Snapshot',
+        disabled: () => Object.keys(snapshots).length === 0 && 'No snapshots recorded'
+      }
+    ]
+    choices.push(...devChoices)
+  }
+
+  choices.push('Quit', new inquirer.Separator())
+
   const updateHeader = async (str = getTimesStr(contracts)) => {
     console.log(await str)
   }
@@ -267,8 +281,8 @@ async function run(options) {
 }
 
 let AGREEMENT_HASH
-
-async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tvalue }) {
+const snapshots = {}
+async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tvalue, gen }) {
   if (action === 'Refresh time') return true
 
   const {
@@ -578,6 +592,38 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
         if (answ.amount === 0) break;
 
         await increaseTimeAndMine(answ.amount * 60)
+      }
+      break;
+    case 'Revert a Snapshot':
+      {
+        const snapKeys = Object.keys(snapshots)
+        const answ = await inquirer.prompt({
+          name: 'snapname',
+          type: 'list',
+          message: 'Choose a snapshot to revert to',
+          choices: snapKeys.concat('Cancel'),
+        })
+
+        if (answ.snapname === 'Cancel') break
+
+        const result = await revertSnapshot(snapshots[answ.snapname])
+        delete snapshots[answ.snapname]
+        if (result.result) console.log(`Reverted to ${answ.snapname} snapshot`);
+
+      }
+      break;
+    case 'Take a Snapshot':
+      {
+        const answ = await inquirer.prompt({
+          name: 'name',
+          type: 'input',
+          message: 'Name this snapshot or press Enter for default'
+        })
+
+        const snap = await takeSnapshot()
+        const snapName = answ.name || snap
+        snapshots[snapName] = snap
+        console.log(`Snapshot ${snapName} created`);
       }
       break;
     default:
