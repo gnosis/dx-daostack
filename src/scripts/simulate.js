@@ -426,12 +426,14 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
       break;
     case 'Give a Token':
       {
+        const symbol2bal = (await getTokenBalances(tokens, [master]))[master]
+
         await loopTillSuccess(async () => {
           const answ = await inquirer.prompt([{
             name: 'symbol',
             type: 'list',
             message: 'Choose token to transfer',
-            choices: symbols
+            choices: Object.keys(symbol2bal)
           }, {
             name: 'amount',
             type: 'number',
