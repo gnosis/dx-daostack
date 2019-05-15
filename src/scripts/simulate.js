@@ -569,8 +569,8 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
             name: 'allowance',
             type: 'number',
             message: 'Amount to approve DxGenAuction to handle. Current allowance is ' + allowance,
-            when: ({ amount }) => amount < allowance.toString(),
-            validate: (allow, { amount }) => amount < allow ? 'Insufficient allowance' : true
+            when: ({ amount }) => amount > allowance.toString(),
+            validate: (allow, { amount }) => amount > allow ? 'Insufficient allowance' : true
           }])
 
           if (answ.amount === 0 || answ.allowance === 0) return;
