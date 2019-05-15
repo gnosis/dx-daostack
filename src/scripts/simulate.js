@@ -391,7 +391,8 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
 
           const perAcc = answ.amount / accs.length
           console.log(`Locking ${perAcc} MGN for each account`);
-          await Promise.all(accs.map(acc => mgn.lock(web3.utils.toWei(String(perAcc), 'ether'), acc, { from: master })))
+          await mgn.lockMultiple(web3.utils.toWei(String(perAcc), 'ether'), accs)
+          // await Promise.all(accs.map(acc => mgn.lock(web3.utils.toWei(String(perAcc), 'ether'), acc, { from: master })))
         })
       }
       break;
