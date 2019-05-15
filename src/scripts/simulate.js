@@ -289,6 +289,7 @@ async function run(options) {
 }
 
 let AGREEMENT_HASH
+
 const snapshots = {}
 async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tvalue, gen }) {
   if (action === 'Refresh time') return true
@@ -299,6 +300,8 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
     DxLockMgn,
     DxLockWhitelisted
   } = contracts
+
+  AGREEMENT_HASH = AGREEMENT_HASH || await DxGenAuction.getAgreementHash()
 
   const symbols = []
   const symbol2token = tokens.reduce((accum, t) => {
