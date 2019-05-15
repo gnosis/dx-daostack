@@ -895,6 +895,8 @@ async function getTokenBalances(tokens, accounts, fname = 'balanceOf') {
   const acc2Balances = await Promise.all(
     accounts.map(async acc => {
       const token2bal = await Promise.all(tokens.map(async t => {
+        // MGN Mock doesn'thave .balanceOf
+        if (typeof t[fname] !== 'function') return
         const bal = await t[fname](acc)
         if (bal.isZero()) return
         return {
