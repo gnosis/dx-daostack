@@ -579,14 +579,23 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
           // first approve allowance
           if (answ.allowance) {
             console.log('Approving DxGenAuction to handle GEN token transfers');
-            await Promise.all(accs.map(acc => gen.approve(DxGenAuction.address, web3.utils.toWei(answ.allowance, 'ether'), { from: acc })))
+            const req = gen.contract.methods.approve(DxGenAuction.address, web3.utils.toWei(String(answ.allowance), 'ether')).send.request()
+            console.log('req: ', req);
+
+            const batch = new wa3.BatchRequest();
+
+            accs.forEach(acc => batch.add({
+              ...req,
+              params: req.params.map(param => ({ ...param, from: acc }))
+            }));
+
+            await batch.execute()
+            // await Promise.all(accs.map(acc => wa3.eth.sendTransaction({...req.params[0], from: acc})))
           }
 
           console.log(`${accs.length} accounts bidding ${answ.amount} GEN in auction #${auctionId} in DxLockWhitelisted`);
 
-          AGREEMENT_HASH = AGREEMENT_HASH || await DxGenAuction.getAgreementHash()
-
-          await Promise.all(accs.map(acc => DxGenAuction.bid(web3.utils.toWei(answ.amount, 'ether'), auctionId, AGREEMENT_HASH, { from: acc })))
+          await Promise.all(accs.map(acc => DxGenAuction.bid(web3.utils.toWei(String(answ.amount), 'ether'), auctionId, AGREEMENT_HASH, { from: acc })))
         })
       }
       break;
