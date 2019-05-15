@@ -11,6 +11,7 @@ const DxLockMgnForRep = artifacts.require('DxLockMgnForRep')
 const DxLockWhitelisted4Rep = artifacts.require('DxLockWhitelisted4Rep')
 const WhitelistPriceOracle = artifacts.require('WhitelistPriceOracle')
 const TestToken = artifacts.require('TestToken')
+const GenToken = artifacts.require('GenToken')
 const TransferValue = artifacts.require('TransferValue')
 
 const getPriceOracleAddress = require('../helpers/getPriceOracleAddress.js')(web3, artifacts)
@@ -185,14 +186,21 @@ async function run(options) {
 
   let gen = tokens.find(t => t.symbol === 'GEN')
   if (!gen) {
-    const genAddress = require('../config/genTokenAddress')[networkId]
+    let genAddress = require('../config/genTokenAddress')[networkId]
+    if (!genAddress && isDev) {
+      try {
+        genAddress = { address: GenToken.address }
+      } catch (error) {
+        console.error(error);
+      }
+    }
     if (genAddress) {
       gen = await wrapToken(genAddress.address)
       if (gen) tokens.push(gen)
     }
   }
 
-  console.log(`GEN Token at ${gen.address}`);
+  console.log(`GEN Token at ${gen && gen.address}`);
 
   console.log(`MGN implementation -- ${mgnImpl} at ${mgn.address}`);
 
@@ -233,12 +241,7 @@ async function run(options) {
     'Bid GEN',
     new inquirer.Separator(),
     'Refresh time',
-    {
-      name: 'Increase Time',
-      disabled: !isDev && 'Only available locally'
-    },
     new inquirer.Separator(),
-    'Quit'
   ]
 
   if (isDev) {
