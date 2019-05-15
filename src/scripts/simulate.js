@@ -14,6 +14,11 @@ const TestToken = artifacts.require('TestToken')
 const GenToken = artifacts.require('GenToken')
 const TransferValue = artifacts.require('TransferValue')
 
+const EtherToken = artifacts.require('EtherToken')
+const TokenFRTProxy = artifacts.require('TokenFRTProxy')
+const TokenGNO = artifacts.require('TokenGNO')
+const TokenOWLProxy = artifacts.require('TokenOWLProxy')
+
 const getPriceOracleAddress = require('../helpers/getPriceOracleAddress.js')(web3, artifacts)
 const getDXContractAddresses = require('../helpers/getDXContractAddresses.js')(web3, artifacts)
 
@@ -723,7 +728,12 @@ function printNestedKV(obj, label) {
   })
 }
 
-const possibleWhitelistedTokens = {
+function isLocalGanache(networkId) {
+  return networkId > Date.now() / 10
+}
+
+const possibleWhitelistedTokens = (networkId) => {
+  const id2tokens = {
   1: [
     '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
     '0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6',
@@ -743,6 +753,21 @@ const possibleWhitelistedTokens = {
   ]
 }
 
+  const tokenaddresses = id2tokens[networkId]
+  if (tokenaddresses) return tokenaddresses
+
+  if (isLocalGanache(networkId)) {
+    return [
+      EtherToken.address,
+      TokenFRTProxy.address,
+      TokenGNO.address,
+      TokenOWLProxy.address
+    ]
+
+
+  }
+}
+
 async function getWhitelistedTokens(priceOracleImpl, networkId) {
   const priceOracleAddress = priceOracleImpl === 'DutchXPriceOracle' ?
     await getDXContractAddresses('DutchExchangeProxy') :
@@ -753,8 +778,21 @@ async function getWhitelistedTokens(priceOracleImpl, networkId) {
   const whiteList = await WhitelistPriceOracle.at(priceOracleAddress)
   // console.log('whiteList: ', whiteList);
 
-  const tokensToCheck = possibleWhitelistedTokens[networkId]
+  console.log('isLocalGanache(networkId): ', isLocalGanache(networkId));
+  console.log('networkId: ', networkId);
+  const tokensToCheck = possibleWhitelistedTokens(networkId)
   if (!tokensToCheck || tokensToCheck.length === 0) return []
+
+  if (isLocalGanache(networkId)) {
+    console.log('In local Ganache');
+    console.log('Whitelisting available tokens for testing');
+    try {
+      await whiteList.updateApprovalOfToken(tokensToCheck, true)
+    } catch (error) {
+      console.error('error whitelisting tokens', error);
+
+    }
+  }
 
   const approvedMapping = await whiteList.getApprovedAddressesOfList(tokensToCheck)
   const approvedTokens = tokensToCheck.filter((addr, i) => approvedMapping[i])
