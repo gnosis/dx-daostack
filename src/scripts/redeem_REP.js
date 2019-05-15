@@ -197,27 +197,21 @@ const main = async () => {
     }
 
     const redeemAllInBatches = (accountsToRedeem, mapIdx, call = true, txOptions) => {
-      let bN = 0
       return batchExecute(
         accountsSlice => {
-          console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToRedeem.length}`)
-          bN += accountsSlice.length
           return (call ? dxHelper.redeemAll.call : dxHelper.redeemAll)(accountsSlice, mapIdx, txOptions)
         },
-        { batchSize },
+        { batchSize, log: true },
         accountsToRedeem
       )
     }
 
     const redeemAllGARInBatches = (accountsToRedeem, auctionIDs, call = true, txOptions) => {
-      let bN = 0
       return batchExecute(
         (accountsSlice, auctionIDsSlice) => {
-          console.log(`Batch ${bN + 1}-${bN + accountsSlice.length} from ${accountsToRedeem.length}`)
-          bN += accountsSlice.length
           return (call ? dxHelper.redeemAllGAR.call : dxHelper.redeemAllGAR)(accountsSlice, auctionIDsSlice, txOptions)
         },
-        { batchSize },
+        { batchSize, log: true },
         accountsToRedeem,
         auctionIDs,
       )
