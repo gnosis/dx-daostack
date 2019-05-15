@@ -1,3 +1,5 @@
+/* global artifacts, web3 */
+
 const yargs = require('yargs');
 const inquirer = require('inquirer');
 const Web3 = require('web3')
@@ -31,7 +33,7 @@ const priceOracleImpl = process.env.PRICE_ORACLE_IMPL || 'DutchXPriceOracle'
 const mgnImpl = process.env.MGN_IMPL || 'TokenFRTProxy'
 
 
-const privateKeys = process.env.PK && process.env.PK.split(',')
+// const privateKeys = process.env.PK && process.env.PK.split(',')
 const mnemonic = process.env.MNEMONIC || DEFAULT_MNEMONIC
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -136,7 +138,7 @@ async function run(options) {
   // console.log('options: ', options);
 
   const wa3 = createWeb3(options)
-  const { network, fromBlock, useHelper } = options
+  const { network, /*fromBlock,*/ useHelper } = options
 
   const isDev = network === 'development'
   const networkId = await web3.eth.net.getId()
@@ -178,7 +180,7 @@ async function run(options) {
   const accs = wa3.currentProvider.addresses
   const accsN = accs.length
   const acc2bal = await getBalances(web3, accs)
-  withBalance = Object.keys(acc2bal)
+  const withBalance = Object.keys(acc2bal)
   console.log(`Available ${accsN} accounts`);
   console.log(`${withBalance.length || 'None'} of them have balance\n`);
 
@@ -507,7 +509,7 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
           const answ = await inquirer.prompt([{
             name: 'period',
             type: 'number',
-            message: 'Period to lock for, in sceonds',
+            message: 'Period to lock for, in seconds',
           }, {
             name: 'amount',
             type: 'number',
@@ -527,8 +529,6 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
     case 'Lock MGN for REP':
       {
         await loopTillSuccess(async () => {
-
-          AGREEMENT_HASH = AGREEMENT_HASH || await DxGenAuction.getAgreementHash()
 
           console.log(`${accs.length} accounts claiming locked MGN in DxLockMgn`);
           await Promise.all(accs.map(acc => DxLockMgn.claim(ZERO_ADDRESS, AGREEMENT_HASH, { from: acc })))
@@ -783,24 +783,24 @@ function isLocalGanache(networkId) {
 
 const possibleWhitelistedTokens = (networkId) => {
   const id2tokens = {
-  1: [
-    '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-    '0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6',
-    '0xd26114cd6ee289accf82350c8d8487fedb8a0c07',
-    '0xdd974d5c2e2928dea5f71b9825b8b646686bd200',
-    '0x543ff227f64aa17ea132bf9886cab5db55dcaddf',
-    '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2',
-    '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
-    '0x6810e776880c02933d47db1b9fc05908e5386b96'
-  ],
-  4: [
-    '0xd0Dab4E640D95E9E8A47545598c33e31bDb53C7c',
-    '0x3615757011112560521536258c1E7325Ae3b48AE',
-    '0x00Df91984582e6e96288307E9c2f20b38C8FeCE9',
-    '0xc778417E063141139Fce010982780140Aa0cD5Ab',
-    '0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf'
-  ]
-}
+    1: [
+      '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+      '0x255aa6df07540cb5d3d297f0d0d4d84cb52bc8e6',
+      '0xd26114cd6ee289accf82350c8d8487fedb8a0c07',
+      '0xdd974d5c2e2928dea5f71b9825b8b646686bd200',
+      '0x543ff227f64aa17ea132bf9886cab5db55dcaddf',
+      '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2',
+      '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
+      '0x6810e776880c02933d47db1b9fc05908e5386b96'
+    ],
+    4: [
+      '0xd0Dab4E640D95E9E8A47545598c33e31bDb53C7c',
+      '0x3615757011112560521536258c1E7325Ae3b48AE',
+      '0x00Df91984582e6e96288307E9c2f20b38C8FeCE9',
+      '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+      '0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf'
+    ]
+  }
 
   const tokenaddresses = id2tokens[networkId]
   if (tokenaddresses) return tokenaddresses
