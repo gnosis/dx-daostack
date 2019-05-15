@@ -234,7 +234,11 @@ async function run(options) {
     'Fund accounts',
     {
       name: 'Lock mocked MGN',
-      disabled: !mgnMock ? `Can't mint with ${mgnImpl}` : !isMgnOwner && !MGNownerless && `Only owner can mint`
+      disabled: !mgnMock ? `Can't mint with ${mgnImpl}` : !isMgnOwner && !MGNownerless && 'Only owner can mint'
+    },
+    {
+      name: 'Lock real MGN',
+      disabled: mgnMock && 'Using MGN Mock'
     },
     'Register for future MGN claiming',
     'Print accounts registered for future MGN claiming',
@@ -410,10 +414,36 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
         })
       }
       break;
+    case 'Lock real MGN':
+      {
+        await loopTillSuccess(async () => {
+          const answ = await inquirer.prompt({
+            name: `amount`,
+            message: 'How much MGN to lock for each accounts',
+            type: 'number'
+          })
+
+          if (answ.amount === 0) return;
+
+          console.log(`Locking ${answ.amount} MGN for each account`);
+          const req = mgn.contract.methods.lockTokens(web3.utils.toWei(String(answ.amount), 'ether')).send.request()
+          console.log('req: ', req);
+
+          const batch = new wa3.BatchRequest();
+
+          accs.forEach(acc => batch.add({
+            ...req,
+            params: req.params.map(param => ({ ...param, from: acc }))
+          }));
+
+          await batch.execute()
+          // await Promise.all(accs.map(acc => mgn.lockTokens(web3.utils.toWei(String(answ.amount), 'ether'), { from: acc })))
+        })
+      }
+      break;
     case 'Register for future MGN claiming':
       {
         console.log(`Registering ${accs.length} on DxLockMgnForRep`);
-        AGREEMENT_HASH = AGREEMENT_HASH || await DxGenAuction.getAgreementHash()
         try {
           await Promise.all(accs.map(acc => DxLockMgn.register(AGREEMENT_HASH, { from: acc })))
         } catch (error) {
