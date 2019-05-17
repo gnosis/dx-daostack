@@ -19,10 +19,14 @@ const batchExecute = async (cb, { batchSize = Infinity, maxConcurrent = 1, log }
 
       if (promises.length >= maxConcurrent) {
         if (log) console.log('Waiting on batches')
-        results = results.concat(await Promise.all(promises))
-        promises = []
+        try {
+          results = results.concat(await Promise.all(promises))
+        } finally {
+          promises = []
+        }
       }
     } catch (error) {
+      console.log('error: ', error.message);
       results.push(error)
     }
   }
