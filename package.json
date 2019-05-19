@@ -31,7 +31,7 @@
     "update-price-oracle": "truffle exec src/scripts/update-price-oracle.js",
     "prettier": "prettier --write --tab-width 4 --print-width 120 '**/*.sol'"
   },
-  "license": "ISC",
+  "license": "LGPL-3.0",
   "devDependencies": {
     "@gnosis.pm/truffle-nice-tools": "1.2.1",
     "babel-eslint": "^10.0.1",
