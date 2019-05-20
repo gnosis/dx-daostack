@@ -1,7 +1,6 @@
 const networksFile = '@daostack/migration/migration.json'
 const networksJSON = require(networksFile)
-// QUESTION: there are only kovan addresses,
-// should we deploy ourselves when on other networks (rikeby)?
+const { version: arcVersion } = require('@daostack/arc/package.json')
 
 const genTokenNetworks = require('../config/genTokenAddress')
 
@@ -34,7 +33,10 @@ const getContract = (web3, artifacts) => async (ContractName) => {
   const ContractsOnNetwork = networksJSON[network]
   if (!ContractsOnNetwork) throw new Error(`No deployed contracts on ${network}`)
 
-  const address = ContractsOnNetwork.base[ContractName]
+  const ContractsForVersion = ContractsOnNetwork.base[arcVersion]
+  if (!ContractsForVersion) throw new Error(`No deployed contracts on network ${network} in ${networksFile} for arc version ${arcVersion}`)
+
+  const address = ContractsForVersion[ContractName]
   if (!address) throw new Error(`No address for ${ContractName} on network ${network} in ${networksFile}`)
 
   return Artifact.at(address)
