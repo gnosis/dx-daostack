@@ -197,10 +197,10 @@ async function run(options) {
 
   const accs = wa3.currentProvider.addresses
   const accsN = accs.length
-  const acc2bal = await getBalances(web3, accs, { batchSize, maxConcurrent })
-  const withBalance = Object.keys(acc2bal)
+  // const acc2bal = await getBalances(web3, accs, { batchSize, maxConcurrent })
+  // const withBalance = Object.keys(acc2bal)
   console.log(`Available ${accsN} accounts`);
-  console.log(`${withBalance.length || 'None'} of them have balance\n`);
+  // console.log(`${withBalance.length || 'None'} of them have balance\n`);
 
 
 
