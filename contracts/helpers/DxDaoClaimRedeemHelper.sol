@@ -1,17 +1,16 @@
 pragma solidity ^0.5.4;
 
-import "../schemes/bootstrap/DxLockEth4Rep.sol";
-import "../schemes/bootstrap/DxLockMgnForRep.sol";
-import "../schemes/bootstrap/DxLockWhitelisted4Rep.sol";
 import "../schemes/bootstrap/DxGenAuction4Rep.sol";
 
 import "../interfaces/DxToken4RepInterface.sol";
+
 
 contract DxDaoClaimRedeemHelper {
     DxToken4RepInterface public dxLER;
     DxToken4RepInterface public dxLMR;
     DxToken4RepInterface public dxLWR;
     DxGenAuction4Rep public dxGAR;
+    bytes32 public agreementHash;
 
     constructor (
         DxToken4RepInterface _dxLER,
@@ -27,6 +26,8 @@ contract DxDaoClaimRedeemHelper {
         dxLMR = _dxLMR;
         dxLWR = _dxLWR;
         dxGAR = _dxGAR;
+
+        agreementHash = dxLMR.getAgreementHash();
     }
 
     enum DxTokenContracts4Rep {
@@ -38,11 +39,11 @@ contract DxDaoClaimRedeemHelper {
 
     /// @dev batch claiming
     function claimAll(
-        address[] calldata userAddresses, 
+        address[] calldata userAddresses,
         DxTokenContracts4Rep mapIdx
-    ) 
-        external 
-        returns(bytes32[] memory) 
+    )
+        external
+        returns(bytes32[] memory)
     {
         require(uint(mapIdx) < 3, "mapIdx cannot be greater than 2");
 
@@ -61,7 +62,7 @@ contract DxDaoClaimRedeemHelper {
         bytes32[] memory returnArray = new bytes32[](length);
 
         for (uint i = 0; i < length; i++) {
-            returnArray[i] = claimingContract.claim(userAddresses[i]);
+            returnArray[i] = claimingContract.claim(userAddresses[i], agreementHash);
         }
 
         return returnArray;
@@ -69,12 +70,12 @@ contract DxDaoClaimRedeemHelper {
 
     /// @dev batch redeeming
     function redeemAll(
-        address[] calldata userAddresses, 
+        address[] calldata userAddresses,
         DxTokenContracts4Rep mapIdx
-    ) 
-        external 
-        returns(uint256[] memory) 
-    {        
+    )
+        external
+        returns(uint256[] memory)
+    {
         require(uint(mapIdx) < 3, "mapIdx cannot be greater than 2");
 
         DxToken4RepInterface redeemingContract;
@@ -100,12 +101,12 @@ contract DxDaoClaimRedeemHelper {
 
     /// @dev batch redeeming (dxGAR only)
     function redeemAllGAR(
-        address[] calldata userAddresses, 
+        address[] calldata userAddresses,
         uint256[] calldata auctionIndices
-    ) 
-        external 
-        returns(uint256[] memory) 
-    {        
+    )
+        external
+        returns(uint256[] memory)
+    {
         require(userAddresses.length == auctionIndices.length, "userAddresses and auctioIndices must be the same length arrays");
 
         uint length = userAddresses.length;

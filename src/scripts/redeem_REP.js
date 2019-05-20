@@ -1,4 +1,5 @@
-// artifacts and web3 are available globally
+/* global artifacts, web3 */
+
 const DxLockMgnForRepArtifact = artifacts.require('DxLockMgnForRep')
 const DxLockEth4RepArtifact = artifacts.require('DxLockEth4Rep')
 const DxLockWhitelisted4RepArtifact = artifacts.require('DxLockWhitelisted4Rep')
@@ -65,7 +66,7 @@ const main = async () => {
       describe: 'Blockchain network to operate on'
     })
     .option('batchSize', {
-      type: 'string',
+      type: 'number',
       default: 50,
       describe: 'Set batch size'
     })
@@ -195,18 +196,26 @@ const main = async () => {
       `)
     }
 
-    const redeemAllInBatches = (accountsToRedeem, mapIdx, call = true, txOptions) => batchExecute(
-      accountsSlice => (call ? dxHelper.redeemAll.call : dxHelper.redeemAll)(accountsSlice, mapIdx, txOptions),
-      {batchSize},
-      accountsToRedeem
-    )
+    const redeemAllInBatches = (accountsToRedeem, mapIdx, call = true, txOptions) => {
+      return batchExecute(
+        accountsSlice => {
+          return (call ? dxHelper.redeemAll.call : dxHelper.redeemAll)(accountsSlice, mapIdx, txOptions)
+        },
+        { batchSize, log: true },
+        accountsToRedeem
+      )
+    }
 
-    const redeemAllGARInBatches = (accountsToRedeem, auctionIDs, call = true, txOptions) => batchExecute(
-      (accountsSlice, auctionIDsSlice) => (call ? dxHelper.redeemAllGAR.call : dxHelper.redeemAllGAR)(accountsSlice, auctionIDsSlice, txOptions),
-      {batchSize},
-      accountsToRedeem,
-      auctionIDs,
-    )
+    const redeemAllGARInBatches = (accountsToRedeem, auctionIDs, call = true, txOptions) => {
+      return batchExecute(
+        (accountsSlice, auctionIDsSlice) => {
+          return (call ? dxHelper.redeemAllGAR.call : dxHelper.redeemAllGAR)(accountsSlice, auctionIDsSlice, txOptions)
+        },
+        { batchSize, log: true },
+        accountsToRedeem,
+        auctionIDs,
+      )
+    }
 
     // ?. Dry Run - call redeem on all contracts
     if (dryRun) {

@@ -1,3 +1,5 @@
+/* global artifacts, web3 */
+
 const { toBN, getTimestamp } = require('./utils')(web3)
 const batchExecute = require('./utils/batch')
 const ZERO = toBN(0)
@@ -35,7 +37,7 @@ const main = async () => {
       describe: 'Run contract functions via [.call]'
     })
     .option('batchSize', {
-      type: 'string',
+      type: 'number',
       default: 50,
       describe: 'Set batch size'
     })
@@ -191,24 +193,29 @@ const main = async () => {
     // consistent 'overflow' error(seems to be Truffle5 + Ethers.js issue)
     // 1 = dxLMR
     await batchExecute(
-      accountsSlice => claimRedeemHelper.claimAll.estimateGas(accountsSlice, 1),
-      {batchSize},
+      accountsSlice => {
+        return claimRedeemHelper.claimAll.estimateGas(accountsSlice, 1)
+      },
+      { batchSize, log: true },
       accountsToClaim
     )
     console.log('\nPreparing claimAll call...')
     // 1 = dxLMR
     const lockingIdsArray = await batchExecute(
-      accountsSlice => claimRedeemHelper.claimAll.call(accountsSlice, 1),
-      {batchSize},
+      accountsSlice => {
+        return claimRedeemHelper.claimAll.call(accountsSlice, 1)
+      },
+      { batchSize, log: true },
       accountsToClaim
     )
     console.log('\nLocking IDs Array', JSON.stringify(lockingIdsArray, undefined, 2))
   } else {
-    // TODO: batchSize
     console.log('\nPreparing actual claimAll - this WILL affect blockchain state...')
     const claimAllReceipts = await batchExecute(
-      accountsSlice => claimRedeemHelper.claimAll(accountsSlice, 1),
-      {batchSize},
+      accountsSlice => {
+        return claimRedeemHelper.claimAll(accountsSlice, 1)
+      },
+      { batchSize, log: true },
       accountsToClaim
     )
     console.log('ClaimAll Receipt(s)', claimAllReceipts)
@@ -294,11 +301,13 @@ async function filterAccountsFix({
   dxLockMgnForRep
 }) {
   console.log('\n-------- TODO: Review and fix this -------------')
+  const agrHash = await dxLockMgnForRep.getAgreementHash()
+
   // Below is required as Solidity loop function claimAll inside DxLockMgnForRepHelper.claimAll is NOT reverting when looping and
   // calling individual DxLockMgnForRep.claim method on passed in beneficiary addresses
   // Lines 268 - 277 filter out bad responses and leave claimable addresses to batch
   const individualClaimCallReturn = await Promise.all(
-    accounts.map(beneAddr => dxLockMgnForRep.claim.call(beneAddr))
+    accounts.map(beneAddr => dxLockMgnForRep.claim.call(beneAddr, agrHash))
   )
   console.log('DxLockMgnForRep.claim on each acct call result: ', individualClaimCallReturn)
   console.log('Filtering out 0x08c379a000000000000000000000000000000000000000000000000000000000 values...')

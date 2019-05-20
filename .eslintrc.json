@@ -10,13 +10,13 @@
     },
     "rules": {
         "semi": "off",
-        "no-undef": "off",
         "eol-last": 2,
         "eqeqeq": "error",
         "no-console": 0
     },
     "env": {
         "commonjs": true,
-        "node": true
+        "node": true,
+        "es6": true
     }
 }

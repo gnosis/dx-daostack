@@ -1,4 +1,5 @@
-// web3 and artifacts available globalls
+/* global artifacts, web3 */
+
 const { toBN, mapToString, getTimestamp } = require('../utils')(web3)
 
 // const MgnBasicMock = artifacts.require('MgnBasicMock')

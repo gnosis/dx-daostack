@@ -1,6 +1,6 @@
 {
   "name": "@gnosis.pm/dx-daostack",
-  "version": "0.7.1",
+  "version": "0.7.4",
   "description": "",
   "main": "index.js",
   "config": {
@@ -57,8 +57,8 @@
     "yargs": "^13.2.2"
   },
   "dependencies": {
-    "@daostack/arc": "0.0.1-rc.17",
-    "@daostack/migration": "0.0.1-rc.16-v1",
+    "@daostack/arc": "0.0.1-rc.18",
+    "@daostack/migration": "0.0.1-rc.18-v1",
     "@gnosis.pm/dx-contracts": "^2.0.0",
     "@gnosis.pm/dx-price-oracle": "0.2.0",
     "@gnosis.pm/gno-token": "^2.0.0",

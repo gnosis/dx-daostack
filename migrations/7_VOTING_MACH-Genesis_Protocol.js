@@ -1,3 +1,5 @@
+/* global artifacts, web3 */
+
 const genesisProtocolHelper = require('../src/helpers/genesisProtocolHelper')({ artifacts, web3 })
 
 

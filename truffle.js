@@ -28,7 +28,7 @@ if (envPath) {
 
 if (parsed) {
   console.log('Overrided config using ENV vars: ')
-  for (key in parsed) {
+  for (const key in parsed) {
     if (SECRET_ENV_VARS.includes(key)) {
       console.log('  %s: %s', key, `<SECRET-${key}>`)
     } else {
@@ -57,6 +57,8 @@ let mnemonic = process.env.MNEMONIC
 if (!privateKey && !mnemonic) {
   mnemonic = DEFAULT_MNEMONIC
 }
+
+const isDryRun = process.argv.includes('--dry-run') || undefined
 
 function truffleConfig({
   mnemonic = DEFAULT_MNEMONIC,
@@ -99,6 +101,7 @@ function truffleConfig({
       development: {
         host: urlDevelopment,
         port: portDevelopment,
+        provider: isDryRun && _getProvider(`http://${urlDevelopment}:${portDevelopment}`),
         gas,
         gasPrice,
         network_id: '*'

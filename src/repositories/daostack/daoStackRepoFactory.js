@@ -1,3 +1,5 @@
+/* global web3 */
+
 const constants = require('./util/constants');
 // const getDxContracts = require('../src/helpers/getDxContracts')
 const getDaoStackContracts = require('./util/getDaoStackContracts');
@@ -17,7 +19,7 @@ module.exports = async ({
   } = await getDaoStackContracts({
     contracts,
     provider,
-    defaults: transactionDefaults
+    // defaults: transactionDefaults
   });
 
   let daoCreator;

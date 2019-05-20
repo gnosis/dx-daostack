@@ -1,3 +1,5 @@
+/* global artifacts, web3 */
+
 const { toBN } = require('./utils')(web3)
 const { increaseTimeAndMine, getTimestamp } = require('../helpers/web3helpers')(web3)
 
@@ -114,7 +116,7 @@ const main = async () => {
   try {
     let dxLockMgnForRep
     let promisedDxDaoClaimRedeemHelper
-    // let promisedTokenMGN
+    let promisedTokenMGN
 
     // Conditionally check which contract addresses to use
     if (f) {

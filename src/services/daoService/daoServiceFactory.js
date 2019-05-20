@@ -8,7 +8,7 @@ module.exports = async ({
   const daoStackRepo = await daoStackRepoFactory({
     contracts,
     provider,
-    transactionDefaults
+    // transactionDefaults
   });
 
   const createOrganization = require('./createOrganization')({
