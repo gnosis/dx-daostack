@@ -47,7 +47,11 @@ const main = async () => {
       default: 0,
       describe: 'Set from which Block to check for events'
     })
-
+    .option('toBlock', {
+      type: 'number',
+      default: null,
+      describe: 'Set to which Block to check for events (latest by default)'
+    })
     .option('blockBatchSize', {
       type: 'number',
       default: 50000, // a bit less than 10 days
@@ -68,15 +72,23 @@ const main = async () => {
 
   if (!argv._[0]) return argv.showHelp()
 
-  const { dryRun, network, batchSize, fromBlock, blockBatchSize } = argv
+  const { dryRun, network, batchSize, fromBlock, toBlock: toBlockAux, blockBatchSize } = argv
+  const currentBlock = (await web3.eth.getBlock('latest')).number
+  let toBlock
+  if (!toBlock) {
+    toBlock = currentBlock
+  } else {
+    toBlock = toBlockAux
+  }
+
   console.log(`
       Claim MGN data:
       
       ====================================================================
       Dry run: ${dryRun}
       Network: ${network}
-      Batch size: ${batchSize}
-      Searching Events from block: ${fromBlock}
+      Claim in Batches of ${batchSize} addresses
+      Searching Events from ${fromBlock} to ${toBlock} (queried in blocks of ${blockBatchSize})
       ====================================================================
   `)
 
@@ -105,12 +117,18 @@ const main = async () => {
         DxDaoClaimRedeemHelperArtifact: ${claimRedeemHelper.address}
   `)
 
-  const currentBlock = (await web3.eth.getBlock('latest')).number
-
-  for (let i = fromBlock; i <= currentBlock; i += blockBatchSize) {
-    const toBlock = Math.min(i + blockBatchSize - 1, currentBlock)
-    console.log(`  [Claim from block ${i} to ${toBlock}]`)
-    await retry(() => claimMgn({ dryRun, batchSize, fromBlock: i, toBlock, mgn, dxLockMgnForRep, claimRedeemHelper }))
+  for (let i = fromBlock; i <= toBlock; i += blockBatchSize) {
+    const toBlockBatch = Math.min(i + blockBatchSize - 1, toBlock)
+    console.log(`  [Claim from block ${i} to ${toBlockBatch}]`)
+    await retry(() => claimMgn({
+      fromBlock: i,
+      toBlock: toBlockBatch,
+      batchSize,
+      dryRun,
+      mgn,
+      dxLockMgnForRep,
+      claimRedeemHelper
+    }))
     await wait(WAIT_TIME)
   }
 
