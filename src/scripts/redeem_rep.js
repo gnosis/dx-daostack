@@ -48,8 +48,8 @@ const batchExecute = require('./utils/batch')
    * [use flag -f 'networks-rinkeby-long-lock.json' for addresses]
    * [use flag --from-block 0]
    * 
-   * Complete [ DRY-RUN ]: npx truffle exec src/scripts/redeem_REP.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 0
-   * Complete [ REAL-RUN ]: npx truffle exec src/scripts/redeem_REP.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 750153 --dry-run false
+   * Complete [ DRY-RUN ]: npx truffle exec src/scripts/redeem_rep.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 0
+   * Complete [ REAL-RUN ]: npx truffle exec src/scripts/redeem_rep.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 750153 --dry-run false
    */
 
 const main = async () => {
@@ -88,7 +88,7 @@ const main = async () => {
   const { dryRun, network, f, batchSize, fromBlock } = argv
 
   console.log(`
-    redeem_REP.js data:
+    redeem_rep.js data:
 
     Dry run: ${dryRun}
     Network: ${network}
