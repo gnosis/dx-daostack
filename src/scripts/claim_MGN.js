@@ -1,40 +1,12 @@
 /* global artifacts, web3 */
 
-const { toBN } = require('./utils')(web3)
-const { increaseTimeAndMine, getTimestamp } = require('../helpers/web3helpers')(web3)
+const { toBN, getTimestamp } = require('./utils')(web3)
+const batchExecute = require('./utils/batch')
+const ZERO = toBN(0)
 
 const DxLockMgnForRepArtifact = artifacts.require('DxLockMgnForRep')
 const DxDaoClaimRedeemHelperArtifact = artifacts.require('DxDaoClaimRedeemHelper')
-const MgnBasicMock = artifacts.require('MgnBasicMock')
 const TokenMGN = artifacts.require('TokenFRT')
-const TokenMGNProxy = artifacts.require('TokenFRTProxy')
-
-// Why this script?
-
-// 1 Get DxLockMgnForRep contract
-// either the deployed one (if artifacts have network) 
-// or from a given networks-*.json file (-f flag?)
-// or provided as an execution --flag
-
-// 2 Get all Register events from the contract
-// Contract.Register().getData or something like that
-// var res = await lock.getPastEvents('Register', {fromBlock:0})
-
-// test with this one, has events
-// https://rinkeby.etherscan.io/address/0xa248671eC41110D58e587120a5B9C24A66daBfc6#events
-
-// 3 Get all accounts that registered
-// call Contract.claim(account) for them
-// that produces Lock events
-
-// 4 Would also be good to save log somewhere
-// e.g
-// {
-//   <address>: {
-//     Lock: {}
-//     error: ?
-//   }
-// }    
 
 // artifacts and web3 are available globally
 const main = async () => {
@@ -52,16 +24,8 @@ const main = async () => {
    * Complete [ REAL-RUN ]: 
    *    yarn claim_mgn --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0 --dry-run false
    */
-
-  // address of DxLockMgnForRep contract with Register events
-  const REGISTER_EVENTS = '0xa248671eC41110D58e587120a5B9C24A66daBfc6'
-
   const argv = require('yargs')
-    .usage('Usage: MNEMONIC="evil cat kills man ... " npm run claimMGN -- -f [string] --network [name] --dry-run --batch-size [number]')
-    .option('f', {
-      type: 'string',
-      describe: 'Networks JSON file name'
-    })
+    .usage('Usage: MNEMONIC="evil cat kills man ... " yarn claim_mgn --network [name] --dry-run --batch-size [number]')
     .option('network', {
       type: 'string',
       default: 'development',
@@ -73,32 +37,31 @@ const main = async () => {
       describe: 'Run contract functions via [.call]'
     })
     .option('batchSize', {
-      type: 'string',
-      default: '500',
+      type: 'number',
+      default: 50,
       describe: 'Set batch size'
-    })
-    .option('mockMGN', {
-      type: 'boolean',
-      default: false,
-      describe: 'Use mock MGN contract to simulate - TESTING ONLY'
-    })
-    // TODO: remove
-    .option('knownEvents', {
-      type: 'boolean',
-      default: false,
-      describe: 'Set contract address to one with Register events'
     })
     .option('fromBlock', {
       type: 'number',
-      default: 7185000,
+      default: 0,
       describe: 'Set from which Block to check for events'
+    })
+    .option('lock-address', {
+      type: 'string',
+      alias: 'l',
+      describe: 'Address for DxLockMgnForRep'
+    })
+    .option('helper-address', {
+      type: 'string',
+      alias: 'h',
+      describe: 'Address for DxDaoClaimRedeemHelper'
     })
     .help('help')
     .argv
 
   if (!argv._[0]) return argv.showHelp()
 
-  const { dryRun, network, f, batchSize, mockMGN, knownEvents, fromBlock } = argv
+  const { dryRun, network, batchSize, fromBlock } = argv
 
   console.log(`
       Claim MGN data:
@@ -106,92 +69,13 @@ const main = async () => {
       ====================================================================
       Dry run: ${dryRun}
       Network: ${network}
-      Network file: ${f}
       Batch size: ${batchSize}
-      Use known Rinkeby address with Register Events? ${knownEvents}
       Searching Events from block: ${fromBlock}
       ====================================================================
   `)
 
-  try {
-    let dxLockMgnForRep
-    let promisedDxDaoClaimRedeemHelper
-    let promisedTokenMGN
-
-    // Conditionally check which contract addresses to use
-    if (f) {
-      console.log(`
-      =====================================================================================
-
-      Network flag detected [-f] - attempting to use networks from ${f}
-
-      =====================================================================================
-      `)
-      // if f flag is specified, use networks file passed in
-      // to set contract addresses
-      const fs = require('fs')
-      const contractNetworksMap = JSON.parse(fs.readFileSync(f))
-      const netID = await web3.eth.net.getId()
-      try {
-        dxLockMgnForRep = await DxLockMgnForRepArtifact.at(contractNetworksMap['DxLockMgnForRep'][netID].address)
-        promisedDxDaoClaimRedeemHelper = DxDaoClaimRedeemHelperArtifact.at(contractNetworksMap['DxDaoClaimRedeemHelper'][netID].address)
-        promisedTokenMGN = TokenMGN.at(await dxLockMgnForRep.externalLockingContract())
-      } catch (error) {
-        const ERROR_MESSAGE = `
-        No relevant netID addresses found. Stopping. 
-        Please check your networks file that the above contracts respective addresses have been added.
-        `
-        handleError(error, ERROR_MESSAGE)
-      }
-    } else {
-      try {
-        // Use current artifacts network addresses inside build/contracts
-        // const dxLockMgnForRep = await DxLockMgnForRepArtifact.at('0xa248671eC41110D58e587120a5B9C24A66daBfc6')
-        dxLockMgnForRep = (network === 'rinkeby' && knownEvents) ? await DxLockMgnForRepArtifact.at(REGISTER_EVENTS) : await DxLockMgnForRepArtifact.deployed()
-
-        // Start promise resolve for DxDaoClaimRedeemHelper
-        promisedDxDaoClaimRedeemHelper = DxDaoClaimRedeemHelperArtifact.deployed()
-
-        // Allow use of MockMGN contract, only on development
-        if (mockMGN && network !== 'mainnet') {
-          console.log(`
-      =====================================================================
-
-      Using MgnBasicMock.address as MGN [MOCK MGN FLAG DETECTED]
-
-      =====================================================================
-          `)
-          const eTLM = await MgnBasicMock.deployed()
-          promisedTokenMGN = TokenMGN.at(eTLM.address)
-        } else {
-          // else use the regular method of TokenFRTProxy address
-          console.log('Using TokenFRTProxy.address as MGN [DEFAULT]')
-          promisedTokenMGN = TokenMGN.at(TokenMGNProxy.address)
-        }
-      } catch (error) {
-        const ERROR_MESSAGE = (`
-        MGN Token initialisation errors encountered. 
-        It is likely your contract artifacts don't have the correct injected networks.
-        `)
-
-        handleError(error, ERROR_MESSAGE)
-      }
-    }
-
-    // Hook up to DxLockMgnForRep contract with known Rinkeby Register events
-    if (network === 'rinkeby' && knownEvents) {
-      console.log(`
-      =============================================================================================================
-
-      Using DxLockMgnForRep Rinkeby address with known Register Events @ ${REGISTER_EVENTS}
-
-      =============================================================================================================
-      `)
-      dxLockMgnForRep = await DxLockMgnForRepArtifact.at(REGISTER_EVENTS)
-    }
-
-    if (fromBlock === 0 || fromBlock < 7185000) {
-      console.warn(`
+  if (fromBlock === 0 || fromBlock < 7185000) {
+    console.warn(`
       =================================================================================================================
       WARNING: You are checking for Register events from either Block 0 or from a block further back than 15 hours ago.
       Script may hang or fail unexpectedly on Mainnet as filter array length size is too large.
@@ -199,103 +83,103 @@ const main = async () => {
       Please explicitly set the [--from-block <number>] flag if necessary.
       =================================================================================================================
       `)
-    }
+  }
 
-    /**
-     * allPastRegisterEvents
-     * @summary Promise for all past Register events fromBlock flag or 7185000
-     * @type { [] } - Array of Event objects
-     */
-    const allPastRegisterEvents = await dxLockMgnForRep.getPastEvents('Register', { fromBlock })
-    if (!allPastRegisterEvents.length) throw 'Controlled THROW: No registered users. Aborting. Did you forget [--from-block 0]?'
+  // Get contracts and main data
+  const dxLockMgnForRep = await (argv.l ? DxLockMgnForRepArtifact.at(argv.l) : DxLockMgnForRepArtifact.deployed())
+  const mgnAddress = await dxLockMgnForRep.externalLockingContract.call()
+  const claimRedeemHelper = await (argv.h ? DxDaoClaimRedeemHelperArtifact.at(argv.h) : DxDaoClaimRedeemHelperArtifact.deployed())
+  const mgn = await TokenMGN.at(mgnAddress)
+  // TODO: Get dates from dxLockMgnForRep contract
 
-    /**
-     * allFromandBeneficiaries
-     * @summary Array with OBJECT items { from: '0x...', beneficiary: '0x...' }
-     * @type { string[] }
-     */
-    const allBeneficiariesFromEvents = allPastRegisterEvents.map(({ returnValues }) => returnValues._beneficiary)
-    // console.log('All Registered Beneficiaries Addresses', allBeneficiaries)
+  console.log(`
+    Addresses
+        MGN: ${mgnAddress}
+        DxLockMgnForRep: ${dxLockMgnForRep.address}
+        DxDaoClaimRedeemHelperArtifact: ${claimRedeemHelper.address}
+  `)
 
-    /* 
-      VALIDATION - REMOVE UN-CLAIMABLE USER ADDRESSES
-    */
+  // Get all registered accounts
+  const registeredAccounts = await getAllRegisteredAccounts({
+    dxLockMgnForRep,
+    fromBlock
+  })
 
-    // Make sure that beneficiaries inside allBeneficiaries have NOT already claimed  
-    const hasRegistered = await Promise.all(allBeneficiariesFromEvents.map(bene => dxLockMgnForRep.externalLockers.call(bene)))
-    const allBeneficiaries = allBeneficiariesFromEvents.reduce((acc, bene, idx) => {
-      if (hasRegistered[idx]) return acc
+  if (!registeredAccounts.length) {
+    console.log("\nThere's are no registered users. There's nothing to do")
+    return
+  }
 
-      acc.push(bene)
-      return acc
-    }, [])
-    if (!allBeneficiaries.length) throw 'Controlled THROW: No first time registered users available. Aborting.'
+  // Filter out the accounts that already claimed
+  const {
+    claimed: claimedAccounts,
+    unclaimed: unclaimedAccounts
+  } = await getClaimStatusByAccount({
+    accounts: registeredAccounts,
+    dxLockMgnForRep
+  })
 
-    // Get beneficiaries' MGN locked balance (since there's no point in claiming 0 balance MGN...)
-    const mgn = await promisedTokenMGN
-    const beneficiariesMgnBalances = await Promise.all(allBeneficiaries.map(beneficiary => mgn.lockedTokenBalances.call(beneficiary)))
+  console.log('    Claiming status')
+  console.log(`        Total registered accounts: ${registeredAccounts.length}`)
+  if (claimedAccounts.length) {
+    console.log(`        ${claimedAccounts.length} accounts already claimed: ${claimedAccounts.join(', ')}`)
+  } else {
+    console.log('        No one has claimed yet')
+  }
 
-    /**
-     * beneficiariesWithBalance
-     * @summary Maps through beneficiaries to grab address and add MGN locked balance - filters out 0 balance
-     * @type { { address: string, balance: BN }[] }
-     */
-    const beneficiariesWithBalance = allBeneficiaries
-      .map((bene, i) => ({ address: bene, balance: beneficiariesMgnBalances[i] }))
-      .filter(({ balance }) => balance.gt(toBN(0)))
-    console.log('\nBeneficiary Addresss + Balances Objects: \n', JSON.stringify(beneficiariesWithBalance.map(item => ({ ...item, balance: item.balance.toString() })), undefined, 2))
-    if (!beneficiariesWithBalance.length) throw 'Controlled THROW: No registered users with any MGN balance. Aborting.'
+  if (unclaimedAccounts.length) {
+    console.log(`        Unclaimed (${unclaimedAccounts.length}): ${unclaimedAccounts.join(', ')}`)
+  } else {
+    console.log('\nNo one needs to be claimed')
+    return
+  }
 
-    // Development only, can be removed
-    if (network === 'development') {
-      // All time values below in denoted in SECONDS
-      const { NOW, TIME_JUMP_REQUIRED } = await getDxLockMgnForRepState(dxLockMgnForRep)
+  // Get users with and with/without balance 
+  const {
+    withBalance: unclaimedAccountsWithBalance,
+    withoutBalance: unclaimedAccountsWithoutBalance
+  } = await getBalanceStatusByAccount({
+    mgn,
+    accounts: unclaimedAccounts
+  })
 
-      if (TIME_JUMP_REQUIRED.gt(toBN(0))) {
-        console.log(`
-        A time change is required - fast-forwarding ganache blockchain time...
-        TIME BEFORE = [in SECONDS] = ${NOW.toString()}
-        [FORMATTED: ${new Date(NOW.toString() * 1000)}]
-        
-        TIME REQUIRED JUMPING FORWARD: ${toBN(TIME_JUMP_REQUIRED).toString()}
-      `)
+  if (unclaimedAccountsWithoutBalance.length) {
+    const accounts = unclaimedAccountsWithoutBalance.map(({ address }) => address)
+    console.log(`        Accounts without MGN balance (${accounts.length}): ${accounts.join(', ')}`)
+  }
 
-        //TODO: remove
-        await increaseTimeAndMine(TIME_JUMP_REQUIRED.toNumber())
+  if (!unclaimedAccountsWithBalance.length) {
+    console.log("\nAll the accounts are unclaimable, because they don't have MGN balance. Nothing to do")
+    return
+  }
 
-        console.log(`
-        Time jump successful...
-        TIME AFTER = [in SECONDS] = ${toBN(await getTimestamp()).toString()}
-        [FORMATTED: ${new Date(toBN(await getTimestamp()).toString() * 1000)}]
-      `)
-      }
-      // console.log('Time jump NOT required. Skipping...')
-    }
+  const timing = await checkTiming(dxLockMgnForRep)
+  if (timing.error) {
+    const { period, now, error } = timing
+    throw new Error(`
+    Claiming can be done only during claiming period.
+    Claiming period: ${period};
+    Now: ${now};
+    ${error}
+    `)
+  }
 
-    // get dxLockHelper
-    const dxDaoClaimRedeemHelper = await promisedDxDaoClaimRedeemHelper
-    // Extract only addresses w/MGN locked balance into array
-    const beneficiariesWithBalanceAddressesOnly = beneficiariesWithBalance.map(({ address }) => address)
+  // Extract only addresses w/MGN locked balance into array
+  let accountsToClaim = unclaimedAccountsWithBalance.map(({ address }) => address)
 
-    // Below is required as Solidity loop function claimAll inside DxDaoClaimRedeemHelper.claimAll is NOT reverting when looping and
-    // calling individual DxLockMgnForRep.claim method on passed in beneficiary addresses
-    // Lines 268 - 277 filter out bad responses and leave claimable addresses to batch
-    const individualClaimCallReturn = await Promise.all(beneficiariesWithBalanceAddressesOnly.map(beneAddr => dxLockMgnForRep.claim.call(beneAddr)))
-    console.log('DxLockMgnForRep.claim on each acct call result: ', individualClaimCallReturn)
-    console.log('Filtering out 0x08c379a000000000000000000000000000000000000000000000000000000000 values...')
+  // Filter out 
+  // This is a Fix, not sure why it's needed. 
+  // TODO: Review!
+  accountsToClaim = await filterAccountsFix({
+    accounts: accountsToClaim,
+    dxLockMgnForRep
+  })
+  if (!accountsToClaim.length) {
+    throw new Error(`No accounts are claimbale from the ${unclaimedAccountsWithBalance.length} unclaimed ones`)
+  }
 
-    const accountsClaimable = individualClaimCallReturn.reduce((acc, item, index) => {
-      if (item === '0x08c379a000000000000000000000000000000000000000000000000000000000') return acc
-
-      acc.push(beneficiariesWithBalanceAddressesOnly[index])
-      return acc
-    }, [])
-    console.log('Final Filtered Values', accountsClaimable)
-
-    if (!accountsClaimable.length) throw 'Controlled THROW: No final claimable addresses. Aborting.'
-
-    if (dryRun) {
-      console.warn(`
+  if (dryRun) {
+    console.warn(`
       ============================================================================
       
       DRY-RUN ENABLED - Call values returned, no actual blockchain state affected. 
@@ -304,73 +188,170 @@ const main = async () => {
       ============================================================================
       `)
 
-      // TODO: fix this
-      // Workaround as failing bytes32[] call return doesn't properly throw and returns
-      // consistent 'overflow' error(seems to be Truffle5 + Ethers.js issue)
-      // 1 = dxLMR
-      await dxDaoClaimRedeemHelper.claimAll.estimateGas(accountsClaimable, 1)
-      console.log('\nPreparing claimAll call...')
-      // 1 = dxLMR
-      const lockingIdsArray = await dxDaoClaimRedeemHelper.claimAll.call(accountsClaimable, 1)
-      console.log('\nLocking IDs Array', JSON.stringify(lockingIdsArray, undefined, 2))
-    } else {
-      console.log('\nPreparing actual claimAll - this WILL affect blockchain state...')
-      const claimAllReceipts = await dxDaoClaimRedeemHelper.claimAll(accountsClaimable, 1)
-      console.log('ClaimAll Receipt(s)', claimAllReceipts)
-    }
-  } catch (error) {
-    console.error(error)
-  } finally {
-    console.warn(`
-      ===========
-      
-      SCRIPT DONE
-
-      ===========
-    `)
+    // TODO: fix this
+    // Workaround as failing bytes32[] call return doesn't properly throw and returns
+    // consistent 'overflow' error(seems to be Truffle5 + Ethers.js issue)
+    // 1 = dxLMR
+    await batchExecute(
+      accountsSlice => {
+        return claimRedeemHelper.claimAll.estimateGas(accountsSlice, 1)
+      },
+      { batchSize, log: true },
+      accountsToClaim
+    )
+    console.log('\nPreparing claimAll call...')
+    // 1 = dxLMR
+    const lockingIdsArray = await batchExecute(
+      accountsSlice => {
+        return claimRedeemHelper.claimAll.call(accountsSlice, 1)
+      },
+      { batchSize, log: true },
+      accountsToClaim
+    )
+    console.log('\nLocking IDs Array', JSON.stringify(lockingIdsArray, undefined, 2))
+  } else {
+    console.log('\nPreparing actual claimAll - this WILL affect blockchain state...')
+    const claimAllReceipts = await batchExecute(
+      accountsSlice => {
+        return claimRedeemHelper.claimAll(accountsSlice, 1)
+      },
+      { batchSize, log: true },
+      accountsToClaim
+    )
+    console.log('ClaimAll Receipt(s)', claimAllReceipts)
   }
-}
-/** 
- * Helper Functions
-*/
-async function getDxLockMgnForRepState(dxLockMgnContract) {
-  // TODO: node_modules/truffle/lib/cli.bundled.js > 
-  // var outputBlockFormatter = function(block) { ... }
-  // ^^ Removed as breaking fast-forwarding
-  // Fix is below...
-  // NOW = SECONDS - mult by 1000 for millis
-  const NOW = toBN(await getTimestamp()).toString()
 
-  // All time values in SECONDS
-  // Mult by 1000 for millisecond values needed to print via new Date(...)
-  const [MAX_LOCKING_PERIOD, LOCKING_END_TIME, LOCKING_START_TIME] = await Promise.all([
-    dxLockMgnContract.maxLockingPeriod.call(),
-    dxLockMgnContract.lockingEndTime.call(),
-    dxLockMgnContract.lockingStartTime.call()
+  console.log()
+}
+
+async function getAllRegisteredAccounts({
+  dxLockMgnForRep,
+  fromBlock
+}) {
+  /**
+   * allPastRegisterEvents
+   * @summary Promise for all past Register events fromBlock flag or 7185000
+   * @type { [] } - Array of Event objects
+  */
+  const events = await dxLockMgnForRep.getPastEvents('Register', { fromBlock })
+
+  /**
+   * allFromandBeneficiaries
+   * @summary Array with OBJECT items { from: '0x...', beneficiary: '0x...' }
+   * @type { string[] }
+  */
+  return events.map(({ returnValues }) => returnValues._beneficiary)
+}
+
+async function getClaimStatusByAccount({
+  accounts,
+  dxLockMgnForRep
+}) {
+  /* 
+    VALIDATION - REMOVE UN-CLAIMABLE USER ADDRESSES
+  */
+
+  // Make sure that beneficiaries inside allBeneficiaries have NOT already claimed  
+  const accountsClaimFlags = await Promise.all(
+    accounts.map(account => dxLockMgnForRep.externalLockers.call(account))
+  )
+  const claimStatusByAccount = accounts.reduce((acc, account, idx) => {
+    if (accountsClaimFlags[idx]) {
+      acc.claimed.push(account)
+    } else {
+      acc.unclaimed.push(account)
+    }
+
+    return acc
+  }, { claimed: [], unclaimed: [] })
+
+  return claimStatusByAccount
+}
+
+async function getBalanceStatusByAccount({
+  mgn,
+  accounts
+}) {
+  // Get accounts' MGN locked balance (since there's no point in claiming 0 balance MGN...)
+  const balances = await Promise.all(
+    accounts.map(account => mgn.lockedTokenBalances.call(account))
+  )
+
+  const balanceStatusByAccount = accounts.reduce((acc, account, idx) => {
+    const balance = balances[idx]
+    const info = {
+      address: account,
+      balance
+    }
+
+    if (balance.gt(ZERO)) {
+      acc.withBalance.push(info)
+    } else {
+      acc.withoutBalance.push(info)
+    }
+
+    return acc
+  }, { withBalance: [], withoutBalance: [] })
+
+  return balanceStatusByAccount
+}
+
+async function filterAccountsFix({
+  accounts,
+  dxLockMgnForRep
+}) {
+  console.log('\n-------- TODO: Review and fix this -------------')
+  const agrHash = await dxLockMgnForRep.getAgreementHash()
+
+  // Below is required as Solidity loop function claimAll inside DxLockMgnForRepHelper.claimAll is NOT reverting when looping and
+  // calling individual DxLockMgnForRep.claim method on passed in beneficiary addresses
+  // Lines 268 - 277 filter out bad responses and leave claimable addresses to batch
+  const individualClaimCallReturn = await Promise.all(
+    accounts.map(beneAddr => dxLockMgnForRep.claim.call(beneAddr, agrHash))
+  )
+  console.log('DxLockMgnForRep.claim on each acct call result: ', individualClaimCallReturn)
+  console.log('Filtering out 0x08c379a000000000000000000000000000000000000000000000000000000000 values...')
+
+  const accountsClaimable = individualClaimCallReturn.reduce((acc, account, index) => {
+    if (account === '0x08c379a000000000000000000000000000000000000000000000000000000000') {
+      console.warn(`[WARN] Discarding account ${account}`)
+      return acc
+    }
+
+    acc.push(accounts[index])
+    return acc
+  }, [])
+  console.log('Final Filtered Values', accountsClaimable)
+  console.log('-------------------------\n')
+
+  return accountsClaimable
+}
+
+async function checkTiming(dxLockMgnForRep) {
+  const [start, end, now] = await Promise.all([
+    dxLockMgnForRep.lockingStartTime.call(),
+    dxLockMgnForRep.lockingEndTime.call(),
+    getTimestamp()
   ])
 
-  const TIME_JUMP_REQUIRED = LOCKING_START_TIME.sub(toBN(NOW))
+  const period = `${new Date(start * 1000).toUTCString()} -- ${new Date(end * 1000).toUTCString()}`
+  const nowUTC = new Date(now * 1000).toUTCString()
 
-  return {
-    NOW,
-    MAX_LOCKING_PERIOD,
-    LOCKING_END_TIME,
-    LOCKING_START_TIME,
-    TIME_JUMP_REQUIRED: TIME_JUMP_REQUIRED.gt(toBN(0)) ? TIME_JUMP_REQUIRED : toBN(0)
+  const res = {
+    period,
+    now: nowUTC,
+    error: null
   }
-}
 
-function handleError(error, message) {
-  throw `
+  const nowBN = toBN(now)
 
-    ERROR!
-    ======================================================================
-    ${message}
+  if (end.lte(nowBN)) {
+    res.error = 'Too late'
+  } else if (start.gt(nowBN)) {
+    res.error = 'Too early'
+  }
 
-    Error: ${error.message || 'Unknown error occurred'}
-    ======================================================================
-
-  `
+  return res
 }
 
 module.exports = cb => main().then(() => cb(), cb)
