@@ -74,12 +74,7 @@ const main = async () => {
 
   const { dryRun, network, batchSize, fromBlock, toBlock: toBlockAux, blockBatchSize } = argv
   const currentBlock = (await web3.eth.getBlock('latest')).number
-  let toBlock
-  if (!toBlock) {
-    toBlock = currentBlock
-  } else {
-    toBlock = toBlockAux
-  }
+  const toBlock = toBlockAux || currentBlock
 
   console.log(`
       Claim MGN data:
@@ -187,9 +182,7 @@ async function claimMgn({ dryRun, batchSize, fromBlock, toBlock, mgn, dxLockMgnF
     console.log('        No one has claimed yet')
   }
 
-  if (unclaimedAccounts.length) {
-    console.log(`        Unclaimed (${unclaimedAccounts.length}): ${unclaimedAccounts.join(', ')}`)
-  } else {
+  if (!unclaimedAccounts.length) {
     console.log('\nNo one needs to be claimed')
     return
   }
@@ -200,16 +193,17 @@ async function claimMgn({ dryRun, batchSize, fromBlock, toBlock, mgn, dxLockMgnF
     withoutBalance: unclaimedAccountsWithoutBalance
   } = await getBalanceStatusByAccount({
     mgn,
-    accounts: unclaimedAccounts,
-    batchSize
+    accounts: unclaimedAccounts
   })
 
   if (unclaimedAccountsWithoutBalance.length) {
     const accounts = unclaimedAccountsWithoutBalance.map(({ address }) => address)
-    console.log(`        Accounts without MGN balance (${accounts.length}): ${accounts.join(', ')}`)
+    console.log(`        Unclaimed accounts without MGN balance (${accounts.length}): ${accounts.join(', ')}`)
   }
 
-  if (!unclaimedAccountsWithBalance.length) {
+  if (unclaimedAccountsWithBalance.length) {
+    console.log(`        Unclaimed accounts with MGN balance (${unclaimedAccountsWithBalance.length}): ${unclaimedAccountsWithBalance.join(', ')}`)
+  } else {
     console.log("\nAll the accounts are unclaimable, because they don't have MGN balance. Nothing to do")
     return
   }
@@ -335,7 +329,7 @@ async function getClaimStatusByAccount({
 async function getBalanceStatusByAccount({
   mgn,
   accounts,
-  batchSize
+  batchSize = 15 // It query the balances in batches to avoid getting rate-limit errors in the Node
 }) {
   // Get accounts' MGN locked balance (since there's no point in claiming 0 balance MGN...)
   const balancesArr = await batchExecute(
