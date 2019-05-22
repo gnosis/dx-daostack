@@ -9,6 +9,8 @@ const DxDaoClaimRedeemHelperArtifact = artifacts.require('DxDaoClaimRedeemHelper
 const TokenMGN = artifacts.require('TokenFRT')
 const WAIT_TIME = 3000 // Wait time to avoid infura rate limit error
 
+let Registered = 0, AlreadyClaimed = 0, WereUnclaimed = 0, UnclaimedWithoutLockedMGN = 0, UnclaimedWithLockedMGN = 0, TriedToClaimFor = 0
+
 // artifacts and web3 are available globally
 const main = async () => {
 
@@ -112,20 +114,37 @@ const main = async () => {
         DxDaoClaimRedeemHelperArtifact: ${claimRedeemHelper.address}
   `)
 
-  for (let i = fromBlock; i <= toBlock; i += blockBatchSize) {
-    const toBlockBatch = Math.min(i + blockBatchSize - 1, toBlock)
-    console.log(`  [Claim from block ${i} to ${toBlockBatch}]`)
-    await retry(() => claimMgn({
-      fromBlock: i,
-      toBlock: toBlockBatch,
-      batchSize,
-      dryRun,
-      mgn,
-      dxLockMgnForRep,
-      claimRedeemHelper
-    }))
-    await wait(WAIT_TIME)
+  const claimLoop = async ({ fromBlock, toBlock, blockBatchSize }) => {
+    for (let i = fromBlock; i <= toBlock; i += blockBatchSize) {
+      const toBlockBatch = Math.min(i + blockBatchSize - 1, toBlock)
+      console.log(`  [Claim from block ${i} to ${toBlockBatch}]`)
+      await retry(() => claimMgn({
+        fromBlock: i,
+        toBlock: toBlockBatch,
+        batchSize,
+        dryRun,
+        mgn,
+        dxLockMgnForRep,
+        claimRedeemHelper
+      }))
+      await wait(WAIT_TIME)
+    }
   }
+
+  await claimLoop({ fromBlock, toBlock, blockBatchSize })
+
+  if (!toBlockAux) {
+    const newCurrentBlock = (await web3.eth.getBlock('latest')).number
+    console.log('newCurrentBlock: ', newCurrentBlock);
+    await claimLoop({ fromBlock: currentBlock + 1, toBlock: newCurrentBlock, blockBatchSize })
+  }
+
+  console.log('Registered: ', Registered);
+  console.log('AlreadyClaimed: ', AlreadyClaimed);
+  console.log('WereUnclaimed: ', WereUnclaimed);
+  console.log('UnclaimedWithoutLockedMGN: ', UnclaimedWithoutLockedMGN);
+  console.log('UnclaimedWithLockedMGN: ', UnclaimedWithLockedMGN);
+  console.log('TriedToClaimFor: ', TriedToClaimFor);
 
 }
 
@@ -174,6 +193,10 @@ async function claimMgn({ dryRun, batchSize, fromBlock, toBlock, mgn, dxLockMgnF
     dxLockMgnForRep
   })
 
+  Registered += registeredAccounts.length
+
+  AlreadyClaimed += claimedAccounts.length
+
   console.log('    Claiming status')
   console.log(`        Total registered accounts: ${registeredAccounts.length}`)
   if (claimedAccounts.length) {
@@ -187,6 +210,8 @@ async function claimMgn({ dryRun, batchSize, fromBlock, toBlock, mgn, dxLockMgnF
     return
   }
 
+  WereUnclaimed += unclaimedAccounts.length
+
   // Get users with and with/without balance 
   const {
     withBalance: unclaimedAccountsWithBalance,
@@ -196,13 +221,16 @@ async function claimMgn({ dryRun, batchSize, fromBlock, toBlock, mgn, dxLockMgnF
     accounts: unclaimedAccounts
   })
 
+  UnclaimedWithoutLockedMGN += unclaimedAccountsWithoutBalance.length
+  UnclaimedWithLockedMGN += unclaimedAccountsWithBalance.length
+
   if (unclaimedAccountsWithoutBalance.length) {
     const accounts = unclaimedAccountsWithoutBalance.map(({ address }) => address)
     console.log(`        Unclaimed accounts without MGN balance (${accounts.length}): ${accounts.join(', ')}`)
   }
 
   if (unclaimedAccountsWithBalance.length) {
-    console.log(`        Unclaimed accounts with MGN balance (${unclaimedAccountsWithBalance.length}): ${unclaimedAccountsWithBalance.join(', ')}`)
+    console.log(`        Unclaimed accounts with MGN balance (${unclaimedAccountsWithBalance.length}): ${unclaimedAccountsWithBalance.map(o => o.address).join(', ')}`)
   } else {
     console.log("\nAll the accounts are unclaimable, because they don't have MGN balance. Nothing to do")
     return
@@ -232,6 +260,8 @@ async function claimMgn({ dryRun, batchSize, fromBlock, toBlock, mgn, dxLockMgnF
   if (!accountsToClaim.length) {
     throw new Error(`No accounts are claimbale from the ${unclaimedAccountsWithBalance.length} unclaimed ones`)
   }
+
+  TriedToClaimFor += accountsToClaim.length
 
   if (dryRun) {
     console.warn(`
