@@ -80,12 +80,43 @@ const main = async () => {
       default: 7185000,
       describe: 'Set from which Block to check for events'
     })
+    .option('toBlock', {
+      type: 'number',
+      default: null,
+      describe: 'Set to which Block to check for events (latest by default)'
+    })
+    .option('blockBatchSize', {
+      type: 'number',
+      default: 50000, // a bit less than 10 days
+      describe: 'Number of blocks for fetching the events'
+    })
+    .option('mgn', {
+      type: 'boolean',
+      default: true,
+      describe: 'Redeem events for MGN Locks'
+    })
+    .option('eth', {
+      type: 'boolean',
+      default: true,
+      describe: 'Redeem events for ETH Locks'
+    })
+    .option('whitelisted', {
+      type: 'boolean',
+      default: true,
+      describe: 'Redeem events for Whitelisted Tokens Locks'
+    })
+    .option('gen', {
+      type: 'boolean',
+      default: true,
+      describe: 'Redeem events for GEN Bids'
+    })
+
     .help('help')
     .argv
 
   if (!argv._[0]) return argv.showHelp()
 
-  const { dryRun, network, f, batchSize, fromBlock } = argv
+  const { dryRun, network, f, batchSize, fromBlock, toBlock, blockBatchSize, mgn, eth, whitelisted, gen } = argv
 
   console.log(`
     redeem_rep.js data:
@@ -154,21 +185,96 @@ const main = async () => {
 
     // 1. Check all Lock events for dxLockMGNForRep, dxLockETHForRep, and dxLockWhitelistForRep
     //TODO: should this be 1 array? Does it matter if it's split?
-    const [dxLMR_Lock_Events, dxLER_Lock_Events, dxLWR_Lock_Events, dxGAR_Bid_Events] = await Promise.all([
-      dxLMR.getPastEvents('Lock', { fromBlock }),
-      dxLER.getPastEvents('Lock', { fromBlock }),
-      dxLWR.getPastEvents('Lock', { fromBlock }),
-      dxGAR.getPastEvents('Bid', { fromBlock })
-    ])
+    // const [dxLMR_Lock_Events, dxLER_Lock_Events, dxLWR_Lock_Events, dxGAR_Bid_Events] = await Promise.all([
+    //   dxLMR.getPastEvents('Lock', { fromBlock }),
+    //   dxLER.getPastEvents('Lock', { fromBlock }),
+    //   dxLWR.getPastEvents('Lock', { fromBlock }),
+    //   dxGAR.getPastEvents('Bid', { fromBlock })
+    // ])
+
+    const dxLMR_Lock_Events = mgn ? await getPastEvents(dxLMR, 'Lock', { fromBlock , toBlock, blockBatchSize}) : []
+    const dxLER_Lock_Events = eth ? await getPastEvents(dxLER, 'Lock', { fromBlock , toBlock, blockBatchSize}) : []
+    const dxLWR_Lock_Events = whitelisted ? await getPastEvents(dxLWR, 'Lock', { fromBlock , toBlock, blockBatchSize}) : []
+    const dxGAR_Bid_Events = gen ? await getPastEvents(dxGAR, 'Bid', { fromBlock , toBlock, blockBatchSize}): []
+    // const dxGAR_Bid_Events = []
+
+    // eslint-disable-next-line no-inner-declarations
+    function parseEventLog({returnValues}) {
+      return Object.entries(returnValues).reduce((accum, [k,v]) => {
+        if(Number.isNaN(+k))accum[k]=v
+        return accum
+        },{})
+    }
+
+    // eslint-disable-next-line no-inner-declarations
+    async function getPastEvents(contract, eventName, { fromBlock = 0, toBlock, blockBatchSize = 30, ...rest} = {}) {
+      if (!toBlock) ({number: toBlock} = await web3.eth.getBlock('latest'));
+
+      try {
+        console.log(`Fetching event ${eventName} from contract ${contract.constructor.contractName}`);
+        const results = await contract.getPastEvents(eventName, { fromBlock, toBlock, ...rest})
+        console.log('single batch: ', results.map(parseEventLog));
+        return results
+      } catch (error) {
+        if (error.message.includes('query returned more than 1000 results')) {
+          console.warn(error.message)
+          console.log(`Will try getting events from ${blockBatchSize} blocks at a time`)
+
+          const results = []
+
+          let gotEvents = 0
+
+          for (let i = fromBlock; i <= toBlock; i += blockBatchSize) {
+            const toBlockBatch = Math.min(i + blockBatchSize - 1, toBlock)
+            console.log(`\n  [Fetch event ${eventName} from block ${i} to ${toBlockBatch} from contract ${contract.constructor.contractName}]`)
+            const batch = await retry(() => {
+              return contract.getPastEvents(eventName, { fromBlock: i, toBlock: toBlockBatch, ...rest})
+            })
+            console.log('batch: ', batch.map(parseEventLog));
+
+            results.push(...batch)
+            gotEvents += batch.length
+            if (gotEvents > 1000) {
+              gotEvents = 0
+              console.log('Got more than 1000 events. Trying fetching the rest in one bunch.');
+              console.log(`\n  [Fetch event ${eventName} from block ${i + blockBatchSize} to ${toBlock} from contract ${contract.constructor.contractName}]`)
+              try {
+                const batch = await retry(() => {
+                  return contract.getPastEvents(eventName, { fromBlock: i + blockBatchSize, toBlock, ...rest})
+                })
+                console.log('batch: ', batch.map(parseEventLog));
+    
+                results.push(...batch)
+                return results
+              } catch (error) {
+                if (error.message.includes('query returned more than 1000 results')) {
+                  console.warn(error.message)
+                  console.log(`Continuing getting events from ${blockBatchSize} blocks at a time`)
+                }
+              }
+            }
+            // await wait(WAIT_TIME)
+          }
+
+          return results
+        }
+
+        throw error
+      }
+    }
 
     // Cache necessary addresses from events
-    let dxLER_Lock_Lockers = await removeZeroScoreAddresses(dxLER_Lock_Events.map(event => event.returnValues._locker), dxLER),
-      dxLMR_Lock_Lockers = await removeZeroScoreAddresses(dxLMR_Lock_Events.map(event => event.returnValues._locker), dxLMR),
-      dxLWR_Lock_Lockers = await removeZeroScoreAddresses(dxLWR_Lock_Events.map(event => event.returnValues._locker), dxLWR),
-      [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = await removeZeroBidsAddresses(dxGAR_Bid_Events.map(
+    console.log('Removing addresses with zero score from LockEth4Rep')
+    let dxLER_Lock_Lockers = await removeZeroScoreAddresses(dxLER_Lock_Events.map(event => event.returnValues._locker), dxLER, {batchSize})
+    console.log('Removing addresses with zero score from LockMgn4Rep')
+    let  dxLMR_Lock_Lockers = await removeZeroScoreAddresses(dxLMR_Lock_Events.map(event => event.returnValues._locker), dxLMR, {batchSize})
+    console.log('Removing addresses with zero score from LockWhitelisted4Rep')
+    let  dxLWR_Lock_Lockers = await removeZeroScoreAddresses(dxLWR_Lock_Events.map(event => event.returnValues._locker), dxLWR, {batchSize})
+    console.log('Removing addresses with zero score from BidGenAuction')
+    let  [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = await removeZeroBidsAddresses(dxGAR_Bid_Events.map(
         event => event.returnValues._bidder),
         dxGAR_Bid_Events.map(event => event.returnValues._auctionId),
-        dxGAR
+        dxGAR, {batchSize}
       )
 
     // Throw if all addresses empty or non-redeemable
@@ -279,12 +385,40 @@ const main = async () => {
   }
 }
 
+async function retry(cb, attempt = 1, maxAttempts = 10) {
+  try {
+    return await cb()
+  } catch (e) {
+    // const waitTime = attempt * attempt * WAIT_TIME
+    // console.error(`\nError claiming MGN. Retrying in ${waitTime / 1000} seconds. ${maxAttempts - attempt} remaining attempts\n`)
+    console.error(`\nError redeeming. Retrying. ${maxAttempts - attempt} remaining attempts\n`)
+
+    if (attempt >= maxAttempts) {
+      console.log('Out of attempts')
+      throw e
+    } else {
+      // await wait(waitTime)
+      console.warn(e.message)
+      return await retry(cb, attempt + 1, maxAttempts)
+    }
+  }
+}
+
 function arrayBNtoNum(arr) {
   return arr.map(bn => bn.toString())
 }
 
-async function removeZeroScoreAddresses(arr, contract) {
-  const hasScore = await Promise.all(arr.map(bene => contract['scores'].call(bene)))
+async function removeZeroScoreAddresses(arr, contract, {batchSize}) {
+  const hasScoreArrs = await batchExecute(
+    accountsSlice => {
+      return retry(() => Promise.all(accountsSlice.map(bene => contract.scores.call(bene))))
+      // return Promise.all(accountsSlice.map(bene => contract.scores.call(bene)))
+    },
+    { batchSize, log: true },
+    arr
+  )
+  const hasScore = [].concat(...hasScoreArrs)
+  // const hasScore = await Promise.all(arr.map(bene => contract['scores'].call(bene)))
   const reducedArr = arr.reduce((acc, bene, idx) => {
     // REMOVE bene if they have 0 score
     if (hasScore[idx].lte(toBN(0))) return acc
