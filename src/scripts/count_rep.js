@@ -799,12 +799,12 @@ async function getContracts({ mgn, eth, tkn, auc, n }) {
   }, {})
 }
 
-const MAX_TRIES = 15
-function retryPromise(execPromise, tryN = 1) {
-  if (tryN > MAX_TRIES) return Promise.reject('number of tries exceeded', MAX_TRIES, '\taborting')
-  // console.log('try', tryN)
-  return execPromise().catch(() => retryPromise(execPromise, tryN + 1))
-}
+// const MAX_TRIES = 15
+// function retryPromise(execPromise, tryN = 1) {
+//   if (tryN > MAX_TRIES) return Promise.reject('number of tries exceeded', MAX_TRIES, '\taborting')
+//   // console.log('try', tryN)
+//   return execPromise().catch(() => retryPromise(execPromise, tryN + 1))
+// }
 
 
 module.exports = cb => main().then(() => cb(), cb)
