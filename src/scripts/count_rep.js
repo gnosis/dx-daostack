@@ -13,6 +13,7 @@
  * --auc <address>              DxGenAuction4Rep  address
  * -o <path>                    output file path
  * --from-block <number>        start querying events from block
+ * --log                        print event fetching process
  */
 
 /**
