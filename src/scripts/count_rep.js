@@ -1,7 +1,7 @@
 /* global artifacts, web3 */
 
 /**
- * truffle exec src/scripts/count_REP.js
+ * truffle exec src/scripts/count_rep.js
  * to get REP locking nad accumulated REP data for
  * @flags:
  * -a <address>,<address>       for addresses
@@ -12,20 +12,22 @@
  * --tkn <address>              DxLockWhitelisted4Rep address
  * --auc <address>              DxGenAuction4Rep  address
  * -o <path>                    output file path
+ * --from-block <number>        start querying events from block
+ * --log                        print event fetching process
  */
 
 /**
  * examples:
- * $ npx truffle exec src/scripts/count_REP.js --network mainnet -a 0x123,0x456 -n ./networks.json
+ * $ npx truffle exec src/scripts/count_rep.js --network mainnet -a 0x123,0x456 -n ./networks.json
  * calculates reputation for the two provided accounts
  * for contracts on mainnet at addresses from ./networks.json
  * 
- * $ npx truffle exec src/scripts/count_REP.js --network rinkeby -o ./out.json
+ * $ npx truffle exec src/scripts/count_rep.js --network rinkeby -o ./out.json
  * calculates reputation for all accounts for which there were Lock/Bid events
  * for contracts on mainnet at addresses from artifacts in ./build/contracts
  * and outputs formatted data to ./out.json
  * 
- * $ npx truffle exec src/scripts/count_REP.js --network rinkeby --mgn 0x1234
+ * $ npx truffle exec src/scripts/count_rep.js --network rinkeby --mgn 0x1234
  * calculates reputation for all accounts for which there were Lock/Bid events
  * for contracts on rinkeby at addresses from artifacts in ./build/contracts
  * except for DxLockMgnForRep whose address is provided in --mgn flag
@@ -39,6 +41,8 @@ const DxLockWhitelisted4Rep = artifacts.require('DxLockWhitelisted4Rep')
 
 const path = require('path')
 const fs = require('fs')
+
+const { getPastEvents } = require('./utils')(web3)
 
 const argv = require('minimist')(process.argv.slice(2),
   { string: ['a', 'mgn', 'eth', 'tkn', 'auc'] })
@@ -669,12 +673,12 @@ async function getTokenPricesAtBlocks(address, blockNumbers, oracleAddress) {
 
 async function getLockedBid(accounts, contracts) {
   const LockOptions = {
-    fromBlock: 0,
+    fromBlock: argv.fromBlock || 0,
     toBlock: 'latest',
     filter: accounts && accounts.length && { _locker: accounts }
   }
   const BidOptions = {
-    fromBlock: 0,
+    fromBlock: argv.fromBlock || 0,
     toBlock: 'latest',
     filter: accounts && accounts.length && { _bidder: accounts }
   }
@@ -689,16 +693,20 @@ async function getLockedBid(accounts, contracts) {
   console.group('\nFetching events from contracts\n')
 
   console.log('Fetching Lock events from DxLockMgnForRep');
-  const MgnLocks = await retryPromise(() => DxLockMgnForRep.getPastEvents('Lock', LockOptions))
+  // const MgnLocks = await retryPromise(() => DxLockMgnForRep.getPastEvents('Lock', LockOptions))
+  const MgnLocks = await getPastEvents(DxLockMgnForRep, 'Lock', {...LockOptions, ...argv})
 
   console.log('Fetching Lock events from DxLockEth4Rep');
-  const EthLocks = await retryPromise(() => DxLockEth4Rep.getPastEvents('Lock', LockOptions))
+  // const EthLocks = await retryPromise(() => DxLockEth4Rep.getPastEvents('Lock', LockOptions))
+  const EthLocks = await getPastEvents(DxLockEth4Rep, 'Lock', {...LockOptions, ...argv})
 
   console.log('Fetching Lock events from DxLockWhitelisted4Rep');
-  const TknLocks = await retryPromise(() => DxLockWhitelisted4Rep.getPastEvents('Lock', LockOptions))
+  // const TknLocks = await retryPromise(() => DxLockWhitelisted4Rep.getPastEvents('Lock', LockOptions))
+  const TknLocks = await getPastEvents(DxLockWhitelisted4Rep, 'Lock', {...LockOptions, ...argv})
 
   console.log('Fetching Bid events from DxGenAuction4Rep');
-  const GenBids = await retryPromise(() => DxGenAuction4Rep.getPastEvents('Bid', BidOptions))
+  // const GenBids = await retryPromise(() => DxGenAuction4Rep.getPastEvents('Bid', BidOptions))
+  const GenBids = await getPastEvents(DxGenAuction4Rep, 'Bid', {...BidOptions, ...argv})
 
   let participatingAccounts = new Set()
 
@@ -791,12 +799,12 @@ async function getContracts({ mgn, eth, tkn, auc, n }) {
   }, {})
 }
 
-const MAX_TRIES = 15
-function retryPromise(execPromise, tryN = 1) {
-  if (tryN > MAX_TRIES) return Promise.reject('number of tries exceeded', MAX_TRIES, '\taborting')
-  // console.log('try', tryN)
-  return execPromise().catch(() => retryPromise(execPromise, tryN + 1))
-}
+// const MAX_TRIES = 15
+// function retryPromise(execPromise, tryN = 1) {
+//   if (tryN > MAX_TRIES) return Promise.reject('number of tries exceeded', MAX_TRIES, '\taborting')
+//   // console.log('try', tryN)
+//   return execPromise().catch(() => retryPromise(execPromise, tryN + 1))
+// }
 
 
 module.exports = cb => main().then(() => cb(), cb)

@@ -7,6 +7,9 @@ const ZERO = toBN(0)
 const DxLockMgnForRepArtifact = artifacts.require('DxLockMgnForRep')
 const DxDaoClaimRedeemHelperArtifact = artifacts.require('DxDaoClaimRedeemHelper')
 const TokenMGN = artifacts.require('TokenFRT')
+const WAIT_TIME = 3000 // Wait time to avoid infura rate limit error
+
+let Registered = 0, AlreadyClaimed = 0, WereUnclaimed = 0, UnclaimedWithoutLockedMGN = 0, UnclaimedWithLockedMGN = 0, TriedToClaimFor = 0
 
 // artifacts and web3 are available globally
 const main = async () => {
@@ -46,6 +49,16 @@ const main = async () => {
       default: 0,
       describe: 'Set from which Block to check for events'
     })
+    .option('toBlock', {
+      type: 'number',
+      default: null,
+      describe: 'Set to which Block to check for events (latest by default)'
+    })
+    .option('blockBatchSize', {
+      type: 'number',
+      default: 50000, // a bit less than 10 days
+      describe: 'Number of blocks for fetching the events'
+    })
     .option('lock-address', {
       type: 'string',
       alias: 'l',
@@ -61,7 +74,9 @@ const main = async () => {
 
   if (!argv._[0]) return argv.showHelp()
 
-  const { dryRun, network, batchSize, fromBlock } = argv
+  const { dryRun, network, batchSize, fromBlock, toBlock: toBlockAux, blockBatchSize } = argv
+  const currentBlock = (await web3.eth.getBlock('latest')).number
+  const toBlock = toBlockAux || currentBlock
 
   console.log(`
       Claim MGN data:
@@ -69,8 +84,8 @@ const main = async () => {
       ====================================================================
       Dry run: ${dryRun}
       Network: ${network}
-      Batch size: ${batchSize}
-      Searching Events from block: ${fromBlock}
+      Claim in Batches of ${batchSize} addresses
+      Searching Events from ${fromBlock} to ${toBlock} (queried in blocks of ${blockBatchSize})
       ====================================================================
   `)
 
@@ -99,10 +114,69 @@ const main = async () => {
         DxDaoClaimRedeemHelperArtifact: ${claimRedeemHelper.address}
   `)
 
+  const claimLoop = async ({ fromBlock, toBlock, blockBatchSize }) => {
+    for (let i = fromBlock; i <= toBlock; i += blockBatchSize) {
+      const toBlockBatch = Math.min(i + blockBatchSize - 1, toBlock)
+      console.log(`  [Claim from block ${i} to ${toBlockBatch}]`)
+      await retry(() => claimMgn({
+        fromBlock: i,
+        toBlock: toBlockBatch,
+        batchSize,
+        dryRun,
+        mgn,
+        dxLockMgnForRep,
+        claimRedeemHelper
+      }))
+      await wait(WAIT_TIME)
+    }
+  }
+
+  await claimLoop({ fromBlock, toBlock, blockBatchSize })
+
+  if (!toBlockAux) {
+    const newCurrentBlock = (await web3.eth.getBlock('latest')).number
+    console.log('newCurrentBlock: ', newCurrentBlock);
+    await claimLoop({ fromBlock: currentBlock + 1, toBlock: newCurrentBlock, blockBatchSize })
+  }
+
+  console.log('Registered: ', Registered);
+  console.log('AlreadyClaimed: ', AlreadyClaimed);
+  console.log('WereUnclaimed: ', WereUnclaimed);
+  console.log('UnclaimedWithoutLockedMGN: ', UnclaimedWithoutLockedMGN);
+  console.log('UnclaimedWithLockedMGN: ', UnclaimedWithLockedMGN);
+  console.log('TriedToClaimFor: ', TriedToClaimFor);
+
+}
+
+async function retry(cb, attempt = 1, maxAttempts = 10) {
+  try {
+    await cb()
+  } catch (e) {
+    const waitTime = attempt * attempt * WAIT_TIME
+    console.error(`\nError claiming MGN. Retrying in ${waitTime / 1000} seconds. ${maxAttempts - attempt} remaining attempts\n`)
+
+    if (attempt >= maxAttempts) {
+      console.log('Out of attempts')
+      throw e
+    } else {
+      await wait(waitTime)
+      await retry(cb, attempt + 1, maxAttempts)
+    }
+  }
+}
+
+async function wait(time) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, time)
+  })
+}
+
+async function claimMgn({ dryRun, batchSize, fromBlock, toBlock, mgn, dxLockMgnForRep, claimRedeemHelper }) {
   // Get all registered accounts
   const registeredAccounts = await getAllRegisteredAccounts({
     dxLockMgnForRep,
-    fromBlock
+    fromBlock,
+    toBlock
   })
 
   if (!registeredAccounts.length) {
@@ -119,6 +193,10 @@ const main = async () => {
     dxLockMgnForRep
   })
 
+  Registered += registeredAccounts.length
+
+  AlreadyClaimed += claimedAccounts.length
+
   console.log('    Claiming status')
   console.log(`        Total registered accounts: ${registeredAccounts.length}`)
   if (claimedAccounts.length) {
@@ -127,12 +205,12 @@ const main = async () => {
     console.log('        No one has claimed yet')
   }
 
-  if (unclaimedAccounts.length) {
-    console.log(`        Unclaimed (${unclaimedAccounts.length}): ${unclaimedAccounts.join(', ')}`)
-  } else {
+  if (!unclaimedAccounts.length) {
     console.log('\nNo one needs to be claimed')
     return
   }
+
+  WereUnclaimed += unclaimedAccounts.length
 
   // Get users with and with/without balance 
   const {
@@ -143,12 +221,17 @@ const main = async () => {
     accounts: unclaimedAccounts
   })
 
+  UnclaimedWithoutLockedMGN += unclaimedAccountsWithoutBalance.length
+  UnclaimedWithLockedMGN += unclaimedAccountsWithBalance.length
+
   if (unclaimedAccountsWithoutBalance.length) {
     const accounts = unclaimedAccountsWithoutBalance.map(({ address }) => address)
-    console.log(`        Accounts without MGN balance (${accounts.length}): ${accounts.join(', ')}`)
+    console.log(`        Unclaimed accounts without MGN balance (${accounts.length}): ${accounts.join(', ')}`)
   }
 
-  if (!unclaimedAccountsWithBalance.length) {
+  if (unclaimedAccountsWithBalance.length) {
+    console.log(`        Unclaimed accounts with MGN balance (${unclaimedAccountsWithBalance.length}): ${unclaimedAccountsWithBalance.map(o => o.address).join(', ')}`)
+  } else {
     console.log("\nAll the accounts are unclaimable, because they don't have MGN balance. Nothing to do")
     return
   }
@@ -177,6 +260,8 @@ const main = async () => {
   if (!accountsToClaim.length) {
     throw new Error(`No accounts are claimbale from the ${unclaimedAccountsWithBalance.length} unclaimed ones`)
   }
+
+  TriedToClaimFor += accountsToClaim.length
 
   if (dryRun) {
     console.warn(`
@@ -218,7 +303,7 @@ const main = async () => {
       { batchSize, log: true },
       accountsToClaim
     )
-    console.log('ClaimAll Receipt(s)', claimAllReceipts)
+    console.log('ClaimAll Transaction(s):\n', claimAllReceipts.map(receipt => receipt.tx).join('\n'))
   }
 
   console.log()
@@ -226,14 +311,15 @@ const main = async () => {
 
 async function getAllRegisteredAccounts({
   dxLockMgnForRep,
-  fromBlock
+  fromBlock,
+  toBlock
 }) {
   /**
    * allPastRegisterEvents
    * @summary Promise for all past Register events fromBlock flag or 7185000
    * @type { [] } - Array of Event objects
   */
-  const events = await dxLockMgnForRep.getPastEvents('Register', { fromBlock })
+  const events = await dxLockMgnForRep.getPastEvents('Register', { fromBlock, toBlock })
 
   /**
    * allFromandBeneficiaries
@@ -265,17 +351,24 @@ async function getClaimStatusByAccount({
     return acc
   }, { claimed: [], unclaimed: [] })
 
+  await wait(WAIT_TIME)
+
   return claimStatusByAccount
 }
 
 async function getBalanceStatusByAccount({
   mgn,
-  accounts
+  accounts,
+  batchSize = 15 // It query the balances in batches to avoid getting rate-limit errors in the Node
 }) {
   // Get accounts' MGN locked balance (since there's no point in claiming 0 balance MGN...)
-  const balances = await Promise.all(
-    accounts.map(account => mgn.lockedTokenBalances.call(account))
+  const balancesArr = await batchExecute(
+    accountsSlice => Promise.all(accountsSlice.map(account => mgn.lockedTokenBalances.call(account))),
+    { batchSize, log: true },
+    accounts
   )
+
+  const balances = [].concat(...balancesArr)
 
   const balanceStatusByAccount = accounts.reduce((acc, account, idx) => {
     const balance = balances[idx]
@@ -300,7 +393,6 @@ async function filterAccountsFix({
   accounts,
   dxLockMgnForRep
 }) {
-  console.log('\n-------- TODO: Review and fix this -------------')
   const agrHash = await dxLockMgnForRep.getAgreementHash()
 
   // Below is required as Solidity loop function claimAll inside DxLockMgnForRepHelper.claimAll is NOT reverting when looping and
@@ -309,7 +401,7 @@ async function filterAccountsFix({
   const individualClaimCallReturn = await Promise.all(
     accounts.map(beneAddr => dxLockMgnForRep.claim.call(beneAddr, agrHash))
   )
-  console.log('DxLockMgnForRep.claim on each acct call result: ', individualClaimCallReturn)
+  console.log('DxLockMgnForRep.claim on each acct call result: ', individualClaimCallReturn.join(', '))
   console.log('Filtering out 0x08c379a000000000000000000000000000000000000000000000000000000000 values...')
 
   const accountsClaimable = individualClaimCallReturn.reduce((acc, account, index) => {
@@ -321,8 +413,7 @@ async function filterAccountsFix({
     acc.push(accounts[index])
     return acc
   }, [])
-  console.log('Final Filtered Values', accountsClaimable)
-  console.log('-------------------------\n')
+  console.log('Final Filtered Values', accountsClaimable.join(', '))
 
   return accountsClaimable
 }

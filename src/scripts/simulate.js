@@ -69,6 +69,12 @@ function parseArgv() {
       describe:
         'how many accounts to create'
     })
+    .option('from', {
+      type: 'number',
+      default: 0,
+      describe:
+        'start accounts from index'
+    })
     .option('batchSize', {
       type: 'number',
       default: 50,
@@ -99,17 +105,17 @@ function parseArgv() {
 
 
 
-function createProvider(url, accounts) {
+function createProvider(url, accounts, from = 0) {
   return new HDWalletProvider(
     mnemonic,
     url,
-    0,
+    from,
     accounts
   )
 }
 
-function createWeb3({ network, accounts }) {
-  const prov = createProvider(network2URL[network], accounts)
+function createWeb3({ network, accounts, from }) {
+  const prov = createProvider(network2URL[network], accounts, from)
   return new Web3(prov)
 }
 
@@ -201,6 +207,18 @@ async function run(options) {
   // const withBalance = Object.keys(acc2bal)
   console.log(`Available ${accsN} accounts`);
   // console.log(`${withBalance.length || 'None'} of them have balance\n`);
+
+  // accs.forEach(async acc => {
+  //   const bal = await wa3.eth.getBalance(acc)
+  //   // console.log('acc',acc, 'bal: ', bal, bal -21000);
+  //   // console.log('String(bal - 2 * 21000): ', String(bal - 2 * 21000));
+  //   wa3.eth.sendTransaction({
+  //     from: acc,
+  //     to: master,
+  //     value: String(bal - 15  * 10000000000 * 21000),
+  //     gas: 21000
+  //   }).then((res) => console.log('acc', acc, res)).catch(e=> console.error('acc', acc, e))
+  // })
 
 
 
@@ -470,16 +488,34 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
           const req = mgn.contract.methods.lockTokens(web3.utils.toWei(expToString(answ.amount), 'ether')).send.request()
           console.log('req: ', req);
 
-          await batchExecute(accsSlice => {
+          let withMGN = 0, withoutMGN = 0
+          await batchExecute(async accsSlice => {
             const batch = new wa3.BatchRequest();
 
-            accsSlice.forEach(acc => batch.add({
-              ...req,
-              params: req.params.map(param => ({ ...param, from: acc }))
-            }));
+            const accs2MGN = await Promise.all(accsSlice.map(acc => mgn.lockedTokenBalances(acc)))
+
+
+            accsSlice.forEach((acc, i) => {
+              if (accs2MGN[i].toString() !== '0') {
+                console.log(`Account ${acc} already has locked MGN: ${accs2MGN[i].toString() / 1e18}`);
+                ++withMGN
+                return
+              }
+
+              ++withoutMGN
+              console.log(`Account ${acc} hasn't locked MGN`);
+
+              batch.add({
+                ...req,
+                params: req.params.map(param => ({ ...param, from: acc }))
+              })
+            });
 
             return batch.execute()
           }, { batchSize, maxConcurrent, log: true }, accs)
+
+
+          console.log(`There was ${withMGN} accounts with MGN already locked, and ${withoutMGN} accounts without.`)
 
           // const batch = new wa3.BatchRequest();
 
@@ -499,14 +535,34 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
         console.log(`Registering ${accs.length} on DxLockMgnForRep`);
         const gas = await DxLockMgn.register.estimateGas(AGREEMENT_HASH, { from: accs[0] })
         console.log('gas: ', gas);
+        let notRegistered = 0, Registered = 0
         try {
-          await batchExecute(accsSlice => {
-            return Promise.all(accsSlice.map(acc => DxLockMgn.register(AGREEMENT_HASH, { from: acc, gas })))
+          await batchExecute(async accsSlice => {
+            const accs2Reg = await Promise.all(accsSlice.map(acc => DxLockMgn.registrar(acc)))
+
+            const accsToRegister = []
+            accsSlice.forEach((acc, i) => {
+              if (accs2Reg[i]) {
+                console.log(`Account ${acc} already Registered`);
+                ++Registered
+                return
+              }
+
+              accsToRegister.push(acc)
+
+              ++notRegistered
+            });
+
+            return Promise.all(accsToRegister.map(acc => DxLockMgn.register(AGREEMENT_HASH, { from: acc, gas: gas*1.5 })))
           }, { batchSize, maxConcurrent, log: true }, accs)
+          // await batchExecute(accsSlice => {
+          //   return Promise.all(accsSlice.map(acc => DxLockMgn.register(AGREEMENT_HASH, { from: acc, gas })))
+          // }, { batchSize, maxConcurrent, log: true }, accs)
           // await Promise.all(accs.map(acc => DxLockMgn.register(AGREEMENT_HASH, { from: acc })))
         } catch (error) {
           console.error(error.message);
         }
+        console.log(`${Registered} accounts have been registered beforehand; ${notRegistered} not registered`);
       }
       break;
     case 'Print accounts registered for future MGN claiming':
@@ -589,8 +645,10 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
 
           console.log(`${accs.length} accounts locking ${answ.amount} ETH in DxLockEth`);
 
+          const gas = await DxLockEth.lock.estimateGas(answ.period, AGREEMENT_HASH, { from: accs[0], value })
+
           await batchExecute(accsSlice => {
-            return Promise.all(accsSlice.map(acc => DxLockEth.lock(answ.period, AGREEMENT_HASH, { from: acc, value })))
+            return Promise.all(accsSlice.map(acc => DxLockEth.lock(answ.period, AGREEMENT_HASH, { from: acc, value, gas })))
           }, { batchSize, maxConcurrent, log: true }, accs)
 
           // await Promise.all(accs.map(acc => DxLockEth.lock(answ.period, AGREEMENT_HASH, { from: acc, value })))
@@ -635,29 +693,49 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
           const wei = answ.amount * (10 ** token.decimals)
 
           const allowance = (await token.allowance(accs[0], DxLockWhitelisted.address)).toString() / (10 ** token.decimals)
-          if (answ.amount < allowance.toString()) {
-            const answ = await inquirer.prompt({
+          console.log('answ.amount: ', answ.amount);
+          console.log('allowance: ', allowance, (await token.allowance(accs[0], DxLockWhitelisted.address)).toString());
+          console.log('answ.amount < allowance.toString(): ', answ.amount < allowance.toString());
+          if (answ.amount > allowance.toString()) {
+            const answ1 = await inquirer.prompt({
               name: 'allowance',
               type: 'number',
               message: 'Amount to approve DxLockWhitelisted to handle. Current allowance is ' + allowance,
-              validate: (allow) => answ.amount < allow ? 'Insufficient allowance' : true
+              validate: (allow) => answ.allowance < allow ? 'Insufficient allowance' : true
             })
 
-            if (answ.allowance === 0) return;
+            if (answ1.allowance === 0) return;
 
-            console.log('answ.allowance: ', answ.allowance);
+            console.log('answ.allowance: ', answ1.allowance);
             // first approve allowance
-            if (answ.allowance) {
+            if (answ1.allowance) {
               console.log('Approving DxLockWhitelisted to handle Token transfers');
-              const allow = expToString(answ.allowance * (10 ** token.decimals))
+              const allow = expToString(answ1.allowance * (10 ** token.decimals))
+              console.log('DxLockWhitelisted.address: ', DxLockWhitelisted.address);
+              console.log('allow: ', allow);
+              const req = token.contract.methods.approve(DxLockWhitelisted.address, allow).send.request()
+              console.log('req: ', req);
+
               await batchExecute(accsSlice => {
-                return Promise.all(accsSlice.map(acc => token.approve(DxLockWhitelisted.address, allow, { from: acc })))
+                const batch = new wa3.BatchRequest();
+
+                accsSlice.forEach(acc => batch.add({
+                  ...req,
+                  params: req.params.map(param => ({ ...param, from: acc }))
+                }));
+
+                return batch.execute()
+                // await batchExecute(accsSlice => {
+                //   return Promise.all(accsSlice.map(acc => token.approve(DxLockWhitelisted.address, allow, { from: acc })))
               }, { batchSize, maxConcurrent, log: true }, accs)
               // await Promise.all(accs.map(acc => token.approve(DxLockWhitelisted.address, allow, { from: acc })))
             }
           }
 
           console.log(`${accs.length} accounts locking ${answ.amount} ${answ.symbol} in DxLockWhitelisted`);
+
+          const gas = await DxLockWhitelisted.lock.estimateGas(expToString(wei), answ.period, token.address, AGREEMENT_HASH, { from: accs[0] })
+          console.log('gas: ', gas);
 
           await batchExecute(accsSlice => {
             return Promise.all(accsSlice.map(acc => DxLockWhitelisted.lock(expToString(wei), answ.period, token.address, AGREEMENT_HASH, { from: acc })))
@@ -672,6 +750,7 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
         const auctionId = await getCurrentAuctionId(DxGenAuction);
         await loopTillSuccess(async () => {
           const allowance = gen && (await gen.allowance(accs[0], DxGenAuction.address)).toString() / 1e18
+          console.log('allowance: ', allowance);
 
           const answ = await inquirer.prompt([{
             name: 'amount',
@@ -719,8 +798,11 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
 
           console.log(`${accs.length} accounts bidding ${answ.amount} GEN in auction #${auctionId} in DxLockWhitelisted`);
 
+          // const gas =await DxGenAuction.bid(web3.utils.toWei(expToString(answ.amount), 'ether'), auctionId, AGREEMENT_HASH, { from: accs[0] })
+          // console.log('gas: ', gas);
+
           await batchExecute(accsSlice => {
-            return Promise.all(accsSlice.map(acc => DxGenAuction.bid(web3.utils.toWei(expToString(answ.amount), 'ether'), auctionId, AGREEMENT_HASH, { from: acc })))
+            return Promise.all(accsSlice.map(acc => DxGenAuction.bid(web3.utils.toWei(expToString(answ.amount), 'ether'), auctionId, AGREEMENT_HASH, { from: acc, gas: 76261 })))
           }, { batchSize, maxConcurrent, log: true }, accs)
 
           // await Promise.all(accs.map(acc => DxGenAuction.bid(web3.utils.toWei(expToString(answ.amount), 'ether'), auctionId, AGREEMENT_HASH, { from: acc })))
