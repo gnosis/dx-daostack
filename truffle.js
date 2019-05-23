@@ -66,7 +66,7 @@ function truffleConfig({
   gasPriceGWei = GAS_PRICE_GWEI,
   gas = GAS_LIMIT,
   optimizedEnabled = true,
-  urlRinkeby = 'https://rinkeby.infura.io/v3/9408f47dedf04716a03ef994182cf150',
+  urlRinkeby = 'https://rinkeby.infura.io/v3/215a80d5964d4c618e61e8d8a0e3f2d5',
   urlKovan = 'https://kovan.infura.io/v3/9408f47dedf04716a03ef994182cf150',
   urlMainnet = 'https://mainnet.infura.io/v3/9408f47dedf04716a03ef994182cf150',
   urlDevelopment = 'localhost',
