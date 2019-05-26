@@ -116,7 +116,8 @@ function truffleConfig({
         provider: _getProvider(urlRinkeby),
         network_id: '4',
         gas,
-        gasPrice
+        gasPrice,
+        skipDryRun: true
       },
       kovan: {
         provider: _getProvider(urlKovan),
