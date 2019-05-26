@@ -5,7 +5,7 @@ async function registerScheme({
   web3,
   label,
   schemeAddress,
-  paramsHash = web3.utils.asciiToHex('0'),
+  paramsHash = web3.utils.asciiToHex(0),
   permissions = SchemePermissions.REGISTERED,
   avatarAddress,
   controller
