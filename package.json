@@ -52,7 +52,7 @@
     "moment-timezone": "^0.5.25",
     "node-fetch": "^2.6.0",
     "solium": "^1.2.4",
-    "truffle": "^5.0.19",
+    "truffle": "^5.0.21",
     "truffle-flattener": "1.3.0",
     "yargs": "^13.2.4"
   },
@@ -67,8 +67,10 @@
     "debug": "^4.1.1",
     "prettier": "^1.17.1",
     "prettier-plugin-solidity-refactor": "^1.0.0-alpha.14",
+    "rxjs": "^6.5.2",
     "scrypt": "^6.0.3",
-    "truffle-contract": "^4.0.17",
-    "truffle-hdwallet-provider": "^1.0.9"
+    "truffle-contract": "^4.0.19",
+    "truffle-hdwallet-provider": "^1.0.10",
+    "web3": "^1.0.0-beta.55"
   }
 }

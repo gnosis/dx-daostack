@@ -42,7 +42,7 @@ const DxLockWhitelisted4Rep = artifacts.require('DxLockWhitelisted4Rep')
 const path = require('path')
 const fs = require('fs')
 
-const { getPastEvents } = require('./utils')(web3)
+const { getPastEvents, getPastEventsBinary, getPastEventsRx } = require('./utils')(web3)
 
 const argv = require('minimist')(process.argv.slice(2),
   { string: ['a', 'mgn', 'eth', 'tkn', 'auc'] })
@@ -606,7 +606,13 @@ async function getTokenSymbol(address) {
   }
 
   const symbolHex = await web3.eth.call(request)
-  return address2symbol[address] = web3.eth.abi.decodeParameter('string', symbolHex)
+  let symbol
+  try {
+    symbol = web3.eth.abi.decodeParameter('string', symbolHex)
+  } catch (error) {
+    symbol = web3.utils.toUtf8(symbolHex)
+  }
+  return address2symbol[address] = symbol
 }
 
 const address2decimals = {}
@@ -672,15 +678,24 @@ async function getTokenPricesAtBlocks(address, blockNumbers, oracleAddress) {
 }
 
 async function getLockedBid(accounts, contracts) {
+
+  // latest
+  const toBlock = await web3.eth.getBlockNumber()
+
   const LockOptions = {
     fromBlock: argv.fromBlock || 0,
-    toBlock: 'latest',
+    toBlock,
     filter: accounts && accounts.length && { _locker: accounts }
   }
   const BidOptions = {
     fromBlock: argv.fromBlock || 0,
-    toBlock: 'latest',
+    toBlock,
     filter: accounts && accounts.length && { _bidder: accounts }
+  }
+  const RegisterOptions = {
+    fromBlock: argv.fromBlock || 0,
+    toBlock,
+    filter: accounts && accounts.length && { _beneficiary: accounts }
   }
 
   const {
@@ -694,41 +709,55 @@ async function getLockedBid(accounts, contracts) {
 
   console.log('Fetching Lock events from DxLockMgnForRep');
   // const MgnLocks = await retryPromise(() => DxLockMgnForRep.getPastEvents('Lock', LockOptions))
-  const MgnLocks = await getPastEvents(DxLockMgnForRep, 'Lock', {...LockOptions, ...argv})
+  const MgnLocks = await getPastEventsRx(DxLockMgnForRep, 'Lock', { ...LockOptions, ...argv })
+
+  console.log('Fetching Register events from DxLockMgnForRep');
+  // const MgnLocks = await retryPromise(() => DxLockMgnForRep.getPastEvents('Lock', LockOptions))
+  const MgnRegisters = await getPastEventsRx(DxLockMgnForRep, 'Register', { ...RegisterOptions, ...argv })
 
   console.log('Fetching Lock events from DxLockEth4Rep');
   // const EthLocks = await retryPromise(() => DxLockEth4Rep.getPastEvents('Lock', LockOptions))
-  const EthLocks = await getPastEvents(DxLockEth4Rep, 'Lock', {...LockOptions, ...argv})
+  const EthLocks = await getPastEventsRx(DxLockEth4Rep, 'Lock', { ...LockOptions, ...argv })
 
   console.log('Fetching Lock events from DxLockWhitelisted4Rep');
   // const TknLocks = await retryPromise(() => DxLockWhitelisted4Rep.getPastEvents('Lock', LockOptions))
-  const TknLocks = await getPastEvents(DxLockWhitelisted4Rep, 'Lock', {...LockOptions, ...argv})
+  const TknLocks = await getPastEventsRx(DxLockWhitelisted4Rep, 'Lock', { ...LockOptions, ...argv })
 
   console.log('Fetching Bid events from DxGenAuction4Rep');
   // const GenBids = await retryPromise(() => DxGenAuction4Rep.getPastEvents('Bid', BidOptions))
-  const GenBids = await getPastEvents(DxGenAuction4Rep, 'Bid', {...BidOptions, ...argv})
+  const GenBids = await getPastEventsRx(DxGenAuction4Rep, 'Bid', { ...BidOptions, ...argv })
 
   let participatingAccounts = new Set()
+  let totalAccounts = new Set()
 
-  const gatherEventsPerAddress = (events) => {
+  const gatherEventsPerAddress = (events, dontCount = false) => {
     return events.reduce((accum, event) => {
       const { returnValues } = event
       returnValues.event = event.event
       returnValues.blockNumber = event.blockNumber
       returnValues.tx = event.transactionHash
 
-      const addr = (returnValues._locker || returnValues._bidder).toLowerCase()
-      participatingAccounts.add(addr)
+      const addr = (
+        returnValues._locker
+        || returnValues._bidder
+        || returnValues._beneficiary
+      ).toLowerCase()
+      totalAccounts.add(addr)
+      if(!dontCount) participatingAccounts.add(addr)
 
-      if (!accum[addr]) accum[addr] = []
+      if (!accum[addr]) {
+        accum[addr] = []
+        accum.total++
+      }
       accum[addr].push(returnValues)
 
       return accum
-    }, {})
+    }, { total: 0 })
   }
 
 
   const MgnEvents = gatherEventsPerAddress(MgnLocks),
+    MgnRegisterEvents = gatherEventsPerAddress(MgnRegisters, true),
     EthEvents = gatherEventsPerAddress(EthLocks),
     TknEvents = gatherEventsPerAddress(TknLocks),
     GenEvents = gatherEventsPerAddress(GenBids)
@@ -747,6 +776,15 @@ async function getLockedBid(accounts, contracts) {
   }, {})
 
   // console.log('eventsPerAddress: ', JSON.stringify(eventsPerAddress, null, 2));
+
+  console.group(`Total participating accounts: ${participatingAccounts.length}`);
+  console.log(`Including registered ${totalAccounts.size}`);
+  console.log(`Registered for MGN locking ${MgnRegisterEvents.total} accounts`);
+  console.log(`Locked MGN ${MgnEvents.total} accounts`);
+  console.log(`Locked ETH ${EthEvents.total} accounts`);
+  console.log(`Locked Tokens ${TknEvents.total} accounts`);
+  console.log(`Bid GEN ${GenEvents.total} accounts`);
+  console.groupEnd()
 
   console.groupEnd()
 

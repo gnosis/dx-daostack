@@ -266,10 +266,14 @@ const main = async () => {
     // Cache necessary addresses from events
     console.log('Removing addresses with zero score from LockEth4Rep')
     let dxLER_Lock_Lockers = await removeZeroScoreAddresses(dxLER_Lock_Events.map(event => event.returnValues._locker), dxLER, {batchSize})
+    console.log('dxLER_Lock_Events.map(event => event.returnValues._locker): ', dxLER_Lock_Events.map(event => event.returnValues._locker));
+    
     console.log('Removing addresses with zero score from LockMgn4Rep')
     let  dxLMR_Lock_Lockers = await removeZeroScoreAddresses(dxLMR_Lock_Events.map(event => event.returnValues._locker), dxLMR, {batchSize})
+    console.log('dxLMR_Lock_Events.map(event => event.returnValues._locker): ', dxLMR_Lock_Events.map(event => event.returnValues._locker));
     console.log('Removing addresses with zero score from LockWhitelisted4Rep')
     let  dxLWR_Lock_Lockers = await removeZeroScoreAddresses(dxLWR_Lock_Events.map(event => event.returnValues._locker), dxLWR, {batchSize})
+    console.log('dxLWR_Lock_Events.map(event => event.returnValues._locker): ', dxLWR_Lock_Events.map(event => event.returnValues._locker));
     console.log('Removing addresses with zero score from BidGenAuction')
     let  [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = await removeZeroBidsAddresses(dxGAR_Bid_Events.map(
         event => event.returnValues._bidder),
@@ -285,11 +289,11 @@ const main = async () => {
     dxLWR_Lock_Lockers = removeDuplicates(dxLWR_Lock_Lockers);
     [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = removePairedDuplicates(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs);
 
-    // console.log('dxLER_Lock_Lockers: ', dxLER_Lock_Lockers);
-    // console.log('dxLMR_Lock_Lockers: ', dxLMR_Lock_Lockers);
-    // console.log('dxLWR_Lock_Lockers: ', dxLWR_Lock_Lockers);
-    // console.log('dxGAR_Bid_Bidders: ', dxGAR_Bid_Bidders);
-    // console.log('dxGAR_Bid_AuctionIDs: ', dxGAR_Bid_AuctionIDs);
+    console.log('dxLER_Lock_Lockers: ', dxLER_Lock_Lockers);
+    console.log('dxLMR_Lock_Lockers: ', dxLMR_Lock_Lockers);
+    console.log('dxLWR_Lock_Lockers: ', dxLWR_Lock_Lockers);
+    console.log('dxGAR_Bid_Bidders: ', dxGAR_Bid_Bidders);
+    console.log('dxGAR_Bid_AuctionIDs: ', dxGAR_Bid_AuctionIDs);
 
     const timing = await checkTiming(dxLMR)
     if (timing.error) {

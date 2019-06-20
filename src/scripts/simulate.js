@@ -25,8 +25,17 @@ const getPriceOracleAddress = require('../helpers/getPriceOracleAddress.js')(web
 const getDXContractAddresses = require('../helpers/getDXContractAddresses.js')(web3, artifacts)
 const batchExecute = require('./utils/batch')
 
-const { getTimestamp, increaseTimeAndMine, takeSnapshot, revertSnapshot } = require('../helpers/web3helpers')(web3)
+const {
+  streamline,
+  makeBatchNumberTracker,
+  makeProcessSlice,
+  postprocessBatchRequest,
+  flattenArray,
+} = require('./utils/rx')
 
+const { getTimestamp, getBlockNumber, increaseTimeAndMine, takeSnapshot, revertSnapshot } = require('../helpers/web3helpers')(web3)
+const rxjs = require('rxjs')
+const rxjsOps = require('rxjs/operators')
 
 const DEFAULT_MNEMONIC = 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
 
@@ -115,15 +124,15 @@ function createProvider(url, accounts, from = 0) {
 }
 
 function createWeb3({ network, accounts, from }) {
-  const prov = createProvider(network2URL[network], accounts, from)
-  return new Web3(prov)
+  const provider = createProvider(network2URL[network], accounts, from)
+  return { web3: new Web3(provider), provider }
 }
 
-async function getContracts(web3) {
-  DxGenAuction4Rep.setProvider(web3.currentProvider)
-  DxLockEth4Rep.setProvider(web3.currentProvider)
-  DxLockMgnForRep.setProvider(web3.currentProvider)
-  DxLockWhitelisted4Rep.setProvider(web3.currentProvider)
+async function getContracts(provider) {
+  DxGenAuction4Rep.setProvider(provider)
+  DxLockEth4Rep.setProvider(provider)
+  DxLockMgnForRep.setProvider(provider)
+  DxLockWhitelisted4Rep.setProvider(provider)
 
   const [DxGenAuction, DxLockEth, DxLockMgn, DxLockWhitelisted] = await Promise.all([
     DxGenAuction4Rep.deployed(),
@@ -140,28 +149,157 @@ async function getContracts(web3) {
   }
 }
 
-async function getBalances(web3, accs, options) {
+async function getBalances(web3, accounts, options) {
   // TODO: batch and flat-map
-  const balArrs = await batchExecute(accsSlice => {
-    return Promise.all(accsSlice.map(acc => web3.eth.getBalance(acc)))
-  }, { ...options, log: options && options.batchSize < accs.length }, accs)
+  // const balArrs = await batchExecute(accsSlice => {
+  //   return Promise.all(accsSlice.map(acc => web3.eth.getBalance(acc)))
+  // }, { ...options, log: options && options.batchSize < accs.length }, accs)
 
-  const balances = [].concat(...balArrs)
+  // const balances = [].concat(...balArrs)
 
   // const balances = await Promise.all(accs.map(acc => web3.eth.getBalance(acc)))
   // console.log('balances: ', balances);
 
-  return accs.reduce((accum, acc, i) => {
-    const bal = balances[i]
-    if (bal > 0) accum[acc] = bal
-    return accum
-  }, {})
+  const trackBatch = makeBatchNumberTracker()
+
+  const getBalanceReq = acc => web3.eth.getBalance.request(acc, () => { })
+  const makeBatch = accsSlice => {
+    const { from, to } = trackBatch(accsSlice)
+    const batch = new web3.BatchRequest()
+    batch.name = `${from}--${to} from ${accounts.length}`
+    accsSlice.forEach(acc => batch.add(getBalanceReq(acc)))
+
+    console.log(`Batch ${batch.name} compiled`)
+    return batch
+  }
+
+  const processSlice = makeProcessSlice({
+    makeBatch,
+    timeout: 10000,
+    retry: 15,
+  })
+
+  const postprocess = rxjs.pipe(
+    postprocessBatchRequest,
+    rxjsOps.map(balances => balances.reduce((accum, balance, i) => {
+      const { withBalance, withoutBalance } = accum
+      if (balance > 0) withBalance[accounts[i]] = balance
+      else withoutBalance.push(accounts[i])
+      return accum
+    }, { withBalance: {}, withoutBalance: [] }))
+  )
+
+  const acc2bal = await streamline(accounts, {
+    ...options,
+    processSlice,
+    postprocess,
+  })
+
+  // const { from, defer, of, forkJoin } = rxjs
+
+  // const { map, bufferCount, tap, concatMap, scan, reduce, pluck, retry, timeout, concatAll } = rxjsOps
+
+  // const tapIndex = cb => source => defer(() => {
+  //   let index = 0
+  //   let from = 0
+  //   let to = 0
+
+
+  //   return source.pipe(tap(arr => {
+  //     from = to + 1
+  //     to = from + arr.length - 1
+  //     cb({ from, to, ind: index++, value: arr })
+  //   }))
+  // })
+  // const tapIndexTotal = (cb) => {
+  //   let index = 0
+  //   let from = 0
+  //   let to = 0
+  //   let total = 0
+
+
+  //   return tap(arr => {
+  //     from = to + 1
+  //     to = from + arr.length - 1
+  //     total += arr.length
+  //     cb({ from, to, ind: index++, value: arr, total })
+  //   })
+
+  // }
+
+  // const trackBatches = tapIndexTotal(
+  //   ({ from, to }) => console.log(`batch ${from}--${to} from ${accs.length}`),
+  //   accs.length
+  // )
+
+  // const indexBatch = () => scan((accum, accs, ind) => {
+  //   const from = accum.to + 1
+  //   const to = from + accs.length - 1
+  //   return { from, to, accs, ind }
+  // }, { from: 0, to: 0, accs: [] })
+
+  // const processSlice = slice => {
+  //   console.log('Start OW');
+  //   return of(slice).pipe(
+  //     trackBatches,
+  //     map(makeBatch),
+  //     concatMap(batch => {
+  //       console.log('Start bo');
+  //       // const prom = batch.execute()
+  //       // console.log('prom: ', prom, Object.getOwnPropertyNames(prom), Object.getOwnPropertyNames(Object.getPrototypeOf(prom)));
+  //       return defer(() => batch.execute()).pipe(
+  //         // stop waiting and retry if past * ms
+  //         timeout(10000),
+  //         tap(
+  //           () => console.log('Batch resolved'),
+  //           e => console.log('Batch errored', e.message)
+  //         ),
+  //         retry(15)
+  //       )
+  //     }),
+
+  //   )
+  // }
+
+  console.log('options.maxConcurrent: ', options.maxConcurrent);
+  // const acc2bal = await rxjs.from(accs).pipe(
+  //   bufferCount(options.batchSize),
+  //   bufferCount(options.maxConcurrent),
+  //   // starts #maxConcurrent at a time
+  //   concatMap(arrOfSlices => forkJoin(arrOfSlices.map(processSlice))),
+  //   concatAll(),
+  //   // tap(console.log),
+  //   // concatMap(processSlice),
+  //   pluck('response'),
+  //   // tap(v => console.log('Balances', v)),
+  //   reduce((accum, curr) => accum.concat(curr), []),
+  //   tap(balances => console.log('total accs processed', balances.length)),
+  //   map(bals => bals.reduce((accum, bal, i) => {
+  //     const { withBalance, withoutBalance } = accum
+  //     if (bal > 0) withBalance[accs[i]] = bal
+  //     else withoutBalance.push(accs[i])
+  //     return accum
+  //   }, { withBalance: {}, withoutBalance: [] }))
+  // ).toPromise()
+
+  console.log('withBalance: ', Object.keys(acc2bal.withBalance).length);
+  console.log('withoutBalance: ', acc2bal.withoutBalance.length);
+
+  return acc2bal
+
+  // return accs.reduce((accum, acc, i) => {
+  //   const bal = balances[i]
+  //   if (bal > 0) accum[acc] = bal
+  //   return accum
+  // }, {})
 }
 
 async function run(options) {
   // console.log('options: ', options);
 
-  const wa3 = createWeb3(options)
+  const { web3: wa3, provider } = createWeb3(options)
+  console.log('web3 version: ', web3.version);
+  console.log('wa3 version: ', wa3.version);
   const { network, /*fromBlock,*/ useHelper, batchSize, maxConcurrent } = options
 
   const isDev = network === 'development'
@@ -183,7 +321,7 @@ async function run(options) {
   mgn.symbol = 'MGN'
   mgn.decimals = '18'
 
-  const contracts = await getContracts(wa3)
+  const contracts = await getContracts(provider)
 
   const [master] = await web3.eth.getAccounts()
   const masterBal = await web3.eth.getBalance(master)
@@ -201,7 +339,7 @@ async function run(options) {
   )
 
 
-  const accs = wa3.currentProvider.addresses
+  const accs = await wa3.eth.getAccounts()
   const accsN = accs.length
   // const acc2bal = await getBalances(web3, accs, { batchSize, maxConcurrent })
   // const withBalance = Object.keys(acc2bal)
@@ -286,9 +424,13 @@ async function run(options) {
     },
     new inquirer.Separator(),
     'Lock ETH for REP',
+    'Print accounts that locked ETH',
     'Lock MGN for REP',
+    'Print accounts that locked MGN',
     'Lock Token for REP',
+    'Print accounts that locked Tokens',
     'Bid GEN',
+    'Print accounts that bid GEN',
     new inquirer.Separator(),
     'Refresh time',
     new inquirer.Separator(),
@@ -336,7 +478,20 @@ async function run(options) {
 let AGREEMENT_HASH
 
 const snapshots = {}
-async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tvalue, gen, batchSize, maxConcurrent }) {
+async function act(action, options) {
+  const {
+    web3,
+    wa3,
+    accs,
+    master,
+    contracts,
+    tokens,
+    mgn,
+    tvalue,
+    gen,
+    batchSize,
+    maxConcurrent
+  } = options
   if (action === 'Refresh time') return true
 
   const {
@@ -367,7 +522,7 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
       }
     case 'Print master Token balances':
       {
-        const acc2bals = await getTokenBalances(tokens, [master], { batchSize, maxConcurrent })
+        const { withBalance: acc2bals } = await getTokenBalances(tokens, [master], { web3: wa3, batchSize, maxConcurrent })
         if (!acc2bals[master] || Object.keys(acc2bals[master]).length === 0) {
           console.log('Master has no Tokens');
           break;
@@ -376,32 +531,84 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
         break;
       }
     case 'Print account balances':
-      await printAccBalances(web3, accs, { batchSize, maxConcurrent })
-      break;
+      {
+        const withoutBalance = await printAccBalances(wa3, accs, { batchSize, maxConcurrent })
+        if (withoutBalance.length) {
+          const answ = await inquirer.prompt({
+            name: 'fund',
+            message: `${withoutBalance.length} accounts don't have balance. Would you like to fund them?`,
+            type: 'confirm'
+          })
+
+          if (answ.fund) await act('Fund accounts', { ...options, accs: withoutBalance });
+        }
+        break;
+
+      }
     case 'Print account Token balances':
       {
-        const acc2bals = await getTokenBalances(tokens, accs, { batchSize, maxConcurrent })
+        const symbols = tokens.map(t => t.symbol)
+        const allSymbols = symbols.join(',')
+        const answ = await inquirer.prompt({
+          name: 'symbol',
+          type: 'list',
+          message: 'Choose token to transfer',
+          choices: [allSymbols, ...symbols]
+        })
+
+        let tokensToCheck = tokens
+
+        if (answ.symbol !== allSymbols) {
+          tokensToCheck = [tokens.find(t => t.symbol === answ.symbol)]
+        }
+
+        const { withBalance: acc2bals, withoutBalance } = await getTokenBalances(tokensToCheck, accs, { web3: wa3, batchSize, maxConcurrent })
         if (Object.keys(acc2bals).length === 0) {
           console.log('No account has Tokens');
           break;
         }
-        printNestedKV(acc2bals, 'Accounts token balances')
+        // printNestedKV(acc2bals, 'Accounts token balances')
+        if (withoutBalance.length) {
+          const answ = await inquirer.prompt({
+            name: 'fund',
+            message: `${withoutBalance.length} accounts don't have Tokens. Would you like to give them some?`,
+            type: 'confirm'
+          })
+
+          if (answ.fund) await act('Give a Token', { ...options, accs: withoutBalance });
+        }
         break;
 
       }
     case 'Print locked MGN':
       {
-        const acc2bals = await getTokenBalances([mgn], accs, { fname: 'lockedTokenBalances', batchSize, maxConcurrent })
+        const { withBalance: acc2bals, withoutBalance } = await getTokenBalances([mgn], accs, { web3: wa3, fname: 'lockedTokenBalances', batchSize, maxConcurrent })
+
+
+
         if (Object.keys(acc2bals).length === 0) {
-          console.log('No account has MGN');
+          console.log('No account has locked MGN Tokens');
           break;
         }
-        printNestedKV(acc2bals, `${Object.keys(acc2bals).length} accounts with MGN balances`)
+        printNestedKV(acc2bals, `${Object.keys(acc2bals).length} accounts with locked MGN balances`)
+        console.log(`${Object.keys(acc2bals).length} accounts with locked MGN balances`)
+
+        if (withoutBalance.length) {
+          const answ = await inquirer.prompt({
+            name: 'lock',
+            message: `${withoutBalance.length} accounts don't have locked MGN. Would you like to lock some?`,
+            type: 'confirm'
+          })
+
+          if (answ.lock) await act('Lock real MGN', { ...options, accs: withoutBalance });
+        }
       }
       break;
+
     case 'Print account addresses':
       console.log('  ' + accs.join('\n  '));
       break;
+
     case 'Fund accounts':
       {
 
@@ -418,14 +625,135 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
           console.log(`Sending ${perAcc} ETH to each account`);
 
           if (tvalue) {
-            await batchExecute(accsSlice => {
+            // const makeRequestFactory = total => accsSlice => {
+            //   const value = web3.utils.toWei(expToString(answ.amount / total * accsSlice.length), 'ether')
+            //   // console.log('value: ', value);
+            //   return tvalue.contract.transferETH(accsSlice).send.request({
+            //     from: master,
+            //     value
+            //   }, () => { })
+            //   // web3.eth.getBalance.request(acc, () => { })
+            // }
+
+            // const makeRequest = makeRequestFactory(accs.length)
+
+            const trackBatch = makeBatchNumberTracker()
+
+            const makeBatch = accsSlice => {
               const value = web3.utils.toWei(expToString(answ.amount / accs.length * accsSlice.length), 'ether')
               // console.log('value: ', value);
-              return tvalue.transferETH(accsSlice, {
+              const { from, to } = trackBatch(accsSlice)
+              const name = `${from}--${to} from ${accs.length}`
+
+              const execute = () => tvalue.transferETH(accsSlice, {
                 from: master,
                 value
               })
-            }, { batchSize, maxConcurrent, log: true }, accs)
+
+              return { execute, name }
+
+              // const batch = new web3.BatchRequest()
+              // accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+              // return batch
+            }
+
+            // const { from, defer, of, forkJoin } = rxjs
+
+            // const { map, bufferCount, toArray, tap, concatMap, scan, catchError, reduce, pluck, retry, timeout, concatAll } = rxjsOps
+
+            // const tapIndex = cb => source => defer(() => {
+            //   let index = 0
+            //   let from = 0
+            //   let to = 0
+
+
+            //   return source.pipe(tap(arr => {
+            //     from = to + 1
+            //     to = from + arr.length - 1
+            //     cb({ from, to, ind: index++, value: arr })
+            //   }))
+            // })
+            // const tapIndexTotal = (cb) => {
+            //   let index = 0
+            //   let from = 0
+            //   let to = 0
+            //   let total = 0
+
+
+            //   return tap(arr => {
+            //     from = to + 1
+            //     to = from + arr.length - 1
+            //     total += arr.length
+            //     cb({ from, to, ind: index++, value: arr, total })
+            //   })
+
+            // }
+
+            // const trackBatches = tapIndexTotal(
+            //   ({ from, to }) => console.log(`batch ${from}--${to} from ${accs.length}`),
+            //   accs.length
+            // )
+
+            // const indexBatch = () => scan((accum, accs, ind) => {
+            //   const from = accum.to + 1
+            //   const to = from + accs.length - 1
+            //   return { from, to, accs, ind }
+            // }, { from: 0, to: 0, accs: [] })
+
+            // const processSlice = slice => {
+            //   console.log('Start OW');
+            //   return of(slice).pipe(
+            //     trackBatches,
+            //     map(makeBatch),
+            //     concatMap(batch => {
+            //       console.log('Start ba');
+            //       // const prom = batch.execute()
+            //       // console.log('prom: ', prom, Object.getOwnPropertyNames(prom), Object.getOwnPropertyNames(Object.getPrototypeOf(prom)));
+            //       return defer(() => batch.execute()).pipe(
+            //         // stop waiting and retry if past * ms
+            //         // timeout(10000),
+            //         tap(
+            //           () => console.log('Batch resolved'),
+            //           e => console.log('Batch errored', e.message)
+            //         ),
+            //         catchError(e => of(e.message))
+            //         // retry(15)
+            //       )
+            //     }),
+
+            //   )
+
+            // }
+
+            const processSlice = makeProcessSlice({
+              makeBatch
+            })
+
+            const postprocess = rxjsOps.toArray()
+
+            const results = await streamline(accs, {
+              batchSize,
+              maxConcurrent,
+              processSlice,
+              postprocess
+            })
+
+            // const results = await from(accs).pipe(
+            //   bufferCount(batchSize),
+            //   concatMap(processSlice),
+            //   pluck('response'),
+            //   toArray(),
+            // ).toPromise()
+            console.log('results: ', results);
+
+            // await batchExecute(accsSlice => {
+            //   const value = web3.utils.toWei(expToString(answ.amount / accs.length * accsSlice.length), 'ether')
+            //   // console.log('value: ', value);
+            //   return tvalue.transferETH(accsSlice, {
+            //     from: master,
+            //     value
+            //   })
+            // }, { batchSize, maxConcurrent, log: true }, accs)
             // await tvalue.transferETH(accs, {
             //   from: master,
             //   value: web3.utils.toWei(expToString(answ.amount), 'ether')
@@ -485,37 +813,74 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
           if (answ.amount === 0) return;
 
           console.log(`Locking ${answ.amount} MGN for each account`);
-          const req = mgn.contract.methods.lockTokens(web3.utils.toWei(expToString(answ.amount), 'ether')).send.request()
-          console.log('req: ', req);
 
-          let withMGN = 0, withoutMGN = 0
-          await batchExecute(async accsSlice => {
-            const batch = new wa3.BatchRequest();
+          const trackBatch = makeBatchNumberTracker()
 
-            const accs2MGN = await Promise.all(accsSlice.map(acc => mgn.lockedTokenBalances(acc)))
+          const lockData = mgn.contract.methods.lockTokens(web3.utils.toWei(expToString(answ.amount), 'ether')).encodeABI()
+
+          const makeRequest = acc => wa3.eth.sendTransaction.request({
+            from: acc,
+            data: lockData,
+            to: mgn.address
+          }, (err, txhash) => console.log(`Acc ${acc}, tx ${txhash}, err ${err}`))
+
+          const makeBatch = accsSlice => {
+            const { from, to } = trackBatch(accsSlice)
+            const name = `${from}--${to} from ${accs.length}`
+
+            const batch = new wa3.BatchRequest()
+
+            accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+            batch.name = name
+
+            return batch
+          }
+
+          const processSlice = makeProcessSlice({
+            makeBatch,
+          })
+
+          // const postprocess = rxjsOps.toArray()
+
+          const results = await streamline(accs, {
+            batchSize,
+            maxConcurrent,
+            processSlice,
+            postprocess: postprocessBatchRequest,
+          })
+          console.log('results: ', results);
+
+          // const req = mgn.contract.methods.lockTokens(web3.utils.toWei(expToString(answ.amount), 'ether')).send.request()
+          // console.log('req: ', req);
+
+          // let withMGN = 0, withoutMGN = 0
+          // await batchExecute(async accsSlice => {
+          //   const batch = new wa3.BatchRequest();
+
+          //   const accs2MGN = await Promise.all(accsSlice.map(acc => mgn.lockedTokenBalances(acc)))
 
 
-            accsSlice.forEach((acc, i) => {
-              if (accs2MGN[i].toString() !== '0') {
-                console.log(`Account ${acc} already has locked MGN: ${accs2MGN[i].toString() / 1e18}`);
-                ++withMGN
-                return
-              }
+          //   accsSlice.forEach((acc, i) => {
+          //     if (accs2MGN[i].toString() !== '0') {
+          //       console.log(`Account ${acc} already has locked MGN: ${accs2MGN[i].toString() / 1e18}`);
+          //       ++withMGN
+          //       return
+          //     }
 
-              ++withoutMGN
-              console.log(`Account ${acc} hasn't locked MGN`);
+          //     ++withoutMGN
+          //     console.log(`Account ${acc} hasn't locked MGN`);
 
-              batch.add({
-                ...req,
-                params: req.params.map(param => ({ ...param, from: acc }))
-              })
-            });
+          //     batch.add({
+          //       ...req,
+          //       params: req.params.map(param => ({ ...param, from: acc }))
+          //     })
+          //   });
 
-            return batch.execute()
-          }, { batchSize, maxConcurrent, log: true }, accs)
+          //   return batch.execute()
+          // }, { batchSize, maxConcurrent, log: true }, accs)
 
 
-          console.log(`There was ${withMGN} accounts with MGN already locked, and ${withoutMGN} accounts without.`)
+          // console.log(`There was ${withMGN} accounts with MGN already locked, and ${withoutMGN} accounts without.`)
 
           // const batch = new wa3.BatchRequest();
 
@@ -535,26 +900,64 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
         console.log(`Registering ${accs.length} on DxLockMgnForRep`);
         const gas = await DxLockMgn.register.estimateGas(AGREEMENT_HASH, { from: accs[0] })
         console.log('gas: ', gas);
-        let notRegistered = 0, Registered = 0
+        // let notRegistered = 0, Registered = 0
         try {
-          await batchExecute(async accsSlice => {
-            const accs2Reg = await Promise.all(accsSlice.map(acc => DxLockMgn.registrar(acc)))
 
-            const accsToRegister = []
-            accsSlice.forEach((acc, i) => {
-              if (accs2Reg[i]) {
-                console.log(`Account ${acc} already Registered`);
-                ++Registered
-                return
-              }
+          const trackBatch = makeBatchNumberTracker()
 
-              accsToRegister.push(acc)
+          const registerData = DxLockMgn.contract.methods.register(AGREEMENT_HASH).encodeABI()
 
-              ++notRegistered
-            });
+          const makeRequest = acc => wa3.eth.sendTransaction.request({
+            from: acc,
+            data: registerData,
+            to: DxLockMgn.address,
+            gas: gas * 1.5
+          }, (err, txhash) => console.log(`Acc ${acc}, tx ${txhash}, err ${err}`))
 
-            return Promise.all(accsToRegister.map(acc => DxLockMgn.register(AGREEMENT_HASH, { from: acc, gas: gas*1.5 })))
-          }, { batchSize, maxConcurrent, log: true }, accs)
+          const makeBatch = accsSlice => {
+            const { from, to } = trackBatch(accsSlice)
+            const name = `${from}--${to} from ${accs.length}`
+
+            const batch = new wa3.BatchRequest()
+
+            accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+            batch.name = name
+
+            return batch
+          }
+
+          const processSlice = makeProcessSlice({
+            makeBatch,
+          })
+
+          // const postprocess = rxjsOps.toArray()
+
+          const results = await streamline(accs, {
+            batchSize,
+            maxConcurrent,
+            processSlice,
+            postprocess: postprocessBatchRequest,
+          })
+          console.log('results: ', results);
+
+          // await batchExecute(async accsSlice => {
+          //   const accs2Reg = await Promise.all(accsSlice.map(acc => DxLockMgn.registrar(acc)))
+
+          //   const accsToRegister = []
+          //   accsSlice.forEach((acc, i) => {
+          //     if (accs2Reg[i]) {
+          //       console.log(`Account ${acc} already Registered`);
+          //       ++Registered
+          //       return
+          //     }
+
+          //     accsToRegister.push(acc)
+
+          //     ++notRegistered
+          //   });
+
+          //   return Promise.all(accsToRegister.map(acc => DxLockMgn.register(AGREEMENT_HASH, { from: acc, gas: gas * 1.5 })))
+          // }, { batchSize, maxConcurrent, log: true }, accs)
           // await batchExecute(accsSlice => {
           //   return Promise.all(accsSlice.map(acc => DxLockMgn.register(AGREEMENT_HASH, { from: acc, gas })))
           // }, { batchSize, maxConcurrent, log: true }, accs)
@@ -562,26 +965,86 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
         } catch (error) {
           console.error(error.message);
         }
-        console.log(`${Registered} accounts have been registered beforehand; ${notRegistered} not registered`);
+        // console.log(`${Registered} accounts have been registered beforehand; ${notRegistered} not registered`);
       }
       break;
     case 'Print accounts registered for future MGN claiming':
       {
-        const regArrs = await batchExecute(accsSlice => {
-          return Promise.all(accsSlice.map(acc => DxLockMgn.registrar(acc)))
-        }, { batchSize, maxConcurrent, log: true }, accs)
-        console.log('regArrs: ', regArrs);
-        const registered = [].concat(...regArrs)
-        // const registered = await Promise.all(accs.map(acc => DxLockMgn.registrar(acc)))
-        console.log(`${registered.filter(Boolean).length} accounts registered`);
+        const trackBatch = makeBatchNumberTracker()
+
+        const makeRequest = acc => wa3.eth.call.request({
+          from: acc,
+          data: DxLockMgn.contract.methods.registrar(acc).encodeABI(),
+          to: DxLockMgn.address
+        }, () => { })
+
+        const makeBatch = accsSlice => {
+          const { from, to } = trackBatch(accsSlice)
+          const name = `${from}--${to} from ${accs.length}`
+
+          const batch = new wa3.BatchRequest()
+
+          accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+          batch.name = name
+
+          return batch
+        }
+
+        const processSlice = makeProcessSlice({
+          makeBatch,
+          timeout: 10000,
+          retry: 15,
+        })
+
+        const postprocess = rxjs.pipe(
+          postprocessBatchRequest,
+          rxjsOps.map(registeredBools => registeredBools.reduce((accum, registeredHex, i) => {
+            console.log('accs[i]: ', accs[i]);
+            console.log('registeredHex: ', registeredHex);
+            const registeredBool = wa3.eth.abi.decodeParameter('bool', registeredHex)
+            console.log('registeredBool: ', registeredBool);
+            const { registered, notRegistered } = accum
+            if (registeredBool) registered.push(accs[i])
+            else notRegistered.push(accs[i])
+            return accum
+          }, { registered: [], notRegistered: [] }))
+        )
+
+        const { registered, notRegistered } = await streamline(accs, {
+          batchSize,
+          maxConcurrent,
+          processSlice,
+          postprocess,
+        })
+        // console.log('results: ', results);
+
+        // const regArrs = await batchExecute(accsSlice => {
+        //   return Promise.all(accsSlice.map(acc => DxLockMgn.registrar(acc)))
+        // }, { batchSize, maxConcurrent, log: true }, accs)
+        // console.log('regArrs: ', regArrs);
+        // const registered = [].concat(...regArrs)
+        // // const registered = await Promise.all(accs.map(acc => DxLockMgn.registrar(acc)))
+        console.log(`${registered.length} accounts registered`);
         accs.forEach((acc, i) => {
           if (registered[i]) console.log(acc);
         })
+        console.log(`${registered.length} accounts registered`);
+        console.log(`${notRegistered.length} accounts not registered`);
+
+        if (notRegistered.length) {
+          const answ = await inquirer.prompt({
+            name: 'register',
+            message: `${notRegistered.length} accounts haven't registered for MGN claiming. Would you like to register them?`,
+            type: 'confirm'
+          })
+
+          if (answ.register) await act('Register for future MGN claiming', { ...options, accs: notRegistered });
+        }
       }
       break;
     case 'Give a Token':
       {
-        const symbol2bal = (await getTokenBalances(tokens, [master], { batchSize, maxConcurrent }))[master]
+        const symbol2bal = (await getTokenBalances(tokens, [master], { web3: wa3, batchSize, maxConcurrent })).withBalance[master]
 
         await loopTillSuccess(async () => {
           const answ = await inquirer.prompt([{
@@ -605,13 +1068,43 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
           if (tvalue) {
             const wei = answ.amount * (10 ** token.decimals)
 
+            console.log('expToString(wei): ', expToString(wei));
             await token.approve(tvalue.address, expToString(wei), { from: master })
+            console.log('Approved');
 
-            await batchExecute(accsSlice => {
-              return tvalue.transferToken(token.address, accsSlice, expToString(wei / accs.length * accsSlice.length), {
+            const trackBatch = makeBatchNumberTracker()
+
+            const makeBatch = accsSlice => {
+              const { from, to } = trackBatch(accsSlice)
+              const name = `${from}--${to} from ${accs.length}`
+
+              const execute = () => tvalue.transferToken(token.address, accsSlice, expToString(wei / accs.length * accsSlice.length), {
                 from: master,
               })
-            }, { batchSize, maxConcurrent, log: true }, accs)
+
+              return { execute, name }
+            }
+
+            const processSlice = makeProcessSlice({
+              makeBatch,
+            })
+
+            const postprocess = rxjsOps.toArray()
+
+            const results = await streamline(accs, {
+              batchSize,
+              maxConcurrent,
+              processSlice,
+              postprocess,
+            })
+
+            console.log('results: ', results);
+
+            // await batchExecute(accsSlice => {
+            //   return tvalue.transferToken(token.address, accsSlice, expToString(wei / accs.length * accsSlice.length), {
+            //     from: master,
+            //   })
+            // }, { batchSize, maxConcurrent, log: true }, accs)
             return;
           }
 
@@ -647,12 +1140,115 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
 
           const gas = await DxLockEth.lock.estimateGas(answ.period, AGREEMENT_HASH, { from: accs[0], value })
 
-          await batchExecute(accsSlice => {
-            return Promise.all(accsSlice.map(acc => DxLockEth.lock(answ.period, AGREEMENT_HASH, { from: acc, value, gas })))
-          }, { batchSize, maxConcurrent, log: true }, accs)
+          const trackBatch = makeBatchNumberTracker()
+
+          const lockData = DxLockEth.contract.methods.lock(answ.period, AGREEMENT_HASH).encodeABI()
+
+          const makeRequest = acc => wa3.eth.sendTransaction.request({
+            from: acc,
+            data: lockData,
+            to: DxLockEth.address,
+            gas: gas * 1.5,
+            value,
+          }, (err, txhash) => console.log(`Acc ${acc}, tx ${txhash}, err ${err}`))
+
+          const makeBatch = accsSlice => {
+            const { from, to } = trackBatch(accsSlice)
+            const name = `${from}--${to} from ${accs.length}`
+
+            const batch = new wa3.BatchRequest()
+
+            accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+            batch.name = name
+
+            return batch
+          }
+
+          const processSlice = makeProcessSlice({
+            makeBatch,
+          })
+
+          // const postprocess = rxjsOps.toArray()
+
+          const results = await streamline(accs, {
+            batchSize,
+            maxConcurrent,
+            processSlice,
+            postprocess: postprocessBatchRequest,
+          })
+          console.log('results: ', results);
+
+          // await batchExecute(accsSlice => {
+          //   return Promise.all(accsSlice.map(acc => DxLockEth.lock(answ.period, AGREEMENT_HASH, { from: acc, value, gas })))
+          // }, { batchSize, maxConcurrent, log: true }, accs)
 
           // await Promise.all(accs.map(acc => DxLockEth.lock(answ.period, AGREEMENT_HASH, { from: acc, value })))
         })
+      }
+      break;
+    case 'Print accounts that locked ETH':
+      {
+        const trackBatch = makeBatchNumberTracker()
+
+        const makeRequest = acc => wa3.eth.call.request({
+          from: acc,
+          data: DxLockEth.contract.methods.scores(acc).encodeABI(),
+          to: DxLockEth.address
+        }, () => { })
+
+        const makeBatch = accsSlice => {
+          const { from, to } = trackBatch(accsSlice)
+          const name = `${from}--${to} from ${accs.length}`
+
+          const batch = new wa3.BatchRequest()
+
+          accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+          batch.name = name
+
+          return batch
+        }
+
+        const processSlice = makeProcessSlice({
+          makeBatch,
+          timeout: 10000,
+          retry: 15,
+        })
+
+        const postprocess = rxjs.pipe(
+          postprocessBatchRequest,
+          rxjsOps.map(scores => scores.reduce((accum, scoreHex, i) => {
+            // console.log('accs[i]: ', accs[i]);
+            // console.log('scoreHex: ', scoreHex);
+            const score = wa3.eth.abi.decodeParameter('uint', scoreHex)
+            // console.log('score: ', score);
+            const { withScore, withoutScore } = accum
+            if (!score.isZero()) withScore[accs[i]] = score.toString()
+            else withoutScore.push(accs[i])
+            return accum
+          }, { withScore: {}, withoutScore: [] }))
+        )
+
+        const { withScore, withoutScore } = await streamline(accs, {
+          batchSize,
+          maxConcurrent,
+          processSlice,
+          postprocess,
+        })
+
+        printKV(withScore, 'Accounts with Lock ETH score')
+
+        console.log(`${Object.keys(withScore).length} accounts with score`);
+        console.log(`${withoutScore.length} accounts without score`);
+
+        if (withoutScore.length) {
+          const answ = await inquirer.prompt({
+            name: 'lock',
+            message: `${withoutScore.length} accounts without score. Would you like them to lock ETH?`,
+            type: 'confirm'
+          })
+
+          if (answ.lock) await act('Lock ETH for REP', { ...options, accs: withoutScore });
+        }
       }
       break;
     case 'Lock MGN for REP':
@@ -660,12 +1256,116 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
         await loopTillSuccess(async () => {
 
           console.log(`${accs.length} accounts claiming locked MGN in DxLockMgn`);
-          await batchExecute(accsSlice => {
-            return Promise.all(accsSlice.map(acc => DxLockMgn.claim(ZERO_ADDRESS, AGREEMENT_HASH, { from: acc })))
-          }, { batchSize, maxConcurrent, log: true }, accs)
+
+          const trackBatch = makeBatchNumberTracker()
+
+          const lockData = DxLockMgn.contract.methods.claim(ZERO_ADDRESS, AGREEMENT_HASH).encodeABI()
+
+          const makeRequest = acc => wa3.eth.sendTransaction.request({
+            from: acc,
+            data: lockData,
+            to: DxLockMgn.address,
+          }, (err, txhash) => console.log(`Acc ${acc}, tx ${txhash}, err ${err}`))
+
+          const makeBatch = accsSlice => {
+            const { from, to } = trackBatch(accsSlice)
+            const name = `${from}--${to} from ${accs.length}`
+
+            const batch = new wa3.BatchRequest()
+
+            accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+            batch.name = name
+
+            return batch
+          }
+
+          const processSlice = makeProcessSlice({
+            makeBatch,
+          })
+
+          // const postprocess = rxjsOps.toArray()
+
+          const results = await streamline(accs, {
+            batchSize,
+            maxConcurrent,
+            processSlice,
+            postprocess: postprocessBatchRequest,
+          })
+          console.log('results: ', results);
+
+          // await batchExecute(accsSlice => {
+          //   return Promise.all(accsSlice.map(acc => DxLockMgn.claim(ZERO_ADDRESS, AGREEMENT_HASH, { from: acc })))
+          // }, { batchSize, maxConcurrent, log: true }, accs)
           // await Promise.all(accs.map(acc => DxLockMgn.claim(ZERO_ADDRESS, AGREEMENT_HASH, { from: acc })))
 
         })
+      }
+      break;
+    case 'Print accounts that locked MGN':
+      {
+        const trackBatch = makeBatchNumberTracker()
+
+        const makeRequest = acc => wa3.eth.call.request({
+          from: acc,
+          data: DxLockMgn.contract.methods.scores(acc).encodeABI(),
+          to: DxLockMgn.address
+        }, () => { })
+
+        const makeBatch = accsSlice => {
+          const { from, to } = trackBatch(accsSlice)
+          const name = `${from}--${to} from ${accs.length}`
+
+          const batch = new wa3.BatchRequest()
+
+          accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+          batch.name = name
+
+          return batch
+        }
+
+        const processSlice = makeProcessSlice({
+          makeBatch,
+          timeout: 10000,
+          retry: 15,
+        })
+
+        const postprocess = rxjs.pipe(
+          postprocessBatchRequest,
+          rxjsOps.map(scores => scores.reduce((accum, scoreHex, i) => {
+            // console.log('accs[i]: ', accs[i]);
+            // console.log('scoreHex: ', scoreHex);
+            const score = wa3.eth.abi.decodeParameter('uint', scoreHex)
+            // console.log('score: ', score);
+            const { withScore, withoutScore } = accum
+            if (!score.isZero()) withScore[accs[i]] = score.toString()
+            else withoutScore.push(accs[i])
+            return accum
+          }, { withScore: {}, withoutScore: [] }))
+        )
+
+        const { withScore, withoutScore } = await streamline(accs, {
+          batchSize,
+          maxConcurrent,
+          processSlice,
+          postprocess,
+        })
+
+
+        // console.log('withScore: ', withScore);
+        printKV(withScore, 'Accounts with Lock MGN score')
+
+        console.log(`${Object.keys(withScore).length} accounts with score`);
+        console.log(`${withoutScore.length} accounts without score`);
+
+        if (withoutScore.length) {
+          const answ = await inquirer.prompt({
+            name: 'lock',
+            message: `${withoutScore.length} accounts without score. Would you like them to lock MGN?`,
+            type: 'confirm'
+          })
+
+          if (answ.lock) await act('Lock MGN for REP', { ...options, accs: withoutScore });
+        }
       }
       break;
     case 'Lock Token for REP':
@@ -713,36 +1413,175 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
               const allow = expToString(answ1.allowance * (10 ** token.decimals))
               console.log('DxLockWhitelisted.address: ', DxLockWhitelisted.address);
               console.log('allow: ', allow);
-              const req = token.contract.methods.approve(DxLockWhitelisted.address, allow).send.request()
-              console.log('req: ', req);
+              const approveData = token.contract.methods.approve(DxLockWhitelisted.address, allow).encodeABI()
+              // console.log('req: ', req);
 
-              await batchExecute(accsSlice => {
-                const batch = new wa3.BatchRequest();
+              const trackBatch = makeBatchNumberTracker()
 
-                accsSlice.forEach(acc => batch.add({
-                  ...req,
-                  params: req.params.map(param => ({ ...param, from: acc }))
-                }));
+              // const lockData = DxLockEth.contract.methods.lock(answ.period, AGREEMENT_HASH).encodeABI()
 
-                return batch.execute()
-                // await batchExecute(accsSlice => {
-                //   return Promise.all(accsSlice.map(acc => token.approve(DxLockWhitelisted.address, allow, { from: acc })))
-              }, { batchSize, maxConcurrent, log: true }, accs)
+              const makeRequest = acc => wa3.eth.sendTransaction.request({
+                from: acc,
+                data: approveData,
+                to: token.address,
+              }, (err, txhash) => console.log(`Acc ${acc}, tx ${txhash}, err ${err}`))
+
+              const makeBatch = accsSlice => {
+                const { from, to } = trackBatch(accsSlice)
+                const name = `${from}--${to} from ${accs.length}`
+
+                const batch = new wa3.BatchRequest()
+
+                accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+                batch.name = name
+
+                return batch
+              }
+
+              const processSlice = makeProcessSlice({
+                makeBatch,
+              })
+
+              // const postprocess = rxjsOps.toArray()
+
+              const results = await streamline(accs, {
+                batchSize,
+                maxConcurrent,
+                processSlice,
+                postprocess: postprocessBatchRequest,
+              })
+              console.log('results: ', results);
+
+              // await batchExecute(accsSlice => {
+              //   const batch = new wa3.BatchRequest();
+
+              //   accsSlice.forEach(acc => batch.add({
+              //     ...req,
+              //     params: req.params.map(param => ({ ...param, from: acc }))
+              //   }));
+
+              //   return batch.execute()
+              //   // await batchExecute(accsSlice => {
+              //   //   return Promise.all(accsSlice.map(acc => token.approve(DxLockWhitelisted.address, allow, { from: acc })))
+              // }, { batchSize, maxConcurrent, log: true }, accs)
               // await Promise.all(accs.map(acc => token.approve(DxLockWhitelisted.address, allow, { from: acc })))
             }
           }
 
           console.log(`${accs.length} accounts locking ${answ.amount} ${answ.symbol} in DxLockWhitelisted`);
 
-          const gas = await DxLockWhitelisted.lock.estimateGas(expToString(wei), answ.period, token.address, AGREEMENT_HASH, { from: accs[0] })
-          console.log('gas: ', gas);
+          // const gas = await DxLockWhitelisted.lock.estimateGas(expToString(wei), answ.period, token.address, AGREEMENT_HASH, { from: accs[0] })
+          // console.log('gas: ', gas);
 
-          await batchExecute(accsSlice => {
-            return Promise.all(accsSlice.map(acc => DxLockWhitelisted.lock(expToString(wei), answ.period, token.address, AGREEMENT_HASH, { from: acc })))
-          }, { batchSize, maxConcurrent, log: true }, accs)
+          const trackBatch = makeBatchNumberTracker()
+
+          const lockData = DxLockWhitelisted.contract.methods.lock(expToString(wei), answ.period, token.address, AGREEMENT_HASH).encodeABI()
+
+          const makeRequest = acc => wa3.eth.sendTransaction.request({
+            from: acc,
+            data: lockData,
+            to: DxLockWhitelisted.address,
+          }, (err, txhash) => console.log(`Acc ${acc}, tx ${txhash}, err ${err}`))
+
+          const makeBatch = accsSlice => {
+            const { from, to } = trackBatch(accsSlice)
+            const name = `${from}--${to} from ${accs.length}`
+
+            const batch = new wa3.BatchRequest()
+
+            accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+            batch.name = name
+
+            return batch
+          }
+
+          const processSlice = makeProcessSlice({
+            makeBatch,
+          })
+
+          // const postprocess = rxjsOps.toArray()
+
+          const results = await streamline(accs, {
+            batchSize,
+            maxConcurrent,
+            processSlice,
+            postprocess: postprocessBatchRequest,
+          })
+          console.log('results: ', results);
+
+          // await batchExecute(accsSlice => {
+          //   return Promise.all(accsSlice.map(acc => DxLockWhitelisted.lock(expToString(wei), answ.period, token.address, AGREEMENT_HASH, { from: acc })))
+          // }, { batchSize, maxConcurrent, log: true }, accs)
 
           // await Promise.all(accs.map(acc => DxLockWhitelisted.lock(expToString(wei), answ.period, token.address, AGREEMENT_HASH, { from: acc })))
         })
+      }
+      break;
+    case 'Print accounts that locked Tokens':
+      {
+        const trackBatch = makeBatchNumberTracker()
+
+        const makeRequest = acc => wa3.eth.call.request({
+          from: acc,
+          data: DxLockWhitelisted.contract.methods.scores(acc).encodeABI(),
+          to: DxLockWhitelisted.address
+        }, () => { })
+
+        const makeBatch = accsSlice => {
+          const { from, to } = trackBatch(accsSlice)
+          const name = `${from}--${to} from ${accs.length}`
+
+          const batch = new wa3.BatchRequest()
+
+          accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+          batch.name = name
+
+          return batch
+        }
+
+        const processSlice = makeProcessSlice({
+          makeBatch,
+          timeout: 10000,
+          retry: 15,
+        })
+
+        const postprocess = rxjs.pipe(
+          postprocessBatchRequest,
+          rxjsOps.map(scores => scores.reduce((accum, scoreHex, i) => {
+            // console.log('accs[i]: ', accs[i]);
+            // console.log('scoreHex: ', scoreHex);
+            const score = wa3.eth.abi.decodeParameter('uint', scoreHex)
+            // console.log('score: ', score);
+            const { withScore, withoutScore } = accum
+            if (!score.isZero()) withScore[accs[i]] = score.toString()
+            else withoutScore.push(accs[i])
+            return accum
+          }, { withScore: {}, withoutScore: [] }))
+        )
+
+        const { withScore, withoutScore } = await streamline(accs, {
+          batchSize,
+          maxConcurrent,
+          processSlice,
+          postprocess,
+        })
+
+
+        // console.log('withScore: ', withScore);
+        printKV(withScore, 'Accounts with Lock Token score')
+
+        console.log(`${Object.keys(withScore).length} accounts with score`);
+        console.log(`${withoutScore.length} accounts without score`);
+
+        if (withoutScore.length) {
+          const answ = await inquirer.prompt({
+            name: 'lock',
+            message: `${withoutScore.length} accounts without score. Would you like them to lock Tokens?`,
+            type: 'confirm'
+          })
+
+          if (answ.lock) await act('Lock Token for REP', { ...options, accs: withoutScore });
+        }
       }
       break;
     case 'Bid GEN':
@@ -770,19 +1609,58 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
           // first approve allowance
           if (answ.allowance) {
             console.log('Approving DxGenAuction to handle GEN token transfers');
-            const req = gen.contract.methods.approve(DxGenAuction.address, web3.utils.toWei(expToString(answ.allowance), 'ether')).send.request()
-            console.log('req: ', req);
+            const approveData = gen.contract.methods.approve(DxGenAuction.address, web3.utils.toWei(expToString(answ.allowance), 'ether')).encodeABI()
+            // console.log('req: ', req);
 
-            await batchExecute(accsSlice => {
-              const batch = new wa3.BatchRequest();
+            // const approveData = token.contract.methods.approve(DxLockWhitelisted.address, allow).encodeABI()
+            // console.log('req: ', req);
 
-              accsSlice.forEach(acc => batch.add({
-                ...req,
-                params: req.params.map(param => ({ ...param, from: acc }))
-              }));
+            const trackBatch = makeBatchNumberTracker()
 
-              return batch.execute()
-            }, { batchSize, maxConcurrent, log: true }, accs)
+            // const lockData = DxLockEth.contract.methods.lock(answ.period, AGREEMENT_HASH).encodeABI()
+
+            const makeRequest = acc => wa3.eth.sendTransaction.request({
+              from: acc,
+              data: approveData,
+              to: gen.address,
+            }, (err, txhash) => console.log(`Acc ${acc}, tx ${txhash}, err ${err}`))
+
+            const makeBatch = accsSlice => {
+              const { from, to } = trackBatch(accsSlice)
+              const name = `${from}--${to} from ${accs.length}`
+
+              const batch = new wa3.BatchRequest()
+
+              accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+              batch.name = name
+
+              return batch
+            }
+
+            const processSlice = makeProcessSlice({
+              makeBatch,
+            })
+
+            // const postprocess = rxjsOps.toArray()
+
+            const results = await streamline(accs, {
+              batchSize,
+              maxConcurrent,
+              processSlice,
+              postprocess: postprocessBatchRequest,
+            })
+            console.log('results: ', results);
+
+            // await batchExecute(accsSlice => {
+            //   const batch = new wa3.BatchRequest();
+
+            //   accsSlice.forEach(acc => batch.add({
+            //     ...req,
+            //     params: req.params.map(param => ({ ...param, from: acc }))
+            //   }));
+
+            //   return batch.execute()
+            // }, { batchSize, maxConcurrent, log: true }, accs)
 
             // const batch = new wa3.BatchRequest();
 
@@ -796,17 +1674,141 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
             // await Promise.all(accs.map(acc => wa3.eth.sendTransaction({...req.params[0], from: acc})))
           }
 
-          console.log(`${accs.length} accounts bidding ${answ.amount} GEN in auction #${auctionId} in DxLockWhitelisted`);
+          console.log(`${accs.length} accounts bidding ${answ.amount} GEN in auction #${auctionId} in DxGenAuction`);
 
           // const gas =await DxGenAuction.bid(web3.utils.toWei(expToString(answ.amount), 'ether'), auctionId, AGREEMENT_HASH, { from: accs[0] })
           // console.log('gas: ', gas);
 
-          await batchExecute(accsSlice => {
-            return Promise.all(accsSlice.map(acc => DxGenAuction.bid(web3.utils.toWei(expToString(answ.amount), 'ether'), auctionId, AGREEMENT_HASH, { from: acc, gas: 76261 })))
-          }, { batchSize, maxConcurrent, log: true }, accs)
+          const trackBatch = makeBatchNumberTracker()
+
+          const bidData = DxGenAuction.contract.methods.bid(web3.utils.toWei(expToString(answ.amount), 'ether'), auctionId, AGREEMENT_HASH).encodeABI()
+
+          const makeRequest = acc => wa3.eth.sendTransaction.request({
+            from: acc,
+            data: bidData,
+            to: DxGenAuction.address,
+            gas: 78261,
+          }, (err, txhash) => console.log(`Acc ${acc}, tx ${txhash}, err ${err}`))
+
+          const makeBatch = accsSlice => {
+            const { from, to } = trackBatch(accsSlice)
+            const name = `${from}--${to} from ${accs.length}`
+
+            const batch = new wa3.BatchRequest()
+
+            accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+            batch.name = name
+
+            return batch
+          }
+
+          const processSlice = makeProcessSlice({
+            makeBatch,
+          })
+
+          // const postprocess = rxjsOps.toArray()
+
+          const results = await streamline(accs, {
+            batchSize,
+            maxConcurrent,
+            processSlice,
+            postprocess: postprocessBatchRequest,
+          })
+          console.log('results: ', results);
+
+          // await batchExecute(accsSlice => {
+          //   return Promise.all(accsSlice.map(acc => DxGenAuction.bid(web3.utils.toWei(expToString(answ.amount), 'ether'), auctionId, AGREEMENT_HASH, { from: acc, gas: 76261 })))
+          // }, { batchSize, maxConcurrent, log: true }, accs)
 
           // await Promise.all(accs.map(acc => DxGenAuction.bid(web3.utils.toWei(expToString(answ.amount), 'ether'), auctionId, AGREEMENT_HASH, { from: acc })))
         })
+      }
+      break;
+    case 'Print accounts that bid GEN':
+      {
+        const numberOfAuctions = await DxGenAuction.numberOfAuctions()
+        console.log('numberOfAuctions: ', numberOfAuctions.toString());
+        const auctionIds = Array.from({ length: numberOfAuctions.toString() }, (_, i) => i)
+        console.log('auctionIds: ', auctionIds);
+        const trackBatch = makeBatchNumberTracker()
+
+        const makeRequest = (acc, auctionId) => wa3.eth.call.request({
+          from: acc,
+          data: DxGenAuction.contract.methods.getBid(acc, auctionId).encodeABI(),
+          to: DxGenAuction.address
+        }, () => { })
+
+        const makeBatch = accsSlice => {
+          const { from, to } = trackBatch(accsSlice)
+          const name = `${from}--${to} from ${accs.length}`
+
+          const batch = new wa3.BatchRequest()
+
+          accsSlice.forEach(acc => {
+            auctionIds.forEach(id => batch.add(makeRequest(acc, id)))
+          })
+          batch.name = name
+
+          return batch
+        }
+
+        const processSlice = makeProcessSlice({
+          makeBatch,
+          timeout: 30000,
+          retry: 15,
+        })
+
+        const postprocess = rxjs.pipe(
+          rxjsOps.pluck('response'),
+          rxjsOps.concatMap(bidsArray => rxjs.from(bidsArray).pipe(
+            rxjsOps.bufferCount(+numberOfAuctions.toString()),
+            rxjsOps.map(bids => {
+              const bidsN = bids.map(bidHex => +wa3.eth.abi.decodeParameter('uint', bidHex).toString())
+              console.log('bidsN: ', bidsN);
+              return bidsN.reduce((a, b) => a + b)
+            }),
+            rxjsOps.toArray()
+          )),
+          // rxjsOps.bufferCount(+numberOfAuctions.toString()),
+          // rxjsOps.map(bids => {
+          //   const bidsN = bids.map(bidHex => +wa3.eth.abi.decodeParameter('uint', bidHex).toString())
+          //   console.log('bidsN: ', bidsN);
+          //   return Math.max(...bidsN)
+          // }),
+          flattenArray,
+          rxjsOps.map(bids => bids.reduce((accum, bid, i) => {
+            // console.log('accs[i]: ', accs[i]);
+            // console.log('bidHex: ', bidHex);
+            // const bid = wa3.eth.abi.decodeParameter('uint', bidHex)
+            // console.log('bid: ', bid);
+            const { withBids, withoutBids } = accum
+            if (bid !== 0) withBids[accs[i]] = bid.toString()
+            else withoutBids.push(accs[i])
+            return accum
+          }, { withBids: {}, withoutBids: [] }))
+        )
+
+        const { withBids, withoutBids } = await streamline(accs, {
+          batchSize: Math.floor(batchSize / +numberOfAuctions * 2),
+          maxConcurrent,
+          processSlice,
+          postprocess,
+        })
+
+        printKV(withBids, 'Accounts with Bid GEN score')
+
+        console.log(`${Object.keys(withBids).length} accounts with score`);
+        console.log(`${withoutBids.length} accounts without score`);
+
+        if (withoutBids.length) {
+          const answ = await inquirer.prompt({
+            name: 'lock',
+            message: `${withoutBids.length} accounts without score. Would you like them to bid GEN?`,
+            type: 'confirm'
+          })
+
+          if (answ.lock) await act('Bid GEN', { ...options, accs: withoutBids });
+        }
       }
       break;
     case 'Increase Time':
@@ -865,7 +1867,7 @@ async function act(action, { web3, wa3, accs, master, contracts, tokens, mgn, tv
 }
 
 function expToString(expNotation) {
-  return String(expNotation).replace(/e\+?(\d+)$/g, (_, exp) => Array(+exp + 1).join('0'))
+  return String(expNotation).replace(/(.\d+)?e\+?(\d+)$/, (_, dec, exp) => (dec ? dec.slice(1) : '') + Array(+exp + 1 - (dec ? dec.length - 1 : 0)).join('0'))
 }
 
 async function getCurrentAuctionId(DxGenAuction) {
@@ -931,13 +1933,14 @@ async function loopTillSuccess(cb) {
 }
 
 async function printAccBalances(web3, accs, options) {
-  const acc2bal = await getBalances(web3, accs, options)
-  if (Object.keys(acc2bal).length === 0) console.log('No account has balance');
+  const { withBalance, withoutBalance } = await getBalances(web3, accs, options)
+  if (Object.keys(withBalance).length === 0) console.log('No account has balance');
   else {
-    console.log(Object.keys(acc2bal).length, 'accounts have balance');
+    console.log(Object.keys(withBalance).length, 'accounts have balance');
     console.log('Displaying accounts with non-zero balances');
-    printKV(acc2bal, 'Account\t : \t\t\t\tBalance ETH', { valTransform: v => v / 1e18 })
+    printKV(withBalance, 'Account\t : \t\t\t\t\tBalance ETH', { valTransform: v => v / 1e18 })
   }
+  return withoutBalance
 }
 
 const passThrough = v => v
@@ -1031,6 +2034,7 @@ async function getWhitelistedTokens(priceOracleImpl, networkId) {
   }
 
   const approvedMapping = await whiteList.getApprovedAddressesOfList(tokensToCheck)
+  console.log('approvedMapping: ', approvedMapping);
   const approvedTokens = tokensToCheck.filter((addr, i) => approvedMapping[i])
 
   // const ApprovalEvents = await whiteList.getPastEvents('Approval', { fromBlock })
@@ -1078,31 +2082,139 @@ async function wrapToken(address) {
   }
 }
 
-async function getTokenBalances(tokens, accounts, { fname = 'balanceOf', batchSize, maxConcurrent } = {}) {
+async function getTokenBalances(tokens, accounts, { web3, fname = 'balanceOf', batchSize, maxConcurrent } = {}) {
 
   const batchSizeWithTokens = batchSize /* && Math.floor(batchSize / tokens.length) */
 
-  const balArrs = await batchExecute(accsSlice => {
-    return Promise.all(
+  const trackBatch = makeBatchNumberTracker()
 
-      accsSlice.map(async acc => {
-        const token2bal = await Promise.all(tokens.map(async t => {
-          // MGN Mock doesn'thave .balanceOf
-          if (typeof t[fname] !== 'function') return
-          const bal = await t[fname](acc)
-          if (bal.isZero()) return
-          return {
-            [t.symbol]: bal.toString() / (10 ** t.decimals)
-          }
-        }))
+  const getBalanceReq = (token, acc) => {
+    const data = token.contract.methods[fname](acc).encodeABI()
+    // const request = token.contract.methods[fname](acc).call.request(() => {})
+    const request = web3.eth.call.request({
+      from: accounts[0],
+      data,
+      to: token.address
+    }, () => { })
+    return request
+  }
+  const makeBatch = accsSlice => {
+    // console.log('accsSlice: ', accsSlice);
+    const { from, to } = trackBatch(accsSlice)
+    const batch = new web3.BatchRequest()
+    batch.name = `${from}--${to} from ${accounts.length}`
+    accsSlice.forEach(acc => {
+      tokens.forEach(token => batch.add(getBalanceReq(token, acc)))
+    })
 
-        if (token2bal.every(b => !b)) return
+    // console.log(`Batch ${batch.name} compiled`)
+    // console.log('batch: ', batch.methods[0], batch.execute);
+    return batch
+  }
 
-        return Object.assign({}, ...token2bal)
-      }))
-  }, { batchSize: batchSizeWithTokens, maxConcurrent, log: batchSize && batchSizeWithTokens < accounts.length }, accounts)
+  console.log('tokens.length: ', tokens.length);
+  const postprocessBatchResponse = rxjs.pipe(
+    // rxjsOps.tap(console.log),
+    rxjsOps.pluck('response'),
+    rxjsOps.concatAll(),
+    // rxjsOps.tap(console.log),
+    rxjsOps.bufferCount(tokens.length),
+    // rxjsOps.tap(balanceBatch => console.log('balanceBatch.length', balanceBatch.length)),
+    rxjsOps.map(balanceBatch => balanceBatch.reduce((accum, bal, i) => {
+      // console.log('bal: ', bal)
+      // console.log('bal: ', bal, web3.eth.abi.decodeParameter('uint', bal))
+      const balance = web3.eth.abi.decodeParameter('uint', bal)
+      if (!balance.isZero()) {
+        const token = tokens[i]
+        accum[token.symbol] = balance.toString() / (10 ** token.decimals)
+      }
+      return accum
+    }, {})),
+    rxjsOps.toArray()
+    // rxjsOps.tap(console.log)
+    // rxjsOps.map(balanceBatchofBatch => balanceBatchofBatch.reduce((accum, bal, i) => {
+    //   console.log('bal: ', bal)
+    //   console.log('bal: ', bal, web3.eth.abi.decodeParameter('uint', bal))
+    //   if (true || !bal.isZero()) {
+    //     const token = tokens[i]
+    //     accum[token.symbol] = bal.toString() / (10 ** token.decimals)
+    //   }
+    //   return accum
+    // }, {}))
+  )
 
-  const acc2Balances = [].concat(...balArrs)
+  const processSlice = makeProcessSlice({
+    makeBatch,
+    postprocess: postprocessBatchResponse,
+    timeout: 20000,
+    retry: 15,
+  })
+
+  const postprocess = rxjs.pipe(
+    rxjsOps.concatAll(),
+    // rxjsOps.tap(console.log),
+    rxjsOps.reduce((accum, bals, i) => {
+      const account = accounts[i]
+      if (Object.keys(bals).length) {
+        accum.withBalance[account] = bals
+      } else {
+        accum.withoutBalance.push(account)
+      }
+      // console.log(`accounts[${i}]: `, accounts[i]);
+
+      return accum
+    }, { withBalance: {}, withoutBalance: [] }),
+    rxjsOps.tap(v => console.log('accounts:', Object.keys(v).length)),
+    // postprocessBatchRequest,
+    // rxjsOps.bufferCount(tokens.length),
+    // rxjsOps.map(balanceBatch => from(balanceBatch).pipe()
+    //   balanceBatch.reduce((accum, bal, i) => {
+    //   if (!bal.isZero()) {
+    //     const token = tokens[i]
+    //     accum[token.symbol] = bal.toString() / (10 ** token.decimals)
+    //   }
+    //   return accum
+    // }, {})
+    // rxjsOps.map(balances => balances.reduce((accum, balance, i) => {
+    //   // const { withBalance, withoutBalance } = accum
+    //   // if (balance > 0) withBalance[accounts[i]] = balance
+    //   // else withoutBalance.push(accounts[i])
+    //   // return accum
+    //   accum[accounts[i]] = balance
+    // }, {}))
+  )
+
+  const acc2bal = await streamline(accounts, {
+    batchSize,
+    maxConcurrent,
+    processSlice,
+    postprocess,
+  })
+
+  console.log('acc2bal: ', acc2bal);
+  return acc2bal
+
+  // const balArrs = await batchExecute(accsSlice => {
+  //   return Promise.all(
+
+  //     accsSlice.map(async acc => {
+  //       const token2bal = await Promise.all(tokens.map(async t => {
+  //         // MGN Mock doesn'thave .balanceOf
+  //         if (typeof t[fname] !== 'function') return
+  //         const bal = await t[fname](acc)
+  //         if (bal.isZero()) return
+  //         return {
+  //           [t.symbol]: bal.toString() / (10 ** t.decimals)
+  //         }
+  //       }))
+
+  //       if (token2bal.every(b => !b)) return
+
+  //       return Object.assign({}, ...token2bal)
+  //     }))
+  // }, { batchSize: batchSizeWithTokens, maxConcurrent, log: batchSize && batchSizeWithTokens < accounts.length }, accounts)
+
+  // const acc2Balances = [].concat(...balArrs)
 
   // const acc2Balances = await Promise.all(
   //   // TODO: batch and flatmap
@@ -1123,10 +2235,10 @@ async function getTokenBalances(tokens, accounts, { fname = 'balanceOf', batchSi
   //     return Object.assign({}, ...token2bal)
   //   }))
 
-  return accounts.reduce((accum, acc, i) => {
-    if (acc2Balances[i]) accum[acc] = acc2Balances[i]
-    return accum
-  }, {})
+  // return accounts.reduce((accum, acc, i) => {
+  //   if (acc2Balances[i]) accum[acc] = acc2Balances[i]
+  //   return accum
+  // }, {})
 }
 
 async function getTimesStr({
@@ -1148,7 +2260,7 @@ async function getTimesStr({
     auctionStart,
     auctionEnd,
     auctionRedeem,
-    now
+    now,
   ] = (await Promise.all([
     DxLockMgn.lockingStartTime.call(),
     DxLockMgn.lockingEndTime.call(),
@@ -1162,8 +2274,10 @@ async function getTimesStr({
     DxGenAuction.auctionsStartTime.call(),
     DxGenAuction.auctionsEndTime.call(),
     DxGenAuction.redeemEnableTime.call(),
-    getTimestamp()
+    getTimestamp(),
   ])).map(d => new Date(d * 1000))
+
+  const blockNumber = await getBlockNumber()
 
   let mgnPeriod
   if (now < mgnStart) mgnPeriod = 'REGISTERING'
@@ -1195,7 +2309,7 @@ async function getTimesStr({
   }
 
   return `
-  Now: ${now.toUTCString()}
+  Now: ${now.toUTCString()} \t current block: ${blockNumber}
   -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   DxLockMgn:\t\t\t\t\t | DxLockEth:\t\t\t\t\t | DxLockWhitelisted:\t\t\t\t | DxGenAuction:
   lock start: ${mgnStart.toUTCString()}\t | lock start: ${ethStart.toUTCString()}\t | lock start: ${tokenStart.toUTCString()}\t | auctions start: ${auctionStart.toUTCString()}

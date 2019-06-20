@@ -49,8 +49,13 @@ module.exports = web3 => {
     return (await web3.eth.getBlock(block)).timestamp
   }
 
+  async function getBlockNumber() {
+    return web3.eth.getBlockNumber()
+  }
+
   return {
     getTimestamp,
+    getBlockNumber,
     web3Send,
     mineBlock,
     increaseTime,
