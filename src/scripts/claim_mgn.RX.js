@@ -6,7 +6,6 @@ const {
   makeBatchNumberTracker,
   makeProcessSlice,
   postprocessBatchRequest,
-  flattenArray,
 } = require('./utils/rx')
 
 const Web3 = require('web3')
@@ -15,9 +14,7 @@ const fs = require('fs-extra')
 
 const rxjs = require('rxjs')
 const rxjsOps = require('rxjs/operators')
-const { toBN, getTimestamp, getBlockNumber, getPastEventsRx, getPastEventsBinary } = require('./utils')(web3)
-const batchExecute = require('./utils/batch')
-const ZERO = toBN(0)
+const { toBN, getTimestamp, getBlockNumber, getPastEventsRx } = require('./utils')(web3)
 
 const network2URL = {
   mainnet: 'https://mainnet.infura.io/v3/9408f47dedf04716a03ef994182cf150',
@@ -55,6 +52,94 @@ const DxLockMgnForRepArtifact = artifacts.require('DxLockMgnForRep')
 const DxDaoClaimRedeemHelperArtifact = artifacts.require('DxDaoClaimRedeemHelper')
 const TokenMGN = artifacts.require('TokenFRT')
 
+const getFname = ({ network, address }) => `./reports/MGN_LOCK#${address}@${network}.json`
+
+function readFileReport(options) {
+  const fname = getFname(options)
+  console.log(`Loading ${fname}`);
+  return fs.readJSON(fname).catch(() => ({}))
+}
+
+const concatDistict = (arr1, arr2) => {
+  return Array.from(new Set(arr1.concat(arr2)))
+}
+
+async function writeFileReport({ lable, ...data }, options) {
+  const fname = getFname(options)
+
+  const json = await fs.readJSON(fname).catch(() => ({}))
+  // console.log('json: ', json);
+
+  const pastData = json[lable] || DefaultJson[label]
+
+  let newData
+  if (lable === 'Claimed') {
+    newData = {
+      block: data.block,
+      accounts: concatDistict(pastData.accounts, data.accounts),
+    }
+  } else if (lable === 'Registered') {
+    newData = {
+      fromBlock: pastData.fromBlock || data.fromBlock,
+      toBlock: data.toBlock,
+      accounts: concatDistict(pastData.accounts, data.accounts),
+    }
+  } else {
+    newData = data
+  }
+
+  Object.assign(json, { [lable]: newData })
+
+  return fs.outputJSON(fname, json, { spaces: 2 })
+}
+
+const DefaultJson = {
+  Registered: {
+    fromBlock: 0,
+    toBlock: 0,
+    accounts: [],
+  },
+  Claimed: {
+    block: 0,
+    accounts: [],
+  }
+}
+async function loadPreviousAccounts(options) {
+  const json = await readFileReport(options)
+  // console.log('json: ', json);
+  const { Registered = DefaultJson.Registered, Claimed = DefaultJson.Claimed } = json || {}
+
+  console.group('Loaded previous accounts');
+  console.log(`
+  Registered:
+    From block: ${Registered.fromBlock}
+    To block: ${Registered.toBlock}
+    Accounts: ${Registered.accounts.length}
+  `);
+
+  console.log(`
+  Claimed:
+    At block ${Claimed.block}
+    Claimed: ${Claimed.accounts.length}
+  `);
+
+  console.groupEnd()
+
+  const claimedSet = new Set(Claimed.accounts)
+
+  const unclaimedAccounts = Registered.accounts.filter(acc => !claimedSet.has(acc))
+
+  return {
+    oldFromBlock: Registered.fromBlock,
+    oldToBlock: Registered.toBlock,
+    newFromBlock: Registered.toBlock && Registered.toBlock + 1,
+    registeredAccounts: Registered.accounts,
+    unclaimedAccounts,
+    claimedAtBlock: Claimed.block,
+    claimedAccounts: Claimed.accounts
+  }
+}
+
 // artifacts and web3 are available globally
 const main = async () => {
 
@@ -62,14 +147,9 @@ const main = async () => {
    * How best to run this for testing @ Rinkeby
    * 
    * Rinkeby:
-   * [use flag --mock-mgn to use mocked ExternalLocking contract allowing testing w/LockedMGNBalance
-   * [use flag -f 'networks-rinkeby-long-lock.json' for addresses]
    * [use flag --from-block 0]
    * 
-   * Complete [ DRY-RUN ]: 
-   *    yarn claim_mgn --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0
-   * Complete [ REAL-RUN ]: 
-   *    yarn claim_mgn --network rinkeby -f 'networks-rinkeby-long-lock.json' --mock-mgn --from-block 0 --dry-run false
+   * yarn claim_mgn --network rinkeby --from-block 0
    */
   const argv = require('yargs')
     .usage('Usage: MNEMONIC="evil cat kills man ... " yarn claim_mgn --network [name] --dry-run --batch-size [number]')
@@ -113,37 +193,25 @@ const main = async () => {
 
   if (!argv._[0]) return argv.showHelp()
 
-  // const { dryRun, network, batchSize, fromBlock } = argv
 
   const { web3: wa3 } = createWeb3(argv)
   console.log('web3 version: ', web3.version);
   console.log('wa3 version: ', wa3.version);
-  let { network, fromBlock, useHelper, batchSize, maxConcurrent, dryRun } = argv
+  let { network, fromBlock, batchSize, maxConcurrent } = argv
 
   // const isDev = network === 'development'
-  const networkId = await web3.eth.net.getId()
+  // const networkId = await web3.eth.net.getId()
 
   console.log(`
       Claim MGN data:
       
       ====================================================================
-      Dry run: ${dryRun}
       Network: ${network}
       Batch size: ${batchSize}
+      Max concurrent: ${maxConcurrent}
       Searching Events from block: ${fromBlock}
       ====================================================================
   `)
-
-  if (fromBlock === 0 || fromBlock < 7185000) {
-    console.warn(`
-      =================================================================================================================
-      WARNING: You are checking for Register events from either Block 0 or from a block further back than 15 hours ago.
-      Script may hang or fail unexpectedly on Mainnet as filter array length size is too large.
-
-      Please explicitly set the [--from-block <number>] flag if necessary.
-      =================================================================================================================
-      `)
-  }
 
   // Get contracts and main data
   const dxLockMgnForRep = await (argv.l ? DxLockMgnForRepArtifact.at(argv.l) : DxLockMgnForRepArtifact.deployed())
@@ -152,11 +220,13 @@ const main = async () => {
   const mgn = await TokenMGN.at(mgnAddress)
   // TODO: Get dates from dxLockMgnForRep contract
 
-  if (!fromBlock) fromBlock = (await web3.eth.getTransaction(DxLockMgnForRepArtifact.transactionHash)).blockNumber
+  mgn.name = 'Magnolia'
+  mgn.symbol = 'MGN'
+  mgn.decimals = 18
 
   const contracts = {
     DxLockMGN: dxLockMgnForRep,
-    MGN: dxLockMgnForRep,
+    MGN: mgn,
     ClaimHelper: claimRedeemHelper,
   }
 
@@ -167,22 +237,44 @@ const main = async () => {
         MGN: ${mgnAddress}
         DxLockMgnForRep: ${dxLockMgnForRep.address}
         DxDaoClaimRedeemHelperArtifact: ${claimRedeemHelper.address}
+    AGREEMENT_HASH: ${AGREEMENT_HASH}
   `)
+
+  const { unclaimedAccounts, newFromBlock, oldFromBlock } = await loadPreviousAccounts({ ...argv, address: dxLockMgnForRep.address })
+  console.log('newFromBlock: ', newFromBlock);
+
+  if (unclaimedAccounts.length) {
+    console.log('Will operate on loaded unclaimed accounts');
+    accounts = unclaimedAccounts
+  }
+
+  if (newFromBlock) {
+    fromBlock = newFromBlock
+  }
+
+  console.log('fromBlock: ', fromBlock);
+  if (!fromBlock) {
+    console.log(`--from-block wasn't specified. Assuming the block DxLockMgnForRep was deployed at`);
+    fromBlock = (await web3.eth.getTransaction(DxLockMgnForRepArtifact.transactionHash)).blockNumber
+    console.log('fromBlock: ', fromBlock);
+  }
 
   const choices = [
     'Print current account selection',
-    'Print available Register events',
-    'Gather new Register events',
-    'Filter users that have not been claimed for',
-    'Filter users that have locked MGN balance available',
-    'Filter users claim would revert for',
+    'Gather new Register events (W)',
+    new inquirer.Separator(),
+    'Filter out users that have been claimed for (W)',
+    'Filter out users that have no locked MGN balance available',
+    'Filter out users claim would revert for',
+    new inquirer.Separator(),
     'Dry run MGN claiming',
     'Real MGN claiming',
+    new inquirer.Separator(),
     'Print accounts & locked MGN',
-    'Print registered accounts without locked MGN',
-    'Print all accounts that have claimed/locked MGN',
+    'Print all accounts that have not been claimed for yet',
     new inquirer.Separator(),
     'Refresh time',
+    'Reload accounts from saved file',
     new inquirer.Separator(),
     'Quit'
   ]
@@ -210,187 +302,93 @@ const main = async () => {
   do {
     await updateHeader()
     answ = await inquire(answ.action)
-    // console.log('answ: ', answ);
-    cont = await act(answ.action, { web3, wa3, master, contracts, mgn, batchSize, maxConcurrent, fromBlock })
+    cont = await act(answ.action, { network, web3, wa3, master, contracts, mgn, batchSize, maxConcurrent, fromBlock, oldFromBlock })
   } while (cont)
-
-  // Get all registered accounts
-//   const registeredAccounts = await getAllRegisteredAccounts({
-//     dxLockMgnForRep,
-//     fromBlock
-//   })
-
-//   if (!registeredAccounts.length) {
-//     console.log("\nThere's are no registered users. There's nothing to do")
-//     return
-//   }
-
-//   // Filter out the accounts that already claimed
-//   const {
-//     claimed: claimedAccounts,
-//     unclaimed: unclaimedAccounts
-//   } = await getClaimStatusByAccount({
-//     accounts: registeredAccounts,
-//     dxLockMgnForRep
-//   })
-
-//   console.log('    Claiming status')
-//   console.log(`        Total registered accounts: ${registeredAccounts.length}`)
-//   if (claimedAccounts.length) {
-//     console.log(`        ${claimedAccounts.length} accounts already claimed: ${claimedAccounts.join(', ')}`)
-//   } else {
-//     console.log('        No one has claimed yet')
-//   }
-
-//   if (unclaimedAccounts.length) {
-//     console.log(`        Unclaimed (${unclaimedAccounts.length}): ${unclaimedAccounts.join(', ')}`)
-//   } else {
-//     console.log('\nNo one needs to be claimed')
-//     return
-//   }
-
-//   // Get users with and with/without balance 
-//   const {
-//     withBalance: unclaimedAccountsWithBalance,
-//     withoutBalance: unclaimedAccountsWithoutBalance
-//   } = await getBalanceStatusByAccount({
-//     mgn,
-//     accounts: unclaimedAccounts
-//   })
-
-//   if (unclaimedAccountsWithoutBalance.length) {
-//     const accounts = unclaimedAccountsWithoutBalance.map(({ address }) => address)
-//     console.log(`        Accounts without MGN balance (${accounts.length}): ${accounts.join(', ')}`)
-//   }
-
-//   if (!unclaimedAccountsWithBalance.length) {
-//     console.log("\nAll the accounts are unclaimable, because they don't have MGN balance. Nothing to do")
-//     return
-//   }
-
-//   const timing = await checkTiming(dxLockMgnForRep)
-//   if (timing.error) {
-//     const { period, now, error } = timing
-//     throw new Error(`
-//     Claiming can be done only during claiming period.
-//     Claiming period: ${period};
-//     Now: ${now};
-//     ${error}
-//     `)
-//   }
-
-//   // Extract only addresses w/MGN locked balance into array
-//   let accountsToClaim = unclaimedAccountsWithBalance.map(({ address }) => address)
-
-//   // Filter out 
-//   // This is a Fix, not sure why it's needed. 
-//   // TODO: Review!
-//   accountsToClaim = await filterAccountsFix({
-//     accounts: accountsToClaim,
-//     dxLockMgnForRep
-//   })
-//   if (!accountsToClaim.length) {
-//     throw new Error(`No accounts are claimbale from the ${unclaimedAccountsWithBalance.length} unclaimed ones`)
-//   }
-
-//   if (dryRun) {
-//     console.warn(`
-//       ============================================================================
-      
-//       DRY-RUN ENABLED - Call values returned, no actual blockchain state affected. 
-//       To actually change state, please run without [--dry-run false].
-
-//       ============================================================================
-//       `)
-
-//     // TODO: fix this
-//     // Workaround as failing bytes32[] call return doesn't properly throw and returns
-//     // consistent 'overflow' error(seems to be Truffle5 + Ethers.js issue)
-//     // 1 = dxLMR
-//     await batchExecute(
-//       accountsSlice => {
-//         return claimRedeemHelper.claimAll.estimateGas(accountsSlice, 1)
-//       },
-//       { batchSize, log: true },
-//       accountsToClaim
-//     )
-//     console.log('\nPreparing claimAll call...')
-//     // 1 = dxLMR
-//     const lockingIdsArray = await batchExecute(
-//       accountsSlice => {
-//         return claimRedeemHelper.claimAll.call(accountsSlice, 1)
-//       },
-//       { batchSize, log: true },
-//       accountsToClaim
-//     )
-//     console.log('\nLocking IDs Array', JSON.stringify(lockingIdsArray, undefined, 2))
-//   } else {
-//     console.log('\nPreparing actual claimAll - this WILL affect blockchain state...')
-//     const claimAllReceipts = await batchExecute(
-//       accountsSlice => {
-//         return claimRedeemHelper.claimAll(accountsSlice, 1)
-//       },
-//       { batchSize, log: true },
-//       accountsToClaim
-//     )
-//     console.log('ClaimAll Receipt(s)', claimAllReceipts)
-//   }
-
-//   console.log()
 }
 
 async function act(action, options) {
-  const { web3, wa3, master, contracts, tokens, mgn, tvalue, gen, batchSize, maxConcurrent, fromBlock } = options
-  const { DxLockMGN, ClaimHelper, MGN } = contracts
+  const { web3, wa3, contracts, batchSize, maxConcurrent, fromBlock, oldFromBlock } = options
+  const { DxLockMGN, MGN } = contracts
   switch (action) {
     case 'Quit':
       return false;
+    case 'Reload accounts from saved file':
+      {
+        const { unclaimedAccounts } = await loadPreviousAccounts({ ...options, address: DxLockMGN.address })
+
+        if (unclaimedAccounts.length) {
+          console.log('Will operate on loaded unclaimed accounts');
+          accounts = unclaimedAccounts
+        }
+      }
+      break;
     case 'Print current account selection':
       console.log('  ' + accounts.join('\n  '));
       console.log('accounts.length: ', accounts.length);
       break;
-    case 'Print available Register events':
-      break;
-    case 'Gather new Register events':
+    case 'Gather new Register events (W)':
       {
         const toBlock = await web3.eth.getBlockNumber()
         console.log('currentBlock: ', toBlock);
         const events = await getPastEventsRx(DxLockMGN, 'Register', { fromBlock, toBlock })
-        console.log('events: ', events);
+        // console.log('events: ', events);
         const registeredSet = new Set(events.map(ev => ev.returnValues._beneficiary))
+
+        accounts.forEach(acc => registeredSet.add(acc))
+
         accounts = Array.from(registeredSet)
         console.log('accounts: ', accounts);
-        console.log('accounts.length: ', accounts.length);
+        console.log('accounts.length: ', accounts.length, 'at block', toBlock);
+
+        await writeFileReport({ lable: 'Registered', fromBlock, toBlock, accounts }, { ...options, address: DxLockMGN.address })
       }
       break;
-    case 'Filter users claim would revert for':
+    case 'Filter out users claim would revert for':
       {
-        const { claimable } = await getUnclaimableAccounts(accounts, { ...options, web3: wa3 })
+        const { claimable, unclaimable } = await getUnclaimableAccounts(accounts, { ...options, web3: wa3 })
+        // console.log('claimable: ', claimable);
+
+        reportNumbers({ accounts, claimable, unclaimable })
+
         const claimableSet = new Set(claimable)
         accounts = accounts.filter(acc => claimableSet.has(acc))
-        console.log('accounts: ', accounts);
+        // console.log('accounts: ', accounts);
       }
       break;
-    case 'Filter users that have not been claimed for':
+    case 'Filter out users that have been claimed for (W)':
       {
-        const { notClaimed } = await getExternaLockersUsers(accounts, { ...options, web3: wa3 })
+        const currentBlock = await web3.eth.getBlockNumber()
+
+        const { notClaimed, claimed } = await getExternaLockersUsers(accounts, { ...options, web3: wa3 })
+        console.log('notClaimed: ', notClaimed);
+
+        reportNumbers({ accounts, claimed, notClaimed })
 
         const haveNotClaimedAlready = new Set(notClaimed)
         accounts = accounts.filter(acc => haveNotClaimedAlready.has(acc))
-        console.log('accounts: ', accounts);
+
+        await writeFileReport({ lable: 'Claimed', block: currentBlock, accounts: claimed }, { ...options, address: DxLockMGN.address })
+
+        // console.log('accounts: ', accounts);
       }
       break;
-    case 'Filter users that have locked MGN balance available':
+    case 'Filter out users that have no locked MGN balance available':
       {
-        const { withBalance, withoutBalance } = await getTokenBalances([MGN], accounts, { web3: wa3, fname: 'lockedTokenBalances', batchSize, maxConcurrent })
+        const { withBalance, withoutBalance } = await getTokenBalances(
+          [MGN],
+          accounts,
+          { web3: wa3, fname: 'lockedTokenBalances', batchSize, maxConcurrent }
+        )
         const withBalanceArr = Object.keys(withBalance)
         console.log(`${withBalanceArr.length} accounts with locked MGN balances`)
 
         console.log(`${withoutBalance.length} accounts don't have locked MGN`)
 
+        reportNumbers({ accounts, withLockedMGN: withBalanceArr, withoutLockedMGN: withoutBalance })
+
         const haveLockedMGNbalance = new Set(withBalanceArr)
         accounts = accounts.filter(acc => haveLockedMGNbalance.has(acc))
-        console.log('accounts: ', accounts);
+        // console.log('accounts: ', accounts);
       }
       break;
     case 'Dry run MGN claiming':
@@ -419,10 +417,11 @@ async function act(action, options) {
       break;
     case 'Print accounts & locked MGN':
       {
-        const { withBalance, withoutBalance } = await getTokenBalances([MGN], accounts, { web3: wa3, fname: 'lockedTokenBalances', batchSize, maxConcurrent })
-        // const { withBalance: acc2bals, withoutBalance } = await getTokenBalances([mgn], accs, { web3: wa3, fname: 'lockedTokenBalances', batchSize, maxConcurrent })
-
-
+        const { withBalance, withoutBalance } = await getTokenBalances(
+          [MGN],
+          accounts,
+          { web3: wa3, fname: 'lockedTokenBalances', batchSize, maxConcurrent }
+        )
 
         if (Object.keys(withBalance).length === 0) {
           console.log('No account has locked MGN Tokens');
@@ -437,7 +436,7 @@ async function act(action, options) {
         }
       }
       break;
-    case 'Print all accounts that have claimed/locked MGN':
+    case 'Print all accounts that have not been claimed for yet':
       {
         const toBlock = await web3.eth.getBlockNumber()
         console.log('currentBlock: ', toBlock);
@@ -448,6 +447,8 @@ async function act(action, options) {
         const accountsLeftUnclaimed = accounts.filter(acc => !lockedSet.has(acc))
         console.log('accountsLeftUnclaimed: ', accountsLeftUnclaimed);
         console.log('accountsLeftUnclaimed.length: ', accountsLeftUnclaimed.length);
+
+        reportNumbers({ accounts, locked: lockedSet, leftUnclaimed: accountsLeftUnclaimed })
       }
       break;
     case 'Refresh Time':
@@ -455,10 +456,25 @@ async function act(action, options) {
     default:
       break;
   }
+
+  console.log('After current action');
+  reportNumbers({ accounts })
   console.log('\n');
 
   // continue?
   return true
+}
+
+function reportNumbers({ accounts, ...rest }) {
+  console.group(`Total accounts ${accounts.length}`);
+  const entries = Object.entries(rest)
+  if (entries.length) {
+    console.log('Out of them:');
+    Object.entries(rest).forEach(([k, v]) => {
+      console.log(`${k}: ${v.length === undefined ? v.size : v.length}`);
+    })
+  }
+  console.groupEnd()
 }
 
 async function claimAllMGNCall(accounts, { batchSize, maxConcurrent, contracts, master } = {}) {
@@ -556,13 +572,16 @@ async function getUnclaimableAccounts(accounts, { web3, batchSize, maxConcurrent
     retry: 15,
   })
 
+  const BAD_BYTES = '0x08c379a000000000000000000000000000000000000000000000000000000000'
+
   const postprocess = rxjs.pipe(
     postprocessBatchRequest,
     rxjsOps.map(claimResults => claimResults.reduce((accum, claimHex, i) => {
-      console.log('accs[i]: ', accounts[i]);
-      console.log('claimHex: ', claimHex);
+      // console.log('accs[i]: ', accounts[i]);
+      // console.log('claimHex: ', claimHex);
       const { claimable, unclaimable } = accum
-      if (claimHex !== '0x08c379a000000000000000000000000000000000000000000000000000000000') claimable.push(accounts[i])
+      const claimBytes32 = web3.eth.abi.decodeParameter('bytes32', claimHex)
+      if (claimBytes32 !== BAD_BYTES) claimable.push(accounts[i])
       else unclaimable.push(accounts[i])
       return accum
     }, { claimable: [], unclaimable: [] }))
@@ -575,12 +594,9 @@ async function getUnclaimableAccounts(accounts, { web3, batchSize, maxConcurrent
     postprocess,
   })
 
-  console.log(`${claimable.length} accounts have been claimed for`);
-  // accounts.forEach((acc, i) => {
-  //   if (claimable[i]) console.log(acc);
-  // })
-  // console.log(`${claimable.length} accounts claimable`);
-  console.log(`${unclaimable.length} accounts have not been claimed for`);
+  console.log(`${claimable.length} accounts can be claimed for`);
+
+  console.log(`${unclaimable.length} accounts can not been claimed for`);
   unclaimable.forEach((acc) => {
     console.log(acc);
   })
@@ -589,33 +605,6 @@ async function getUnclaimableAccounts(accounts, { web3, batchSize, maxConcurrent
     unclaimable,
     claimable,
   }
-
-
-  // console.log('\n-------- TODO: Review and fix this -------------')
-  // const agrHash = await dxLockMgnForRep.getAgreementHash()
-
-  // // Below is required as Solidity loop function claimAll inside DxLockMgnForRepHelper.claimAll is NOT reverting when looping and
-  // // calling individual DxLockMgnForRep.claim method on passed in beneficiary addresses
-  // // Lines 268 - 277 filter out bad responses and leave claimable addresses to batch
-  // const individualClaimCallReturn = await Promise.all(
-  //   accounts.map(beneAddr => dxLockMgnForRep.claim.call(beneAddr, agrHash))
-  // )
-  // console.log('DxLockMgnForRep.claim on each acct call result: ', individualClaimCallReturn)
-  // console.log('Filtering out 0x08c379a000000000000000000000000000000000000000000000000000000000 values...')
-
-  // const accountsClaimable = individualClaimCallReturn.reduce((acc, account, index) => {
-  //   if (account === '0x08c379a000000000000000000000000000000000000000000000000000000000') {
-  //     console.warn(`[WARN] Discarding account ${accounts[index]}`)
-  //     return acc
-  //   }
-
-  //   acc.push(accounts[index])
-  //   return acc
-  // }, [])
-  // console.log('Final Filtered Values', accountsClaimable)
-  // console.log('-------------------------\n')
-
-  // return accountsClaimable
 }
 
 async function getExternaLockersUsers(accounts, { web3, batchSize, maxConcurrent, contracts } = {}) {
@@ -668,15 +657,12 @@ async function getExternaLockersUsers(accounts, { web3, batchSize, maxConcurrent
   })
 
   console.log(`${externalLockers.length} accounts have been claimed for`);
-  // accounts.forEach((acc, i) => {
-  //   if (externalLockers[i]) console.log(acc);
-  // })
-  // console.log(`${externalLockers.length} accounts externalLockers`);
+
   console.log(`${externalLockersFalse.length} accounts have not been claimed for`);
 
   return {
-    claimed: externalLockersFalse,
-    notClaimed: externalLockers,
+    claimed: externalLockers,
+    notClaimed: externalLockersFalse,
   }
 }
 
@@ -686,7 +672,6 @@ async function getTokenBalances(tokens, accounts, { web3, fname = 'balanceOf', b
 
   const getBalanceReq = (token, acc) => {
     const data = token.contract.methods[fname](acc).encodeABI()
-    // const request = token.contract.methods[fname](acc).call.request(() => {})
     const request = web3.eth.call.request({
       from: accounts[0],
       data,
@@ -705,7 +690,6 @@ async function getTokenBalances(tokens, accounts, { web3, fname = 'balanceOf', b
     return batch
   }
 
-  console.log('tokens.length: ', tokens.length);
   const postprocessBatchResponse = rxjs.pipe(
     rxjsOps.pluck('response'),
     rxjsOps.concatAll(),
@@ -742,7 +726,7 @@ async function getTokenBalances(tokens, accounts, { web3, fname = 'balanceOf', b
 
       return accum
     }, { withBalance: {}, withoutBalance: [] }),
-    rxjsOps.tap(v => console.log('accounts:', Object.keys(v).length)),
+    // rxjsOps.tap(v => console.log('accounts:', Object.keys(v).length)),
   )
 
   const acc2bal = await streamline(accounts, {
@@ -752,113 +736,8 @@ async function getTokenBalances(tokens, accounts, { web3, fname = 'balanceOf', b
     postprocess,
   })
 
-  console.log('acc2bal: ', acc2bal);
+  // console.log('acc2bal: ', acc2bal);
   return acc2bal
-}
-
-async function getAllRegisteredAccounts({
-  dxLockMgnForRep,
-  fromBlock
-}) {
-  /**
-   * allPastRegisterEvents
-   * @summary Promise for all past Register events fromBlock flag or 7185000
-   * @type { [] } - Array of Event objects
-  */
-  const { number: blockNumber } = await web3.eth.getBlock('latest')
-
-  const events = await dxLockMgnForRep.getPastEvents('Register', { fromBlock })
-
-  /**
-   * allFromandBeneficiaries
-   * @summary Array with OBJECT items { from: '0x...', beneficiary: '0x...' }
-   * @type { string[] }
-  */
-  return events.map(({ returnValues }) => returnValues._beneficiary)
-}
-
-async function getClaimStatusByAccount({
-  accounts,
-  dxLockMgnForRep
-}) {
-  /* 
-    VALIDATION - REMOVE UN-CLAIMABLE USER ADDRESSES
-  */
-
-  // Make sure that beneficiaries inside allBeneficiaries have NOT already claimed  
-  const accountsClaimFlags = await Promise.all(
-    accounts.map(account => dxLockMgnForRep.externalLockers.call(account))
-  )
-  const claimStatusByAccount = accounts.reduce((acc, account, idx) => {
-    if (accountsClaimFlags[idx]) {
-      acc.claimed.push(account)
-    } else {
-      acc.unclaimed.push(account)
-    }
-
-    return acc
-  }, { claimed: [], unclaimed: [] })
-
-  return claimStatusByAccount
-}
-
-async function getBalanceStatusByAccount({
-  mgn,
-  accounts
-}) {
-  // Get accounts' MGN locked balance (since there's no point in claiming 0 balance MGN...)
-  const balances = await Promise.all(
-    accounts.map(account => mgn.lockedTokenBalances.call(account))
-  )
-
-  const balanceStatusByAccount = accounts.reduce((acc, account, idx) => {
-    const balance = balances[idx]
-    const info = {
-      address: account,
-      balance
-    }
-
-    if (balance.gt(ZERO)) {
-      acc.withBalance.push(info)
-    } else {
-      acc.withoutBalance.push(info)
-    }
-
-    return acc
-  }, { withBalance: [], withoutBalance: [] })
-
-  return balanceStatusByAccount
-}
-
-async function filterAccountsFix({
-  accounts,
-  dxLockMgnForRep
-}) {
-  console.log('\n-------- TODO: Review and fix this -------------')
-  const agrHash = await dxLockMgnForRep.getAgreementHash()
-
-  // Below is required as Solidity loop function claimAll inside DxLockMgnForRepHelper.claimAll is NOT reverting when looping and
-  // calling individual DxLockMgnForRep.claim method on passed in beneficiary addresses
-  // Lines 268 - 277 filter out bad responses and leave claimable addresses to batch
-  const individualClaimCallReturn = await Promise.all(
-    accounts.map(beneAddr => dxLockMgnForRep.claim.call(beneAddr, agrHash))
-  )
-  console.log('DxLockMgnForRep.claim on each acct call result: ', individualClaimCallReturn)
-  console.log('Filtering out 0x08c379a000000000000000000000000000000000000000000000000000000000 values...')
-
-  const accountsClaimable = individualClaimCallReturn.reduce((acc, account, index) => {
-    if (account === '0x08c379a000000000000000000000000000000000000000000000000000000000') {
-      console.warn(`[WARN] Discarding account ${accounts[index]}`)
-      return acc
-    }
-
-    acc.push(accounts[index])
-    return acc
-  }, [])
-  console.log('Final Filtered Values', accountsClaimable)
-  console.log('-------------------------\n')
-
-  return accountsClaimable
 }
 
 async function checkTiming(dxLockMgnForRep) {
