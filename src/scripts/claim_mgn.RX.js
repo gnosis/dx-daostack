@@ -60,7 +60,7 @@ function readFileReport(options) {
   return fs.readJSON(fname).catch(() => ({}))
 }
 
-const concatDistict = (arr1, arr2) => {
+const concatDistinct = (arr1, arr2) => {
   return Array.from(new Set(arr1.concat(arr2)))
 }
 
@@ -70,19 +70,19 @@ async function writeFileReport({ lable, ...data }, options) {
   const json = await fs.readJSON(fname).catch(() => ({}))
   // console.log('json: ', json);
 
-  const pastData = json[lable] || DefaultJson[label]
+  const pastData = json[lable] || DefaultJson[lable]
 
   let newData
   if (lable === 'Claimed') {
     newData = {
       block: data.block,
-      accounts: concatDistict(pastData.accounts, data.accounts),
+      accounts: concatDistinct(pastData.accounts, data.accounts),
     }
   } else if (lable === 'Registered') {
     newData = {
       fromBlock: pastData.fromBlock || data.fromBlock,
       toBlock: data.toBlock,
-      accounts: concatDistict(pastData.accounts, data.accounts),
+      accounts: concatDistinct(pastData.accounts, data.accounts),
     }
   } else {
     newData = data
@@ -307,7 +307,7 @@ const main = async () => {
 }
 
 async function act(action, options) {
-  const { web3, wa3, contracts, batchSize, maxConcurrent, fromBlock, oldFromBlock } = options
+  const { web3, wa3, contracts, batchSize, maxConcurrent, fromBlock } = options
   const { DxLockMGN, MGN } = contracts
   switch (action) {
     case 'Quit':
@@ -540,7 +540,6 @@ async function claimAllMGNSend(accounts, { batchSize, maxConcurrent, contracts, 
     postprocess,
   })
 
-  console.log('results: ', results);
   return results
 }
 

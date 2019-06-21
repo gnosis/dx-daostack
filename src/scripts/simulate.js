@@ -1797,13 +1797,13 @@ async function act(action, options) {
 
         printKV(withBids, 'Accounts with Bid GEN score')
 
-        console.log(`${Object.keys(withBids).length} accounts with score`);
-        console.log(`${withoutBids.length} accounts without score`);
+        console.log(`${Object.keys(withBids).length} accounts with bids`);
+        console.log(`${withoutBids.length} accounts without bids`);
 
         if (withoutBids.length) {
           const answ = await inquirer.prompt({
             name: 'lock',
-            message: `${withoutBids.length} accounts without score. Would you like them to bid GEN?`,
+            message: `${withoutBids.length} accounts without bids. Would you like them to bid GEN?`,
             type: 'confirm'
           })
 
