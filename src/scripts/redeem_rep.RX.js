@@ -6,14 +6,13 @@ const DxLockWhitelisted4RepArtifact = artifacts.require('DxLockWhitelisted4Rep')
 const DxGenAuction4RepArtifact = artifacts.require('DxGenAuction4Rep')
 const DxDaoClaimRedeemHelperArtifact = artifacts.require('DxDaoClaimRedeemHelper')
 
-const batchExecute = require('./utils/batch')
-
 const inquirer = require('inquirer');
 const {
   streamline,
   makeBatchNumberTracker,
   makeProcessSlice,
   postprocessBatchRequest,
+  flattenArray,
 } = require('./utils/rx')
 
 const Web3 = require('web3')
@@ -54,7 +53,22 @@ function createWeb3({ network }) {
 }
 
 let AGREEMENT_HASH
-let accounts = []
+const accounts = {
+  MGN: [],
+  ETH: [],
+  Token: [],
+  GEN: {
+    bidders: [],
+    auctionIds: [],
+  },
+}
+
+const FromBlocks = {
+  MGN: 0,
+  ETH: 0,
+  Token: 0,
+  GEN: 0,
+}
 
 /* ================================================================================================================================
  * To help console testing - sets contracts + prints vars + saves events for respective Events into dxLMR_Lock_Events etc:
@@ -99,7 +113,7 @@ let accounts = []
    * Complete [ REAL-RUN ]: npx truffle exec src/scripts/redeem_rep.js --network rinkeby -f 'networks-rinkeby-long-lock.json' --from-block 750153 --dry-run false
    */
 
-const getFname = ({ network, address }) => `./reports/MGN_LOCK#${address}@${network}.json`
+const getFname = ({ network, address, CTR_NAME }) => `./reports/${CTR_NAME}#${address}@${network}.json`
 
 function readFileReport(options) {
   const fname = getFname(options)
@@ -107,7 +121,7 @@ function readFileReport(options) {
   return fs.readJSON(fname).catch(() => ({}))
 }
 
-const concatDistict = (arr1, arr2) => {
+const concatDistinct = (arr1, arr2) => {
   return Array.from(new Set(arr1.concat(arr2)))
 }
 
@@ -117,19 +131,61 @@ async function writeFileReport({ lable, ...data }, options) {
   const json = await fs.readJSON(fname).catch(() => ({}))
   // console.log('json: ', json);
 
-  const pastData = json[lable] || DefaultJson[label]
+  const pastData = json[lable] || DefaultJson[lable]
 
   let newData
-  if (lable === 'Claimed') {
+  if (lable === 'Redeemed') {
     newData = {
       block: data.block,
-      accounts: concatDistict(pastData.accounts, data.accounts),
+      accounts: concatDistinct(pastData.accounts, data.accounts),
     }
-  } else if (lable === 'Registered') {
+  } else if (lable === 'Locked') {
     newData = {
       fromBlock: pastData.fromBlock || data.fromBlock,
       toBlock: data.toBlock,
-      accounts: concatDistict(pastData.accounts, data.accounts),
+      accounts: concatDistinct(pastData.accounts, data.accounts),
+    }
+  } else {
+    newData = data
+  }
+
+  Object.assign(json, { [lable]: newData })
+
+  return fs.outputJSON(fname, json, { spaces: 2 })
+}
+async function writeFileReportGEN({ lable, ...data }, options) {
+  const fname = getFname(options)
+
+  const json = await fs.readJSON(fname).catch(() => ({}))
+  // console.log('json: ', json);
+
+  const pastData = json[lable] || DefaultJsonGEN[lable]
+
+  let newData
+  if (lable === 'Redeemed') {
+    const [bidders, auctionIds] = removePairedDuplicates(
+      pastData.accounts.bidders.concat(data.accounts.bidders),
+      pastData.accounts.auctionIds.concat(data.accounts.auctionIds)
+    )
+    newData = {
+      block: data.block,
+      accounts: {
+        bidders,
+        auctionIds,
+      },
+    }
+  } else if (lable === 'Bid') {
+    const [bidders, auctionIds] = removePairedDuplicates(
+      pastData.accounts.bidders.concat(data.accounts.bidders),
+      pastData.accounts.auctionIds.concat(data.accounts.auctionIds)
+    )
+    newData = {
+      fromBlock: pastData.fromBlock || data.fromBlock,
+      toBlock: data.toBlock,
+      accounts: {
+        bidders,
+        auctionIds,
+      },
     }
   } else {
     newData = data
@@ -141,51 +197,176 @@ async function writeFileReport({ lable, ...data }, options) {
 }
 
 const DefaultJson = {
-  Registered: {
+  Locked: {
     fromBlock: 0,
     toBlock: 0,
     accounts: [],
   },
-  Claimed: {
+  Redeemed: {
     block: 0,
     accounts: [],
+  }
+}
+const DefaultJsonGEN = {
+  Redeemed: {
+    block: 0,
+    accounts: {
+      bidders: [],
+      auctionIds: [],
+    },
+  },
+  Bid: {
+    fromBlock: 0,
+    toBlock: 0,
+    accounts: {
+      bidders: [],
+      auctionIds: [],
+    },
   }
 }
 async function loadPreviousAccounts(options) {
   const json = await readFileReport(options)
   // console.log('json: ', json);
-  const { Registered = DefaultJson.Registered, Claimed = DefaultJson.Claimed } = json || {}
+  const {
+    Locked = DefaultJson.Locked,
+    Redeemed = DefaultJson.Redeemed,
+  } = json || {}
 
   console.group('Loaded previous accounts');
   console.log(`
-    Registered:
-      From block: ${Registered.fromBlock}
-      To block: ${Registered.toBlock}
-      Accounts: ${Registered.accounts.length}
-    `);
+    Locked:
+      From block: ${Locked.fromBlock}
+      To block: ${Locked.toBlock}
+      Accounts: ${Locked.accounts.length}
+  `);
 
   console.log(`
-    Claimed:
-      At block ${Claimed.block}
-      Claimed: ${Claimed.accounts.length}
-    `);
+    Redeemed:
+      At block ${Redeemed.block}
+      Redeemed: ${Redeemed.accounts.length}
+  `);
 
   console.groupEnd()
 
-  const claimedSet = new Set(Claimed.accounts)
+  const redeemedSet = new Set(Redeemed.accounts)
 
-  const unclaimedAccounts = Registered.accounts.filter(acc => !claimedSet.has(acc))
+  const unredeemedAccounts = Locked.accounts.filter(acc => !redeemedSet.has(acc))
 
   return {
-    oldFromBlock: Registered.fromBlock,
-    oldToBlock: Registered.toBlock,
-    newFromBlock: Registered.toBlock && Registered.toBlock + 1,
-    registeredAccounts: Registered.accounts,
-    unclaimedAccounts,
-    claimedAtBlock: Claimed.block,
-    claimedAccounts: Claimed.accounts
+    oldFromBlock: Locked.fromBlock,
+    oldToBlock: Locked.toBlock,
+    newFromBlock: Locked.toBlock && Locked.toBlock + 1,
+    lockedAccounts: Locked.accounts,
+    unredeemedAccounts,
+    redeemedAtBlock: Redeemed.block,
+    redeemedAccounts: Redeemed.accounts
   }
 }
+
+async function loadPreviousAccountsGEN(options) {
+  const json = await readFileReport(options)
+  // console.log('json: ', json);
+  const {
+    Redeemed = DefaultJsonGEN.Redeemed,
+    Bid = DefaultJsonGEN.Bid,
+  } = json || {}
+
+  console.group('Loaded previous accounts');
+
+  console.log(`
+    Bid:
+      From block: ${Bid.fromBlock}
+      To block: ${Bid.toBlock}
+      Account-AuctionId pairs: ${Bid.accounts.bidders.length}
+  `);
+
+
+  console.log(`
+    Redeemed:
+      At block ${Redeemed.block}
+      Redeemed pairs: ${Redeemed.accounts.bidders.length}
+  `);
+
+  console.groupEnd()
+
+  const filtered = filterBidPairs({
+    toFilter: Bid.accounts,
+    filterAgainst: Redeemed.accounts
+  })
+
+  return {
+    oldFromBlock: Bid.fromBlock,
+    oldToBlock: Bid.toBlock,
+    newFromBlock: Bid.toBlock && Bid.toBlock + 1,
+    redeemedPairs: Redeemed.accounts,
+    unredeemedPairs: filtered,
+    redeemedAtBlock: Redeemed.block,
+  }
+}
+
+function filterBidPairs({
+  toFilter,
+  filterAgainst
+}) {
+  const filterSet = new Set(filterAgainst.bidders.map((bidder, i) => {
+    return `${bidder}@${filterAgainst.auctionIds[i]}`
+  }))
+
+  const { bidders, auctionIds } = toFilter.bidders.reduce((accum, bidder, i) => {
+    const auctionId = toFilter.auctionIds[i]
+    const hash = `${bidder}@${auctionId}`
+
+    if (!filterSet.has(hash)) {
+      accum.bidders.push(bidder)
+      accum.auctionIds.push(auctionId)
+    }
+
+    return accum
+  }, { bidders: [], auctionIds: [] })
+
+  return { bidders, auctionIds }
+}
+
+const MGNchoices = [
+  'Print current account selection for LockMgn4Rep',
+  'Gather new Lock MGN events (W)',
+  'Filter out users that have been Redeemed for LockMgn4Rep (W)',
+  'Filter out users redeeming would revert for LockMgn4Rep',
+  'Dry run MGN redeeming',
+  'Real MGN redeeming',
+  'Reload MGN accounts from saved file',
+]
+
+const ETHchoices = [
+  'Print current account selection for LockEth4Rep',
+  'Gather new Lock ETH events (W)',
+  'Filter out users that have been Redeemed for LockEth4Rep (W)',
+  'Filter out users redeeming would revert for LockEth4Rep',
+  'Dry run ETH redeeming',
+  'Real ETH redeeming',
+  'Reload ETH accounts from saved file',
+]
+
+const TokenChoices = [
+  'Print current account selection for LockWhitelisted4Rep',
+  'Gather new Lock Token events (W)',
+  'Filter out users that have been Redeemed for LockWhitelisted4Rep (W)',
+  'Filter out users redeeming would revert for LockWhitelisted4Rep',
+  'Dry run Token redeeming',
+  'Real Token redeeming',
+  'Reload Token accounts from saved file',
+]
+
+const GENchoices = [
+  'Print current account selection for BidGenAuction',
+  'Print current account-auctionId pairs selection for BidGenAuction',
+  'Gather new Bid GEN events (W)',
+  'Filter out account-auctionId pairs that have been Redeemed for BidGenAuction (W)',
+  'Filter out account-auctionId pairs redeeming would revert for BidGenAuction',
+  'Dry run GEN auction redeeming',
+  'Real GEN auction redeeming',
+  'Reload GEN account-auctionId pairs from saved file',
+]
 
 const main = async () => {
 
@@ -212,7 +393,7 @@ const main = async () => {
     })
     .option('fromBlock', {
       type: 'number',
-      default: 7185000,
+      default: 0,
       describe: 'Set from which Block to check for events'
     })
     .option('toBlock', {
@@ -261,26 +442,23 @@ const main = async () => {
     redeem_rep.js data:
 
     Network: ${network}
-    Network file: ${f}
     Batch size: ${batchSize}
     Max concurrent: ${maxConcurrent}
     Searching Events from block: ${fromBlock}
   `)
 
-  try {
 
-    const [dxLMR, dxLER, dxLWR, dxGAR, dxHelper] = await Promise.all([
-      DxLockMgnForRepArtifact.deployed(),
-      DxLockEth4RepArtifact.deployed(),
-      // DxLockEth4RepArtifact.at(contractNetworksMap['DxLockEth4Rep'][netID].address),
-      DxLockWhitelisted4RepArtifact.deployed(),
-      DxGenAuction4RepArtifact.deployed(),
-      DxDaoClaimRedeemHelperArtifact.deployed(),
-    ])
+  const [dxLMR, dxLER, dxLWR, dxGAR, dxHelper] = await Promise.all([
+    DxLockMgnForRepArtifact.deployed(),
+    DxLockEth4RepArtifact.deployed(),
+    DxLockWhitelisted4RepArtifact.deployed(),
+    DxGenAuction4RepArtifact.deployed(),
+    DxDaoClaimRedeemHelperArtifact.deployed(),
+  ])
 
 
-    if (fromBlock === 0 || fromBlock < 7185000) {
-      console.warn(`
+  if (fromBlock === 0 || fromBlock < 7185000) {
+    console.warn(`
       =================================================================================================================
       WARNING: You are checking for Register events from either Block 0 or from a block further back than 15 hours ago.
       Script may hang or fail unexpectedly on Mainnet as filter array length size is too large.
@@ -288,64 +466,45 @@ const main = async () => {
       Please explicitly set the [--from-block <number>] flag if necessary.
       =================================================================================================================
       `)
-    }
+  }
 
-    const contracts = {
-      DxLockMGN: dxLMR,
-      DxLockETH: dxLER,
-      DxLockToken: dxLWR,
-      DxGENauction: dxGAR,
-      MGN: mgn,
-      ClaimHelper: dxHelper,
-    }
-  
-    AGREEMENT_HASH = await dxLMR.getAgreementHash()
+  const contracts = {
+    DxLockMGN: dxLMR,
+    DxLockETH: dxLER,
+    DxLockToken: dxLWR,
+    DxGENauction: dxGAR,
+    MGN: mgn,
+    ClaimHelper: dxHelper,
+  }
 
-    console.log('fromBlock: ', fromBlock);
+  AGREEMENT_HASH = await dxLMR.getAgreementHash()
+
+  console.log('fromBlock: ', fromBlock);
   if (!fromBlock) {
     console.log(`--from-block wasn't specified. Assuming the earliest block any of the contracts was deployed at`);
     const fromBlocks = (await Promise.all([
-      web3.eth.getTransaction(dxLMR.transactionHash),
-      web3.eth.getTransaction(dxLER.transactionHash),
-      web3.eth.getTransaction(dxLWR.transactionHash),
-      web3.eth.getTransaction(dxGAR.transactionHash),
+      web3.eth.getTransaction(DxLockMgnForRepArtifact.transactionHash),
+      web3.eth.getTransaction(DxLockEth4RepArtifact.transactionHash),
+      web3.eth.getTransaction(DxLockWhitelisted4RepArtifact.transactionHash),
+      web3.eth.getTransaction(DxDaoClaimRedeemHelperArtifact.transactionHash),
     ])).map(rc => rc.blockNumber)
     const earliestBlock = Math.min(...fromBlocks)
     console.log('fromBlocks: ', fromBlocks);
     console.log('earliestBlock: ', earliestBlock);
     fromBlock = earliestBlock
     console.log('fromBlock: ', fromBlock);
+    FromBlocks.MGN = FromBlocks.ETH = FromBlocks.Token = FromBlocks.GEN = fromBlock
   }
 
   const choices = [
     new inquirer.Separator('--------MGN--------'),
-    'Print current account selection for LockMgn4Rep',
-    'Gather new Lock MGN events (W)',
-    'Remove addresses with zero score from LockMgn4Rep',
-    'Dry run MGN redeeming',
-    'Real MGN redeeming',
-    'Reload MGN accounts from saved file',
+    ...MGNchoices,
     new inquirer.Separator('--------ETH--------'),
-    'Print current account selection for LockEth4Rep',
-    'Gather new Lock ETH events (W)',
-    'Remove addresses with zero score from LockEth4Rep',
-    'Dry run ETH redeeming',
-    'Real ETH redeeming',
-    'Reload ETH accounts from saved file',
+    ...ETHchoices,
     new inquirer.Separator('--------Token--------'),
-    'Print current account selection for LockWhitelisted4Rep',
-    'Gather new Lock Token events (W)',
-    'Remove addresses with zero score from LockWhitelisted4Rep',
-    'Dry run Token redeeming',
-    'Real Token redeeming',
-    'Reload Token accounts from saved file',
+    ...TokenChoices,
     new inquirer.Separator('--------GEN-auction--------'),
-    'Print current account selection for BidGenAuction',
-    'Gather new Bid GEN events (W)',
-    'Remove addresses with zero score from BidGenAuction',
-    'Dry run GEN auction redeeming',
-    'Real GEN auction redeeming',
-    'Reload GEN auction accounts from saved file',
+    ...GENchoices,
     new inquirer.Separator(),
     'Refresh time',
     'Reload accounts from saved file',
@@ -364,316 +523,466 @@ const main = async () => {
     choices
   })
 
-  const updateHeader = async (str = getTimesStr({ DxLockMgn: dxLockMgnForRep })) => {
+  const updateHeader = async (str = getTimesStr(contracts)) => {
     console.log(await str)
   }
 
   const [master] = await web3.eth.getAccounts()
   console.log('master: ', master);
 
+  await act('Reload accounts from saved file', { network, web3, wa3, master, contracts, mgn, batchSize, maxConcurrent, fromBlock })
 
   let cont, answ = {}
   do {
     await updateHeader()
     answ = await inquire(answ.action)
-    cont = await act(answ.action, { network, web3, wa3, master, contracts, mgn, batchSize, maxConcurrent, fromBlock, oldFromBlock })
+    cont = await act(answ.action, { network, web3, wa3, master, contracts, mgn, batchSize, maxConcurrent, fromBlock })
   } while (cont)
 
-    // 1. Check all Lock events for dxLockMGNForRep, dxLockETHForRep, and dxLockWhitelistForRep
-    //TODO: should this be 1 array? Does it matter if it's split?
-    // const [dxLMR_Lock_Events, dxLER_Lock_Events, dxLWR_Lock_Events, dxGAR_Bid_Events] = await Promise.all([
-    //   dxLMR.getPastEvents('Lock', { fromBlock }),
-    //   dxLER.getPastEvents('Lock', { fromBlock }),
-    //   dxLWR.getPastEvents('Lock', { fromBlock }),
-    //   dxGAR.getPastEvents('Bid', { fromBlock })
-    // ])
 
-    const dxLMR_Lock_Events = mgn ? await getPastEvents(dxLMR, 'Lock', { fromBlock, toBlock, blockBatchSize }) : []
-    const dxLER_Lock_Events = eth ? await getPastEvents(dxLER, 'Lock', { fromBlock, toBlock, blockBatchSize }) : []
-    const dxLWR_Lock_Events = whitelisted ? await getPastEvents(dxLWR, 'Lock', { fromBlock, toBlock, blockBatchSize }) : []
-    const dxGAR_Bid_Events = gen ? await getPastEvents(dxGAR, 'Bid', { fromBlock, toBlock, blockBatchSize }) : []
-    // const dxGAR_Bid_Events = []
-
-    // eslint-disable-next-line no-inner-declarations
-    function parseEventLog({ returnValues }) {
-      return Object.entries(returnValues).reduce((accum, [k, v]) => {
-        if (Number.isNaN(+k)) accum[k] = v
-        return accum
-      }, {})
-    }
-
-    // eslint-disable-next-line no-inner-declarations
-    async function getPastEvents(contract, eventName, { fromBlock = 0, toBlock, blockBatchSize = 30, ...rest } = {}) {
-      if (!toBlock) ({ number: toBlock } = await web3.eth.getBlock('latest'));
-
-      try {
-        console.log(`Fetching event ${eventName} from contract ${contract.constructor.contractName}`);
-        const results = await contract.getPastEvents(eventName, { fromBlock, toBlock, ...rest })
-        console.log('single batch: ', results.map(parseEventLog));
-        return results
-      } catch (error) {
-        if (error.message.includes('query returned more than 1000 results')) {
-          console.warn(error.message)
-          console.log(`Will try getting events from ${blockBatchSize} blocks at a time`)
-
-          const results = []
-
-          let gotEvents = 0
-
-          for (let i = fromBlock; i <= toBlock; i += blockBatchSize) {
-            const toBlockBatch = Math.min(i + blockBatchSize - 1, toBlock)
-            console.log(`\n  [Fetch event ${eventName} from block ${i} to ${toBlockBatch} from contract ${contract.constructor.contractName}]`)
-            const batch = await retry(() => {
-              return contract.getPastEvents(eventName, { fromBlock: i, toBlock: toBlockBatch, ...rest })
-            })
-            console.log('batch: ', batch.map(parseEventLog));
-
-            results.push(...batch)
-            gotEvents += batch.length
-            if (gotEvents > 1000) {
-              gotEvents = 0
-              console.log('Got more than 1000 events. Trying fetching the rest in one bunch.');
-              console.log(`\n  [Fetch event ${eventName} from block ${i + blockBatchSize} to ${toBlock} from contract ${contract.constructor.contractName}]`)
-              try {
-                const batch = await retry(() => {
-                  return contract.getPastEvents(eventName, { fromBlock: i + blockBatchSize, toBlock, ...rest })
-                })
-                console.log('batch: ', batch.map(parseEventLog));
-
-                results.push(...batch)
-                return results
-              } catch (error) {
-                if (error.message.includes('query returned more than 1000 results')) {
-                  console.warn(error.message)
-                  console.log(`Continuing getting events from ${blockBatchSize} blocks at a time`)
-                }
-              }
-            }
-            // await wait(WAIT_TIME)
-          }
-
-          return results
-        }
-
-        throw error
-      }
-    }
-
-    // Cache necessary addresses from events
-    console.log('Removing addresses with zero score from LockEth4Rep')
-    let dxLER_Lock_Lockers = await removeZeroScoreAddresses(dxLER_Lock_Events.map(event => event.returnValues._locker), dxLER, { batchSize })
-    console.log('dxLER_Lock_Events.map(event => event.returnValues._locker): ', dxLER_Lock_Events.map(event => event.returnValues._locker));
-
-    console.log('Removing addresses with zero score from LockMgn4Rep')
-    let dxLMR_Lock_Lockers = await removeZeroScoreAddresses(dxLMR_Lock_Events.map(event => event.returnValues._locker), dxLMR, { batchSize })
-    console.log('dxLMR_Lock_Events.map(event => event.returnValues._locker): ', dxLMR_Lock_Events.map(event => event.returnValues._locker));
-    console.log('Removing addresses with zero score from LockWhitelisted4Rep')
-    let dxLWR_Lock_Lockers = await removeZeroScoreAddresses(dxLWR_Lock_Events.map(event => event.returnValues._locker), dxLWR, { batchSize })
-    console.log('dxLWR_Lock_Events.map(event => event.returnValues._locker): ', dxLWR_Lock_Events.map(event => event.returnValues._locker));
-    console.log('Removing addresses with zero score from BidGenAuction')
-    let [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = await removeZeroBidsAddresses(dxGAR_Bid_Events.map(
-      event => event.returnValues._bidder),
-      dxGAR_Bid_Events.map(event => event.returnValues._auctionId),
-      dxGAR, { batchSize }
-    )
-
-    // Throw if all addresses empty or non-redeemable
-    if (!dxLER_Lock_Lockers.length && !dxLMR_Lock_Lockers.length && !dxLWR_Lock_Lockers.length && !dxGAR_Bid_Bidders.length) throw 'No workable data - all event address array empty. Aborting.'
-
-    dxLER_Lock_Lockers = removeDuplicates(dxLER_Lock_Lockers);
-    dxLMR_Lock_Lockers = removeDuplicates(dxLMR_Lock_Lockers);
-    dxLWR_Lock_Lockers = removeDuplicates(dxLWR_Lock_Lockers);
-    [dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs] = removePairedDuplicates(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs);
-
-    console.log('dxLER_Lock_Lockers: ', dxLER_Lock_Lockers);
-    console.log('dxLMR_Lock_Lockers: ', dxLMR_Lock_Lockers);
-    console.log('dxLWR_Lock_Lockers: ', dxLWR_Lock_Lockers);
-    console.log('dxGAR_Bid_Bidders: ', dxGAR_Bid_Bidders);
-    console.log('dxGAR_Bid_AuctionIDs: ', dxGAR_Bid_AuctionIDs);
-
-    const timing = await checkTiming(dxLMR)
-    if (timing.error) {
-      const { redeemStart, now, error } = timing
-      throw new Error(`
+  const timing = await checkTiming(dxLMR)
+  if (timing.error) {
+    const { redeemStart, now, error } = timing
+    throw new Error(`
       Redeeming can be done only after redeemEnableTime.
       redeemEnableTime: ${redeemStart};
       Now: ${now};
       ${error}
       `)
-    }
-
-    const redeemAllInBatches = (accountsToRedeem, mapIdx, call = true, txOptions) => {
-      return batchExecute(
-        accountsSlice => {
-          return (call ? dxHelper.redeemAll.call : dxHelper.redeemAll)(accountsSlice, mapIdx, txOptions)
-        },
-        { batchSize, log: true },
-        accountsToRedeem
-      )
-    }
-
-    const redeemAllGARInBatches = (accountsToRedeem, auctionIDs, call = true, txOptions) => {
-      return batchExecute(
-        (accountsSlice, auctionIDsSlice) => {
-          return (call ? dxHelper.redeemAllGAR.call : dxHelper.redeemAllGAR)(accountsSlice, auctionIDsSlice, txOptions)
-        },
-        { batchSize, log: true },
-        accountsToRedeem,
-        auctionIDs,
-      )
-    }
-
-    // ?. Dry Run - call redeem on all contracts
-    if (dryRun) {
-      /* 
-        DxDaoClaimRedeemHelper uses an enum for the different dxDao lock, register, claim, redeem functionality
-        regarding DxLockMgn, DxLockEth, and DxLockWhitelisted for Rep.
-        0 = DxLockEth
-        1 = DxLockMgn
-        2 = DxLockWhitelisted
-        3 = DxGenAuction4Rep (not used)
-      */
-
-
-      const [dxLER_Res, dxLMR_Res, dxLWR_Res] = await Promise.all([
-        redeemAllInBatches(dxLER_Lock_Lockers, 0),
-        redeemAllInBatches(dxLMR_Lock_Lockers, 1),
-        redeemAllInBatches(dxLWR_Lock_Lockers, 2),
-      ])
-
-      console.log('dxLER_Lockers redeemAll Responses = ', dxLER_Res.map(arrayBNtoNum))
-      console.log('dxLMR_Lockers redeemAll Responses = ', dxLMR_Res.map(arrayBNtoNum))
-      console.log('dxLWR_Lockers redeemAll Responses = ', dxLWR_Res.map(arrayBNtoNum))
-      // dxGAR - redeemAllGAR
-      const dxGAR_Res = await redeemAllGARInBatches(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs)
-      console.log('dxGAR_Lockers redeemAllGAR Responses = ', dxGAR_Res.map(arrayBNtoNum))
-    } else {
-      console.log('Checking respective dxLXR contracts and redeeming if length . . .')
-      let dxLER_Receipts, dxLMR_Receipts, dxLWR_Receipts, dxGAR_Receipts
-      if (dxLER_Lock_Lockers.length) {
-        const gas = await dxHelper.redeemAll.estimateGas(dxLER_Lock_Lockers.slice(0, batchSize), 0)
-        // console.log('gas: ', gas);
-        dxLER_Receipts = await redeemAllInBatches(dxLER_Lock_Lockers, 0, false, { gas })
-      }
-
-      if (dxLMR_Lock_Lockers.length) {
-        const gas = await dxHelper.redeemAll.estimateGas(dxLMR_Lock_Lockers.slice(0, batchSize), 1)
-        // console.log('dxLMRgas: ', gas);
-        dxLMR_Receipts = await redeemAllInBatches(dxLMR_Lock_Lockers, 1, false, { gas })
-      }
-
-      if (dxLWR_Lock_Lockers.length) {
-        const gas = await dxHelper.redeemAll.estimateGas(dxLWR_Lock_Lockers.slice(0, batchSize), 2)
-        // console.log('dxLWRgas: ', gas);
-        dxLWR_Receipts = await redeemAllInBatches(dxLWR_Lock_Lockers, 2, false, { gas })
-      }
-
-      // // dxGAR - redeemAllGAR
-      if (dxGAR_Bid_Bidders.length) {
-        const gas = await dxHelper.redeemAllGAR.estimateGas(dxGAR_Bid_Bidders.slice(0, batchSize), dxGAR_Bid_AuctionIDs.slice(0, batchSize))
-        // console.log('dxGARgas: ', gas);
-        dxGAR_Receipts = await redeemAllGARInBatches(dxGAR_Bid_Bidders, dxGAR_Bid_AuctionIDs, false, { gas })
-      }
-
-      dxLER_Receipts ? console.log('dxLER_Lockers redeemAll receipts = ', dxLER_Receipts) : console.log('No lockers to redeem for dxLER')
-      dxLMR_Receipts ? console.log('dxLMR_Lockers redeemAll receipts = ', dxLMR_Receipts) : console.log('No lockers to redeem for dxLMR')
-      dxLWR_Receipts ? console.log('dxLWR_Lockers redeemAll receipts = ', dxLWR_Receipts) : console.log('No lockers to redeem for dxLWR')
-      dxGAR_Receipts ? console.log('dxGAR_Bidders redeemAllGAR receipts = ', dxGAR_Receipts) : console.log('No Bidders to redeem for dxGAR')
-    }
-  } catch (error) {
-    console.error(error)
   }
 }
 
+const whichContract = str => {
+  const [, EVENT_NAME, CTR_NAME] = /(Lock|Bid)\s+(\w+)/.exec(str)
+  return { EVENT_NAME, CTR_NAME }
+}
+
 async function act(action, options) {
-  const { web3, wa3, contracts, batchSize, maxConcurrent, fromBlock, oldFromBlock } = options
-  const { DxLockMGN, MGN } = contracts
+  const { web3, wa3, contracts, fromBlock } = options
+  const {
+    DxGENauction,
+    DxLockETH,
+    DxLockMGN,
+    DxLockToken
+  } = contracts
+
+  const shortContracts = {
+    MGN: DxLockMGN,
+    ETH: DxLockETH,
+    Token: DxLockToken,
+    GEN: DxGENauction,
+  }
+
+  const short2idx = {
+    ETH: 0,
+    MGN: 1,
+    Token: 2,
+  }
+
+  const unsafeToTx = async () => {
+    const timing = await checkTiming(DxLockMGN)
+    if (timing.error) {
+      const { period, now, error } = timing
+      console.warn(`
+            Claiming can be done only during claiming period.
+            Claiming period: ${period};
+            Now: ${now};
+            ${error}
+          `)
+      return true
+    }
+  }
+
   switch (action) {
     case 'Quit':
       return false;
     case 'Reload accounts from saved file':
       {
-        const { unclaimedAccounts } = await loadPreviousAccounts({ ...options, address: DxLockMGN.address })
+        ///////////MGN
+        let { unredeemedAccounts, newFromBlock } = await loadPreviousAccounts({
+          ...options, address: DxLockMGN.address, CTR_NAME: 'MGN'
+        })
 
-        if (unclaimedAccounts.length) {
-          console.log('Will operate on loaded unclaimed accounts');
-          accounts = unclaimedAccounts
+        if (unredeemedAccounts.length) {
+          console.log('MGN will operate on loaded unredeemed accounts');
+          accounts.MGN = unredeemedAccounts
         }
+        FromBlocks.MGN = newFromBlock || fromBlock;
+
+        ///////////ETH
+        ({ unredeemedAccounts, newFromBlock } = await loadPreviousAccounts({
+          ...options, address: DxLockETH.address, CTR_NAME: 'ETH'
+        }))
+
+        if (unredeemedAccounts.length) {
+          console.log('ETH will operate on loaded unredeemed accounts');
+          accounts.ETH = unredeemedAccounts
+        }
+        FromBlocks.ETH = newFromBlock || fromBlock;
+
+        ///////////Token
+        ({ unredeemedAccounts, newFromBlock } = await loadPreviousAccounts({
+          ...options, address: DxLockToken.address, CTR_NAME: 'Token'
+        }))
+
+        if (unredeemedAccounts.length) {
+          console.log('Token will operate on loaded unredeemed accounts');
+          accounts.Token = unredeemedAccounts
+        }
+        FromBlocks.Token = newFromBlock || fromBlock;
+
+        ///////////GEN
+        let unredeemedPairs;
+        ({unredeemedPairs , newFromBlock } = await loadPreviousAccountsGEN({
+          ...options, address: DxGENauction.address, CTR_NAME: 'GEN'
+        }))
+
+        if (unredeemedPairs.bidders.length) {
+          console.log('GEN will operate on loaded unredeemed account-auctionId pairs');
+          accounts.GEN = unredeemedPairs
+        }
+        FromBlocks.GEN = newFromBlock || fromBlock;
+        console.log('FromBlocks: ', FromBlocks);
       }
       break;
-    case 'Print current account selection':
-      console.log('  ' + accounts.join('\n  '));
-      console.log('accounts.length: ', accounts.length);
-      break;
-    case 'Gather new Register events (W)':
+    case 'Reload MGN accounts from saved file':
       {
+        const { unredeemedAccounts, newFromBlock } = await loadPreviousAccounts({
+          ...options, address: DxLockMGN.address, CTR_NAME: 'MGN'
+        })
+
+        if (unredeemedAccounts.length) {
+          console.log('MGN will operate on loaded unclaimed accounts');
+          accounts.MGN = unredeemedAccounts
+        }
+        FromBlocks.MGN = newFromBlock || fromBlock
+      }
+      break;
+    case 'Reload ETH accounts from saved file':
+      {
+        const { unredeemedAccounts, newFromBlock } = await loadPreviousAccounts({
+          ...options, address: DxLockETH.address, CTR_NAME: 'ETH'
+        })
+
+        if (unredeemedAccounts.length) {
+          console.log('ETH will operate on loaded unclaimed accounts');
+          accounts.ETH = unredeemedAccounts
+        }
+        FromBlocks.ETH = newFromBlock || fromBlock
+      }
+      break;
+    case 'Reload Token accounts from saved file':
+      {
+        const { unredeemedAccounts, newFromBlock } = await loadPreviousAccounts({
+          ...options, address: DxLockToken.address, CTR_NAME: 'Token'
+        })
+
+        if (unredeemedAccounts.length) {
+          console.log('Token will operate on loaded unclaimed accounts');
+          accounts.Token = unredeemedAccounts
+        }
+        FromBlocks.Token = newFromBlock || fromBlock
+      }
+      break;
+    case 'Reload GEN account-auctionId pairs from saved file':
+      {
+        const { unredeemedPairs, newFromBlock } = await loadPreviousAccountsGEN({
+          ...options, address: DxGENauction.address, CTR_NAME: 'GEN'
+        })
+
+        if (unredeemedPairs.bidders.length) {
+          console.log('GEN will operate on loaded unclaimed accounts');
+          accounts.GEN = unredeemedPairs
+        }
+        FromBlocks.GEN = newFromBlock || fromBlock
+      }
+      break;
+    case 'Print current account selection for LockMgn4Rep':
+      console.log('  ' + accounts.MGN.join('\n  '));
+      console.log('accounts.length: ', accounts.MGN.length);
+      break;
+    case 'Print current account selection for LockEth4Rep':
+      console.log('  ' + accounts.ETH.join('\n  '));
+      console.log('accounts.length: ', accounts.ETH.length);
+      break;
+    case 'Print current account selection for LockWhitelisted4Rep':
+      console.log('  ' + accounts.Token.join('\n  '));
+      console.log('accounts.length: ', accounts.Token.length);
+      break;
+    case 'Print current account selection for BidGenAuction':
+      {
+        const undupedBidders = removeDuplicates(accounts.GEN.bidders)
+        console.log('  ' + undupedBidders.join('\n  '));
+        console.log('accounts.length: ', undupedBidders.length);
+      }
+      break;
+    case 'Print current account-auctionId pairs selection for BidGenAuction':
+      {
+        const paired = accounts.GEN.bidders.map((bidder, i) => {
+          return `${bidder} -- auction #${accounts.GEN.auctionIds[i]}`
+        })
+        console.log('  ' + paired.join('\n  '));
+        console.log('account-auctionId pairs.length: ', paired.length);
+      }
+      break;
+    case 'Gather new Lock MGN events (W)':
+    case 'Gather new Lock ETH events (W)':
+    case 'Gather new Lock Token events (W)':
+      {
+        const { CTR_NAME, EVENT_NAME } = whichContract(action)
+        const CTR = shortContracts[CTR_NAME]
+
+        const fromBlock = FromBlocks[CTR_NAME]
+        console.log('fromBlock: ', fromBlock);
+
         const toBlock = await web3.eth.getBlockNumber()
         console.log('currentBlock: ', toBlock);
-        const events = await getPastEventsRx(DxLockMGN, 'Register', { fromBlock, toBlock })
+        const events = await getPastEventsRx(CTR, EVENT_NAME, { fromBlock, toBlock })
         // console.log('events: ', events);
-        const registeredSet = new Set(events.map(ev => ev.returnValues._beneficiary))
 
-        accounts.forEach(acc => registeredSet.add(acc))
+        const lockedSet = new Set(events.map(ev => ev.returnValues._locker))
 
-        accounts = Array.from(registeredSet)
-        console.log('accounts: ', accounts);
-        console.log('accounts.length: ', accounts.length, 'at block', toBlock);
+        accounts[CTR_NAME].forEach(acc => lockedSet.add(acc))
 
-        await writeFileReport({ lable: 'Registered', fromBlock, toBlock, accounts }, { ...options, address: DxLockMGN.address })
+        accounts[CTR_NAME] = Array.from(lockedSet)
+        console.log('accounts: ', accounts[CTR_NAME]);
+        console.log('accounts.length: ', accounts[CTR_NAME].length, 'at block', toBlock);
+
+        await writeFileReport({
+          lable: 'Locked',
+          fromBlock, toBlock,
+          accounts: accounts[CTR_NAME]
+        }, { ...options, CTR_NAME, address: CTR.address }
+        )
       }
       break;
-    case 'Filter out users claim would revert for':
+    case 'Gather new Bid GEN events (W)':
       {
-        const { claimable, unclaimable } = await getUnclaimableAccounts(accounts, { ...options, web3: wa3 })
-        // console.log('claimable: ', claimable);
+        const { CTR_NAME, EVENT_NAME } = whichContract(action)
+        const CTR = shortContracts[CTR_NAME]
 
-        reportNumbers({ accounts, claimable, unclaimable })
+        const fromBlock = FromBlocks[CTR_NAME]
 
-        const claimableSet = new Set(claimable)
-        accounts = accounts.filter(acc => claimableSet.has(acc))
-        // console.log('accounts: ', accounts);
+        const toBlock = await web3.eth.getBlockNumber()
+        console.log('currentBlock: ', toBlock);
+        const events = await getPastEventsRx(CTR, EVENT_NAME, { fromBlock, toBlock })
+        // console.log('events: ', events);
+
+
+        const bidPairs = [
+          events.map(ev => ev.returnValues._bidder),
+          events.map(ev => ev.returnValues._auctionId),
+        ]
+
+        const [bidders, auctionIds] = removePairedDuplicates(...bidPairs)
+
+        accounts[CTR_NAME].bidders = bidders
+        accounts[CTR_NAME].auctionIds = auctionIds
+
+        const undupedBidders = removeDuplicates(bidders)
+        console.log('accounts: ', undupedBidders);
+        console.log('accounts.length: ', undupedBidders.length, 'at block', toBlock);
+
+        await writeFileReportGEN({
+          lable: 'Bid',
+          fromBlock, toBlock,
+          accounts: accounts[CTR_NAME]
+        }, { ...options, CTR_NAME, address: CTR.address }
+        )
       }
       break;
-    case 'Filter out users that have been claimed for (W)':
+
+    case 'Filter out users that have been Redeemed for LockMgn4Rep (W)':
       {
         const currentBlock = await web3.eth.getBlockNumber()
+        // after redeeming score == 0
+        const { withScore, withoutScore } = await getScore(accounts.MGN, DxLockMGN, { ...options, web3: wa3 })
+        console.log('withoutScore: ', withoutScore);
 
-        const { notClaimed, claimed } = await getExternaLockersUsers(accounts, { ...options, web3: wa3 })
-        console.log('notClaimed: ', notClaimed);
+        const accsWithScore = Object.keys(withScore)
 
-        reportNumbers({ accounts, claimed, notClaimed })
+        reportNumbers({ accounts: accounts.MGN, notRedeemed: accsWithScore, redeemed: withoutScore })
 
-        const haveNotClaimedAlready = new Set(notClaimed)
-        accounts = accounts.filter(acc => haveNotClaimedAlready.has(acc))
+        const haveNotRedeemedAlready = new Set(accsWithScore)
+        accounts.MGN = accounts.MGN.filter(acc => haveNotRedeemedAlready.has(acc))
 
-        await writeFileReport({ lable: 'Claimed', block: currentBlock, accounts: claimed }, { ...options, address: DxLockMGN.address })
-
-        // console.log('accounts: ', accounts);
-      }
-      break;
-    case 'Filter out users that have no locked MGN balance available':
-      {
-        const { withBalance, withoutBalance } = await getTokenBalances(
-          [MGN],
-          accounts,
-          { web3: wa3, fname: 'lockedTokenBalances', batchSize, maxConcurrent }
+        await writeFileReport({
+          lable: 'Redeemed',
+          block: currentBlock,
+          accounts: withoutScore
+        },
+          { ...options, address: DxLockMGN.address, CTR_NAME: 'MGN' }
         )
-        const withBalanceArr = Object.keys(withBalance)
-        console.log(`${withBalanceArr.length} accounts with locked MGN balances`)
-
-        console.log(`${withoutBalance.length} accounts don't have locked MGN`)
-
-        reportNumbers({ accounts, withLockedMGN: withBalanceArr, withoutLockedMGN: withoutBalance })
-
-        const haveLockedMGNbalance = new Set(withBalanceArr)
-        accounts = accounts.filter(acc => haveLockedMGNbalance.has(acc))
-        // console.log('accounts: ', accounts);
       }
       break;
-    case 'Dry run MGN claiming':
+    case 'Filter out users that have been Redeemed for LockEth4Rep (W)':
       {
-        const lockingIds = await claimAllMGNCall(accounts, options)
-        console.log('lockingIds: ', lockingIds);
+        const currentBlock = await web3.eth.getBlockNumber()
+        // after redeeming score == 0
+        const { withScore, withoutScore } = await getScore(accounts.ETH, DxLockETH, { ...options, web3: wa3 })
+        console.log('withoutScore: ', withoutScore);
+        const accsWithScore = Object.keys(withScore)
+
+        reportNumbers({ accounts: accounts.ETH, notRedeemed: accsWithScore, redeemed: withoutScore })
+
+        const haveNotRedeemedAlready = new Set(accsWithScore)
+        accounts.ETH = accounts.ETH.filter(acc => haveNotRedeemedAlready.has(acc))
+
+        await writeFileReport({
+          lable: 'Redeemed',
+          block: currentBlock,
+          accounts: withoutScore
+        },
+          { ...options, address: DxLockETH.address, CTR_NAME: 'ETH' }
+        )
+      }
+      break;
+    case 'Filter out users that have been Redeemed for LockWhitelisted4Rep (W)':
+      {
+        const currentBlock = await web3.eth.getBlockNumber()
+        // after redeeming score == 0
+        const { withScore, withoutScore } = await getScore(accounts.Token, DxLockToken, { ...options, web3: wa3 })
+        console.log('withoutScore: ', withoutScore);
+        const accsWithScore = Object.keys(withScore)
+
+        reportNumbers({ accounts: accounts.Token, notRedeemed: accsWithScore, redeemed: withoutScore })
+
+        const haveNotRedeemedAlready = new Set(accsWithScore)
+        accounts.Token = accounts.Token.filter(acc => haveNotRedeemedAlready.has(acc))
+
+        await writeFileReport({
+          lable: 'Redeemed',
+          block: currentBlock,
+          accounts: withoutScore
+        },
+          { ...options, address: DxLockToken.address, CTR_NAME: 'Token' }
+        )
+      }
+      break;
+    case 'Filter out account-auctionId pairs that have been Redeemed for BidGenAuction (W)':
+      {
+        const currentBlock = await web3.eth.getBlockNumber()
+        // after redeeming score == 0
+        const { withBids, withoutBids } = await getScoreGEN(accounts.GEN, DxGENauction, { ...options, web3: wa3 })
+        console.log('withoutBids: ', withoutBids);
+
+        reportNumbers({ accounts: accounts.GEN.bidders, notRedeemedPairs: withBids.bidders, redeemedPairs: withoutBids })
+
+        accounts.GEN = filterBidPairs({
+          toFilter: accounts.GEN,
+          filterAgainst: withoutBids,
+        })
+
+        await writeFileReportGEN({
+          lable: 'Redeemed',
+          block: currentBlock,
+          accounts: withoutBids
+        }, { ...options, address: DxGENauction.address, CTR_NAME: 'GEN' }
+        )
+      }
+      break;
+    case 'Filter out users redeeming would revert for LockMgn4Rep':
+      {
+        const { redeemable, unredeemable } = await getUnredeemableAccounts(accounts.MGN, DxLockMGN, { ...options, web3: wa3 })
+        // console.log('redeemable: ', redeemable);
+
+        reportNumbers({ accounts: accounts.MGN, redeemable, unredeemable })
+
+        const redeemableSet = new Set(redeemable)
+        accounts.MGN = accounts.MGN.filter(acc => redeemableSet.has(acc))
+      }
+      break;
+    case 'Filter out users redeeming would revert for LockEth4Rep':
+      {
+        const { redeemable, unredeemable } = await getUnredeemableAccounts(accounts.ETH, DxLockETH, { ...options, web3: wa3 })
+        // console.log('redeemable: ', redeemable);
+
+        reportNumbers({ accounts: accounts.ETH, redeemable, unredeemable })
+
+        const redeemableSet = new Set(redeemable)
+        accounts.ETH = accounts.ETH.filter(acc => redeemableSet.has(acc))
+      }
+      break;
+    case 'Filter out users redeeming would revert for LockWhitelisted4Rep':
+      {
+        const { redeemable, unredeemable } = await getUnredeemableAccounts(accounts.Token, DxLockToken, { ...options, web3: wa3 })
+        // console.log('redeemable: ', redeemable);
+
+        reportNumbers({ accounts: accounts.Token, redeemable, unredeemable })
+
+        const redeemableSet = new Set(redeemable)
+        accounts.Token = accounts.Token.filter(acc => redeemableSet.has(acc))
+      }
+      break;
+    case 'Filter out account-auctionId pairs redeeming would revert for BidGenAuction':
+      {
+        const { redeemable, unredeemable } = await getUnredeemablePairsGEN(accounts.GEN, DxGENauction, { ...options, web3: wa3 })
+        // console.log('redeemable: ', redeemable);
+
+        reportNumbers({ accounts: accounts.GEN, redeemable: redeemable.bidders, unredeemable: unredeemable.bidders })
+
+        accounts.GEN = filterBidPairs({
+          toFilter: accounts.GEN,
+          filterAgainst: unredeemable,
+        })
+        const redeemableSet = new Set(redeemable)
+        accounts.GEN = accounts.GEN.filter(acc => redeemableSet.has(acc))
+      }
+      break;
+    case 'Dry run MGN redeeming':
+      {
+        const reputations = await redeemAllCall(accounts.MGN, short2idx.MGN, options)
+        console.log('reputations: ', reputations.map(arrayBNtoNum));
+      }
+      break;
+    case 'Dry run ETH redeeming':
+      {
+        const reputations = await redeemAllCall(accounts.ETH, short2idx.ETH, options)
+        console.log('reputations: ', reputations.map(arrayBNtoNum));
+      }
+      break;
+    case 'Dry run Token redeeming':
+      {
+        const reputations = await redeemAllCall(accounts.Token, short2idx.Token, options)
+        console.log('reputations: ', reputations.map(arrayBNtoNum));
+      }
+      break;
+    case 'Dry run GEN auction redeeming':
+      {
+        const reputations = await redeemAllCallGEN(accounts.GEN, options)
+        console.log('reputations: ', reputations.map(arrayBNtoNum));
+      }
+      break;
+    case 'Real MGN redeeming':
+      {
+        if (await unsafeToTx()) return true
+
+        const receipts = await redeemAllSend(accounts.MGN, short2idx.MGN, options)
+        console.log('receipts: ', receipts);
+      }
+      break;
+    case 'Real ETH redeeming':
+      {
+        if (await unsafeToTx()) return true
+
+        const receipts = await redeemAllSend(accounts.ETH, short2idx.ETH, options)
+        console.log('receipts: ', receipts);
+      }
+      break;
+    case 'Real Token redeeming':
+      {
+        if (await unsafeToTx()) return true
+
+        const receipts = await redeemAllSend(accounts.Token, short2idx.Token, options)
+        console.log('receipts: ', receipts);
+      }
+      break;
+    case 'Real GEN auction redeeming':
+      {
+        if (await unsafeToTx()) return true
+
+        const receipts = await redeemAllSendGEN(accounts.GEN, options)
+        console.log('receipts: ', receipts);
       }
       break;
     case 'Real MGN claiming':
@@ -694,54 +1003,489 @@ async function act(action, options) {
         console.log('receipts: ', receipts);
       }
       break;
-    case 'Print accounts & locked MGN':
-      {
-        const { withBalance, withoutBalance } = await getTokenBalances(
-          [MGN],
-          accounts,
-          { web3: wa3, fname: 'lockedTokenBalances', batchSize, maxConcurrent }
-        )
-
-        if (Object.keys(withBalance).length === 0) {
-          console.log('No account has locked MGN Tokens');
-          break;
-        }
-        printNestedKV(withBalance, `${Object.keys(withBalance).length} accounts with locked MGN balances`)
-        console.log(`${Object.keys(withBalance).length} accounts with locked MGN balances`)
-
-        if (withoutBalance.length) {
-          console.log(`${withoutBalance.length} accounts don't have locked MGN`)
-          console.log('  ' + accounts.join('\n  '));
-        }
-      }
-      break;
-    case 'Print all accounts that have not been claimed for yet':
-      {
-        const toBlock = await web3.eth.getBlockNumber()
-        console.log('currentBlock: ', toBlock);
-        const events = await getPastEventsRx(DxLockMGN, 'Lock', { fromBlock, toBlock })
-        console.log('events: ', events);
-
-        const lockedSet = new Set(events.map(ev => ev.returnValues._locker))
-        const accountsLeftUnclaimed = accounts.filter(acc => !lockedSet.has(acc))
-        console.log('accountsLeftUnclaimed: ', accountsLeftUnclaimed);
-        console.log('accountsLeftUnclaimed.length: ', accountsLeftUnclaimed.length);
-
-        reportNumbers({ accounts, locked: lockedSet, leftUnclaimed: accountsLeftUnclaimed })
-      }
-      break;
     case 'Refresh Time':
       return true;
     default:
       break;
   }
 
+  if (action.includes('Print')) return true
+
   console.log('After current action');
-  reportNumbers({ accounts })
+  if (MGNchoices.includes(action)) reportNumbers({ accounts: accounts.MGN })
+  else if (ETHchoices.includes(action)) reportNumbers({ accounts: accounts.ETH })
+  else if (TokenChoices.includes(action)) reportNumbers({ accounts: accounts.Token })
+  else if (GENchoices.includes(action)) {
+    const unduped = removeDuplicates(accounts.GEN.bidders)
+    reportNumbers({ accounts: unduped, 'account-auctionId_pairs': accounts.GEN.bidders })
+  }
+
   console.log('\n');
 
   // continue?
   return true
+}
+
+async function redeemAllCall(accounts, mapIdx, { batchSize, maxConcurrent, contracts, master } = {}) {
+  const { ClaimHelper } = contracts
+
+  const trackBatch = makeBatchNumberTracker()
+
+  const makeBatch = accsSlice => {
+    // console.log('accsSlice: ', accsSlice.length);
+    const { from, to } = trackBatch(accsSlice)
+    const name = `${from}--${to} from ${accounts.length}`
+
+    const execute = () => ClaimHelper.redeemAll.call(accsSlice, mapIdx, {
+      from: master,
+    })
+
+    return { execute, name }
+  }
+
+  const processSlice = makeProcessSlice({
+    makeBatch,
+  })
+
+  const postprocess = rxjsOps.toArray()
+
+  const results = await streamline(accounts, {
+    batchSize,
+    maxConcurrent,
+    processSlice,
+    postprocess,
+  })
+
+  // console.log('results: ', results);
+  return results
+}
+async function redeemAllSend(accounts, mapIdx, { batchSize, maxConcurrent, contracts, master } = {}) {
+  const { ClaimHelper } = contracts
+
+  const trackBatch = makeBatchNumberTracker()
+
+  const makeBatch = accsSlice => {
+    // console.log('accsSlice: ', accsSlice.length);
+    const { from, to } = trackBatch(accsSlice)
+    const name = `${from}--${to} from ${accounts.length}`
+
+    const execute = () => ClaimHelper.redeemAll(accsSlice, mapIdx, {
+      from: master,
+    })
+
+    return { execute, name }
+  }
+
+  const processSlice = makeProcessSlice({
+    makeBatch,
+  })
+
+  const postprocess = rxjsOps.toArray()
+
+  const results = await streamline(accounts, {
+    batchSize,
+    maxConcurrent,
+    processSlice,
+    postprocess,
+  })
+
+  // console.log('results: ', results);
+  return results
+}
+async function redeemAllCallGEN({ bidders, auctionIds }, mapIdx, { batchSize, maxConcurrent, contracts, master } = {}) {
+  const { ClaimHelper } = contracts
+
+  const trackBatch = makeBatchNumberTracker()
+
+  const makeBatch = pairsSlice => {
+    // console.log('pairsSlice: ', pairsSlice.length);
+    const { from, to } = trackBatch(pairsSlice)
+    const name = `${from}--${to} from ${bidders.length}`
+
+    const { biddersSlice, auctionIdsSlice } = pairsSlice.reduce((accum, [bidder, id]) => {
+      accum.biddersSlice.push(bidder)
+      accum.auctionIdsSlice.push(id)
+
+      return accum
+    }, { biddersSlice: [], auctionIdsSlice: [] })
+
+    const execute = () => ClaimHelper.redeemAllGAR.call(biddersSlice, auctionIdsSlice, {
+      from: master,
+    })
+
+    return { execute, name }
+  }
+
+  const processSlice = makeProcessSlice({
+    makeBatch,
+  })
+
+  const postprocess = rxjsOps.toArray()
+
+  const results = await streamline(rxjs.zip(rxjs.from(bidders), rxjs.from(auctionIds)), {
+    batchSize,
+    maxConcurrent,
+    processSlice,
+    postprocess,
+  })
+
+  // console.log('results: ', results);
+  return results
+}
+async function redeemAllSendGEN({ bidders, auctionIds }, mapIdx, { batchSize, maxConcurrent, contracts, master } = {}) {
+  const { ClaimHelper } = contracts
+
+  const trackBatch = makeBatchNumberTracker()
+
+  const makeBatch = pairsSlice => {
+    // console.log('pairsSlice: ', pairsSlice.length);
+    const { from, to } = trackBatch(pairsSlice)
+    const name = `${from}--${to} from ${bidders.length}`
+
+    const { biddersSlice, auctionIdsSlice } = pairsSlice.reduce((accum, [bidder, id]) => {
+      accum.biddersSlice.push(bidder)
+      accum.auctionIdsSlice.push(id)
+
+      return accum
+    }, { biddersSlice: [], auctionIdsSlice: [] })
+
+    const execute = () => ClaimHelper.redeemAllGAR(biddersSlice, auctionIdsSlice, {
+      from: master,
+    })
+
+    return { execute, name }
+  }
+
+  const processSlice = makeProcessSlice({
+    makeBatch,
+  })
+
+  const postprocess = rxjsOps.toArray()
+
+  const results = await streamline(rxjs.zip(rxjs.from(bidders), rxjs.from(auctionIds)), {
+    batchSize,
+    maxConcurrent,
+    processSlice,
+    postprocess,
+  })
+
+  // console.log('results: ', results);
+  return results
+}
+
+
+async function getUnredeemableAccounts(accounts, contract, { web3, batchSize, maxConcurrent } = {}) {
+  const trackBatch = makeBatchNumberTracker()
+
+  const makeRequest = acc => web3.eth.call.request({
+    from: acc,
+    data: contract.contract.methods.redeem(acc).encodeABI(),
+    to: contract.address
+  }, () => { })
+
+  const makeBatch = accsSlice => {
+    const { from, to } = trackBatch(accsSlice)
+    const name = `${from}--${to} from ${accounts.length}`
+
+    const batch = new web3.BatchRequest()
+
+    accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+    batch.name = name
+
+    return batch
+  }
+
+  const processSlice = makeProcessSlice({
+    makeBatch,
+    timeout: 10000,
+    retry: 15,
+  })
+
+  const BAD_BYTES = '0x08c379a000000000000000000000000000000000000000000000000000000000'
+
+  const postprocess = rxjs.pipe(
+    postprocessBatchRequest,
+    rxjsOps.map(redeemResults => redeemResults.reduce((accum, redeemHex, i) => {
+      // console.log('accs[i]: ', accounts[i]);
+      // console.log('redeemHex: ', redeemHex);
+      const { redeemable, unredeemable } = accum
+      const redeemBytes32 = web3.eth.abi.decodeParameter('bytes32', redeemHex)
+      if (redeemBytes32 !== BAD_BYTES) redeemable.push(accounts[i])
+      else unredeemable.push(accounts[i])
+      return accum
+    }, { redeemable: [], unredeemable: [] }))
+  )
+
+  const { redeemable, unredeemable } = await streamline(accounts, {
+    batchSize,
+    maxConcurrent,
+    processSlice,
+    postprocess,
+  })
+
+  console.log(`${redeemable.length} accounts can be redeemed for`);
+
+  console.log(`${unredeemable.length} accounts can not been redeemed for`);
+  unredeemable.forEach((acc) => {
+    console.log(acc);
+  })
+
+  return {
+    unredeemable,
+    redeemable,
+  }
+}
+
+async function getUnredeemablePairsGEN({ bidders, auctionIds }, contract, { web3, batchSize, maxConcurrent } = {}) {
+  const trackBatch = makeBatchNumberTracker()
+
+  const makeRequest = (acc, id) => web3.eth.call.request({
+    from: acc,
+    data: contract.contract.methods.redeem(acc, id).encodeABI(),
+    to: contract.address
+  }, () => { })
+
+  const makeBatch = (pairsSlice) => {
+    const { from, to } = trackBatch(pairsSlice)
+    const name = `${from}--${to} from ${bidders.length}`
+
+    const batch = new web3.BatchRequest()
+
+    pairsSlice.forEach(([acc, id]) => batch.add(makeRequest(acc, id)))
+    batch.name = name
+
+    return batch
+  }
+
+  const processSlice = makeProcessSlice({
+    makeBatch,
+    timeout: 10000,
+    retry: 15,
+  })
+
+  const BAD_BYTES = '0x08c379a000000000000000000000000000000000000000000000000000000000'
+
+  const postprocess = rxjs.pipe(
+    postprocessBatchRequest,
+    rxjsOps.map(redeemResults => redeemResults.reduce((accum, redeemHex, i) => {
+      // console.log('accs[i]: ', accounts[i]);
+      // console.log('redeemHex: ', redeemHex);
+      const { redeemable, unredeemable } = accum
+      const redeemBytes32 = web3.eth.abi.decodeParameter('bytes32', redeemHex)
+      if (redeemBytes32 !== BAD_BYTES) {
+        redeemable.bidders.push(bidders[i])
+        redeemable.auctionIds.push(auctionIds[i])
+      }
+      else {
+        unredeemable.bidders.push(bidders[i])
+        unredeemable.auctionIds.push(auctionIds[i])
+      }
+      return accum
+    }, { redeemable: { bidders: [], auctionIds: [] }, unredeemable: { bidders: [], auctionIds: [] } }))
+  )
+
+  const { redeemable, unredeemable } = await streamline(rxjs.zip(rxjs.from(bidders), rxjs.from(auctionIds)), {
+    batchSize,
+    maxConcurrent,
+    processSlice,
+    postprocess,
+  })
+
+  console.log(`${redeemable.bidders.length} accounts can be redeemed for`);
+
+  console.log(`${unredeemable.bidders.length} accounts can not been redeemed for`);
+
+  return {
+    unredeemable,
+    redeemable,
+  }
+}
+
+async function getScore(accounts, contract, { web3, batchSize, maxConcurrent } = {}) {
+  const trackBatch = makeBatchNumberTracker()
+
+  const makeRequest = acc => web3.eth.call.request({
+    from: acc,
+    data: contract.contract.methods.scores(acc).encodeABI(),
+    to: contract.address
+  }, () => { })
+
+  const makeBatch = accsSlice => {
+    const { from, to } = trackBatch(accsSlice)
+    const name = `${from}--${to} from ${accounts.length}`
+
+    const batch = new web3.BatchRequest()
+
+    accsSlice.forEach(acc => batch.add(makeRequest(acc)))
+    batch.name = name
+
+    return batch
+  }
+
+  const processSlice = makeProcessSlice({
+    makeBatch,
+    timeout: 10000,
+    retry: 15,
+  })
+
+  const postprocess = rxjs.pipe(
+    postprocessBatchRequest,
+    rxjsOps.map(scores => scores.reduce((accum, scoreHex, i) => {
+      // console.log('accs[i]: ', accs[i]);
+      // console.log('scoreHex: ', scoreHex);
+      const score = web3.eth.abi.decodeParameter('uint', scoreHex)
+      // console.log('score: ', score);
+      const { withScore, withoutScore } = accum
+      if (!score.isZero()) withScore[accounts[i]] = score.toString()
+      else withoutScore.push(accounts[i])
+      return accum
+    }, { withScore: {}, withoutScore: [] }))
+  )
+
+  const { withScore, withoutScore } = await streamline(accounts, {
+    batchSize,
+    maxConcurrent,
+    processSlice,
+    postprocess,
+  })
+
+
+  console.log(`${Object.keys(withScore).length} accounts with score`);
+  console.log(`${withoutScore.length} accounts without score`);
+
+  return { withScore, withoutScore }
+}
+async function getScoreGEN({ bidders, auctionIds }, contract, { web3, batchSize, maxConcurrent } = {}) {
+  const trackBatch = makeBatchNumberTracker()
+
+  const makeRequest = (acc, id) => web3.eth.call.request({
+    from: acc,
+    data: contract.contract.methods.getBid(acc, id).encodeABI(),
+    to: contract.address
+  }, () => { })
+
+  const makeBatch = (pairsSlice) => {
+    const { from, to } = trackBatch(pairsSlice)
+    const name = `${from}--${to} from ${bidders.length}`
+
+    const batch = new web3.BatchRequest()
+
+    pairsSlice.forEach(([acc, id]) => batch.add(makeRequest(acc, id)))
+    batch.name = name
+
+    return batch
+  }
+
+  const processSlice = makeProcessSlice({
+    makeBatch,
+    timeout: 10000,
+    retry: 15,
+  })
+
+  const postprocess = rxjs.pipe(
+    postprocessBatchRequest,
+    rxjsOps.map(bids => bids.reduce((accum, bidHex, i) => {
+      // console.log('accs[i]: ', accs[i]);
+      // console.log('bidHex: ', bidHex);
+      const bid = web3.eth.abi.decodeParameter('uint', bidHex)
+      // console.log('bid: ', bid);
+      const { withBids, withoutBids } = accum
+      if (!bid.isZero()) {
+        withBids.bidders.push(bidders[i])
+        withBids.auctionIds.push(auctionIds[i])
+      }
+      else {
+        withoutBids.bidders.push(bidders[i])
+        withoutBids.auctionIds.push(auctionIds[i])
+      }
+      return accum
+    }, { withBids: { bidders: [], auctionIds: [] }, withoutBids: { bidders: [], auctionIds: [] } }))
+  )
+
+  const { withBids, withoutBids } = await streamline(rxjs.zip(rxjs.from(bidders), rxjs.from(auctionIds)), {
+    batchSize,
+    maxConcurrent,
+    processSlice,
+    postprocess,
+  })
+
+
+  console.log(`${Object.keys(withBids).length} accounts with score`);
+  console.log(`${withoutBids.length} accounts without score`);
+
+  return { withBids, withoutBids }
+}
+
+async function getScoreGEN0(accounts, contract, { web3, batchSize, maxConcurrent } = {}) {
+  const numberOfAuctions = await contract.numberOfAuctions()
+  console.log('numberOfAuctions: ', numberOfAuctions.toString());
+  const auctionIds = Array.from({ length: numberOfAuctions.toString() }, (_, i) => i)
+  console.log('auctionIds: ', auctionIds);
+  const trackBatch = makeBatchNumberTracker()
+
+  const makeRequest = (acc, auctionId) => web3.eth.call.request({
+    from: acc,
+    data: contract.contract.methods.getBid(acc, auctionId).encodeABI(),
+    to: contract.address
+  }, () => { })
+
+  const makeBatch = accsSlice => {
+    const { from, to } = trackBatch(accsSlice)
+    const name = `${from}--${to} from ${accounts.length}`
+
+    const batch = new web3.BatchRequest()
+
+    accsSlice.forEach(acc => {
+      auctionIds.forEach(id => batch.add(makeRequest(acc, id)))
+    })
+    batch.name = name
+
+    return batch
+  }
+
+  const processSlice = makeProcessSlice({
+    makeBatch,
+    timeout: 30000,
+    retry: 15,
+  })
+
+  const postprocess = rxjs.pipe(
+    rxjsOps.pluck('response'),
+    rxjsOps.concatMap(bidsArray => rxjs.from(bidsArray).pipe(
+      rxjsOps.bufferCount(+numberOfAuctions.toString()),
+      rxjsOps.map(bids => {
+        const bidsN = bids.map(bidHex => +web3.eth.abi.decodeParameter('uint', bidHex).toString())
+        console.log('bidsN: ', bidsN);
+        return bidsN.reduce((a, b) => a + b)
+      }),
+      rxjsOps.toArray()
+    )),
+    flattenArray,
+    rxjsOps.map(bids => bids.reduce((accum, bid, i) => {
+      // console.log('accs[i]: ', accs[i]);
+      // console.log('bidHex: ', bidHex);
+      // const bid = web3.eth.abi.decodeParameter('uint', bidHex)
+      // console.log('bid: ', bid);
+      const { withBids, withoutBids } = accum
+      if (bid !== 0) withBids[accounts[i]] = bid.toString()
+      else withoutBids.push(accounts[i])
+      return accum
+    }, { withBids: {}, withoutBids: [] }))
+  )
+
+  const { withBids, withoutBids } = await streamline(accounts, {
+    batchSize: Math.floor(batchSize / +numberOfAuctions * 2),
+    maxConcurrent,
+    processSlice,
+    postprocess,
+  })
+
+  printKV(withBids, 'Accounts with Bid GEN score')
+
+  console.log(`${Object.keys(withBids).length} accounts with bids`);
+  console.log(`${withoutBids.length} accounts without bids`);
+
+  return { withBids, withoutBids }
 }
 
 function reportNumbers({ accounts, ...rest }) {
@@ -756,61 +1500,42 @@ function reportNumbers({ accounts, ...rest }) {
   console.groupEnd()
 }
 
-async function retry(cb, attempt = 1, maxAttempts = 10) {
-  try {
-    return await cb()
-  } catch (e) {
-    // const waitTime = attempt * attempt * WAIT_TIME
-    // console.error(`\nError claiming MGN. Retrying in ${waitTime / 1000} seconds. ${maxAttempts - attempt} remaining attempts\n`)
-    console.error(`\nError redeeming. Retrying. ${maxAttempts - attempt} remaining attempts\n`)
+// function arrayBNtoNum(arr) {
+//   return arr.map(bn => bn.toString())
+// }
 
-    if (attempt >= maxAttempts) {
-      console.log('Out of attempts')
-      throw e
-    } else {
-      // await wait(waitTime)
-      console.warn(e.message)
-      return await retry(cb, attempt + 1, maxAttempts)
-    }
-  }
-}
+// async function removeZeroScoreAddresses(arr, contract, { batchSize }) {
+//   const hasScoreArrs = await batchExecute(
+//     accountsSlice => {
+//       return retry(() => Promise.all(accountsSlice.map(bene => contract.scores.call(bene))))
+//       // return Promise.all(accountsSlice.map(bene => contract.scores.call(bene)))
+//     },
+//     { batchSize, log: true },
+//     arr
+//   )
+//   const hasScore = [].concat(...hasScoreArrs)
+//   // const hasScore = await Promise.all(arr.map(bene => contract['scores'].call(bene)))
+//   const reducedArr = arr.reduce((acc, bene, idx) => {
+//     // REMOVE bene if they have 0 score
+//     if (hasScore[idx].lte(toBN(0))) return acc
 
-function arrayBNtoNum(arr) {
-  return arr.map(bn => bn.toString())
-}
+//     acc.push(bene)
+//     return acc
+//   }, [])
+//   return reducedArr
+// }
 
-async function removeZeroScoreAddresses(arr, contract, { batchSize }) {
-  const hasScoreArrs = await batchExecute(
-    accountsSlice => {
-      return retry(() => Promise.all(accountsSlice.map(bene => contract.scores.call(bene))))
-      // return Promise.all(accountsSlice.map(bene => contract.scores.call(bene)))
-    },
-    { batchSize, log: true },
-    arr
-  )
-  const hasScore = [].concat(...hasScoreArrs)
-  // const hasScore = await Promise.all(arr.map(bene => contract['scores'].call(bene)))
-  const reducedArr = arr.reduce((acc, bene, idx) => {
-    // REMOVE bene if they have 0 score
-    if (hasScore[idx].lte(toBN(0))) return acc
+// async function removeZeroBidsAddresses(bidders, auctionIds, contract) {
+//   const hasBidAmount = await Promise.all(auctionIds.map((id, idx) => contract.getBid.call(bidders[idx], id)))
+//   const reducedArr = bidders.reduce((acc, bene, idx) => {
+//     // REMOVE bene if they have 0 score
+//     if (hasBidAmount[idx].lte(toBN(0))) return acc
 
-    acc.push(bene)
-    return acc
-  }, [])
-  return reducedArr
-}
-
-async function removeZeroBidsAddresses(bidders, auctionIds, contract) {
-  const hasBidAmount = await Promise.all(auctionIds.map((id, idx) => contract.getBid.call(bidders[idx], id)))
-  const reducedArr = bidders.reduce((acc, bene, idx) => {
-    // REMOVE bene if they have 0 score
-    if (hasBidAmount[idx].lte(toBN(0))) return acc
-
-    acc.push({ bene, id: auctionIds[idx] })
-    return acc
-  }, [])
-  return [reducedArr.map(({ bene }) => bene), reducedArr.map(({ id }) => id)]
-}
+//     acc.push({ bene, id: auctionIds[idx] })
+//     return acc
+//   }, [])
+//   return [reducedArr.map(({ bene }) => bene), reducedArr.map(({ id }) => id)]
+// }
 
 function removeDuplicates(arr) {
   return Array.from(new Set(arr))
@@ -860,19 +1585,49 @@ async function checkTiming(redeemableCtr) {
   return res
 }
 
+async function getCurrentAuctionId(DxGenAuction) {
+  const [auctionsStartTime, auctionPeriod, now] = (await Promise.all([
+    DxGenAuction.auctionsStartTime.call(),
+    DxGenAuction.auctionPeriod.call(),
+    getTimestamp()
+  ])).map(n => +n.toString())
+
+  return Math.floor((now - auctionsStartTime) / auctionPeriod);
+}
+
 async function getTimesStr({
-  DxLockMgn,
+  DxGENauction,
+  DxLockETH,
+  DxLockMGN,
+  DxLockToken
 }) {
   const [
     mgnStart,
     mgnEnd,
     mgnRedeem,
-
+    ethStart,
+    ethEnd,
+    ethRedeem,
+    tokenStart,
+    tokenEnd,
+    tokenRedeem,
+    auctionStart,
+    auctionEnd,
+    auctionRedeem,
     now,
   ] = (await Promise.all([
-    DxLockMgn.lockingStartTime.call(),
-    DxLockMgn.lockingEndTime.call(),
-    DxLockMgn.redeemEnableTime.call(),
+    DxLockMGN.lockingStartTime.call(),
+    DxLockMGN.lockingEndTime.call(),
+    DxLockMGN.redeemEnableTime.call(),
+    DxLockETH.lockingStartTime.call(),
+    DxLockETH.lockingEndTime.call(),
+    DxLockETH.redeemEnableTime.call(),
+    DxLockToken.lockingStartTime.call(),
+    DxLockToken.lockingEndTime.call(),
+    DxLockToken.redeemEnableTime.call(),
+    DxGENauction.auctionsStartTime.call(),
+    DxGENauction.auctionsEndTime.call(),
+    DxGENauction.redeemEnableTime.call(),
     getTimestamp(),
   ])).map(d => new Date(d * 1000))
 
@@ -884,15 +1639,38 @@ async function getTimesStr({
   else if (now >= mgnRedeem) mgnPeriod = 'REDEEMING'
   else mgnPeriod = '?'
 
+  let ethPeriod
+  if (now < ethStart) ethPeriod = 'BEFORE'
+  else if (now < ethEnd) ethPeriod = 'LOCKING'
+  else if (now >= ethRedeem) ethPeriod = 'REDEEMING'
+  else ethPeriod = '?'
+
+  let tokenPeriod
+  if (now < tokenStart) tokenPeriod = 'BEFORE'
+  else if (now < tokenEnd) tokenPeriod = 'LOCKING'
+  else if (now >= tokenRedeem) tokenPeriod = 'REDEEMING'
+  else tokenPeriod = '?'
+
+  let auctionPeriod
+  if (now < auctionStart) auctionPeriod = 'BEFORE'
+  else if (now < auctionEnd) auctionPeriod = 'ONGOING'
+  else if (now >= auctionRedeem) auctionPeriod = 'REDEEMING'
+  else auctionPeriod = '?'
+
+  let auctionId
+  if (auctionPeriod === 'ONGOING') {
+    auctionId = await getCurrentAuctionId(DxGENauction);
+  }
+
   return `
   Now: ${now.toUTCString()} \t current block: ${blockNumber}
   -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  DxLockMgn:
-  lock start: ${mgnStart.toUTCString()}
-  lock end: ${mgnEnd.toUTCString()}
-  redeem: ${mgnRedeem.toUTCString()}
+  DxLockMGN:\t\t\t\t\t | DxLockETH:\t\t\t\t\t | DxLockToken:\t\t\t\t | DxGENauction:
+  lock start: ${mgnStart.toUTCString()}\t | lock start: ${ethStart.toUTCString()}\t | lock start: ${tokenStart.toUTCString()}\t | auctions start: ${auctionStart.toUTCString()}
+  lock end: ${mgnEnd.toUTCString()}\t | lock end: ${ethEnd.toUTCString()}\t | lock end: ${tokenEnd.toUTCString()}\t | auctions end: ${auctionEnd.toUTCString()}
+  redeem: ${mgnRedeem.toUTCString()}\t\t | redeem: ${ethRedeem.toUTCString()}\t | redeem: ${tokenRedeem.toUTCString()}\t | redeem: ${auctionRedeem.toUTCString()}
   -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  period: ${mgnPeriod}
+  period: ${mgnPeriod}\t\t\t\t | period: ${ethPeriod}\t\t\t\t | period: ${tokenPeriod}\t\t\t\t | period: ${auctionPeriod}   ${auctionId !== undefined ? `auctionId: ${auctionId}` : ''}
   `
 }
 
@@ -918,6 +1696,10 @@ function printNestedKV(obj, label) {
     keytansform: () => void 0,
     valTransform: (v, k) => Object.keys(v).length && printKV(v, k),
   })
+}
+
+function arrayBNtoNum(arr) {
+  return arr.map(bn => bn.toString())
 }
 
 module.exports = cb => main().then(() => cb(), cb)
