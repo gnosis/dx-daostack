@@ -1092,7 +1092,7 @@ async function redeemAllSend(accounts, mapIdx, { batchSize, maxConcurrent, contr
   // console.log('results: ', results);
   return results
 }
-async function redeemAllCallGEN({ bidders, auctionIds }, mapIdx, { batchSize, maxConcurrent, contracts, master } = {}) {
+async function redeemAllCallGEN({ bidders, auctionIds }, { batchSize, maxConcurrent, contracts, master } = {}) {
   const { ClaimHelper } = contracts
 
   const trackBatch = makeBatchNumberTracker()
@@ -1132,7 +1132,7 @@ async function redeemAllCallGEN({ bidders, auctionIds }, mapIdx, { batchSize, ma
   // console.log('results: ', results);
   return results
 }
-async function redeemAllSendGEN({ bidders, auctionIds }, mapIdx, { batchSize, maxConcurrent, contracts, master } = {}) {
+async function redeemAllSendGEN({ bidders, auctionIds }, { batchSize, maxConcurrent, contracts, master } = {}) {
   const { ClaimHelper } = contracts
 
   const trackBatch = makeBatchNumberTracker()
