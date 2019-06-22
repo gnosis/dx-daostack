@@ -1,9 +1,9 @@
 const rxjs = require('rxjs')
 const rxjsOps = require('rxjs/operators')
 
-const { from, defer, of, forkJoin, pipe, throwError, concat } = rxjs
+const { defer, throwError, concat } = rxjs
 
-const { map, toArray, bufferCount, tap, concatMap, scan, reduce, pluck, retry, timeout, concatAll, catchError } = rxjsOps
+const { reduce, catchError } = rxjsOps
 
 module.exports = (web3) => {
   const { toBN } = web3.utils

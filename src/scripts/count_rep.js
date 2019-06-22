@@ -42,7 +42,7 @@ const DxLockWhitelisted4Rep = artifacts.require('DxLockWhitelisted4Rep')
 const path = require('path')
 const fs = require('fs')
 
-const { getPastEvents, getPastEventsBinary, getPastEventsRx } = require('./utils')(web3)
+const { getPastEventsRx } = require('./utils')(web3)
 
 const argv = require('minimist')(process.argv.slice(2),
   { string: ['a', 'mgn', 'eth', 'tkn', 'auc'] })

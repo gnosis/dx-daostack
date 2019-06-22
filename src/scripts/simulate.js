@@ -47,19 +47,7 @@ const mgnImpl = process.env.MGN_IMPL || 'TokenFRTProxy'
 const mnemonic = process.env.MNEMONIC || DEFAULT_MNEMONIC
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-const network2URL = {
-  mainnet: 'https://mainnet.infura.io/v3/9408f47dedf04716a03ef994182cf150',
-  ropsten: 'https://ropsten.infura.io/v3/9408f47dedf04716a03ef994182cf150',
-  rinkeby: 'https://rinkeby.infura.io/v3/9408f47dedf04716a03ef994182cf150',
-  kovan: 'https://kovan.infura.io/v3/9408f47dedf04716a03ef994182cf150',
-  development: 'http://localhost:8545'
-};
-const network2Id = {
-  mainnet: 1,
-  ropsten: 3,
-  rinkeby: 4,
-  kovan: 42
-};
+const {network2URL, network2Id} = require('./utils/network2Url')
 
 function parseArgv() {
   return yargs
@@ -2083,8 +2071,6 @@ async function wrapToken(address) {
 }
 
 async function getTokenBalances(tokens, accounts, { web3, fname = 'balanceOf', batchSize, maxConcurrent } = {}) {
-
-  const batchSizeWithTokens = batchSize /* && Math.floor(batchSize / tokens.length) */
 
   const trackBatch = makeBatchNumberTracker()
 

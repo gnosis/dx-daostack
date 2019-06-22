@@ -12,7 +12,6 @@ const {
   makeBatchNumberTracker,
   makeProcessSlice,
   postprocessBatchRequest,
-  flattenArray,
 } = require('./utils/rx')
 
 const Web3 = require('web3')
@@ -23,19 +22,7 @@ const rxjs = require('rxjs')
 const rxjsOps = require('rxjs/operators')
 const { toBN, getTimestamp, getBlockNumber, getPastEventsRx } = require('./utils')(web3)
 
-const network2URL = {
-  mainnet: 'https://mainnet.infura.io/v3/9408f47dedf04716a03ef994182cf150',
-  ropsten: 'https://ropsten.infura.io/v3/9408f47dedf04716a03ef994182cf150',
-  rinkeby: 'https://rinkeby.infura.io/v3/9408f47dedf04716a03ef994182cf150',
-  kovan: 'https://kovan.infura.io/v3/9408f47dedf04716a03ef994182cf150',
-  development: 'http://localhost:8545'
-};
-const network2Id = {
-  mainnet: 1,
-  ropsten: 3,
-  rinkeby: 4,
-  kovan: 42
-};
+const {network2URL} = require('./utils/network2Url')
 
 function createProvider(url, { pk, mnemonic }) {
   return new HDWalletProvider(
@@ -52,7 +39,7 @@ function createWeb3({ network }) {
   return { web3: new Web3(provider), provider }
 }
 
-let AGREEMENT_HASH
+// let AGREEMENT_HASH
 const accounts = {
   MGN: [],
   ETH: [],
@@ -432,7 +419,7 @@ const main = async () => {
 
   if (!argv._[0]) return argv.showHelp()
 
-  let { network, batchSize, maxConcurrent, fromBlock, toBlock, blockBatchSize, mgn, eth, whitelisted, gen } = argv
+  let { network, batchSize, maxConcurrent, fromBlock } = argv
 
   const { web3: wa3 } = createWeb3(argv)
   console.log('web3 version: ', web3.version);
@@ -473,11 +460,10 @@ const main = async () => {
     DxLockETH: dxLER,
     DxLockToken: dxLWR,
     DxGENauction: dxGAR,
-    MGN: mgn,
     ClaimHelper: dxHelper,
   }
 
-  AGREEMENT_HASH = await dxLMR.getAgreementHash()
+  // AGREEMENT_HASH = await dxLMR.getAgreementHash()
 
   console.log('fromBlock: ', fromBlock);
   if (!fromBlock) {
@@ -530,13 +516,13 @@ const main = async () => {
   const [master] = await web3.eth.getAccounts()
   console.log('master: ', master);
 
-  await act('Reload accounts from saved file', { network, web3, wa3, master, contracts, mgn, batchSize, maxConcurrent, fromBlock })
+  await act('Reload accounts from saved file', { network, web3, wa3, master, contracts, batchSize, maxConcurrent, fromBlock })
 
   let cont, answ = {}
   do {
     await updateHeader()
     answ = await inquire(answ.action)
-    cont = await act(answ.action, { network, web3, wa3, master, contracts, mgn, batchSize, maxConcurrent, fromBlock })
+    cont = await act(answ.action, { network, web3, wa3, master, contracts, batchSize, maxConcurrent, fromBlock })
   } while (cont)
 
 
@@ -1421,78 +1407,6 @@ async function getScoreGEN({ bidders, auctionIds }, contract, { web3, batchSize,
   return { withBids, withoutBids }
 }
 
-async function getScoreGEN0(accounts, contract, { web3, batchSize, maxConcurrent } = {}) {
-  const numberOfAuctions = await contract.numberOfAuctions()
-  console.log('numberOfAuctions: ', numberOfAuctions.toString());
-  const auctionIds = Array.from({ length: numberOfAuctions.toString() }, (_, i) => i)
-  console.log('auctionIds: ', auctionIds);
-  const trackBatch = makeBatchNumberTracker()
-
-  const makeRequest = (acc, auctionId) => web3.eth.call.request({
-    from: acc,
-    data: contract.contract.methods.getBid(acc, auctionId).encodeABI(),
-    to: contract.address
-  }, () => { })
-
-  const makeBatch = accsSlice => {
-    const { from, to } = trackBatch(accsSlice)
-    const name = `${from}--${to} from ${accounts.length}`
-
-    const batch = new web3.BatchRequest()
-
-    accsSlice.forEach(acc => {
-      auctionIds.forEach(id => batch.add(makeRequest(acc, id)))
-    })
-    batch.name = name
-
-    return batch
-  }
-
-  const processSlice = makeProcessSlice({
-    makeBatch,
-    timeout: 30000,
-    retry: 15,
-  })
-
-  const postprocess = rxjs.pipe(
-    rxjsOps.pluck('response'),
-    rxjsOps.concatMap(bidsArray => rxjs.from(bidsArray).pipe(
-      rxjsOps.bufferCount(+numberOfAuctions.toString()),
-      rxjsOps.map(bids => {
-        const bidsN = bids.map(bidHex => +web3.eth.abi.decodeParameter('uint', bidHex).toString())
-        console.log('bidsN: ', bidsN);
-        return bidsN.reduce((a, b) => a + b)
-      }),
-      rxjsOps.toArray()
-    )),
-    flattenArray,
-    rxjsOps.map(bids => bids.reduce((accum, bid, i) => {
-      // console.log('accs[i]: ', accs[i]);
-      // console.log('bidHex: ', bidHex);
-      // const bid = web3.eth.abi.decodeParameter('uint', bidHex)
-      // console.log('bid: ', bid);
-      const { withBids, withoutBids } = accum
-      if (bid !== 0) withBids[accounts[i]] = bid.toString()
-      else withoutBids.push(accounts[i])
-      return accum
-    }, { withBids: {}, withoutBids: [] }))
-  )
-
-  const { withBids, withoutBids } = await streamline(accounts, {
-    batchSize: Math.floor(batchSize / +numberOfAuctions * 2),
-    maxConcurrent,
-    processSlice,
-    postprocess,
-  })
-
-  printKV(withBids, 'Accounts with Bid GEN score')
-
-  console.log(`${Object.keys(withBids).length} accounts with bids`);
-  console.log(`${withoutBids.length} accounts without bids`);
-
-  return { withBids, withoutBids }
-}
-
 function reportNumbers({ accounts, ...rest }) {
   console.group(`Total accounts ${accounts.length}`);
   const entries = Object.entries(rest)
@@ -1504,43 +1418,6 @@ function reportNumbers({ accounts, ...rest }) {
   }
   console.groupEnd()
 }
-
-// function arrayBNtoNum(arr) {
-//   return arr.map(bn => bn.toString())
-// }
-
-// async function removeZeroScoreAddresses(arr, contract, { batchSize }) {
-//   const hasScoreArrs = await batchExecute(
-//     accountsSlice => {
-//       return retry(() => Promise.all(accountsSlice.map(bene => contract.scores.call(bene))))
-//       // return Promise.all(accountsSlice.map(bene => contract.scores.call(bene)))
-//     },
-//     { batchSize, log: true },
-//     arr
-//   )
-//   const hasScore = [].concat(...hasScoreArrs)
-//   // const hasScore = await Promise.all(arr.map(bene => contract['scores'].call(bene)))
-//   const reducedArr = arr.reduce((acc, bene, idx) => {
-//     // REMOVE bene if they have 0 score
-//     if (hasScore[idx].lte(toBN(0))) return acc
-
-//     acc.push(bene)
-//     return acc
-//   }, [])
-//   return reducedArr
-// }
-
-// async function removeZeroBidsAddresses(bidders, auctionIds, contract) {
-//   const hasBidAmount = await Promise.all(auctionIds.map((id, idx) => contract.getBid.call(bidders[idx], id)))
-//   const reducedArr = bidders.reduce((acc, bene, idx) => {
-//     // REMOVE bene if they have 0 score
-//     if (hasBidAmount[idx].lte(toBN(0))) return acc
-
-//     acc.push({ bene, id: auctionIds[idx] })
-//     return acc
-//   }, [])
-//   return [reducedArr.map(({ bene }) => bene), reducedArr.map(({ id }) => id)]
-// }
 
 function removeDuplicates(arr) {
   return Array.from(new Set(arr))
@@ -1679,30 +1556,6 @@ async function getTimesStr({
   -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   period: ${mgnPeriod}\t\t\t\t | period: ${ethPeriod}\t\t\t\t | period: ${tokenPeriod}\t\t\t\t | period: ${auctionPeriod}   ${auctionId !== undefined ? `auctionId: ${auctionId}` : ''}
   `
-}
-
-const passThrough = v => v
-function printKV(obj, label, { keytansform = passThrough, valTransform = passThrough } = {}) {
-  if (!obj) return
-
-  console.group(label)
-  Object.entries(obj).forEach(([k, v]) => {
-    // console.log(`${keytansform(k)}: ${valTransform(v)}`)
-    let str = ''
-    const key = keytansform(k, v) || ''
-    str += key
-    const val = valTransform(v, k) || ''
-    str += val && `: ${val}`
-    if (str) console.log(str);
-  })
-  console.groupEnd()
-}
-
-function printNestedKV(obj, label) {
-  printKV(obj, label, {
-    keytansform: () => void 0,
-    valTransform: (v, k) => Object.keys(v).length && printKV(v, k),
-  })
 }
 
 function arrayBNtoNum(arr) {
