@@ -584,8 +584,8 @@ async function act(action, options) {
     if (timing.error) {
       const { period, now, error } = timing
       console.warn(`
-            Claiming can be done only during claiming period.
-            Claiming period: ${period};
+            Redeeming can be done only during redeeming period.
+            Redeeming period: ${period};
             Now: ${now};
             ${error}
           `)
@@ -737,15 +737,21 @@ async function act(action, options) {
 
         const toBlock = await web3.eth.getBlockNumber()
         console.log('currentBlock: ', toBlock);
+        if (fromBlock > toBlock) {
+          console.log('Events already up to current block. Wait for a new one')
+          return true
+        }
         const events = await getPastEventsRx(CTR, EVENT_NAME, { fromBlock, toBlock })
         // console.log('events: ', events);
 
         const lockedSet = new Set(events.map(ev => ev.returnValues._locker))
+        const newFetched = lockedSet.size
 
-        accounts[CTR_NAME].forEach(acc => lockedSet.add(acc))
-
-        accounts[CTR_NAME] = Array.from(lockedSet)
+        const newLockedSet = new Set([...accounts[CTR_NAME],...lockedSet])
+        
+        accounts[CTR_NAME] = Array.from(newLockedSet)
         console.log('accounts: ', accounts[CTR_NAME]);
+        console.log('new accounts fetched', newFetched);
         console.log('accounts.length: ', accounts[CTR_NAME].length, 'at block', toBlock);
 
         await writeFileReport({
@@ -754,6 +760,8 @@ async function act(action, options) {
           accounts: accounts[CTR_NAME]
         }, { ...options, CTR_NAME, address: CTR.address }
         )
+
+        FromBlocks[CTR_NAME] = toBlock + 1
       }
       break;
     case 'Gather new Bid GEN events (W)':
@@ -762,9 +770,15 @@ async function act(action, options) {
         const CTR = shortContracts[CTR_NAME]
 
         const fromBlock = FromBlocks[CTR_NAME]
+        console.log('fromBlock: ', fromBlock);
 
+        
         const toBlock = await web3.eth.getBlockNumber()
         console.log('currentBlock: ', toBlock);
+        if (fromBlock > toBlock) {
+          console.log('Events already up to current block. Wait for a new one')
+          return true
+        }
         const events = await getPastEventsRx(CTR, EVENT_NAME, { fromBlock, toBlock })
         // console.log('events: ', events);
 
@@ -774,13 +788,20 @@ async function act(action, options) {
           events.map(ev => ev.returnValues._auctionId),
         ]
 
-        const [bidders, auctionIds] = removePairedDuplicates(...bidPairs)
+        // const [bidders, auctionIds] = removePairedDuplicates(...bidPairs)
+
+        const [bidders, auctionIds] = removePairedDuplicates(
+          accounts[CTR_NAME].bidders.concat(bidPairs[0]),
+          accounts[CTR_NAME].auctionIds.concat(bidPairs[1])
+        )
 
         accounts[CTR_NAME].bidders = bidders
         accounts[CTR_NAME].auctionIds = auctionIds
 
         const undupedBidders = removeDuplicates(bidders)
         console.log('accounts: ', undupedBidders);
+        console.log('new account-auctionId pairs fetched', bidPairs[0].length);
+        console.log('account-auctionId pairs.length', bidders.length);
         console.log('accounts.length: ', undupedBidders.length, 'at block', toBlock);
 
         await writeFileReportGEN({
@@ -789,6 +810,8 @@ async function act(action, options) {
           accounts: accounts[CTR_NAME]
         }, { ...options, CTR_NAME, address: CTR.address }
         )
+
+        FromBlocks[CTR_NAME] = toBlock + 1
       }
       break;
 
@@ -866,7 +889,7 @@ async function act(action, options) {
         const { withBids, withoutBids } = await getScoreGEN(accounts.GEN, DxGENauction, { ...options, web3: wa3 })
         console.log('withoutBids: ', withoutBids);
 
-        reportNumbers({ accounts: accounts.GEN.bidders, notRedeemedPairs: withBids.bidders, redeemedPairs: withoutBids })
+        reportNumbers({ accounts: accounts.GEN.bidders, notRedeemedPairs: withBids.bidders, redeemedPairs: withoutBids.bidders })
 
         accounts.GEN = filterBidPairs({
           toFilter: accounts.GEN,
@@ -919,14 +942,12 @@ async function act(action, options) {
         const { redeemable, unredeemable } = await getUnredeemablePairsGEN(accounts.GEN, DxGENauction, { ...options, web3: wa3 })
         // console.log('redeemable: ', redeemable);
 
-        reportNumbers({ accounts: accounts.GEN, redeemable: redeemable.bidders, unredeemable: unredeemable.bidders })
+        reportNumbers({ accounts: accounts.GEN.bidders, redeemablePairs: redeemable.bidders, unredeemablePairs: unredeemable.bidders })
 
         accounts.GEN = filterBidPairs({
           toFilter: accounts.GEN,
           filterAgainst: unredeemable,
         })
-        const redeemableSet = new Set(redeemable)
-        accounts.GEN = accounts.GEN.filter(acc => redeemableSet.has(acc))
       }
       break;
     case 'Dry run MGN redeeming':
@@ -982,24 +1003,6 @@ async function act(action, options) {
         if (await unsafeToTx()) return true
 
         const receipts = await redeemAllSendGEN(accounts.GEN, options)
-        console.log('receipts: ', receipts);
-      }
-      break;
-    case 'Real MGN claiming':
-      {
-        const timing = await checkTiming(DxLockMGN)
-        if (timing.error) {
-          const { period, now, error } = timing
-          console.warn(`
-            Claiming can be done only during claiming period.
-            Claiming period: ${period};
-            Now: ${now};
-            ${error}
-          `)
-          return true
-        }
-
-        const receipts = await claimAllMGNSend(accounts, options)
         console.log('receipts: ', receipts);
       }
       break;
@@ -1302,6 +1305,7 @@ async function getUnredeemablePairsGEN({ bidders, auctionIds }, contract, { web3
 }
 
 async function getScore(accounts, contract, { web3, batchSize, maxConcurrent } = {}) {
+  console.log('accounts.length: ', accounts.length);
   const trackBatch = makeBatchNumberTracker()
 
   const makeRequest = acc => web3.eth.call.request({
@@ -1312,6 +1316,7 @@ async function getScore(accounts, contract, { web3, batchSize, maxConcurrent } =
 
   const makeBatch = accsSlice => {
     const { from, to } = trackBatch(accsSlice)
+    console.log('accsSlice: ', accsSlice.length);
     const name = `${from}--${to} from ${accounts.length}`
 
     const batch = new web3.BatchRequest()
@@ -1410,8 +1415,8 @@ async function getScoreGEN({ bidders, auctionIds }, contract, { web3, batchSize,
   })
 
 
-  console.log(`${Object.keys(withBids).length} accounts with score`);
-  console.log(`${withoutBids.length} accounts without score`);
+  console.log(`${withBids.bidders.length} pairs with score`);
+  console.log(`${withoutBids.bidders.length} pairs without score`);
 
   return { withBids, withoutBids }
 }
@@ -1568,10 +1573,12 @@ async function checkTiming(redeemableCtr) {
   ])
 
   const redeemStartUTC = new Date(redeemStart * 1000).toUTCString()
+  const period = `${redeemStartUTC} -->`
   const nowUTC = new Date(now * 1000).toUTCString()
 
   const res = {
     redeemStart: redeemStartUTC,
+    period,
     now: nowUTC,
     error: null
   }
@@ -1699,6 +1706,7 @@ function printNestedKV(obj, label) {
 }
 
 function arrayBNtoNum(arr) {
+  if (!Array.isArray(arr)) return arr
   return arr.map(bn => bn.toString())
 }
 

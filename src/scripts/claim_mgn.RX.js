@@ -47,6 +47,8 @@ function createWeb3({ network }) {
 
 let AGREEMENT_HASH
 let accounts = []
+let From_Block = 0
+let Original_From_Block = 0
 
 const DxLockMgnForRepArtifact = artifacts.require('DxLockMgnForRep')
 const DxDaoClaimRedeemHelperArtifact = artifacts.require('DxDaoClaimRedeemHelper')
@@ -259,6 +261,8 @@ const main = async () => {
     console.log('fromBlock: ', fromBlock);
   }
 
+  From_Block = Original_From_Block = fromBlock
+
   const choices = [
     'Print current account selection',
     'Gather new Register events (W)',
@@ -302,12 +306,12 @@ const main = async () => {
   do {
     await updateHeader()
     answ = await inquire(answ.action)
-    cont = await act(answ.action, { network, web3, wa3, master, contracts, mgn, batchSize, maxConcurrent, fromBlock, oldFromBlock })
+    cont = await act(answ.action, { network, web3, wa3, master, contracts, mgn, batchSize, maxConcurrent, oldFromBlock })
   } while (cont)
 }
 
 async function act(action, options) {
-  const { web3, wa3, contracts, batchSize, maxConcurrent, fromBlock } = options
+  const { web3, wa3, contracts, batchSize, maxConcurrent } = options
   const { DxLockMGN, MGN } = contracts
   switch (action) {
     case 'Quit':
@@ -328,19 +332,36 @@ async function act(action, options) {
       break;
     case 'Gather new Register events (W)':
       {
+        const fromBlock = From_Block
+        console.log('fromBlock: ', fromBlock);
+
         const toBlock = await web3.eth.getBlockNumber()
         console.log('currentBlock: ', toBlock);
+
+        if (fromBlock > toBlock) {
+          console.log('Events already up to current block. Wait for a new one')
+          return true
+        }
+
         const events = await getPastEventsRx(DxLockMGN, 'Register', { fromBlock, toBlock })
         // console.log('events: ', events);
         const registeredSet = new Set(events.map(ev => ev.returnValues._beneficiary))
+        const newFetched = registeredSet.size
 
-        accounts.forEach(acc => registeredSet.add(acc))
+        const newLockedSet = new Set([...accounts,...registeredSet])
+        
+        accounts = Array.from(newLockedSet)
 
-        accounts = Array.from(registeredSet)
+        // accounts.forEach(acc => registeredSet.add(acc))
+
+        // accounts = Array.from(registeredSet)
         console.log('accounts: ', accounts);
+        console.log('new accounts fetched', newFetched);
         console.log('accounts.length: ', accounts.length, 'at block', toBlock);
 
         await writeFileReport({ lable: 'Registered', fromBlock, toBlock, accounts }, { ...options, address: DxLockMGN.address })
+
+        From_Block = toBlock + 1
       }
       break;
     case 'Filter out users claim would revert for':
@@ -438,6 +459,9 @@ async function act(action, options) {
       break;
     case 'Print all accounts that have not been claimed for yet':
       {
+        const fromBlock = Original_From_Block
+        console.log('fromBlock: ', fromBlock);
+
         const toBlock = await web3.eth.getBlockNumber()
         console.log('currentBlock: ', toBlock);
         const events = await getPastEventsRx(DxLockMGN, 'Lock', { fromBlock, toBlock })
