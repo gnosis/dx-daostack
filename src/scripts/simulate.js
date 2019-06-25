@@ -1458,8 +1458,8 @@ async function act(action, options) {
 
           console.log(`${accs.length} accounts locking ${answ.amount} ${answ.symbol} in DxLockWhitelisted`);
 
-          // const gas = await DxLockWhitelisted.lock.estimateGas(expToString(wei), answ.period, token.address, AGREEMENT_HASH, { from: accs[0] })
-          // console.log('gas: ', gas);
+          const gas = await DxLockWhitelisted.lock.estimateGas(expToString(wei), answ.period, token.address, AGREEMENT_HASH, { from: accs[0] })
+          console.log('gas: ', gas);
 
           const trackBatch = makeBatchNumberTracker()
 
@@ -1469,6 +1469,7 @@ async function act(action, options) {
             from: acc,
             data: lockData,
             to: DxLockWhitelisted.address,
+            gas: gas + 10
           }, (err, txhash) => console.log(`Acc ${acc}, tx ${txhash}, err ${err}`))
 
           const makeBatch = accsSlice => {
@@ -1664,8 +1665,8 @@ async function act(action, options) {
 
           console.log(`${accs.length} accounts bidding ${answ.amount} GEN in auction #${auctionId} in DxGenAuction`);
 
-          // const gas =await DxGenAuction.bid(web3.utils.toWei(expToString(answ.amount), 'ether'), auctionId, AGREEMENT_HASH, { from: accs[0] })
-          // console.log('gas: ', gas);
+          const gas =await DxGenAuction.bid.estimateGas(web3.utils.toWei(expToString(answ.amount), 'ether'), auctionId, AGREEMENT_HASH, { from: accs[0] })
+          console.log('gas: ', gas);
 
           const trackBatch = makeBatchNumberTracker()
 
@@ -1675,7 +1676,7 @@ async function act(action, options) {
             from: acc,
             data: bidData,
             to: DxGenAuction.address,
-            gas: 78261,
+            gas: gas + 10,
           }, (err, txhash) => console.log(`Acc ${acc}, tx ${txhash}, err ${err}`))
 
           const makeBatch = accsSlice => {
