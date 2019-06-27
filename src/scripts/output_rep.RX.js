@@ -109,6 +109,7 @@ const FromBlocks = {
 
 const MGNchoices = [
   'Gather Redeem MGN events',
+  'Gather claim data for Redeemed MGN users',
   'Print users and their MGN REP',
   'Output users and MGN REP to JSON (W)',
   'Output users and MGN REP to CSV (W)',
@@ -358,7 +359,7 @@ async function act(action, options) {
         console.log('currentBlock: ', toBlock);
 
         const events = await getPastEventsRx(CTR, EVENT_NAME, { fromBlock, toBlock })
-        console.log('events[0]: ', events[0]);
+        // console.log('events[0]: ', events[0]);
 
         const accNrep = await rxjs.from(events).pipe(
 
@@ -369,7 +370,7 @@ async function act(action, options) {
               rxjsOps.tap(null, (e) => console.log('Error', e.message)),
               rxjsOps.retry(10)
             ).toPromise()
-            // const { from } = await wa3.eth.getTransaction(tx)
+
             return {
               ...rest,
               redeemedBy: from,
@@ -410,6 +411,67 @@ async function act(action, options) {
         console.log('Total REP from', CTR_NAME, 'method:', total.toString() / 1e18)
       }
       break;
+    case 'Gather claim data for Redeemed MGN users':
+      {
+        const fromBlock = FromBlocks.MGN
+        console.log('fromBlock: ', fromBlock);
+
+        const toBlock = await web3.eth.getBlockNumber()
+        console.log('currentBlock: ', toBlock);
+
+        const events = await getPastEventsRx(DxLockMGN, 'Lock', { fromBlock, toBlock })
+        // console.log('events[0]', events[0]);
+
+        const acc2claim = await rxjs.from(events).pipe(
+
+          rxjsOps.map(({ args, transactionHash }) => ({ account: args._locker, lockedMGN: args._amount, tx: transactionHash })),
+          rxjsOps.mergeMap(async ({ tx, ...rest }) => {
+            const { from } = await rxjs.defer(() => wa3.eth.getTransaction(tx)).pipe(
+              rxjsOps.timeout(5000),
+              rxjsOps.tap(null, (e) => console.log('Error', e.message)),
+              rxjsOps.retry(10)
+            ).toPromise()
+
+            return {
+              ...rest,
+              claimedBy: from,
+              claimedByThemselves: from.toLowerCase() === rest.account.toLowerCase(),
+            }
+          }, Math.max(maxConcurrent, 30)),
+          // rxjsOps.tap(console.log),
+          rxjsOps.groupBy(p => p.account),
+          rxjsOps.mergeMap(group => group.pipe(
+            // rxjsOps.tap(console.log),
+            rxjsOps.reduce((accum, cur) => {
+              accum.claimedBy.push(cur.claimedBy)
+              accum.claimedByThemselves.push(cur.claimedByThemselves)
+              accum.lockedMGN = accum.lockedMGN.add(cur.lockedMGN)
+
+              return accum
+            }, { account: group.key, lockedMGN: BN_0, claimedBy: [], claimedByThemselves: [] })
+          )),
+          rxjsOps.map(p => {
+            const claimedBy = p.claimedBy.length === 1 ? p.claimedBy[0] : p.claimedBy
+            const claimedByThemselves = p.claimedByThemselves.length === 1 ? p.claimedByThemselves[0] : p.claimedByThemselves
+
+            return { ...p, claimedBy, claimedByThemselves }
+          }),
+          rxjsOps.reduce((accum, p) => {
+            accum[p.account] = p
+            return accum
+          }, {}),
+          // rxjsOps.tap(console.log),
+        ).toPromise()
+        console.log('acc2claim', acc2claim);
+
+        accounts.MGN.forEach(p => {
+          const claimData = acc2claim[p.account]
+          if (claimData) {
+            Object.assign(p, claimData)
+          }
+        })
+      }
+      break;
     case 'Print users and their MGN REP':
     case 'Print users and their ETH REP':
     case 'Print users and their Token REP':
@@ -419,7 +481,6 @@ async function act(action, options) {
         printUser2Rep(CTR_NAME, accounts[CTR_NAME])
         console.log('Total REP from', CTR_NAME, 'method:', totalREP[CTR_NAME].toString() / 1e18)
       }
-
       break;
     case 'Print all users and their total REP':
       {
@@ -496,6 +557,10 @@ async function act(action, options) {
           }
 
           console.groupEnd()
+        } else {
+          console.log(`
+            Make sure you gather all events and concatenate them first
+          `)
         }
       }
       break;
@@ -505,10 +570,16 @@ async function act(action, options) {
     case 'Output users and GEN REP to JSON (W)':
       {
         const { CTR_NAME } = whichPrintREP(action)
-        const output = accounts[CTR_NAME].map(p => ({
-          ...p,
-          REP: p.REP.toString() / 1e18
-        }))
+        const output = accounts[CTR_NAME].map(p => {
+          const newP = {
+            ...p,
+            REP: p.REP.toString() / 1e18
+          }
+          if (CTR_NAME === 'MGN' && p.lockedMGN) {
+            newP.lockedMGN = p.lockedMGN.toString() / 1e18
+          }
+          return newP
+        })
 
         await fs.outputJSON('./Total_rep' + CTR_NAME + '.json', output, { spaces: 2 })
       }
@@ -520,11 +591,13 @@ async function act(action, options) {
       {
         const { CTR_NAME } = whichPrintREP(action)
         const fields = ['account', 'method', 'REP', 'percentOfMethod', 'redeemedBy', 'redeemedByThemselves'];
+        if (CTR_NAME === 'MGN') fields.push('lockedMGN', 'claimedBy', 'claimedByThemselves')
 
         const json2csvParser = new Parser({ fields });
         const csv = json2csvParser.parse(accounts[CTR_NAME].map(p => ({
           ...p,
-          REP: p.REP.toString() / 1e18
+          REP: p.REP.toString() / 1e18,
+          lockedMGN: p.lockedMGN && p.lockedMGN.toString() / 1e18,
         })));
         console.log('csv', csv);
         await fs.outputFile('./Total_rep' + CTR_NAME + '.csv', csv)
