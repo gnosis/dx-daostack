@@ -384,14 +384,15 @@ async function act(action, options) {
             rxjsOps.reduce((accum, cur) => {
               accum.redeemedBy.push(cur.redeemedBy)
               accum.redeemedByThemselves.push(cur.redeemedByThemselves)
+
               accum.method = cur.method
               accum.REP = accum.REP.add(cur.REP)
               return accum
             }, { account: group.key, REP: BN_0, redeemedBy: [], redeemedByThemselves: [] })
           )),
           rxjsOps.map(p => {
-            const redeemedBy = p.redeemedBy.length === 1 ? p.redeemedBy[0] : p.redeemedBy
-            const redeemedByThemselves = p.redeemedByThemselves.length === 1 ? p.redeemedByThemselves[0] : p.redeemedByThemselves
+            const redeemedBy = new Set(p.redeemedBy).size === 1 ? p.redeemedBy[0] : p.redeemedBy
+            const redeemedByThemselves = new Set(p.redeemedByThemselves).size === 1 ? p.redeemedByThemselves[0] : p.redeemedByThemselves
 
             return { ...p, redeemedBy, redeemedByThemselves }
           }),
@@ -451,8 +452,8 @@ async function act(action, options) {
             }, { account: group.key, lockedMGN: BN_0, claimedBy: [], claimedByThemselves: [] })
           )),
           rxjsOps.map(p => {
-            const claimedBy = p.claimedBy.length === 1 ? p.claimedBy[0] : p.claimedBy
-            const claimedByThemselves = p.claimedByThemselves.length === 1 ? p.claimedByThemselves[0] : p.claimedByThemselves
+            const claimedBy = new Set(p.claimedBy).size === 1 ? p.claimedBy[0] : p.claimedBy
+            const claimedByThemselves = new Set(p.claimedByThemselves).size === 1 ? p.claimedByThemselves[0] : p.claimedByThemselves
 
             return { ...p, claimedBy, claimedByThemselves }
           }),
@@ -463,6 +464,7 @@ async function act(action, options) {
           // rxjsOps.tap(console.log),
         ).toPromise()
         console.log('acc2claim', acc2claim);
+        console.log('Total Claim accounts fetched', Object.keys(acc2claim).length);
 
         accounts.MGN.forEach(p => {
           const claimData = acc2claim[p.account]

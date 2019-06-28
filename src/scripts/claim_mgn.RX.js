@@ -264,6 +264,7 @@ const main = async () => {
     new inquirer.Separator(),
     'Print accounts & locked MGN',
     'Print all accounts that have not been claimed for yet',
+    'Print accounts & tradable MGN',
     new inquirer.Separator(),
     'Refresh time',
     'Reload accounts from saved file',
@@ -332,7 +333,7 @@ async function act(action, options) {
         }
 
         const events = await getPastEventsRx(DxLockMGN, 'Register', { fromBlock, toBlock })
-        // console.log('events: ', events);
+        console.log('Fetched events total: ', events.length);
         const registeredSet = new Set(events.map(ev => ev.returnValues._beneficiary))
         const newFetched = registeredSet.size
 
@@ -441,6 +442,27 @@ async function act(action, options) {
 
         if (withoutBalance.length) {
           console.log(`${withoutBalance.length} accounts don't have locked MGN`)
+          console.log('  ' + accounts.join('\n  '));
+        }
+      }
+      break;
+    case 'Print accounts & tradable MGN':
+      {
+        const { withBalance, withoutBalance } = await getTokenBalances(
+          [MGN],
+          accounts,
+          { web3: wa3, batchSize, maxConcurrent }
+        )
+
+        if (Object.keys(withBalance).length === 0) {
+          console.log('No account has tradable MGN Tokens');
+          break;
+        }
+        printNestedKV(withBalance, `${Object.keys(withBalance).length} accounts with tradable MGN balances`)
+        console.log(`${Object.keys(withBalance).length} accounts with tradable MGN balances`)
+
+        if (withoutBalance.length) {
+          console.log(`${withoutBalance.length} accounts don't have tradable MGN`)
           console.log('  ' + accounts.join('\n  '));
         }
       }

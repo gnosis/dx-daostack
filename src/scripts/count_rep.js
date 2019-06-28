@@ -172,7 +172,7 @@ async function displayExpectedRep(data, contracts) {
 
 
   const GenTotalBidsPerAuction = await Promise.all(Array.from({ length: GENnumberOfAuctions.toString() },
-    (_, i) => DxGenAuction4Rep.auctions(i).then(n => new BN(n.toString())))
+    (_, i) => retryPromise(() => DxGenAuction4Rep.auctions(i).then(n => new BN(n.toString()))))
   )
 
   const { GenAuctionIdsWithBids, GENtotalDistributedRep } = GenTotalBidsPerAuction.reduce(
@@ -479,7 +479,7 @@ async function displayAccountsSubmissions(data, contracts) {
       console.log('\t------------------------------');
       console.log('\n\tLocked Tokens for REP in DxLockWhitelisted4Rep at', DxLockWhitelisted4Rep.address);
 
-      const priceOracleAddress = await DxLockWhitelisted4Rep.priceOracleContract()
+      const priceOracleAddress = await retryPromise(() => DxLockWhitelisted4Rep.priceOracleContract())
 
       const lockingIds = [], amounts = [], periods = [], lockingId2blockNumber = {}
       for (const { _amount, _lockingId, _period, blockNumber } of TknEvents) {
@@ -490,7 +490,7 @@ async function displayAccountsSubmissions(data, contracts) {
         lockingId2blockNumber[_lockingId] = blockNumber
       }
 
-      const tokenAddresses = await Promise.all(lockingIds.map(id => DxLockWhitelisted4Rep.lockedTokens(id)))
+      const tokenAddresses = await Promise.all(lockingIds.map(id => retryPromise(() => DxLockWhitelisted4Rep.lockedTokens(id))))
 
       const token2id_amounts = lockingIds.reduce((accum, id, i) => {
         const token = tokenAddresses[i].toLowerCase()
@@ -518,9 +518,9 @@ async function displayAccountsSubmissions(data, contracts) {
 
       for (const token of Object.keys(token2id_amounts)) {
         const [symbol, decimals, blockNumber2Price] = await Promise.all([
-          getTokenSymbol(token),
-          getTokenDecimals(token),
-          getTokenPricesAtBlocks(token, Object.values(lockingId2blockNumber), priceOracleAddress),
+          retryPromise(() => getTokenSymbol(token)),
+          retryPromise(() => getTokenDecimals(token)),
+          retryPromise(() => getTokenPricesAtBlocks(token, Object.values(lockingId2blockNumber), priceOracleAddress)),
         ])
 
         const { total, lockingIds, totalPerPeriod, periods, amounts } = token2id_amounts[token]
@@ -664,7 +664,7 @@ async function getTokenPricesAtBlocks(address, blockNumbers, oracleAddress) {
       const cachedKey = address + '@' + n
       if (addressAndblockNumber2prices[cachedKey]) return addressAndblockNumber2prices[cachedKey]
 
-      const { num, den } = await MiniOracle.methods.getPrice(address).call(n)
+      const { num, den } = await retryPromise(() => MiniOracle.methods.getPrice(address).call(n))
       return addressAndblockNumber2prices[cachedKey] = [num, den]
     })
   )
@@ -837,12 +837,17 @@ async function getContracts({ mgn, eth, tkn, auc, n }) {
   }, {})
 }
 
-// const MAX_TRIES = 15
-// function retryPromise(execPromise, tryN = 1) {
-//   if (tryN > MAX_TRIES) return Promise.reject('number of tries exceeded', MAX_TRIES, '\taborting')
-//   // console.log('try', tryN)
-//   return execPromise().catch(() => retryPromise(execPromise, tryN + 1))
-// }
+const delayReject = ms => new Promise((_, reject) => setTimeout(reject, ms))
+
+const MAX_TRIES = 15
+function retryPromise(execPromise, tryN = 1) {
+  if (tryN > MAX_TRIES) {
+    const errorSTR = 'number of tries exceeded ' + MAX_TRIES + '\taborting'
+    return Promise.reject(errorSTR)
+  }
+  // console.log('try', tryN)
+  return Promise.race([execPromise(),delayReject(10000)]).catch(() => retryPromise(execPromise, tryN + 1))
+}
 
 
 module.exports = cb => main().then(() => cb(), cb)
