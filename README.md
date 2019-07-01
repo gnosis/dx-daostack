@@ -48,7 +48,7 @@ Main schemes that allow to create proposals to manage the dxDAO.
 Schemes used during Vote Staking Period (VSP) to assign the initial Reputation.
 
 | Name  | Description  | Address |
-|---|---|---|---|
+|---|---|---|
 | ETH Locking Scheme  | Allows users to lock Ether during the VSP in order to get a score that will be used for the allocation of Reputation  | [0x4564BFe303900178578769b2D76B1a13533E5fd5](https://etherscan.io/address/)  |
 | Whitelisted Token Locking Scheme  | Allows users to lock Tokens during the VSP in order to get a score that will be used for the allocation of Reputation  | [0x1cb5B2BB4030220ad5417229A7A1E3c373cDD2F6](https://etherscan.io/address/)  |
 | MGN Registration Scheme  | Allows users to get a score, depending on the amount of locked MGN you hold, that will be used for the allocation of Reputation  | [0x2E6FaE82c77e1D6433CCaAaF90281523b99D0D0a](https://etherscan.io/address/) |
