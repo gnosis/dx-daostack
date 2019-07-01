@@ -20,6 +20,42 @@ You can find all information and documentation about the DutchX
 [here](https://dutchx.readthedocs.io/en/latest/), and join the discussion in 
 this [Forum](https://daotalk.org/c/dx-dao).
 
+# Contract Addresses
+The dxDAO address is [0x519b70055af55A007110B4Ff99b0eA33071c720a](https://etherscan.io/address/0x519b70055af55A007110B4Ff99b0eA33071c720a). 
+
+
+Other relevant addresses of the DAO:
+
+## Main DAO Components
+| Name  | Description  | Address |
+|---|---|---|
+| Avatar  | Main address for the DAO. Ethereum identity  | [0x519b70055af55A007110B4Ff99b0eA33071c720a](https://etherscan.io/address/)  |
+| Token  | dxDAO's own token | [0x643b14F6EA235668278DA5974930105852F2B7C4](https://etherscan.io/address/)  |
+| Reputation  | Voting power for dxDAO proposals  | [0x7a927A93F221976AAE26d5D077477307170f0b7c](https://etherscan.io/address/)  |
+| Controller  | dxDAO controller  | [0x9f828AC3baA9003e8a4e0b24bcaE7b027B6740b0](https://etherscan.io/address/)  |
+| Genesis Protocol | Holographic Consensus voting machine for voting on proposals  | [0x332B8C9734b4097dE50f302F7D9F273FFdB45B84](https://etherscan.io/address/) |
+
+## Main Schemes
+Main schemes that allow to create proposals to manage the dxDAO.
+
+| Name  | Description  | Address | Genesis Protocol Hashed Params |
+|---|---|---|---|
+| DutchX (Generic Scheme) | Manage DutchX protocol  | [0x199719EE4d5DCF174B80b80afa1FE4a8e5b0E3A0](https://etherscan.io/address/)  | `0xff6155010292b35fb8daae8b4450cdc41a586bc591e9a76484e88ffba36f94a8` |
+| Contribution Reward Scheme  | Create proposals contributions in exchange for ETH, Tokens or Reputation  | [0x08cC7BBa91b849156e9c44DEd51896B38400f55B](https://etherscan.io/address/) | `0x399141801e9e265d79f1f1759dd67932980664ea28c2ba7e0e4dba8719e47118` |
+| Admin (Scheme Registrar)  | Register new schemes  | [0xf050F3C6772Ff35eB174A6900833243fcCD0261F](https://etherscan.io/address/) | `0x9799ec39e42562c5ac7fbb104f1edcaa495e00b45e0db80cce1c0cdc863d0d0f` |
+
+## Vote Staking Period Schemes
+Schemes used during Vote Staking Period (VSP) to assign the initial Reputation.
+
+| Name  | Description  | Address |
+|---|---|---|---|
+| ETH Locking Scheme  | Allows users to lock Ether during the VSP in order to get a score that will be used for the allocation of Reputation  | [0x4564BFe303900178578769b2D76B1a13533E5fd5](https://etherscan.io/address/)  |
+| Whitelisted Token Locking Scheme  | Allows users to lock Tokens during the VSP in order to get a score that will be used for the allocation of Reputation  | [0x1cb5B2BB4030220ad5417229A7A1E3c373cDD2F6](https://etherscan.io/address/)  |
+| MGN Registration Scheme  | Allows users to get a score, depending on the amount of locked MGN you hold, that will be used for the allocation of Reputation  | [0x2E6FaE82c77e1D6433CCaAaF90281523b99D0D0a](https://etherscan.io/address/) |
+| GEN Auction Scheme  | Allows users to bid on several GEN auctions during the VSP in order to get a score that will be used for the allocation of Reputation  | [0x4D8DB062dEFa0254d00a44aA1602C30594e47B12](https://etherscan.io/address/) |
+
+
+
 # Bug Bounty
 * [Blog post](https://blog.gnosis.pm/test-dxdao-bug-bounties-live-939095b7dd8d)
 * [Bounty Github branch](https://github.com/gnosis/dx-daostack/tree/feature/bounty)
