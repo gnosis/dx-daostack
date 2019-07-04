@@ -53,6 +53,10 @@ const totalREP = {
   GEN: BN_0,
   TOTAL: BN_0,
 }
+const unreleased = {
+  ETH: [],
+  Token: [],
+}
 
 const FromBlocks = {
   MGN: 0,
@@ -120,6 +124,9 @@ const ETHchoices = [
   'Print users and their ETH REP',
   'Output users and ETH REP to JSON (W)',
   'Output users and ETH REP to CSV (W)',
+  'Gather unreleased ETH locks',
+  'Output unreleased ETH locks to JSON (W)',
+  'Output unreleased ETH locks to CSV (W)',
 ]
 
 const TokenChoices = [
@@ -127,6 +134,9 @@ const TokenChoices = [
   'Print users and their Token REP',
   'Output users and Token REP to JSON (W)',
   'Output users and Token REP to CSV (W)',
+  'Gather unreleased Token locks',
+  'Output unreleased Token locks to JSON (W)',
+  'Output unreleased Token locks to CSV (W)',
 ]
 
 const GENchoices = [
@@ -683,6 +693,176 @@ async function act(action, options) {
       break;
     case 'Refresh Time':
       return true;
+    case 'Gather unreleased ETH locks':
+      {
+        const fromBlock = FromBlocks.MGN
+        console.log('fromBlock: ', fromBlock);
+
+        const toBlock = await web3.eth.getBlockNumber()
+        console.log('currentBlock: ', toBlock);
+
+        const events = await getPastEventsRx(DxLockETH, 'Lock', { fromBlock, toBlock })
+        // console.log('events[0]', events[0]);
+
+        const unreleasedBulk = await rxjs.from(events).pipe(
+
+          rxjsOps.map(({ returnValues }) => ({ account: returnValues._locker, lockingId: returnValues._lockingId, amount: returnValues._amount })),
+          rxjsOps.mergeMap(async (p) => {
+            const { account, lockingId } = p
+            const releaseTime = await rxjs.defer(() => DxLockETH.lockers(account, lockingId)).pipe(
+              rxjsOps.timeout(5000),
+              rxjsOps.tap(null, (e) => console.log('Error', e.message)),
+              rxjsOps.retry(10),
+              rxjsOps.filter(({ amount }) => !amount.isZero()),
+              rxjsOps.map(({ releaseTime }) => new Date(releaseTime.toString() * 1000)),
+            ).toPromise()
+
+            return {
+              ...p,
+              releaseTime,
+            }
+          }, Math.max(maxConcurrent, 30)),
+          rxjsOps.filter(({ releaseTime }) => !!releaseTime),
+          // rxjsOps.tap(console.log),
+          rxjsOps.toArray(),
+        ).toPromise()
+        console.log('unreleased', unreleasedBulk);
+
+        console.log('Total Lock events', events.length)
+        console.log('Unreleased', unreleasedBulk.length)
+
+        unreleased.ETH = unreleasedBulk
+      }
+      break;
+    case 'Gather unreleased Token locks':
+      {
+        const fromBlock = FromBlocks.MGN
+        console.log('fromBlock: ', fromBlock);
+
+        const toBlock = await web3.eth.getBlockNumber()
+        console.log('currentBlock: ', toBlock);
+
+        const events = await getPastEventsRx(DxLockToken, 'Lock', { fromBlock, toBlock })
+        // console.log('events[0]', events[0]);
+
+        const unreleasedBulk = await rxjs.from(events).pipe(
+
+          rxjsOps.map(({ returnValues }) => ({ account: returnValues._locker, lockingId: returnValues._lockingId, amount: returnValues._amount })),
+          rxjsOps.mergeMap(async (p) => {
+            const { account, lockingId } = p
+            const releaseTime = await rxjs.defer(() => DxLockToken.lockers(account, lockingId)).pipe(
+              rxjsOps.timeout(5000),
+              rxjsOps.tap(null, (e) => console.log('Error', e.message)),
+              rxjsOps.retry(10),
+              rxjsOps.filter(({ amount }) => !amount.isZero()),
+              rxjsOps.map(({ releaseTime }) => new Date(releaseTime.toString() * 1000)),
+            ).toPromise()
+
+            const token = await rxjs.defer(() => DxLockToken.lockedTokens(lockingId)).pipe(
+              rxjsOps.timeout(5000),
+              rxjsOps.tap(null, (e) => console.log('Error', e.message)),
+              rxjsOps.retry(10),
+            ).toPromise()
+
+            return {
+              ...p,
+              releaseTime,
+              token,
+            }
+          }, Math.max(maxConcurrent, 30)),
+          rxjsOps.filter(({ releaseTime }) => !!releaseTime),
+          // rxjsOps.tap(console.log),
+          rxjsOps.toArray(),
+        ).toPromise()
+
+        const tokenAddresses = Array.from(new Set(unreleasedBulk.map(p => p.token)))
+
+        const token2Info = await rxjs.from(tokenAddresses).pipe(
+          rxjsOps.mergeMap(async address => {
+            const info = await rxjs.defer(() => getTokenInfo(address)).pipe(
+              rxjsOps.timeout(5000),
+              rxjsOps.tap(null, (e) => console.log('Error', e.message)),
+              rxjsOps.retry(10),
+            ).toPromise()
+
+            return { address, ...info }
+          }, Math.max(maxConcurrent, 30)),
+          rxjsOps.reduce((accum, token) => {
+            accum[token.address] = token
+            return accum
+          }, {})
+        ).toPromise()
+
+        // console.log('token2Info', token2Info);
+
+        unreleasedBulk.forEach(p => {
+          const {symbol, decimals} = token2Info[p.token]
+          p.symbol = symbol
+          p.amount = p.amount / (10 ** decimals)
+        })
+
+        console.log('unreleased', unreleasedBulk);
+
+        console.log('Total Lock events', events.length)
+        console.log('Unreleased', unreleasedBulk.length)
+
+        unreleased.Token = unreleasedBulk
+      }
+      break;
+    case 'Output unreleased ETH locks to JSON (W)':
+      {
+        const json = unreleased.ETH.map(p => ({
+          ...p,
+          amount: web3.utils.fromWei(p.amount),
+          releaseTime: p.releaseTime.toUTCString(),
+        }))
+
+        console.log('json', json);
+        await fs.outputJSON('./Unreleased.ETH.json', json, { spaces: 2 })
+      }
+      break;
+    case 'Output unreleased ETH locks to CSV (W)':
+      {
+        const fields = Object.keys(unreleased.ETH[0] || {})
+
+        const json2csvParser = new Parser({ fields });
+        const json = unreleased.ETH.map(p => ({
+          ...p,
+          amount: web3.utils.fromWei(p.amount),
+          releaseTime: p.releaseTime.toUTCString(),
+        }))
+
+        const csv = json2csvParser.parse(json);
+        console.log('csv', csv);
+        await fs.outputFile('./Unreleased.ETH.csv', csv)
+      }
+      break;
+    case 'Output unreleased Token locks to JSON (W)':
+      {
+        const json = unreleased.Token.map(p => ({
+          ...p,
+          releaseTime: p.releaseTime.toUTCString(),
+        }))
+
+        console.log('json', json);
+        await fs.outputJSON('./Unreleased.Token.json', json, { spaces: 2 })
+      }
+      break;
+    case 'Output unreleased Token locks to CSV (W)':
+      {
+        const fields = Object.keys(unreleased.Token[0] || {})
+
+        const json2csvParser = new Parser({ fields });
+        const json = unreleased.Token.map(p => ({
+          ...p,
+          releaseTime: p.releaseTime.toUTCString(),
+        }))
+
+        const csv = json2csvParser.parse(json);
+        console.log('csv', csv);
+        await fs.outputFile('./Unreleased.Token.csv', csv)
+      }
+      break;
     default:
       break;
   }
@@ -825,6 +1005,37 @@ async function getTimesStr({
   -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   period: ${mgnPeriod}\t\t\t\t | period: ${ethPeriod}\t\t\t\t | period: ${tokenPeriod}\t\t\t\t | period: ${auctionPeriod}   ${auctionId !== undefined ? `auctionId: ${auctionId}` : ''}
   `
+}
+
+async function getTokenSymbol(address) {
+  const request = {
+    data: '0x95d89b41',
+    to: address
+  }
+
+  const symbolHex = await web3.eth.call(request)
+  let symbol
+  try {
+    symbol = web3.eth.abi.decodeParameter('string', symbolHex)
+  } catch (error) {
+    symbol = web3.utils.toUtf8(symbolHex)
+  }
+  return symbol
+}
+
+async function getTokenDecimals(address) {
+  const request = {
+    data: '0x313ce567',
+    to: address
+  }
+
+  const decimalsHex = await web3.eth.call(request)
+  return +decimalsHex
+}
+
+async function getTokenInfo(address) {
+  const [symbol, decimals] = await Promise.all([getTokenSymbol(address), getTokenDecimals(address)])
+  return { symbol, decimals }
 }
 
 module.exports = cb => main().then(() => cb(), cb)
