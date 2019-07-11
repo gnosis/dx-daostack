@@ -25,9 +25,10 @@
     "get-cryptocompare-tokens": "node src/scripts/get-cryptocompare-tokens",
     "get-token-prices": "node src/scripts/get-token-prices.js",
     "make-proposal": "truffle exec src/scripts/make-proposal.js",
-    "claim_mgn": "truffle exec src/scripts/claim_mgn.js",
-    "redeem_rep": "truffle exec src/scripts/redeem_rep.js",
+    "claim_mgn": "truffle exec src/scripts/claim_mgn.RX.js",
+    "redeem_rep": "truffle exec src/scripts/redeem_rep.RX.js",
     "count_rep": "truffle exec src/scripts/count_rep.js",
+    "output_rep": "truffle exec src/scripts/output_rep.RX.js",
     "update-price-oracle": "truffle exec src/scripts/update-price-oracle.js",
     "prettier": "prettier --write --tab-width 4 --print-width 120 '**/*.sol'"
   },
